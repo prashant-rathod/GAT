@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link href="{{url_for('static', filename='css/main.css')}}" rel="stylesheet">
+    <script src="static/js/jquery-1.11.1.min.js"></script>
+    <script src="static/js/jgraph.min.js"></script>
+    <title>Jgraph</title>
+  </head>
+
+  <body>
+    <div class="graph"></div>
+    <div class="label"></div>
+
+    <script type="text/javascript">
+      jgraph.create('.graph', {directed: false});
+      jgraph.draw({{jgdata|safe}});
+
+
+      //////REAME THIS LATER?////
+      var onEnter, onExit, $d, hovered;
+      $d = $('.label');
+      $d.hide();
+      hovered = jgraph.makeMaterial(0xb7ecff);
+      onEnter = function (node) {
+          $d.html('<p><b>' + node.name + '</b></p>');
+          $d.show();
+          node.defaultMaterial = node.material;
+          node.material = hovered;
+      };
+      onExit = function (node) {
+          $d.empty();
+          $d.hide();
+          node.material = node.defaultMaterial;
+      };
+      jgraph.onNodeHover(onEnter, onExit);
+
+      $(document).mousemove(function (event) {
+          $d.css({ left: event.pageX + 10, top: event.pageY + 10 });
+      });
+
+    </script>
+  </body>
+</html>

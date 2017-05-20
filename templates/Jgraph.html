@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link href="{{url_for('static', filename='css/main.css')}}" rel="stylesheet">
+    <link href="{{url_for('static', filename='css/general.css')}}" rel="stylesheet">
+    <script src="{{url_for('static', filename='js/jquery-1.11.1.min.js')}}"></script>
+    <script src="{{url_for('static', filename='js/jgraph_test1.min.js')}}"></script>
+    <title>Jgraph</title>
+  </head>
+
+  <body>
+
+    <div><button class="back-btn" style = "position:fixed;top:0;left:0"><a href="{{url_for('visualize', case_num=case_num)}}">BACK</a></button><div>
+
+    <div class="graph"></div>
+    <div class="label"></div>
+
+    <script type="text/javascript">
+      jgraph.create('.graph', {directed: false});
+      jgraph.draw({{jgdata|safe}});
+
+      var onEnter, onExit, $d, hovered;
+
+      $d = $('.label');
+      $d.hide();
+      hovered = jgraph.makeMaterial(0xb7ecff);
+
+      onEnter = function (object) {
+        if (object.geometry.type === "SphereGeometry") {
+          $d.html('<p><b>' + object.name + '</b></p>');
+        } else {
+          if (object.name !== ""){
+            $d.html('<p><b>' + object.name + '</b></p>');
+          } else {
+            /*$d.html('<p><b>' + "Does_not_exist" + '</b></p>');*/
+          }
+        }
+          console.log(object);
+          $d.show();
+          object.defaultMaterial = object.material;
+          object.material = hovered;
+      };
+
+      onExit = function (object) {
+          $d.empty();
+          $d.hide();
+          object.material = object.defaultMaterial;
+      };
+
+      jgraph.onHover(onEnter, onExit);
+
+      $(document).mousemove(function (event) {
+          $d.css({ left: event.pageX + 10, top: event.pageY + 10 });
+      });
+
+
+      //When node/edge is clicked, display information of the bottom right corner
+      //Need to ask Tony specific file to make edges have properties
+      jgraph.onClick(function (node) {      
+        if (node.name !== "" && node.geometry.type === "SphereGeometry") {
+            $(function() {
+              $.getJSON('/_get_data/{{case_num}}', {
+                name: node.name,        
+              }, function(data) {
+                //currently hard coded, must be fixed soon
+                $("#name").text(data.name);
+                $("#cluster").text(data.cluster);
+                $("#eigenvalue_centrality").text(data.eigenvector);
+                $("#betweenness_centrality").text(data.betweenness);
+                $("#delete").val(data.name);
+              });
+            });
+        } else {
+          $("#name").text(node.name);     // Need Tony to have xlsv file.
+          $("#cluster").text("Null");
+          $("#eigenvalue_centrality").text("Null");
+          $("#betweenness_centrality").text("Null");
+          $("#delete").val('');
+        }
+      });
+
+      //Takes the user input (node that user wants to remove) and removes it from SNA.
+      $(function(){
+        $('a#removeNode').bind('click', function(){
+          $.getJSON('/_remove_node/{{case_num}}', {
+            node: $('input[name=a]').val()
+          }, function(data) {
+            $('#message').text(data.result)
+            jgraph.reload(data.node)
+          });
+        });
+      });
+
+      $(function(){
+        $('a#undo').bind('click', function(){
+            jgraph.undo()
+        });
+      });
+
+      $(function(){
+        $('a#redo').bind('click', function(){
+            jgraph.redo()
+        });
+      });
+
+      $(function(){
+        $('a#reset').bind('click', function(){
+            jgraph.reset()
+        });
+      });
+    </script>
+
+
+    <div id = "nodeInfo" style = "position: fixed; bottom: 0; right: 0; border-style: solid">
+      <span id="name">Name</span> <br>
+      <span id="cluster">Clustering</span> <br>
+      <span id="eigenvalue_centrality">eigenvector centrality</span> <br>
+      <span id="betweenness_centrality">betweenness centrality</span> 
+    </div>
+
+    <!-- Toolbar for removing nodes, undoing or redoing user's action-->
+    <div id = "toolbar" style = "position: fixed; top: 0; right: 0; border-style: solid">  
+      <p>
+        <input type="text" size=20 name=a id="delete"> <br><br>
+        <span id="message"></span>
+      </p>
+      <a href="javascript:void(0);" id="removeNode">remove node</a> <br>
+      <!--a href="javascript:void(0);" id="undo">undo</a>
+      <a href="javascript:void(0);" id="redo">redo</a>
+      <a href="javascript:void(0);" id="redo">reset</a-->
+    </div>
+
+    <div class = "output-window" id = "SNA Options Window" style = "position:fixed;bottom:0;left:0;border:solid;">
+
+    <div class = "output-button-bar">
+      <button class="btn-hide"
+      onclick="document.getElementById('SNA Options').style.display='none'">hide</button>
+
+      <button class="btn-show"
+      onclick="document.getElementById('SNA Options').style.display='inline-block'">show</button>
+
+      <button class="btn-close"
+      onclick="document.getElementById('SNA Options Window').style.display='none'">close</button>
+    </div>
+
+    <div class = "output" id = "SNA Options">
+    <h3><center>SNA Options</center></h3>
+  
+      <form enctype = "multipart/form-data" method = "post">
+        <b>Colors</b><br>
+        {% for set in graph.nodeSet %}
+
+          {{set}}: 
+          <select name = "{{set}}Color">
+            {% for c in colors %}
+
+              <option value = "{{c}}" {% if c == attr[set][0] %}selected = "on" {% endif %}>{{colorDict[c]}}</option>
+
+            {% endfor %}
+
+          </select>
+          <br>
+
+        {% endfor %}
+
+        <input type = "submit" value = "SUBMIT" name = "options">
+
+      </form>
+
+    </div>
+  </div>
+
+
+  </body>
+</html>
