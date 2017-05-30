@@ -21,6 +21,7 @@ import copy
 import sys
 print(sys.getdefaultencoding())
 import random
+import GAT_NLP_JamesWu.NLP.parser as nlp_james
 # import Alok's and James' and Nikita's tools
 
 ''' Before running:
@@ -174,10 +175,15 @@ def upload():
 		fileDict['GSA_file_list']		= request.files.getlist('GSA_Input_map')
 		fileDict['NLP_Input_corpus'] 	= storeNLP(request.files.getlist('NLP_Input_corpus'))
 		fileDict['NLP_Input_LDP']		= storefile(request.files['NLP_Input_LDP'])
+		fileDict['NLP_Input_Sentiment']	= storefile(request.files['NLP_Input_Sentiment'])
+
 		terms = request.form.get('NLP_LDP_terms')
 		term_array						= terms.split(',') if (terms != '' and terms != None) else None
 		if term_array != None:
 			fileDict['NLP_LDP_terms']	= [term.strip() for term in term_array]
+
+		fileDict["NLP_INPUT_NER"] = request.form.get("NLP_INPUT_NER")
+
 		fileDict['SNA_Input'] 			= storefile(request.files['SNA_Input'])
 		#fileDict['NLP_Type'] 			= request.form['NLP_Type']
 
@@ -249,6 +255,9 @@ def visualize(case_num):
 	NLP_dir 			= fileDict.get('NLP_Input_corpus')
 	NLP_file_LDP		= fileDict.get('NLP_Input_LDP')
 	NLP_LDP_terms		= fileDict.get('NLP_LDP_terms')
+	NLP_file_sentiment 	= fileDict.get('NLP_Input_Sentiment')
+	NLP_NER_sentence 	= fileDict.get('NLP_INPUT_NER')
+	NLP_IOB_sentence 	= fileDict.get('NLP_INPUT_IOB')
 	SNA_file 			= fileDict.get('SNA_Input')
 	#NLP_type 			= fileDict.get('NLP_Type')
 	research_question 	= fileDict.get('research_question')
@@ -318,12 +327,27 @@ def visualize(case_num):
 		error = True
 		mymap = None
 
+	#James WU's NLP methods:
+	nlp_sentiment = None
+	if NLP_file_sentiment != None:
+		import os.path
+		if not os.path.isfile("nb_sentiment_classifier.pkl"):
+			nlp_james.trainSentimentClassifier()
+		nlp_sentiment = nlp_james.predictSentiment(NLP_file_sentiment)
+
+	ner = None
+	if NLP_NER_sentence != None:
+		tags = nlp_james.npChunking(NLP_NER_sentence)
+		ner = nlp_james.treeTraverse(tags)
 	#if request.method == 'POST':
 
-
+	iob = None
+	if NLP_IOB_sentence != None:
+		ne_tree = nlp_james.NEChunker(NLP_IOB_sentence)
+		iob = nlp_james.IOB_Tagging(ne_tree)
 	# pass files into parsers/tools created by Alok and James
 	# this part will be done at the coding session
-	# how will the output look? 
+	# how will the output look?
 	# oh yeah we need 3 different options for the 3 different NLP tools - DONE
 	# go to http://werkzeug.pocoo.org/docs/0.11/datastructures/ to see how to read files
 	# probably best to save the flask file objects as python file objects then use python file i/o
@@ -351,7 +375,10 @@ def visualize(case_num):
 		auto = auto,
 		sp_dyn = sp_dyn,
 		error=error,
-		case_num = case_num
+		case_num = case_num,
+		nlp_sentiment = nlp_sentiment,
+		nlp_ner = ner,
+		nlp_iob = iob
 		)
 
 ###########################
@@ -709,6 +736,12 @@ def checkExtensions(case_num):
 	if nlp_file != None:
 		if not nlp_file.endswith('.txt'):
 			errors.append("Error: please upload txt file for NLP Lexical Dispersion Plot.")
+
+	sentiment_file = fileDict["NLP_Input_Sentiment"]
+	if sentiment_file != None:
+		if not sentiment_file.endswith('.txt'):
+			errors.append("Error: please upload txt file for Sentiment Analysis.")
+
 	if terms != None and nlp_file == None:
 		errors.append("Error: please upload txt file for NLP Lexical Dispersion Plot.")
 

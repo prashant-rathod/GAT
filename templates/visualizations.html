@@ -208,7 +208,10 @@
 
 		<div class = "output" id = "NLP Data" >
 		<h3><center>NLP Data</center></h3>
-
+			 <script type="text/javascript">
+				 console.log("TEST");
+			 </script>
+<!--
 			{% if nb %}
 
 				<li>Classification: {{nb.classification}}</li>
@@ -227,12 +230,23 @@
 			{% if vs %}
 
 				<li>Positive: {{ vs.pos }}</li>
-				<li>Compount: {{ vs.compound }}</li>
+				<li>Compound: {{ vs.compound }}</li>
 				<li>Neutral: {{ vs.neu }}</li>
 				<li>Negative: {{ vs.neg }}</li>
 
 			{% endif %}
+			-->
+			<!--{% if nlp_sentiment %}
 
+				<li>Sentiment: {{ nlp_sentiment[0] }}</li>
+				<li>Positive Probability: {{ nlp_sentiment[1] }}</li>
+				<li>Negative Probability: {{ nlp_sentiment[2] }}</li>
+				<li>Most Useful Words: {{ nlp_sentiment[3] }}</li>
+
+			{% endif %}-->
+
+				<li></li>
+			<!--{%%}-->
 		</div>
 	</div>
 	
