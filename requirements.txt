@@ -21,8 +21,8 @@ Pygments==2.2.0
 pyparsing==2.2.0
 python-dateutil==2.6.0
 pytz==2017.2
-scikit-learn==0.18.1
-scipy==0.9
+scikit-learn
+scipy
 simplegeneric==0.8.1
 six==1.10.0
 sklearn
