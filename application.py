@@ -337,7 +337,7 @@ def visualize(case_num):
 			nlp_sentiment = nlp_james.predictSentiment(file.read())
 
 	ner = None
-	if NLP_NER_sentence != None:
+	if NLP_NER_sentence != None and NLP_NER_sentence.strip() != "":
 		tags = nlp_james.npChunking(NLP_NER_sentence)
 		ner = nlp_james.treeTraverseString(tags)
 	#if request.method == 'POST':
