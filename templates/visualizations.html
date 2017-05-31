@@ -193,6 +193,8 @@
 		</div>
 	</div>
 
+	{% endif %}
+	{% if nlp_data_show %}
 	<div class = "output-window" id = "NLP Data Window">
 
 		<div class = "output-button-bar">
@@ -208,52 +210,37 @@
 
 		<div class = "output" id = "NLP Data" >
 		<h3><center>NLP Data</center></h3>
-			 <script type="text/javascript">
-				 console.log("TEST");
-			 </script>
-<!--
-			{% if nb %}
 
-				<li>Classification: {{nb.classification}}</li>
-				<li>Probability positive: {{ nb.p_pos }}</li>
-				<li>Probability negative: {{ nb.p_neg }}</li>
+			{% if nlp_sentiment %}
 
-			{% endif %}
-
-			{% if pa %}
-
-				<li>Polarity: {{ pa.polarity }}</li>
-				<li>Subjectivity: {{ pa.subjectivity }}</li>
-
-			{% endif %}
-
-			{% if vs %}
-
-				<li>Positive: {{ vs.pos }}</li>
-				<li>Compound: {{ vs.compound }}</li>
-				<li>Neutral: {{ vs.neu }}</li>
-				<li>Negative: {{ vs.neg }}</li>
-
-			{% endif %}
-			-->
-			<!--{% if nlp_sentiment %}
-
+				Sentiment Analysis: <br>
 				<li>Sentiment: {{ nlp_sentiment[0] }}</li>
 				<li>Positive Probability: {{ nlp_sentiment[1] }}</li>
 				<li>Negative Probability: {{ nlp_sentiment[2] }}</li>
 				<li>Most Useful Words: {{ nlp_sentiment[3] }}</li>
 
-			{% endif %}-->
+			{% endif %}
 
-				<li></li>
-			<!--{%%}-->
+			{% if nlp_ner %}
+
+				Name Entity Recognition: <br>
+				<li>Tags: {{ nlp_ner }}</li>
+
+			{% endif %}
+
+			{% if nlp_iob %}
+
+				IOB Tagging: <br>
+				<li>Tags: {{ nlp_iob }}</li>
+
+			{% endif %}
+
 		</div>
 	</div>
-	
+	{% endif %}
 
 	<br>
 	<br>
-	{% endif %}
 
 	{% if graph %}
 	<div class = "output-window" id = "SNA Visualization Window">

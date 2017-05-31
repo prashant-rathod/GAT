@@ -1,13 +1,12 @@
-from flask import Flask, render_template, request, redirect, url_for, session, jsonify
 import matplotlib
+from flask import Flask, render_template, request, redirect, url_for, jsonify
+
 matplotlib.use('Agg')
 import os
 import nltkDraw
 import SNA as sna
 import xlrd
 import tempfile
-import shutil
-import matplotlib.pyplot as plt
 import csv
 import json
 import networkx as nx
@@ -16,12 +15,11 @@ import GAT_GSA
 import GAT_GSA.MapGenerator
 #import GAT_GSA.GSA_flask
 from numpy import array, matrix
-import pprint
 import copy
 import sys
 print(sys.getdefaultencoding())
 import random
-import GAT_NLP_JamesWu.NLP.parser as nlp_james
+import GAT_NLP_JamesWu.parser as nlp_james
 # import Alok's and James' and Nikita's tools
 
 ''' Before running:
@@ -44,7 +42,7 @@ import GAT_NLP_JamesWu.NLP.parser as nlp_james
 		matplotlib: http://cfss.uchicago.edu/slides/week10_flaskPlotting.pdf
 
 		Couple options: Do we run all things that we can run, then when the user asks for them we just show?
-		Or do we perform the function when they choose it? 
+		Or do we perform the function when they choose it?
 		The first seems easier for me, but less efficient and intuitive overall.
 		For the second, I'd have to find a way to run the programs by pressing a menu button
 		CS250 design decisions popping up here no?
@@ -52,7 +50,7 @@ import GAT_NLP_JamesWu.NLP.parser as nlp_james
 		Users will log in?
 		We can save their files in their user directory
 
-		Big things: 
+		Big things:
 			Saving files on server so we can upload files that aren't in the same directory as the other
 			Managing said files. Some we don't want to save, right? They'll take up a ton of space
 			SNA prompts
@@ -107,7 +105,7 @@ for color in colors:
 	hexColors[color] = hexVal
 
 # the following few store helper methods are used to store user-uploaded files
-# tempfile is a python package 
+# tempfile is a python package
 # essentially what we're doing is copying their uploaded data to a randomly named folder or filename which is how we store it on the server
 # then we use these folders and files to do our analysis
 # some of the storing has to be done in a specialized manner, which is the reason for the storeNLP and storeGSA methods
@@ -183,6 +181,7 @@ def upload():
 			fileDict['NLP_LDP_terms']	= [term.strip() for term in term_array]
 
 		fileDict["NLP_INPUT_NER"] = request.form.get("NLP_INPUT_NER")
+		fileDict["NLP_INPUT_IOB"] = request.form.get("NLP_INPUT_IOB")
 
 		fileDict['SNA_Input'] 			= storefile(request.files['SNA_Input'])
 		#fileDict['NLP_Type'] 			= request.form['NLP_Type']
@@ -217,7 +216,7 @@ def upload():
 
 # the <int:case_num> is part of the URL
 # why do we have case_num? Before, when we didn't, everyone accessing the webiste simultaneously was affecting the same internal data
-# e.g. if person 1 made an SNA visuazliaiton, then person 2 came in a second later and did their SNA visualization, then 
+# e.g. if person 1 made an SNA visuazliaiton, then person 2 came in a second later and did their SNA visualization, then
 # person 2's data would overwrite person 1's data and person 1 would see person 2's data
 # now, each person using GAT has a (almost certainly) unique case number associated with their internal data so this doesn't happen
 # you can see, once you go past the upload page, the URL is appended with a number
@@ -330,21 +329,24 @@ def visualize(case_num):
 	#James WU's NLP methods:
 	nlp_sentiment = None
 	if NLP_file_sentiment != None:
+		print(NLP_file_sentiment)
 		import os.path
 		if not os.path.isfile("nb_sentiment_classifier.pkl"):
 			nlp_james.trainSentimentClassifier()
-		nlp_sentiment = nlp_james.predictSentiment(NLP_file_sentiment)
+		with open(NLP_file_sentiment) as file:
+			nlp_sentiment = nlp_james.predictSentiment(file.read())
 
 	ner = None
 	if NLP_NER_sentence != None:
 		tags = nlp_james.npChunking(NLP_NER_sentence)
-		ner = nlp_james.treeTraverse(tags)
+		ner = nlp_james.treeTraverseString(tags)
 	#if request.method == 'POST':
 
 	iob = None
 	if NLP_IOB_sentence != None:
 		ne_tree = nlp_james.NEChunker(NLP_IOB_sentence)
 		iob = nlp_james.IOB_Tagging(ne_tree)
+
 	# pass files into parsers/tools created by Alok and James
 	# this part will be done at the coding session
 	# how will the output look?
@@ -358,6 +360,8 @@ def visualize(case_num):
 
 	copy_of_graph = copy.deepcopy(graph)
 	fileDict['copy_of_graph'] = copy_of_graph
+
+	nlp_data_show = nlp_sentiment != None or ner != None or iob != None
 
 	return render_template('visualizations.html', 
 		research_question = research_question,
@@ -378,7 +382,8 @@ def visualize(case_num):
 		case_num = case_num,
 		nlp_sentiment = nlp_sentiment,
 		nlp_ner = ner,
-		nlp_iob = iob
+		nlp_iob = iob,
+		nlp_data_show = nlp_data_show
 		)
 
 ###########################

@@ -163,6 +163,17 @@ def treeTraverse(t):
             treeTraverse(child)
         print(')', end=" ")
 
+def treeTraverseString(t):
+    try:
+        t.label()
+    except AttributeError:
+        return str(t) + " "
+    else:
+        string = '(' + t.label() + " "
+        for child in t:
+            string += treeTraverseString(child)
+        return string + ')' + " "
+
 """
 Takes the output from the NEChunker() and does IOB tagging 
 Used for identifying verbs to match to CAMEO codes 
@@ -325,7 +336,7 @@ def predictSentiment(text):
 	sentiment_probabilities = me_classifier.prob_classify(test)
 	positive_prob = sentiment_probabilities.prob("pos")
 	negative_prob = sentiment_probabilities.prob("neg")
-	most_useful = me_classifier.show_most_informative_features(5)
+	most_useful = me_classifier.most_informative_features(5)
 	return sentiment,positive_prob,negative_prob,most_useful
 
 if __name__=="__main__":
