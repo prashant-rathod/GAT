@@ -20,7 +20,7 @@ import sys
 print(sys.getdefaultencoding())
 import random
 import GAT_NLP_JamesWu.parser as nlp_james
-import 
+import scraper.url_parser as url_parser
 # import Alok's and James' and Nikita's tools
 
 ''' Before running:
@@ -352,7 +352,7 @@ def visualize(case_num):
 	#################James WU's NLP methods###########################
 
 	###########scrape inputted url and return text:##############
-	url_parser.
+	research_question = url_parser.write_articles([research_question]).replace("\n", " ")
 
 
 	# pass files into parsers/tools created by Alok and James
