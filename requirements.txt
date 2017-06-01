@@ -22,7 +22,7 @@ pyparsing==2.2.0
 python-dateutil==2.6.0
 pytz==2017.2
 scipy
-scikit-learn
+scikit-learn==0.18.1
 simplegeneric==0.8.1
 six==1.10.0
 sklearn
