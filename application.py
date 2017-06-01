@@ -352,7 +352,8 @@ def visualize(case_num):
 	#################James WU's NLP methods###########################
 
 	###########scrape inputted url and return text:##############
-	research_question = url_parser.write_articles([research_question]).replace("\n", " ")
+	if research_question != None and research_question != None:
+		research_question = url_parser.write_articles([research_question]).replace("\n", " ")
 
 
 	# pass files into parsers/tools created by Alok and James
@@ -705,8 +706,12 @@ def sample(sample_path, case_num):
             6.61742518]]))
 		#return fileDict['GSA_file_CSV'] + " " + fileDict['GSA_file_SVG']
 	if arr[0] == 'NLP':
-		fileDict['NLP_Input_corpus'] = url_for('static', filename = "sample/NLP/" + arr[1] + '/')[1:]
-		return redirect(url_for('choose_tropes', case_num = case_num))
+		if arr[1] == 'iran':
+			fileDict['NLP_Input_Sentiment'] = 'static/sample/NLP/sample_sentiment.txt'
+			return redirect(url_for('visualize', case_num = case_num))
+		else:
+			fileDict['NLP_Input_corpus'] = url_for('static', filename = "sample/NLP/" + arr[1] + '/')[1:]
+			return redirect(url_for('choose_tropes', case_num = case_num))
 	if arr[0] == 'SNA':
 		fileDict['SNA_Input'] = url_for('static', filename = "sample/SNA/" + arr[1])[1:]
 		return redirect(url_for('sheetSelect', case_num = case_num))
