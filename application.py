@@ -262,8 +262,6 @@ def visualize(case_num):
 	#NLP_type 			= fileDict.get('NLP_Type')
 	research_question 	= fileDict.get('research_question')
 	tropes 				= fileDict.get('tropes')
-	if research_question == '':
-		research_question = "None specified"
 	#research_question = None # temporary: Smart Search is under development
 	graph 				= fileDict.get('graph')
 	GSA_sample			= fileDict.get('GSA_data')
@@ -352,9 +350,11 @@ def visualize(case_num):
 	#################James WU's NLP methods###########################
 
 	###########scrape inputted url and return text:##############
-	if research_question != None and research_question != None:
+	if research_question != None and research_question.strip() != "":
+		print("RESEARCH QUESTION: " + research_question)
 		research_question = url_parser.write_articles([research_question]).replace("\n", " ")
 
+	research_question = research_question if research_question != None else "No URL Specified"
 
 	# pass files into parsers/tools created by Alok and James
 	# this part will be done at the coding session
