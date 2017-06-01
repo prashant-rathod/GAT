@@ -20,6 +20,7 @@ import sys
 print(sys.getdefaultencoding())
 import random
 import GAT_NLP_JamesWu.parser as nlp_james
+import 
 # import Alok's and James' and Nikita's tools
 
 ''' Before running:
@@ -263,7 +264,7 @@ def visualize(case_num):
 	tropes 				= fileDict.get('tropes')
 	if research_question == '':
 		research_question = "None specified"
-	research_question = None # temporary: Smart Search is under development
+	#research_question = None # temporary: Smart Search is under development
 	graph 				= fileDict.get('graph')
 	GSA_sample			= fileDict.get('GSA_data')
 	error = False
@@ -326,7 +327,7 @@ def visualize(case_num):
 		error = True
 		mymap = None
 
-	#James WU's NLP methods:
+	#################James WU's NLP methods:###########################
 	nlp_sentiment = None
 	if NLP_file_sentiment != None:
 		print(NLP_file_sentiment)
@@ -336,6 +337,7 @@ def visualize(case_num):
 		with open(NLP_file_sentiment) as file:
 			nlp_sentiment = nlp_james.predictSentiment(file.read())
 
+	######Temporarily turned off as per Tony's request:##################
 	ner = None
 	if NLP_NER_sentence != None and NLP_NER_sentence.strip() != "":
 		tags = nlp_james.npChunking(NLP_NER_sentence)
@@ -346,6 +348,12 @@ def visualize(case_num):
 	if NLP_IOB_sentence != None:
 		ne_tree = nlp_james.NEChunker(NLP_IOB_sentence)
 		iob = nlp_james.IOB_Tagging(ne_tree)
+	######Temporarily turned off as per Tony's request##################
+	#################James WU's NLP methods###########################
+
+	###########scrape inputted url and return text:##############
+	url_parser.
+
 
 	# pass files into parsers/tools created by Alok and James
 	# this part will be done at the coding session
