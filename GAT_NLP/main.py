@@ -3,7 +3,7 @@
 import os
 import string
 import nltk
-from radar import graph
+from .radar import graph
 from operator import itemgetter
 from nltk.tokenize import sent_tokenize, word_tokenize
 from nltk.corpus import stopwords
