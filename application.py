@@ -352,7 +352,7 @@ def visualize(case_num):
 	###########scrape inputted url and return text:##############
 	if research_question != None and research_question.strip() != "":
 		print("RESEARCH QUESTION: " + research_question)
-		research_question = url_parser.write_articles([research_question])
+		research_question = url_parser.write_articles([research_question.strip()])
 
 	research_question = research_question if research_question != None else "No URL Specified"
 
