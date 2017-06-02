@@ -133,6 +133,7 @@ def characteristicDictionary(pathnames):
             words = raw.split(' ')
             for word in words:
                 stopWords = set(stopwords.words('english'))
+                #check what stopwords is
                 words = [w for w in words if w not in stopWords]
             finder = BigramCollocationFinder.from_words(words)
             finder.apply_freq_filter(3)
@@ -292,6 +293,9 @@ def createPolygon(trope, scaled_emotions):
 
 if __name__ == '__main__':
     # finds keywords and tropes
+
+    # first thing to do is run the stopwords, need to check if stopwords are being done correctly
+
     readLexicon()
     pathnames = getFilesRecurse('corpus')
     dic = characteristicDictionary(pathnames)
