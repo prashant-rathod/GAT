@@ -334,7 +334,15 @@ def visualize(case_num):
 			nlp_james.trainSentimentClassifier()
 		with open(NLP_file_sentiment) as file:
 			nlp_sentiment = nlp_james.predictSentiment(file.read())
-
+	####### To perform sentiment analysis on scraped data from URL - Ryan Steed 7 Jun 2017 #####
+	'''
+	if research_question[3] != None:
+		print("Analyzing research question")
+		import os.path
+		if not os.path.isfile("nb_sentiment_classifier.pkl"):
+			nlp_james.trainSentimentClassifier()
+		nlp_sentiment = nlp_james.predictSentiment(research_question[3])
+	'''
 	######Temporarily turned off as per Tony's request:##################
 	ner = None
 	if NLP_NER_sentence != None and NLP_NER_sentence.strip() != "":
@@ -352,9 +360,9 @@ def visualize(case_num):
 	###########scrape inputted url and return text:##############
 	if research_question != None and research_question.strip() != "":
 		print("RESEARCH QUESTION: " + research_question)
-		research_question = url_parser.write_articles([research_question])
+		research_question = url_parser.write_articles([research_question.strip()])
 
-	research_question = research_question if research_question != None else "No URL Specified"
+	research_question = research_question if research_question != None else None
 
 	# pass files into parsers/tools created by Alok and James
 	# this part will be done at the coding session
