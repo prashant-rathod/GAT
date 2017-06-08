@@ -89,7 +89,7 @@ def write_articles(urls):
 	articles = []
 	for url in urls:
 		title, authors, date, text = url_reader(url)
-		articles.append([title, authors, date, text])
+		articles = [title, authors, date, text]
 		text_writer(title, authors, date, text)
 	return articles
 
