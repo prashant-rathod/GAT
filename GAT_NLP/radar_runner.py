@@ -3,6 +3,7 @@
 # download stopwords
 import os
 import nltk
+import random
 
 download_path = None
 home = os.path.expanduser("~")
@@ -31,7 +32,7 @@ from nltk import QuadgramCollocationFinder
 ############################## CONSTANTS ##############################
 
 alph = list(string.ascii_lowercase)
-bad_pos_list = ['CC', 'CD', 'DT', 'EX', 'IN', 'MD', 'PDT', 'PRP', 'PRP$', 'TO', 'UH', 'WDT', 'WP', 'WP$', 'WRB']
+bad_pos_list = ['CC', 'CD', 'DT', 'EX', 'IN', 'MD', 'PDT', 'PRP', 'PRP$', 'TO', 'UH', 'WDT', 'WP', 'WP$', 'WRB','SYM', 'RP', 'JJ','JJR','JJS']
 stop_words = set(stopwords.words('english'))
 lemmatizer = WordNetLemmatizer()
 bigram_measures = BigramAssocMeasures()
@@ -143,18 +144,34 @@ def characteristicDictionary(pathnames):
             # phrase extraction (lengths 2-4) initialization
             file_phrases = []
             words = raw.split(' ')
+            for word in words:
+                stopWords = set(stopwords.words('english'))
+                words = [w for w in words if w not in stopWords]
+            raw = ' '.join(words)
+            #Pull 4 word phrases
+            finder = QuadgramCollocationFinder.from_words(words)
+            finder.apply_freq_filter(3)
+            best = finder.nbest(quadgram_measures.pmi, 5)
+            for pair in best:
+                pair = ' '.join(pair)
+                file_phrases.append(pair.lower())
+                raw = raw.replace(pair , '')
+            words = raw.split(' ')
+            finder = TrigramCollocationFinder.from_words(words)
+            finder.apply_freq_filter(3)
+            best = finder.nbest(trigram_measures.pmi, 10)
+            for pair in best:
+                pair = ' '.join(pair)
+                file_phrases.append(pair.lower())
+                raw = raw.replace(pair, '')
+            words = raw.split(' ')
             finder = BigramCollocationFinder.from_words(words)
             finder.apply_freq_filter(3)
             best = finder.nbest(bigram_measures.pmi, 25)
             for pair in best: file_phrases.append(' '.join(pair).lower())
-            finder = TrigramCollocationFinder.from_words(words)
-            finder.apply_freq_filter(3)
-            best = finder.nbest(trigram_measures.pmi, 25)
-            for pair in best: file_phrases.append(' '.join(pair).lower())
-            finder = QuadgramCollocationFinder.from_words(words)
-            finder.apply_freq_filter(3)
-            best = finder.nbest(quadgram_measures.pmi, 25)
-            for pair in best: file_phrases.append(' '.join(pair).lower())
+
+
+
             for phrase in file_phrases:
                 if phrase in dic:
                     dic[phrase][3] += 1
@@ -192,27 +209,26 @@ def characteristicDictionary(pathnames):
                         pos = 'v'
                     try:
                         lemma = lemmatizer.lemmatize(tagged[i][0], pos=pos)
-                        if lemma not in stop_words:
-                            if tagged[i][1] not in bad_pos_list:
-                                if len(lemma) > 2:
-                                    if lemma not in file_dic.keys():
-                                        file_dic[lemma] = 'unseen'
-                                    if lemma in dic:
-                                        dic[lemma][0] += 1
-                                        dic[lemma][1] += val
-                                        dic[lemma][2] += abs(val)
-                                        if file_dic[lemma] == 'unseen':
-                                            dic[lemma][3] += 1
-                                        dic[lemma][5] = [x+y for x, y in zip(dic[lemma][5], sentence_emotions)]
-                                    else:
-                                        dic[lemma] = []
-                                        dic[lemma].append(1)
-                                        dic[lemma].append(val)
-                                        dic[lemma].append(abs(val))
-                                        dic[lemma].append(1)
-                                        dic[lemma].append(1)
-                                        dic[lemma].append(sentence_emotions)
-                                    file_dic[lemma] = 'seen'
+                        if tagged[i][1] not in bad_pos_list:
+                            if len(lemma) > 2:
+                                if lemma not in file_dic.keys():
+                                    file_dic[lemma] = 'unseen'
+                                if lemma in dic:
+                                    dic[lemma][0] += 1
+                                    dic[lemma][1] += val
+                                    dic[lemma][2] += abs(val)
+                                    if file_dic[lemma] == 'unseen':
+                                        dic[lemma][3] += 1
+                                    dic[lemma][5] = [x+y for x, y in zip(dic[lemma][5], sentence_emotions)]
+                                else:
+                                    dic[lemma] = []
+                                    dic[lemma].append(1)
+                                    dic[lemma].append(val)
+                                    dic[lemma].append(abs(val))
+                                    dic[lemma].append(1)
+                                    dic[lemma].append(1)
+                                    dic[lemma].append(sentence_emotions)
+                                file_dic[lemma] = 'seen'
                     except KeyError:
                         continue
                 for phrase in file_phrases:
@@ -286,7 +302,7 @@ def searchTropes(dic, keywords, minimum_sentiment_strength, min_emotion):
     for word in keywords:
         if dic[word][2] > minimum_sentiment_strength or max(dic[word][5]) > min_emotion:
             tropes.append((word, dic[word][1], dic[word][2], dic[word][5], dic[word][6]))
-    tropes = sorted(tropes, key=itemgetter(2), reverse=True)
+    tropes = sorted(tropes, key= itemgetter(2), reverse=True)
     return tropes
 
 ############################## CREATING POLYGONS ##############################
@@ -296,13 +312,12 @@ def createPolygon(trope, scaled_emotions, source_dir):
     out_dir = source_dir + 'out/'
     if not os.path.isdir(out_dir):
         os.mkdir(out_dir)
-    file_name = out_dir + trope + '.png'
+    file_name = out_dir + ''.join(random.choices(string.ascii_letters, k= 20)) + '.png'
     file_name = file_name.replace(' ', '_')
     graph(trope, emotions[2:], scaled_emotions, optimum, file_name)
     return file_name
 
 ############################## MAIN METHOD ##############################
-
 '''
 if __name__ == '__main__':
     # finds keywords and tropes
@@ -310,7 +325,9 @@ if __name__ == '__main__':
     pathnames = getFilesRecurse('corpus') # This should be a variable in the UI: user uploads multiple files, I put them in a 'temporary' folder, then point to that folder. Eventually we'll get folder uploads hopefully
     dic = characteristicDictionary(pathnames)
     keywords = searchKeywords(dic, .5, .05) # not sure if these constants should be customizable
-    tropes = searchTropes(dic, keywords, .45, 30) # likewise
+    tropes = searchTropes(dic, keywords, .5, 40) # likewise
+    for trope in tropes:
+        print(trope)
 
     # creates polygon graphs
     for item in tropes:
@@ -337,12 +354,3 @@ def tropes(source_dir): # display all possible tropes the user can pick
     keywords = searchKeywords(dic, .5, .05) # not sure if these constants should be customizable
     tropes = searchTropes(dic, keywords, .45, 30) # likewise
     return tropes
-
-
-
-
-
-
-
-
-
