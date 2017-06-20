@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+	<title>Sheet select</title>
+
+	<style type="text/css">
+
+	</style>
+
+
+
+</head>
+
+<body>
+<img id = "banner" src = "../static/GAT_header_1-9.jpg" style = "width:100%;" alt = "Banner Image"/> <br>
+
+<h3>Please choose which sheet you would like to use:</h3>
+
+<form enctype = "multipart/form-data" method = "post">
+
+	<select name="sheet">
+
+	{% for sheet in sheets %}
+
+		<option value="{{ sheet }}">{{ sheet }}</option>
+
+	{% endfor %}
+
+	</select><br>
+
+	<input type = "submit" value = "SUBMIT">
+
+</form>
+
+</body>
+
+
+
+
+
+
+
+</html>
