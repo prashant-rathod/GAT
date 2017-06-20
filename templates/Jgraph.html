@@ -6,6 +6,8 @@
     <link href="{{url_for('static', filename='css/general.css')}}" rel="stylesheet">
     <script src="{{url_for('static', filename='js/jquery-1.11.1.min.js')}}"></script>
     <script src="{{url_for('static', filename='js/jgraph_test1.min.js')}}"></script>
+    <link rel="stylesheet" href="{{url_for('static', filename='css/font-awesome-4.7.0/css/font-awesome.min.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='css/jgraph.css')}}">
     <title>Jgraph</title>
   </head>
 
@@ -67,6 +69,8 @@
                 console.log("DATA:",data)
                 console.log("NODE:",node)
                 $("#name").text(data.name);
+                console.log(data.name)
+                console.log(data.betweenness)
                 $("#cluster").text(data.cluster);
                 $("#eigenvalue_centrality").text(data.eigenvector);
                 $("#betweenness_centrality").text(data.betweenness);
@@ -95,7 +99,6 @@
         });
       });
 
-
       $(function(){
         $('a#undo').bind('click', function(){
             jgraph.undo()
@@ -113,14 +116,48 @@
             jgraph.reset()
         });
       });
+
+      attributesToggle = function() {
+        document.getElementById('measureInfo').style.display='none';
+        document.getElementById('attributeInfo').style.display='inline-block'
+        tablinks = document.getElementsByClassName("tablinks");
+        for (i = 0; i < tablinks.length; i++) {
+          tablinks[i].className = tablinks[i].className.replace(" active", "");
+        }
+        event.currentTarget.className += " active";
+      }
+      measuresToggle = function() {
+        document.getElementById('measureInfo').style.display='inline-block';
+        document.getElementById('attributeInfo').style.display='none'
+        tablinks = document.getElementsByClassName("tablinks");
+        for (i = 0; i < tablinks.length; i++) {
+          tablinks[i].className = tablinks[i].className.replace(" active", "");
+        }
+        event.currentTarget.className += " active";
+      }
     </script>
 
-
-    <div id = "nodeInfo" style = "position: fixed; bottom: 0; right: 0; border-style: solid">
-      <span id="name">Name</span> <br>
-      <span id="cluster">Clustering</span> <br>
-      <span id="eigenvalue_centrality">eigenvector centrality</span> <br>
-      <span id="betweenness_centrality">betweenness centrality</span> 
+    <div id="infoWindows" style = "position: fixed; bottom: 0; right: 0; border-style: solid">
+      <div class = "output-button-bar" style="border:none">
+        <i style="color:white;margin-left:4px" class="fa fa-window-maximize"
+      onclick="document.getElementById('nodeInfo').style.display='inline-block'"></i>
+        <i style="color:white;margin-left:4px" class="fa fa-window-minimize"
+      onclick="document.getElementById('nodeInfo').style.display='none'"></i>
+        <span class="tab" style="float:right">
+          <button class="tablinks" onclick="attributesToggle();">Attributes</button>
+          <button class="tablinks active" onclick="measuresToggle();">Measures</button>
+        </span>
+      </div>
+      <div id = "nodeInfo" class="tabcontent" style="padding:10px;border:none">
+        <div id="attributeInfo" style="display:none; border:none">
+          Name<span id="name"></span>
+        </div>
+        <div id="measureInfo" class="tabcontent" style="padding:10px;border:none">
+          <span id="cluster">Clustering</span> <br>
+          <span id="eigenvalue_centrality">Eigenvector Centrality</span> <br>
+          <span id="betweenness_centrality">Betweenness Centrality</span>
+        </div>
+      </div>
     </div>
 
     <!-- Toolbar for removing nodes, undoing or redoing user's action-->
@@ -138,28 +175,22 @@
     </div>
 
     <div class = "output-button-bar">
-      <button class="btn-hide"
-      onclick="document.getElementById('toolbar').style.display='none'">hide</button>
+      <i style="color:white;margin-left:4px" class="fa fa-window-maximize fa-flip-vertical"
+      onclick="document.getElementById('toolbar').style.display='inline-block'"></i>
 
-      <button class="btn-show"
-      onclick="document.getElementById('toolbar').style.display='inline-block'">show</button>
-
-      <button class="btn-close"
-      onclick="document.getElementById('toolbar').style.display='none'">close</button>
+      <i style="color:white;margin-left:4px" class="fa fa-window-minimize fa-flip-vertical"
+      onclick="document.getElementById('toolbar').style.display='none'"></i>
     </div>
     </div>
 
     <div class = "output-window" id = "SNA Options Window" style = "position:fixed;bottom:0;left:0;border:solid;">
 
-    <div class = "output-button-bar">
-      <button class="btn-hide"
-      onclick="document.getElementById('SNA Options').style.display='none'">hide</button>
+    <div class = "output-button-bar" style="text-align:right">
+      <i style="color:white" class="fa fa-window-minimize"
+      onclick="document.getElementById('SNA Options').style.display='none'"></i>
 
-      <button class="btn-show"
-      onclick="document.getElementById('SNA Options').style.display='inline-block'">show</button>
-
-      <button class="btn-close"
-      onclick="document.getElementById('SNA Options Window').style.display='none'">close</button>
+      <i style="color:white" class="fa fa-window-maximize"
+      onclick="document.getElementById('SNA Options').style.display='inline-block'"></i>
     </div>
 
     <div class = "output" id = "SNA Options">

@@ -79,3 +79,27 @@ li.dropdown {
 .output-button-bar button {
     display: inline;
 }
+
+/* Style the buttons inside the tab */
+.tab button {
+    background-color: #ccc;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 3px;
+    padding-bottom: 0;
+    transition: 0.3s;
+}
+
+/* Change background color of buttons on hover */
+.tab button:hover {
+    background-color: #ddd;
+}
+
+/* Create an active/current tablink class */
+.tab button.active {
+    background-color: #f5f5f5;
+    border: none;
+    padding-bottom:3px
+}
+
