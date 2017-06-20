@@ -94,7 +94,7 @@ class SNA():
         self.G = self.temp
 
     # remove edge and node. Note that when we remove a certain node, edges that are
-    # connted to such node are also deleted.
+    # connected to such nodes are also deleted.
 
     def removeNode(self, node):
         if self.G.has_node(node):
@@ -106,6 +106,19 @@ class SNA():
         if self.G.has_edge(node1,node2):
             self.G.remove_edge(node1,node2)
 
+    # Change an attribute of a node
+    def changeAttribute(self, node,  value, attribute="bipartite"):
+        if self.G.has_node(node):
+            self.G.node[node][attribute] = value
+            print("New attribute for "+node+": "+self.G.node[node][attribute])
+
+    # Change node name
+    def relabelNode(self, oldNode, newNode):
+        if self.G.has_node(oldNode):
+            #self.nodes = nx.relabel_nodes(self,mapping)
+            self.G.add_node(newNode, self.G.node[oldNode])
+            self.G.remove_node(oldNode)
+        self.nodes = nx.nodes(self.G)
 
     # Check if node exists 
     def is_node(self, node):
@@ -349,6 +362,7 @@ class SNA():
         data['nodes'] = nodes_property
         return data
 
+
 ############
 ####TEST####
 ############
@@ -368,6 +382,8 @@ Graph.eigenvector_centrality()
 Graph.load_centrality()
 Graph.communicability_centrality()
 Graph.communicability_centrality_exp()
+Graph.changeAttribute(node='Baqaie.H',value='Institution')
+Graph.relabelNode('Baqaie.H','Ryan.S')
 
 # print(Graph.get_clustering())
 # print(Graph.get_closeness_centrality())
