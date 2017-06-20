@@ -43,21 +43,28 @@ class SNA():
                 else:
                     tempList.append(str(sh.cell(row,col).value))
             list.append(tempList)
+        print("Header:"+str(header), "LIST:"+str(list))
         return header,list
     #create set of nodes for bipartite graph
     # name = names of the node. This is defined by the header. ex: Abbasi-Davani.F: Name  or Abbasi-Davani.F: Faction leader
     # nodeSet = names that define a set of node. For example, we can define Person, Faction Leader, and Party Leader as "Agent"
     # note: len(name) = len(nodeSet), else code fails
     def createNodeList(self, name, nodeSet):
+        # Need to specify what sets from data are attributes of other sets (e.g. is title an attribute of name, or vice versa?)
         header, list = self.header, self.list          #need to use header for role analysis
         counter = 0                                    #counter for the nodeSet
         self.nodeSet = nodeSet
+        print("Name:"+str(name))
         for feature in name:
-            nodeList = []
+            print("Feature:"+str(feature))
+            nodeList = [] # make this a container of (node, attribute dict) tuples https://networkx.github.io/documentation/networkx-1.9/reference/generated/networkx.DiGraph.add_nodes_from.html
             for row in list:
+                #print("ROW:"+str(row))
                 if row[feature] != '':
                     if row[feature] not in nodeList:
                         nodeList.append(row[feature])
+            # Add attributes based on header input
+
             self.G.add_nodes_from(nodeList, bipartite = nodeSet[counter])
             counter+=1
         self.nodes = nx.nodes(self.G)

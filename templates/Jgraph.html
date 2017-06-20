@@ -11,7 +11,7 @@
 
   <body>
 
-    <div><button class="back-btn" style = "position:fixed;top:0;left:0"><a href="{{url_for('visualize', case_num=case_num)}}">BACK</a></button><div>
+    <div><button class="back-btn" style = "position:fixed;top:2;left:2"><a href="{{url_for('visualize', case_num=case_num)}}">BACK</a></button><div>
 
     <div class="graph"></div>
     <div class="label"></div>
@@ -64,6 +64,8 @@
                 name: node.name,        
               }, function(data) {
                 //currently hard coded, must be fixed soon
+                console.log("DATA:",data)
+                console.log("NODE:",node)
                 $("#name").text(data.name);
                 $("#cluster").text(data.cluster);
                 $("#eigenvalue_centrality").text(data.eigenvector);
@@ -82,15 +84,17 @@
 
       //Takes the user input (node that user wants to remove) and removes it from SNA.
       $(function(){
-        $('a#removeNode').bind('click', function(){
+        $('#remove').bind('click', function(){
           $.getJSON('/_remove_node/{{case_num}}', {
             node: $('input[name=a]').val()
           }, function(data) {
             $('#message').text(data.result)
-            jgraph.reload(data.node)
+            location.reload() // quick page reload, TODO refresh only jgraph (mxgraph req?)
+            jgraph.reload(data.node) //doesn't exist??
           });
         });
       });
+
 
       $(function(){
         $('a#undo').bind('click', function(){
@@ -120,15 +124,29 @@
     </div>
 
     <!-- Toolbar for removing nodes, undoing or redoing user's action-->
-    <div id = "toolbar" style = "position: fixed; top: 0; right: 0; border-style: solid">  
-      <p>
-        <input type="text" size=20 name=a id="delete"> <br><br>
+    <div class = "output-window" id = "nodeWindow" style = "position:fixed;top:0;right:0;border:solid;">
+
+      <div id = "toolbar">
+      <p style="margin-bottom:0px;margin-left:auto;margin-right:auto">
+        <input style="margin:4px;margin-left:6px" type="text" size=20 name=a id="delete"> <br><br>
         <span id="message"></span>
       </p>
-      <a href="javascript:void(0);" id="removeNode">remove node</a> <br>
+      <p style="text-align:center ; margin:2px"><input style="margin-right:auto;margin-left:auto;padding:5px" id="remove" type="submit" value="Remove Node" href="javascript:void(0)" ></p> <br>
       <!--a href="javascript:void(0);" id="undo">undo</a>
       <a href="javascript:void(0);" id="redo">redo</a>
       <a href="javascript:void(0);" id="redo">reset</a-->
+    </div>
+
+    <div class = "output-button-bar">
+      <button class="btn-hide"
+      onclick="document.getElementById('toolbar').style.display='none'">hide</button>
+
+      <button class="btn-show"
+      onclick="document.getElementById('toolbar').style.display='inline-block'">show</button>
+
+      <button class="btn-close"
+      onclick="document.getElementById('toolbar').style.display='none'">close</button>
+    </div>
     </div>
 
     <div class = "output-window" id = "SNA Options Window" style = "position:fixed;bottom:0;left:0;border:solid;">
@@ -164,7 +182,7 @@
 
         {% endfor %}
 
-        <input type = "submit" value = "SUBMIT" name = "options">
+        <input style="margin-right:auto;margin-left:auto;margin-top:5px;margin-bottom:5px" type = "submit" value = "SUBMIT" name = "options">
 
       </form>
 
