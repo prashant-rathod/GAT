@@ -43,7 +43,6 @@ class SNA():
                 else:
                     tempList.append(str(sh.cell(row,col).value))
             list.append(tempList)
-        print("Header:"+str(header), "LIST:"+str(list))
         return header,list
     #create set of nodes for bipartite graph
     # name = names of the node. This is defined by the header. ex: Abbasi-Davani.F: Name  or Abbasi-Davani.F: Faction leader
@@ -52,21 +51,29 @@ class SNA():
     def createNodeList(self, name, nodeSet):
         # Need to specify what sets from data are attributes of other sets (e.g. is title an attribute of name, or vice versa?)
         header, list = self.header, self.list          #need to use header for role analysis
-        counter = 0                                    #counter for the nodeSet
+        featureNo = 0 # which feature is being assessed
         self.nodeSet = nodeSet
-        print("Name:"+str(name))
         for feature in name:
-            print("Feature:"+str(feature))
+            #nodesCollected = []
             nodeList = [] # make this a container of (node, attribute dict) tuples https://networkx.github.io/documentation/networkx-1.9/reference/generated/networkx.DiGraph.add_nodes_from.html
             for row in list:
-                #print("ROW:"+str(row))
-                if row[feature] != '':
-                    if row[feature] not in nodeList:
-                        nodeList.append(row[feature])
-            # Add attributes based on header input
-
-            self.G.add_nodes_from(nodeList, bipartite = nodeSet[counter])
-            counter+=1
+                counter = 0
+                nodeAttr = {}
+                for item in row:
+                    if item != row[feature]:
+                        #create dict with corresponding node set
+                        nodeAttr[header[counter]] = item
+                    if item == row[feature]:
+                        if row[feature] not in [x['name'] for x in nodeList]:
+                            nodeList.append({'name': row[feature], 'attributes': nodeAttr})
+                            #nodesCollected.append
+                    counter += 1
+                # Add attributes based on header input
+            print("feature no", feature)
+            for node in nodeList:
+                print(node)
+                self.G.add_node(node['name'],node['attributes'],bipartite=nodeSet[featureNo])
+            featureNo+=1
         self.nodes = nx.nodes(self.G)
     #create a list of edges that connect among sets
     #This part is currently still testing.
@@ -389,7 +396,7 @@ Graph.eigenvector_centrality()
 Graph.load_centrality()
 Graph.communicability_centrality()
 Graph.communicability_centrality_exp()
-Graph.changeAttribute(node='Baqaie.H',value='Institution')
+Graph.changeAttribute(node='Baqaie.H',attribute="FirstName", value='Handel')
 Graph.relabelNode('Baqaie.H','Ryan.S')
 
 # print(Graph.get_clustering())
