@@ -582,11 +582,10 @@ def get_data(case_num):
 	if graph.clustering_dict != {}:
 		cluster = "clustering = " + str(round(graph.clustering_dict.get(name),4));
 	else:
-		cluster="clustering N/A"
-
+		cluster="clustering not available"
 	eigenvector = "eigenvector centrality = " + str(round(graph.eigenvector_centrality_dict.get(name),4));
 	betweenness = "betweenness centrality = " + str(round(graph.betweenness_centrality_dict.get(name),4));
-	return jsonify(name=name, 
+	return jsonify(name=str("Name: ")+str(name),
 				   cluster=cluster, 
 				   eigenvector=eigenvector,
 				   betweenness=betweenness)
