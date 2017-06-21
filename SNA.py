@@ -23,6 +23,7 @@ class SNA():
         self.load_centrality_dict = {}
         self.communicability_centrality_dict = {}
         self.communicability_centrality_exp_dict = {}
+        self.node_attributes_dict = {}
     # Read xlsx file and save the header and all the rows (vector) containing features
     # Input: xlsx file, sheet
     def readFile(self, excel_file, sheet):
@@ -69,12 +70,11 @@ class SNA():
                             #nodesCollected.append
                     counter += 1
                 # Add attributes based on header input
-            print("feature no", feature)
             for node in nodeList:
-                print(node)
                 self.G.add_node(node['name'],node['attributes'],bipartite=nodeSet[featureNo])
             featureNo+=1
         self.nodes = nx.nodes(self.G)
+        print(self.nodes)
     #create a list of edges that connect among sets
     #This part is currently still testing.
     #Right now trying to see if the graph is displayed successfully, but later on need to add a argument that passes the
@@ -129,7 +129,6 @@ class SNA():
     # Change node name
     def relabelNode(self, oldNode, newNode):
         if self.G.has_node(oldNode):
-            #self.nodes = nx.relabel_nodes(self,mapping)
             self.G.add_node(newNode, self.G.node[oldNode])
             self.G.remove_node(oldNode)
         self.nodes = nx.nodes(self.G)
@@ -190,6 +189,10 @@ class SNA():
         self.communicability_centrality_dict = nx.communicability_centrality(self.G)
     def communicability_centrality_exp(self):
         self.communicability_centrality_exp_dict = nx.communicability_centrality(self.G)
+    def node_attributes(self):
+        self.node_attributes_dict = self.G.node
+    def get_node_attributes(self,node):
+        return self.G.node[node]
     def get_eigenvector_centrality(self, lst=[]):
         if len(lst) == 0:
             return self.eigenvector_centrality_dict
@@ -380,10 +383,11 @@ class SNA():
 ############
 ####TEST####
 ############
-'''
+
 Graph = SNA("iran.xlsx", "2011")
 Graph.createNodeList([1,4], ["Agent", "Institution"])
 Graph.createEdgeList([1,4])
+'''
 # test = Graph.getNodes()
 # Graph.graph_2D({"Agent":['y',50], "Institution":['b',50]}, label=True)
 Graph.clustering()
@@ -397,10 +401,12 @@ Graph.eigenvector_centrality()
 Graph.load_centrality()
 Graph.communicability_centrality()
 Graph.communicability_centrality_exp()
-Graph.changeAttribute(node='Baqaie.H',attribute="FirstName", value='Handel')
-Graph.relabelNode('Baqaie.H','Ryan.S')
+Graph.node_attributes()
+#Graph.changeAttribute(node='Baqaie.H',attribute="FirstName", value='Handel')
+#Graph.relabelNode('Baqaie.H','Ryan.S')
 '''
 
+print(Graph.get_node_attributes('Ahmadi.A'))
 # print(Graph.get_clustering())
 # print(Graph.get_closeness_centrality())
 # print(Graph.get_betweenness_centrality())

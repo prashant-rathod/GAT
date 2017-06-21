@@ -6,8 +6,8 @@
     <link href="{{url_for('static', filename='css/general.css')}}" rel="stylesheet">
     <script src="{{url_for('static', filename='js/jquery-1.11.1.min.js')}}"></script>
     <script src="{{url_for('static', filename='js/jgraph_test1.min.js')}}"></script>
+    <script src="{{url_for('static', filename='js/jgraphManual.js')}}"></script>
     <link rel="stylesheet" href="{{url_for('static', filename='css/font-awesome-4.7.0/css/font-awesome.min.css')}}">
-    <link rel="stylesheet" href="{{url_for('static', filename='css/jgraph.css')}}">
     <title>Jgraph</title>
   </head>
 
@@ -59,24 +59,12 @@
 
       //When node/edge is clicked, display information of the bottom right corner
       //Need to ask Tony specific file to make edges have properties
-      jgraph.onClick(function (node) {      
+      jgraph.onClick(function (node) {
         if (node.name !== "" && node.geometry.type === "SphereGeometry") {
-            $(function() {
-              $.getJSON('/_get_data/{{case_num}}', {
-                name: node.name,        
-              }, function(data) {
-                //currently hard coded, must be fixed soon
-                console.log("DATA:",data)
-                console.log("NODE:",node)
-                $("#name").text(data.name);
-                console.log(data.name)
-                console.log(data.betweenness)
-                $("#cluster").text(data.cluster);
-                $("#eigenvalue_centrality").text(data.eigenvector);
-                $("#betweenness_centrality").text(data.betweenness);
-                $("#delete").val(data.name);
-              });
-            });
+          $.getJSON('/_get_data/{{case_num}}',function(data) {
+            data['name'] = node.name;
+            update(data);
+        });
         } else {
           $("#name").text(node.name);     // Need Tony to have xlsv file.
           $("#cluster").text("Null");
@@ -116,45 +104,15 @@
             jgraph.reset()
         });
       });
-
-      attributesToggle = function() {
-        document.getElementById('measureInfo').style.display='none';
-        document.getElementById('attributeInfo').style.display='inline-block';
-        document.getElementById('propInfo').style.display='none';
-        tablinks = document.getElementsByClassName("tablinks");
-        for (i = 0; i < tablinks.length; i++) {
-          tablinks[i].className = tablinks[i].className.replace(" active", "");
-        }
-        event.currentTarget.className += " active";
-      }
-      measuresToggle = function() {
-        document.getElementById('measureInfo').style.display='inline-block';
-        document.getElementById('attributeInfo').style.display='none';
-        document.getElementById('propInfo').style.display='none';
-        tablinks = document.getElementsByClassName("tablinks");
-        for (i = 0; i < tablinks.length; i++) {
-          tablinks[i].className = tablinks[i].className.replace(" active", "");
-        }
-        event.currentTarget.className += " active";
-      }
-      propToggle = function() {
-        document.getElementById('propInfo').style.display='inline-block';
-        document.getElementById('measureInfo').style.display='none';
-        document.getElementById('attributeInfo').style.display='none';
-        tablinks = document.getElementsByClassName("tablinks");
-        for (i = 0; i < tablinks.length; i++) {
-          tablinks[i].className = tablinks[i].className.replace(" active", "");
-        }
-        event.currentTarget.className += " active";
-      }
     </script>
 
     <div id="infoWindows" style = "position: fixed; bottom: 0; right: 0; border-style: solid">
-      <div class = "output-button-bar" style="border:none;width:300px">
+      <div class = "output-button-bar" style="border:none;width:400px">
         <i style="color:white;margin-left:4px" class="fa fa-window-maximize"
-      onclick="document.getElementById('nodeInfo').style.display='inline-block'"></i>
+      onclick="maximizeTabs()"></i>
         <i style="color:white;margin-left:4px" class="fa fa-window-minimize"
-      onclick="document.getElementById('nodeInfo').style.display='none'"></i>
+      onclick="minimizeTabs()"></i>
+        <span id="name"></span>
         <span class="tab" style="float:right">
           <button class="tablinks active" onclick="measuresToggle();">Measures</button>
           <button class="tablinks" onclick="attributesToggle();">Attributes</button>
@@ -163,17 +121,13 @@
       </div>
       <div id = "nodeInfo" style="padding:10px;border:none">
         <div id="attributeInfo" class="tabcontent" style="display:none;border:none">
-          <span id="name">Name</span>
+          <div class="filler chooseRequest" position="center">Select a node to display attributes.</div>
         </div>
-        <div id="measureInfo" class="tabcontent" style="border:none;width:100px;height:100px">
-          <br>
-          <br>
-          <br>
+        <div id="measureInfo" class="tabcontent" style="border:none;">
+          <div class="filler">No network measures currently available.</div>
         </div>
-        <div id="propInfo" class="tabcontent" style="display:none;padding:10px;border:none">
-          <span id="cluster">Clustering</span> <br>
-          <span id="eigenvalue_centrality">Eigenvector Centrality</span> <br>
-          <span id="betweenness_centrality">Betweenness Centrality</span>
+        <div id="propInfo" class="tabcontent" style="display:none;border:none">
+          <div class="filler chooseRequest" position="center">Select a node to display properties.</div>
         </div>
       </div>
     </div>
@@ -213,12 +167,12 @@
 
     <div class = "output" id = "SNA Options">
     <h3><center>SNA Options</center></h3>
-  
+
       <form enctype = "multipart/form-data" method = "post">
         <b>Colors</b><br>
         {% for set in graph.nodeSet %}
 
-          {{set}}: 
+          {{set}}:
           <select name = "{{set}}Color">
             {% for c in colors %}
 
