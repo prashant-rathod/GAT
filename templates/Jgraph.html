@@ -119,7 +119,8 @@
 
       attributesToggle = function() {
         document.getElementById('measureInfo').style.display='none';
-        document.getElementById('attributeInfo').style.display='inline-block'
+        document.getElementById('attributeInfo').style.display='inline-block';
+        document.getElementById('propInfo').style.display='none';
         tablinks = document.getElementsByClassName("tablinks");
         for (i = 0; i < tablinks.length; i++) {
           tablinks[i].className = tablinks[i].className.replace(" active", "");
@@ -128,7 +129,18 @@
       }
       measuresToggle = function() {
         document.getElementById('measureInfo').style.display='inline-block';
-        document.getElementById('attributeInfo').style.display='none'
+        document.getElementById('attributeInfo').style.display='none';
+        document.getElementById('propInfo').style.display='none';
+        tablinks = document.getElementsByClassName("tablinks");
+        for (i = 0; i < tablinks.length; i++) {
+          tablinks[i].className = tablinks[i].className.replace(" active", "");
+        }
+        event.currentTarget.className += " active";
+      }
+      propToggle = function() {
+        document.getElementById('propInfo').style.display='inline-block';
+        document.getElementById('measureInfo').style.display='none';
+        document.getElementById('attributeInfo').style.display='none';
         tablinks = document.getElementsByClassName("tablinks");
         for (i = 0; i < tablinks.length; i++) {
           tablinks[i].className = tablinks[i].className.replace(" active", "");
@@ -138,21 +150,27 @@
     </script>
 
     <div id="infoWindows" style = "position: fixed; bottom: 0; right: 0; border-style: solid">
-      <div class = "output-button-bar" style="border:none">
+      <div class = "output-button-bar" style="border:none;width:300px">
         <i style="color:white;margin-left:4px" class="fa fa-window-maximize"
       onclick="document.getElementById('nodeInfo').style.display='inline-block'"></i>
         <i style="color:white;margin-left:4px" class="fa fa-window-minimize"
       onclick="document.getElementById('nodeInfo').style.display='none'"></i>
         <span class="tab" style="float:right">
-          <button class="tablinks" onclick="attributesToggle();">Attributes</button>
           <button class="tablinks active" onclick="measuresToggle();">Measures</button>
+          <button class="tablinks" onclick="attributesToggle();">Attributes</button>
+          <button class="tablinks" onclick="propToggle();">Properties</button>
         </span>
       </div>
-      <div id = "nodeInfo" class="tabcontent" style="padding:10px;border:none">
-        <div id="attributeInfo" style="display:none; border:none">
+      <div id = "nodeInfo" style="padding:10px;border:none">
+        <div id="attributeInfo" class="tabcontent" style="display:none;border:none">
           <span id="name">Name</span>
         </div>
-        <div id="measureInfo" class="tabcontent" style="padding:10px;border:none">
+        <div id="measureInfo" class="tabcontent" style="border:none;width:100px;height:100px">
+          <br>
+          <br>
+          <br>
+        </div>
+        <div id="propInfo" class="tabcontent" style="display:none;padding:10px;border:none">
           <span id="cluster">Clustering</span> <br>
           <span id="eigenvalue_centrality">Eigenvector Centrality</span> <br>
           <span id="betweenness_centrality">Betweenness Centrality</span>

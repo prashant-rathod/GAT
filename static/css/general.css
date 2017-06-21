@@ -102,4 +102,7 @@ li.dropdown {
     border: none;
     padding-bottom:3px
 }
-
+.tabcontent {
+    width:auto;
+    height:100px;
+}
