@@ -111,9 +111,10 @@ li.dropdown {
 	font-size: 10px;
     position:fixed;
     width: 175px;
-    height: 20px;
+    height: 12px;
     padding-left: 15px;
     padding-top: 3px;
+    overflow: hidden;
 }
 i:hover {
     cursor: pointer;
