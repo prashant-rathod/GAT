@@ -74,6 +74,7 @@ li.dropdown {
 
 .output-button-bar {
     background-color: #21205F;
+    width: 100%;
 }
 
 .output-button-bar button {
@@ -103,14 +104,15 @@ li.dropdown {
     padding-bottom:3px
 }
 .tabcontent {
-    width:auto;
+    width:100%;
+    height: 100%;
     height:100px;
 }
 #name {
 	color: white;
 	font-size: 10px;
     position:fixed;
-    width: 175px;
+    width: 150px;
     height: 12px;
     padding-left: 15px;
     padding-top: 3px;
@@ -120,6 +122,13 @@ i:hover {
     cursor: pointer;
 }
 .filler {
-    width:100%;
+    width: 100%;
     height: 100%;
+}
+#editButton {
+	float:right;
+}
+
+#infoWindows {
+    width:450px
 }

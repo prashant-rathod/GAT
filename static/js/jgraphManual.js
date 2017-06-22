@@ -36,26 +36,6 @@ propToggle = function() {
   event.currentTarget.className += " active";
 }
 
-update = function(nodeDict) {
-  console.log("NodeDict:",nodeDict)
-  $("#delete").val(nodeDict['name']);
-  $("#propInfo").empty()
-  $("#attributeInfo").empty()
-  $("#name").text(nodeDict['name'])
-  // Need Tony to have xlsv file.
-  // append to $("#attributeInfo")
-  for (var key in nodeDict) {
-    if (nodeDict.hasOwnProperty(key)) {
-      if (key != "attributes" && key != "name") {
-        $("#propInfo").append("<span id='"+key+"'>"+key+": "+nodeDict[key]+"</span><br>")
-      }
-    }
-  }
-  for (var feature in nodeDict['attributes']) {
-    $("#attributeInfo").append("<span id='"+feature+"'>"+feature+": "+nodeDict['attributes'][feature]+"</span><br>")
-  }
-}
-
 minimizeTabs = function() {
   $('#nodeInfo').css('display','none');
   $('.tab').css('display','none');

@@ -571,16 +571,19 @@ def get_data(case_num):
 						eigenvector=eigenvector,
 				   		betweenness=betweenness
 						)
-
-	cluster=None
-	if graph.clustering_dict != {}:
+	if graph.clustering_dict != {} and graph.clustering_dict != None:
 		cluster = str(round(graph.clustering_dict.get(name),4));
 	else:
 		cluster="clustering not available"
-	eigenvector = str(round(graph.eigenvector_centrality_dict.get(name),4));
-	betweenness = str(round(graph.betweenness_centrality_dict.get(name),4));
+	if graph.eigenvector_centrality_dict != {} and graph.eigenvector_centrality_dict != None:
+		eigenvector = str(round(graph.eigenvector_centrality_dict.get(name),4));
+	else:
+		eigenvector="clustering not available"
+	if graph.betweenness_centrality_dict != {} and graph.betweenness_centrality_dict != None:
+		betweenness = str(round(graph.betweenness_centrality_dict.get(name),4));
+	else:
+		betweenness="clustering not available"
 	attributes = graph.get_node_attributes(name)
-	print("name",name)
 	toJsonify = dict(name=name,
 				   cluster=cluster,
 				   eigenvector=eigenvector,
