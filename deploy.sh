@@ -1,6 +1,10 @@
-#!/bin/bash -v
+#!/bin/bash 
 
-echo "CLEANING PAST VERSIONS"
+echo "CLENING LOCAL PROJECT"
+
+./clean.sh
+
+echo "CLEANING PAST VERSIONS ON REMOTE SERVER"
 
 CLEAN_SCRIPT="
 rm -rf ~/Projects/GAT/*;
@@ -23,7 +27,6 @@ sudo apt-get update;
 sudo apt-get upgrade;
 sudo apt-get install build-essential;
 sudo apt-get install gfortran;
-sudo apt-get install apache2;
 sudo apt-get install python3;
 sudo apt-get install python3-pip
 sudo apt-get install libatlas-base-dev;
