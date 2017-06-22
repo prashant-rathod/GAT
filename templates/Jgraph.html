@@ -22,7 +22,7 @@
       jgraph.create('.graph', {directed: false});
       jgraph.draw({{jgdata|safe}});
 
-      var onEnter, onExit, $d, hovered;
+      var onEnter, onExit, $d, hovered, currentNodeDict;
 
       $d = $('.label');
       $d.hide();
@@ -64,6 +64,7 @@
           $.getJSON('/_get_data/{{case_num}}',function(data) {
             data['name'] = node.name;
             update(data);
+            currentNodeDict = data;
         });
         } else {
           $("#name").text(node.name);     // Need Tony to have xlsv file.
@@ -104,6 +105,22 @@
             jgraph.reset()
         });
       });
+      handleEditSubmit = function(nodeDict) {
+        console.log("submitted")
+        for (var feature in nodeDict['attributes']) {
+          inputtedValue = $('input[name="'+feature+'"]').val()
+          if (inputtedValue != nodeDict['attributes'][feature]) {
+            $.getJSON('/_change_attribute/{{case_num}}', {
+              node: $('input[name=a]').val(),
+              value: inputtedValue,
+              attribute: feature,
+            }, function(data) {
+              return
+            });
+          };
+        };
+        location.reload()
+      }
     </script>
 
     <div id="infoWindows" style = "position: fixed; bottom: 0; right: 0; border-style: solid">
@@ -115,28 +132,19 @@
         <span id="name"></span>
         <span class="tab" style="float:right">
           <button class="tablinks active" onclick="measuresToggle();">Measures</button>
-          <button class="tablinks" onclick="attributesToggle();">Attributes</button>
-          <button class="tablinks" onclick="propToggle();">Properties</button>
+          <button id="attributesButton" class="tablinks" onclick="attributesToggle();">Attributes</button>
+          <button class="tablinks" onclick="propToggle();">Propensities</button>
         </span>
       </div>
       <div id = "nodeInfo" style="padding:10px;border:none">
         <div id="attributeInfo" class="tabcontent" style="display:none;border:none">
-<<<<<<< HEAD
           <div class="filler chooseRequest" position="center">Select a node to display attributes.</div>
         </div>
         <div id="measureInfo" class="tabcontent" style="border:none;">
-          <div class="filler">No network measures currently available.</div>
+          <div class="filler">Select a node to display measures.</div>
         </div>
         <div id="propInfo" class="tabcontent" style="display:none;border:none">
-          <div class="filler chooseRequest" position="center">Select a node to display properties.</div>
-=======
-          <span class="chooseRequest" position="center">Select a node to display attributes.</span>
-        </div>
-        <div id="measureInfo" class="tabcontent" style="border:none;">
-        </div>
-        <div id="propInfo" class="tabcontent" style="display:none;border:none">
-          <span class="chooseRequest" position="center">Select a node to display properties.</span>
->>>>>>> fee5fee94875decbf79b983d7ce5999b933c4eb7
+          <div class="filler chooseRequest" position="center">No node propensities currently available.</div>
         </div>
       </div>
     </div>
