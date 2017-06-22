@@ -6,11 +6,13 @@ SCRIPT='
 sudo apt-get update;
 sudo apt-get upgrade;
 sudo apt-get install apache2;
+sudo apt-get install libapache2-mod-wsgi-py3;
+
 cd;
 mkdir Projects;
 cd Projects;
 mkdir GAT;
-sudo ln -sT GAT /var/www/html/GAT;
+sudo ln -sT ~/Projects/GAT /var/www/html/GAT;
 '
 
 ssh -i "aws-ec2-gat1.pem" ubuntu@ec2-52-38-189-7.us-west-2.compute.amazonaws.com "${SCRIPT}"
