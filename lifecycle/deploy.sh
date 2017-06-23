@@ -46,4 +46,4 @@ nohup gunicorn application:application -b localhost:8000 &;
 
 ssh -i "aws-ec2-gat1.pem" ubuntu@ec2-52-38-189-7.us-west-2.compute.amazonaws.com "${DEPLOY_SCRIPT}"
 
-echo "SUCCESSFULLY FINISHED DEPLOYMENT"
+echo "FINISHED DEPLOYMENT"

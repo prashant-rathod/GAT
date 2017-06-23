@@ -29,4 +29,4 @@ sudo mv ~/virtual.conf /etc/nginx/conf.d/
 
 ssh -i "aws-ec2-gat1.pem" ubuntu@ec2-52-38-189-7.us-west-2.compute.amazonaws.com "${COPY_SCRIPT}"
 
-echo "SUCCESSFULLY FINISHED SETUP"
+echo "FINISHED SETUP"
