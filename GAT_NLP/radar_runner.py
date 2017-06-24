@@ -5,11 +5,8 @@ import os
 import nltk
 import random
 
-download_path = None
-home = os.path.expanduser("~")
-if home == "/home/wsgi":
-    download_path =  "/opt/python/current/app/"
-    nltk.data.path.append(download_path)
+download_path = "nltk_downloads/"
+nltk.data.path.append(download_path)
 nltk.download('stopwords', download_dir=download_path)
 nltk.download('vader_lexicon', download_dir = download_path)
 nltk.download('averaged_perceptron_tagger', download_dir = download_path)
