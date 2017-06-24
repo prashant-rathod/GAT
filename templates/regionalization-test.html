@@ -1,0 +1,65 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <link href="{{url_for('static', filename='css/vizStyle.css')}}" rel="stylesheet">
+    <script src="http://kartograph.org/js/chroma.min.js"></script>
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <script src="http://kartograph.org/js/jquery.min.js"></script>
+    <script src="http://kartograph.org/js/raphael.min.js"></script>
+    <script src="http://kartograph.org/js/kartograph.min.js"></script>
+    <script type="text/javascript" src="http://kartograph.org/showcase/panzoom/raphael.pan-zoom.min.js"></script>
+</head>
+<body>
+
+<script type="text/javascript" src="htttp://kartograph.org/js/chroma.min.js"></script>
+<script type="text/javascript">
+function get(id) {
+        return document.getElementById(id);
+    }
+
+    function openHelp(source){
+        get("help").style.display = "block";
+    }
+
+    function closeHelp(source) {
+        get("help").style.display = "none";
+    }</script>
+
+
+
+<img id = "banner" src = "{{url_for('static', filename = 'GAT_header_1-9.jpg')}}" alt = "Banner Image"/>
+
+    <!-- dropdown menu 
+        The buttons will have to become buttons, indeed-->
+    <ul>
+        <li class="dropdown">
+            <a href="{{ url_for('visualize') }}">Back</a>
+        <li class="dropdown">
+            <a href="#" class="dropbtn" style = "color:grey">View</a>
+            <div class="dropdown-content">
+            </div>
+        </li>
+        <li class="dropdown">
+            <a href="#" class="dropbtn">Help</a>
+            <div class="dropdown-content">
+                <a href="#" onClick="openHelp(this)">GSA Regionalization Help</a>
+                <a href="#" style="color:grey;">Manual</a>
+            </div>
+        </li>
+    </ul>
+
+    <div id = "help" style = "display: none;">
+        <button onClick = "closeHelp(this)">Close Help</button>
+        <p>Regionalization is spatially constrained clustering. Areas on the map are broken up into regions in which the data points have similar values. The regions must be contiguous.</p>
+    </div>
+
+    <img style = "width:100%" src="{{url_for('static', filename = 'regionalization.png')}}">
+
+
+
+
+<div id="map"></div>
+</body>
+</html>

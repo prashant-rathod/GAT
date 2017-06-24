@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html>
+
+
+<head>
+	<title>GSA, NLP, SNA Analysis</title>
+	<link href="{{url_for('static', filename='css/uploadStyle.css')}}" rel="stylesheet">
+	<script src="static/js/jquery-1.11.1.min.js"></script>
+
+	<script type="text/javascript">
+
+
+	function remove_GSA(source) {
+		document.getElementById("GSA_Input_CSV").value = "";
+		document.getElementById("GSA_Input_map").value = "";
+	}
+
+	function remove_NLP(source) {
+		document.getElementById("NLP_Input_corpus").value = "";
+		document.getElementById("NLP_Input_LDP").value = "";
+		document.getElementById("NLP_LDP_terms").value = "";
+	}
+
+	function remove_SNA(source) {
+		document.getElementById("SNA_Input").value = "";
+	}
+
+	function closeAllHelp(source) {
+		comps = ["GSA-help","NLP-help","SNA-help","all-help"]
+		for (var i = comps.length - 1; i >= 0; i--) {
+			document.getElementById(comps[i]).style.display = "none";
+		};
+	}
+
+	function openAllHelp(source) {
+		comps = ["all-help","GSA-help","NLP-help","SNA-help"]
+		for (var i = comps.length - 1; i >= 0; i--) {
+			document.getElementById(comps[i]).style.display = "block";
+		};
+	}
+
+	function openComponentHelp(comp) {
+		document.getElementById("all-help").style.display = "block";
+		document.getElementById(comp).style.display = "block";
+	}
+
+	function openAbout(source){
+		document.getElementById("about").style.display = "block";
+	}
+
+	function closeAbout(source){
+		document.getElementById("about").style.display = "none";
+	}
+
+	</script>
+
+</head>
+
+<body>
+
+	<!--img id = "banner" src = "{{url_for('static', filename = 'logo3-03.jpg')}}" alt = "Banner Image"/-->
+	<img id = "banner" src = "{{url_for('static', filename = 'GAT New Logo 3.29 White Large.jpg')}}" alt = "Banner Image"/>
+
+	<ul>
+		<li class="dropdown">
+			<a href="#" class="dropbtn" style = "color:grey">Load</a>
+			<!--div class="dropdown-content">
+				<a href="#">Uploads</a>
+			</div-->
+		</li>
+		<li class="dropdown">
+			<a href="#" class="dropbtn">GSA</a>
+			<div class="dropdown-content">
+				<a href="{{url_for('sample', sample_path = 'GSA/usjoin.csv/us48.shp', case_num=case_num)}}">Run United States Income case</a> 
+				<a href="{{url_for('static', filename = 'sample/GSA/template.csv', case_num=case_num)}}" download>Download Template</a>
+			</div>
+		</li>
+		<li class="dropdown">
+			<a href="#" class="dropbtn">NLP</a>
+			<div class="dropdown-content">
+				<!--<a href="{{url_for('sample', sample_path = 'NLP/united-states', case_num=case_num)}}">Run United States case</a>-->
+				<a href="{{url_for('sample', sample_path = 'NLP/isil', case_num=case_num)}}">Run ISIL case</a>
+				<a href="{{url_for('sample', sample_path = 'NLP/iran', case_num=case_num)}}">Run Sentiment Analysis on Iran Speech</a>
+				<!--<a href="{{url_for('sample', sample_path = 'NLP/AAH', case_num=case_num)}}">Run AAH case</a>-->
+			</div>
+		</li>
+		<li class="dropdown">
+			<a href="#" class="dropbtn">SNA</a>
+			<div class="dropdown-content">
+				<a href="{{url_for('sample', sample_path = 'SNA/iran.xlsx', case_num=case_num)}}">Run Iran Political Elite case</a>
+				<a href="{{url_for('sample', sample_path = 'SNA/AAH_for_SNA.xlsx', case_num=case_num)}}">Run AAH case</a>
+			</div>
+		</li>
+		<li class="dropdown">
+			<a href="#" class="dropbtn" style = "color:grey;">View</a>
+			<div class="dropdown-content">
+			</div>
+		</li>
+		<li class="dropdown">
+			<a href="#" class="dropbtn">Help</a>
+			<div class="dropdown-content">
+				<a href="#" onClick = "openComponentHelp('GSA-help')" >GSA</a>
+				<a href="#" onClick = "openComponentHelp('NLP-help')">NLP</a>
+				<a href="#" onClick = "openComponentHelp('SNA-help')">SNA</a>
+				<a href="#" onClick = "openAllHelp(this)">All</a>
+				<a href="#" style = "color: grey">Manual</a>
+			</div>
+		</li>
+		<li class="dropdown">
+			<a href="#" class="dropbtn">About</a>
+			<div class="dropdown-content">
+				<a href="#" onClick = "openAbout(this)">About the tool</a>
+				<a target="_blank" href="http://computationalsecuritystudies.org">LUCAS Website</a>
+			</div>
+		</li>
+	</ul>
+
+	<br>
+
+	{% if errors %}
+
+	<br>
+
+	{% for error in errors %}
+		<p style = "color:red;">{{ error }}</p><br>
+	{% endfor %}
+
+	<br><br>
+
+	{% endif %}
+
+	<div id = "about" style="display:none;">
+		<button onClick = "closeAbout(this)">Close About</button>
+		<p>Complex problems in complex spaces require complex analytic tools. That is the guiding principle behind the Geospatial Analysis Toolkit (GAT) currently under development by LUCAS for the Department of Defense’s Minerva Initiative Resources and Resiliency grant. The Geospatial Analysis Toolkit is designed to be a comprehensive computational security analysis tool that incorporates social network analysis and semantic and sentiment analysis, with a Smart Graphic User Interface (GUI) and Smart Search functionality, grounded in geospatial analysis. It will enable Smart Search capability by location, proper name, or subject keyword. The Smart GUI will produce geographic-based displays of the interconnections of resources, infrastructure, and other geographical features presented as layers to enable particularized or general geo-analysis. The Smart GUI will also enable semantic and sentiment analysis as well as social network analysis visualized for geospatial analysis. The semantic and sentiment and the social network analysis modules will also be visualized independently, allowing for more specified types of analyses.</p>
+		<p>The principal investigator will be the lab’s director, Dr. Tony Rivera, who is a Visiting Assistant Professor at the Social Science Research Institute (SSRI) with a secondary appointment in Political Science.  The project team includes instructors, graduate students, and undergraduates from multiple departments, including Political Science, the Sanford School of Public Policy, and the Nicholas School of the Environment.</p>
+	</div>
+
+
+	<div id="all-help" style="display:none;">
+		<button onClick = "closeAllHelp(this)">Close Help</button>
+		<div id = "GSA-help" style="display:none;">
+			<b>GSA Information:</b>
+			<p>Our Geospatial Analysis component takes in a Scalable Vector Graphics map and a comma-separated value file (.csv) of spatial and temporal data.You can download a template of what your CSV file should look like under GSA > Download Template. The csv file and SVG file should correspond to one another. You can also choose the sample case which is described below. It outputs a map with the data visualized on it.</p>
+			<b>Sample Cases:</b><br>
+			<li>United States Income: This dataset visualizes the average household income of each of the 48 US mainland states over several decades.</li>
+		</div><br>
+		<div id = "NLP-help" style="display:none;">
+			<b>NLP Information:</b>
+			<p>Our Natural Language Processing component takes in a selection of text (.txt) files. You can also choose one of the sample text selections which are described below. The tool identifies tropes in the corpus. For each trope, it returns a radar chart visualizing how strongly the trope is associated with 8 emotions.</p>
+			<b>Sample Cases:</b><br>
+			<li>United States: These texts contain quotes and/or social media posts from US officials or influential people regarding ISIS in Mosul. The texts are mainly negative with a common theme of referring to ISIS as a tumor or other cancerous forms invading Iraq. These were found through google news searches as well as through Facebook, Instagram, and Twitter posts. </li>
+			<li>ISIL: These are statements released by Ninawa Wilayah, the Iraqi governorate of which Mosul is the capital 
+			(Ninawa Wilayah was mostly controlled by ISIL before the liberation efforts started); Amaq, ISIL’s official news outlet; and Jazirah, another ISIL-owned news outlet operating in Mosul. The text files were created using a web scraping tool, from the English translations made available online by the moderators of the Syrian Civil War thread on Reddit.</li>
+		</div><br>
+		<div id = "SNA-help" style="display:none;">
+			<b>SNA Information:</b>
+			<p>	Our Social Network Analysis takes in an Excel spreadsheet (.xlsx or .xls). You can also choose one of the sample cases which are described below. After going through various input steps (for which more help is available on the corresponding pages), the tool returns a 3-dimensional visualization of the network which you can manipulate. Note: If you upload an excel document with only 1 sheet, the tool passes over the sheet selection tool. Otherwise, you must specify which sheet you would like to use.</p>
+			<b>Sample Cases:</b><br>
+			<li>Iran Political Elite: This is a dataset of the relationships between Iranian political leaders, factions, institutions, and other entities during selected years between 2006-2014.</li>
+		</div><br>
+	</div>
+
+	<form enctype = "multipart/form-data" method = "post">
+
+		<span class="inputsectioncontainer">
+
+			<!--<span>
+				Enter a question:<br>
+				<textarea name="research_question" rows="2" style="width:45%;" disabled>Under Development</textarea>
+			</span>-->
+			<span>
+				Enter a url for scraping :<br>
+				<textarea name="research_question" rows="2" style="width:45%;"></textarea>
+			</span>
+
+			<span class="inputsection">
+				<br>
+				Upload .csv file for GSA:<br>
+				<input type = "file" id = "GSA_Input_CSV" name = "GSA_Input_CSV" size = 20><br>
+
+				Upload 3 files (.shp, .shx, .dfb) for GSA:<br>
+				<input type = "file" id = "GSA_Input_map" name = "GSA_Input_map" size = 20 multiple><br>
+
+				<input type = "button" id = "GSA_Clear" value = "Clear" onClick = "remove_GSA(this)">
+				<input type = "submit" value = "SUBMIT">
+			</span>
+
+			<span class="inputsection">
+				<br>
+				Upload .txt corpus for NLP:<br>
+				<p style = "font-size:10px">(Use Ctrl- or Shift-click to select multiple files)</p>
+				<input type = "file" id = "NLP_Input_corpus" name = "NLP_Input_corpus" multiple><br>
+				<hr>
+				Upload .txt file for Lexical Dispersion Plot:<br>
+				<input type = "file" id = "NLP_Input_LDP" name = "NLP_Input_LDP"><br>
+				Enter terms you would like to perform LDP, separated by commas:<br>
+				<input type = "text" id = "NLP_LDP_terms" name = "NLP_LDP_terms"><br>
+				<input type = "button" id = "NLP_Clear" value = "Clear" onClick = "remove_NLP(this)">
+				<hr>
+				Upload .txt file for Sentiment Analysis:<br>
+				<input type = "file" id = "NLP_Input_Sentiment" name = "NLP_Input_Sentiment"><br>
+				<hr>
+
+				<!--
+				Enter sentence for Name Entity Recognition:<br>
+				<input type = "text" id = "NLP_INPUT_NER" name = "NLP_INPUT_NER"><br>
+				<hr>
+
+				Enter sentence for IOB Tagging:<br>
+				<input type = "text" id = "NLP_INPUT_IOB" name = "NLP_INPUT_IOB"><br>
+				<br>
+
+				-->
+				<input type = "submit" value = "SUBMIT">
+
+			</span>
+
+			<span class="inputsection">
+				<br>
+				Upload .xlsx file for SNA:<br>
+				<input type = "file" id = "SNA_Input" name = "SNA_Input" size = 20 value="a"><br><br>
+				<input type = "button" id = "SNA_Clear" value = "Clear" onClick = "remove_SNA(this)">
+				<input type = "submit" value = "SUBMIT">
+			</span>
+		</span>
+		<hr>
+		<input type = "submit" value = "SUBMIT">
+	</form>
+
+
+</body>
+
+
+
+
+
+
+
+
+
+
+
+
+</html>

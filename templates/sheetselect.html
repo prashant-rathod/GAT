@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+	<title>Sheet select</title>
+
+	<link href="{{url_for('static', filename='css/general.css')}}" rel="stylesheet">
+
+	</style>
+
+
+
+</head>
+
+<body>
+<img id = "banner" src = "{{url_for('static', filename = 'GAT_header_1-9.jpg')}}" style = "width:100%;" alt = "Banner Image"/> <br>
+
+	<ul>
+		<li class="dropdown">
+			<a href="{{ url_for('upload') }}">Home</a>
+		</li>
+		<li class="dropdown">
+			<a href="#" class="dropbtn" style = "color:grey;">View</a>
+			<div class="dropdown-content">
+			</div>
+		</li>
+		<li class="dropdown">
+			<a href="#" class="dropbtn">Help</a>
+			<div class="dropdown-content">
+				<a href="#" style = "color: grey">Manual</a>
+			</div>
+		</li>
+	</ul>
+
+<h3>Please choose which sheet you would like to use:</h3>
+
+<form enctype = "multipart/form-data" method = "post">
+
+	<select name="sheet">
+
+	{% for sheet in sheets %}
+
+		<option value="{{ sheet }}">{{ sheet }}</option>
+
+	{% endfor %}
+
+	</select><br><bR>
+
+	<input type = "submit" value = "CONTINUE">
+
+</form>
+
+</body>
+
+
+
+
+
+
+
+</html>

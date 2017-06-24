@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+	<title>Visualization and Data</title>
+
+	<style type="text/css">
+
+	</style>
+
+
+
+</head>
+
+<body>
+<img id = "banner" src = "../static/GAT_header_1-9.jpg" style = "width:100%;" alt = "Banner Image"/> <br>
+
+<h3>Measures:</h3>
+
+
+
+{% if searchedNode %}
+
+These are the following centrality measures for the node {{ searchedNode }}:<br>
+Closeness Centrality: {{ centrality [0] }}<br>
+Degree Centrality: {{ centrality [1] }}<br>
+Betweenness Centrality: {{ centrality [2] }}<br>
+
+{% endif %}
+
+
+
+{% if invalid %}
+
+The specified node is not in the network. Please check spelling or settings. <br>
+
+{% endif %}
+
+<br>
+	
+<form enctype = "multipart/form-data" method = "post">
+	<h3>Search for a node:</h3>
+	<input type = "text" name = "searchedNode"><br>
+
+	<input type = "submit" value = "SUBMIT">
+
+</form>
+
+</body>
+
+
+
+
+
+
+
+</html>

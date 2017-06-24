@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+	<title>Node select</title>
+
+	<style type="text/css">
+
+		.nodewindow {
+			border: 2px solid #000;
+    		border-radius: 4px;
+    		display: inline-block;
+		}
+
+		.nodes {
+			margin-top: 20%;
+    		white-space: nowrap;
+		}
+
+	</style>
+
+
+
+</head>
+
+<body>
+<img id = "banner" src = "../static/GAT_header_1-9.jpg" style = "width:100%; position:fixed;" alt = "Banner Image"/> <br>
+
+<form enctype = "multipart/form-data" method = "post">
+
+	<div class = "nodes">
+
+	{% for node in nodes %}
+
+		<div class = "nodewindow">
+			{{node}} column contains:<br>
+			<select name="{{ node + 'IsNode' }}">
+				<option value="True">Node Names</option>
+				<option value="False">Other</option>
+			</select> <br>
+			Nodeset class: 
+			<select name="{{ node + 'Class' }}">
+				<option value="Agent">Agent</option>
+				<option value="Organization">Organization</option>
+				<option value="Knowledge">Knowledge</option>
+				<option value="Resource">Resource</option>
+				<option value="Belief">Belief</option>
+				<option value="Event">Event</option>
+				<option value="Task">Task</option>
+				<option value="Location">Location</option>
+				<option value="Role">Role</option>
+				<option value="Action">Action</option>
+				<option value="Other">Other</option>
+			</select> <br>
+			Nodeset name: <input type = "text" name = "{{ node + 'Name' }}" value = "{{ node }}">
+
+		</div>
+
+	{% endfor %}
+
+	</div>
+
+	<br>
+	<input type = "submit" value = "SUBMIT" style = "position: fixed;">
+
+</form>
+
+</body>
+
+
+
+
+
+
+
+</html>
