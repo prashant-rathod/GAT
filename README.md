@@ -32,7 +32,7 @@ http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EC2_GetStarted.html#ec2-conne
 7. $ sudo chmod 755 *.sh
 8. Open aws console online
 9. Copy the url of the instance
-10. Open shell scripts inside of lifecycle/ and replace INSTANCE_URL value with that copied from online
+10. Open shell scripts inside of lifecycle/ and replace INSTANCE_URL value with that copied from online and PEM_NAME to the name of the pem file
 11. $ ./setup.sh #(answer y to all questions asked by apt-get)
 12. If you wish to deploy current version of the app follow instructions below
 
