@@ -1,5 +1,8 @@
 #!/bin/bash 
 
+INSTANCE_URL=ubuntu@ec2-52-38-189-7.us-west-2.compute.amazonaws.com
+PEM_NAME="aws-ec2-gat1.pem"
+
 echo "SETTING UP"
 
 SCRIPT='
@@ -17,16 +20,16 @@ mkdir GAT;
 sudo ln -sT ~/Projects/GAT /var/www/html/GAT;
 '
 
-ssh -i "aws-ec2-gat1.pem" ubuntu@ec2-52-38-189-7.us-west-2.compute.amazonaws.com "${SCRIPT}"
+ssh -i "${PEM_NAME}" "${INSTANCE_URL}" "${SCRIPT}"
 
 echo "COPYING NGINX FILES"
 
-scp -i "aws-ec2-gat1.pem" virtual.conf ubuntu@ec2-52-38-189-7.us-west-2.compute.amazonaws.com:~
+scp -i "${PEM_NAME}" virtual.conf "${INSTANCE_URL}":~
 
 COPY_SCRIPT="
 sudo mv ~/virtual.conf /etc/nginx/conf.d/ 
 "
 
-ssh -i "aws-ec2-gat1.pem" ubuntu@ec2-52-38-189-7.us-west-2.compute.amazonaws.com "${COPY_SCRIPT}"
+ssh -i "${PEM_NAME}" "${INSTANCE_URL}" "${COPY_SCRIPT}"
 
 echo "FINISHED SETUP"

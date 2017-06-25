@@ -1,5 +1,8 @@
 #!/bin/bash 
 
+INSTANCE_URL=ubuntu@ec2-52-38-189-7.us-west-2.compute.amazonaws.com
+PEM_NAME="aws-ec2-gat1.pem"
+
 echo "CLENING LOCAL PROJECT"
 
 ./clean.sh
@@ -10,11 +13,11 @@ CLEAN_SCRIPT="
 rm -rf ~/Projects/GAT/*;
 "
 
-ssh -i "aws-ec2-gat1.pem" ubuntu@ec2-52-38-189-7.us-west-2.compute.amazonaws.com "${CLEAN_SCRIPT}"
+ssh -i "${PEM_NAME}" "${INSTANCE_URL}" "${CLEAN_SCRIPT}"
 
 echo "COPYING FILES"
 
-scp -ri "aws-ec2-gat1.pem" ../* ubuntu@ec2-52-38-189-7.us-west-2.compute.amazonaws.com:~/Projects/GAT/
+scp -ri "${PEM_NAME}" ../* "${INSTANCE_URL}":~/Projects/GAT/
 
 echo "FINISHING INSTALLATION"
 
@@ -41,9 +44,8 @@ sudo chmod 777 nltk_downloads;
 sudo pip3 install gunicorn;
 
 sudo service nginx restart;
-nohup gunicorn application:application -b localhost:8000 &;
 "
 
-ssh -i "aws-ec2-gat1.pem" ubuntu@ec2-52-38-189-7.us-west-2.compute.amazonaws.com "${DEPLOY_SCRIPT}"
+ssh -i "${PEM_NAME}" "${INSTANCE_URL}" "${DEPLOY_SCRIPT}"
 
 echo "FINISHED DEPLOYMENT"
