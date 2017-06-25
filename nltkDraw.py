@@ -1,12 +1,7 @@
 import nltk, re, pprint
 import os
-download_path = None
-home = os.path.expanduser("~")
-if home == "/home/wsgi":
-    download_path =  "/opt/python/current/app/"
-    print(download_path)
-    nltk.data.path.append(download_path)
-#os.mkdir(os.path.expanduser("/home/wsgi"))
+download_path = "nltk_downloads/"
+nltk.data.path.append(download_path)
 nltk.download('punkt', download_dir = download_path)
 from nltk import word_tokenize
 import tempfile

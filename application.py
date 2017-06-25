@@ -17,7 +17,6 @@ import GAT_GSA.MapGenerator
 from numpy import array, matrix
 import copy
 import sys
-print(sys.getdefaultencoding())
 import random
 import GAT_NLP_JamesWu.parser as nlp_james
 import scraper.url_parser as url_parser
@@ -127,7 +126,6 @@ def storeNLP(file_list):
 	source_dir = tempfile.mkdtemp(dir=tempdir) + '/'
 	for f in file_list:
 		f.save(source_dir + f.filename)
-	print(source_dir)
 	# this line is necessary because of how AWS creates default permissions for newly created files and folders
 	os.chmod(source_dir, 0o755)
 	return source_dir
@@ -142,7 +140,6 @@ def storeGSA(file_list):
 		f.save(source_dir + f.filename)
 		if f.filename.endswith(".shp"):
 			shapefile = source_dir + f.filename
-	print(source_dir)
 	#see previous comment
 	os.chmod(source_dir, 0o755)
 	return shapefile
@@ -318,7 +315,6 @@ def visualize(case_num):
 	fileDict['NLP_images'] = radar_runner.generate(NLP_dir, tropes)
 	gsaCSV, mymap = tempParseGSA(GSA_file_CSV, GSA_file_SHP)
 	if GSA_file_SVG != None:
-		print("here")
 		gsaCSV, mymap = parseGSA(GSA_file_CSV, GSA_file_SVG)
 
 	if gsaCSV == None and mymap == True:
@@ -328,7 +324,6 @@ def visualize(case_num):
 	#################James WU's NLP methods:###########################
 	nlp_sentiment = None
 	if NLP_file_sentiment != None:
-		print(NLP_file_sentiment)
 		import os.path
 		if not os.path.isfile("nb_sentiment_classifier.pkl"):
 			nlp_james.trainSentimentClassifier()
@@ -499,7 +494,6 @@ def SNA2Dplot(graph, request, label=True):
 	if graph == None:
 		return None
 	if request.form.get("options") == None:
-		print(graph.nodeSet)
 		i = 0
 		for nodeSet in graph.nodeSet:
 			attr[nodeSet] = [colors[i],50]
@@ -577,19 +571,24 @@ def get_data(case_num):
 						eigenvector=eigenvector,
 				   		betweenness=betweenness
 						)
-
-	cluster=None
-	if graph.clustering_dict != {}:
-		cluster = "clustering = " + str(round(graph.clustering_dict.get(name),4));
+	if graph.clustering_dict != {} and graph.clustering_dict != None:
+		cluster = str(round(graph.clustering_dict.get(name),4));
 	else:
-		cluster="clustering N/A"
-
-	eigenvector = "eigenvector centrality = " + str(round(graph.eigenvector_centrality_dict.get(name),4));
-	betweenness = "betweenness centrality = " + str(round(graph.betweenness_centrality_dict.get(name),4));
-	return jsonify(name=name, 
-				   cluster=cluster, 
+		cluster="clustering not available"
+	if graph.eigenvector_centrality_dict != {} and graph.eigenvector_centrality_dict != None:
+		eigenvector = str(round(graph.eigenvector_centrality_dict.get(name),4));
+	else:
+		eigenvector="clustering not available"
+	if graph.betweenness_centrality_dict != {} and graph.betweenness_centrality_dict != None:
+		betweenness = str(round(graph.betweenness_centrality_dict.get(name),4));
+	else:
+		betweenness="clustering not available"
+	attributes = graph.get_node_attributes(name)
+	toJsonify = dict(name=name,
+				   cluster=cluster,
 				   eigenvector=eigenvector,
-				   betweenness=betweenness)
+				   betweenness=betweenness, attributes=attributes)
+	return jsonify(toJsonify)
 
 @application.route("/_remove_node/<int:case_num>")
 def remove_node(case_num):
@@ -684,9 +683,7 @@ def parseGSA(GSA_file_CSV, GSA_file_SVG):
 @application.route('/sample/<int:case_num>/<path:sample_path>')
 def sample(sample_path, case_num):
 	fileDict = caseDict[case_num]
-	print(sample_path)
 	arr = sample_path.split('/')
-	print(url_for('static', filename = ''))
 	if arr[0] == 'GSA':
 		fileDict['GSA_Input_CSV'] = url_for('static', filename = "sample/GSA/" + arr[1])[1:]
 		fileDict['GSA_Input_SHP'] = url_for('static', filename = "sample/GSA/" + arr[2])[1:]

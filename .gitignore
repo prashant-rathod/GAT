@@ -1,4 +1,4 @@
-
+.ebextensions
 # Elastic Beanstalk Files
 .elasticbeanstalk/*
 !.elasticbeanstalk/*.cfg.yml
@@ -7,3 +7,4 @@
 *.pyc
 .idea
 *.pem
+nltk_downloads/*
