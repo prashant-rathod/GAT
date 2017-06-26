@@ -387,9 +387,9 @@ class SNA():
 Graph = SNA("iran.xlsx", "2011")
 Graph.createNodeList([1,4], ["Agent", "Institution"])
 Graph.createEdgeList([1,4])
-'''
-# test = Graph.getNodes()
-# Graph.graph_2D({"Agent":['y',50], "Institution":['b',50]}, label=True)
+
+test = Graph.getNodes()
+Graph.graph_2D({"Agent":['y',50], "Institution":['b',50]}, label=True)
 Graph.clustering()
 Graph.latapy_clustering()
 Graph.robins_alexander_clustering()
@@ -413,6 +413,3 @@ Graph.communicability_centrality_exp()
 # print(Graph.get_load_centrality())
 # print(Graph.get_communicability_centrality())
 # print(Graph.get_communicability_centrality_exp())
-
-
-
