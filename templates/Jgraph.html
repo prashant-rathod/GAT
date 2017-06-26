@@ -90,6 +90,21 @@
         });
       });
 
+      //Takes the user input (node that user wants to add) and adds it to SNA.
+      $(function(){
+        $('#addNode').bind('click', function(){
+          $.getJSON('/_add_node/{{case_num}}', {
+            node: $('input[name=a]').val(),
+            attributes: {},
+            connections: []
+          }, function(data) {
+            $('#message').text(data.result)
+            location.reload() // quick page reload, TODO refresh only jgraph (mxgraph req?)
+            jgraph.reload(data.node) //doesn't exist??
+          });
+        });
+      });
+
       $(function(){
         $('a#undo').bind('click', function(){
             jgraph.undo()

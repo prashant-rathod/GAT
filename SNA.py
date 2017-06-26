@@ -114,7 +114,11 @@ class SNA():
         if self.G.has_node(node):
             self.G.remove_node(node)
             self.nodes.remove(node)
-
+    def addNode(self,node,attrDict={}, connections=[]):
+        self.G.add_node(node,attrDict)
+        for i in connections:
+            print("connecting to:",i)
+            self.G.add_edge(node,i)
 
     def removeEdge(self, node1, node2):
         if self.G.has_edge(node1,node2):
@@ -387,7 +391,7 @@ class SNA():
 Graph = SNA("iran.xlsx", "2011")
 Graph.createNodeList([1,4], ["Agent", "Institution"])
 Graph.createEdgeList([1,4])
-'''
+
 # test = Graph.getNodes()
 # Graph.graph_2D({"Agent":['y',50], "Institution":['b',50]}, label=True)
 Graph.clustering()
