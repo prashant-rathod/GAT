@@ -10,7 +10,7 @@ echo "CLENING LOCAL PROJECT"
 echo "CLEANING PAST VERSIONS ON REMOTE SERVER"
 
 CLEAN_SCRIPT="
-rm -rf ~/Projects/GAT/*;
+sudo rm -rf ~/Projects/GAT/*;
 "
 
 ssh -i "${PEM_NAME}" "${INSTANCE_URL}" "${CLEAN_SCRIPT}"
