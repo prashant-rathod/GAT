@@ -383,7 +383,7 @@ class SNA():
 ############
 ####TEST####
 ############
-
+'''
 Graph = SNA("iran.xlsx", "2011")
 Graph.createNodeList([1,4], ["Agent", "Institution"])
 Graph.createEdgeList([1,4])
@@ -401,12 +401,7 @@ Graph.eigenvector_centrality()
 Graph.load_centrality()
 Graph.communicability_centrality()
 Graph.communicability_centrality_exp()
-Graph.node_attributes()
-#Graph.changeAttribute(node='Baqaie.H',attribute="FirstName", value='Handel')
-#Graph.relabelNode('Baqaie.H','Ryan.S')
 '''
-
-print(Graph.get_node_attributes('Ahmadi.A'))
 # print(Graph.get_clustering())
 # print(Graph.get_closeness_centrality())
 # print(Graph.get_betweenness_centrality())
