@@ -1,30 +1,41 @@
 textarea {
-    height: 150px;
     padding: 12px 20px;
     box-sizing: border-box;
-    border: 2px solid #ccc;
-    border-radius: 4px;
+    border: 0px solid #21205F;
     font-size: 16px;
     resize: none;
+    display: inline;
+    box-shadow: inset 0px 0px 10px rgba(0,0,0,0.3);
+    margin: 0px 20px;
+
 }
 
 body {
-    background-color: #f5f5f5;
-    font-family: Verdana, Geneva, sans-serif;
+    height: 100%;
+    margin: 0;
+    background-repeat: no-repeat;
+    font-family: Segoe UI;
+    background: url("http://res.cloudinary.com/dl1azxsha/image/upload/v1497635072/background_lnd5xb.svg") no-repeat center center fixed; 
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+
 }
+
 ul {
     list-style-type: none;
     margin: 0;
     padding: 0;
     overflow: hidden;
-    background-color: #21205F;
+    background-color: #071138;
 }
 
-/*
-li {
-    float: left;
+li b, .dropdown-img {
+  height: 100%;
+  padding: 20px;
+  width: auto;
 }
-*/
 
 li a, .dropbtn {
     display: inline-block;
@@ -35,11 +46,16 @@ li a, .dropbtn {
 }
 
 li a:hover, .dropdown:hover .dropbtn {
-    background-color: red;
+    background-color: #00218F;
 }
 
 li.dropdown {
+    font-family: "Segoe UI";
     display: inline-block;
+    color: white; 
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
 }
 
 .dropdown-content {
@@ -76,27 +92,63 @@ li.dropdown {
 }
 
 .btn-hide {
-    background-color: white;
-    border: 1px solid #21205F;
-    border-radius: 3px
+    cursor: pointer;
+    padding:5px 15px;
+    border: none;
+    background-color: #0030CF;
+    margin: 5px 5px;
+    color: white;
+    text-align: center;
+    display: block;
+    vertical-align: top;
+    -webkit-transition-duration: 0.4s; /* Safari */
+    transition-duration: 0.4s;
+}
+.btn-hide:hover {
+    background-color: #2149ce;
+    color: white;
 }
 
 .btn-show {
-    background-color: white;
-    border: 1px solid #21205F;
-    border-radius: 3px
+    cursor: pointer;
+    padding:5px 15px;
+    border: none;
+    background-color: #0030CF;
+    margin: 5px 5px;
+    color: white;
+    text-align: center;
+    display: block;
+    vertical-align: top;
+    -webkit-transition-duration: 0.4s; /* Safari */
+    transition-duration: 0.4s;
+}
+.btn-show:hover {
+    background-color: #2149ce;
+    color: white;
 }
 
 .btn-close {
-    background-color: white;
-    border: 1px solid #21205F;
-    border-radius: 3px
+    cursor: pointer;
+    padding:5px 15px;
+    border: none;
+    background-color: #0030CF;
+    margin: 5px 5px;
+    color: white;
+    text-align: center;
+    display: block;
+    vertical-align: top;
+    -webkit-transition-duration: 0.4s; /* Safari */
+    transition-duration: 0.4s;
+}
+.btn-close:hover {
+    background-color: #2149ce;
+    color: white;
 }
 
 .output-window {
     border: 2px solid #000;
-    border-radius: 4px;
-    background-color: #f9f9f9;
+    background-color: #0b1b54;
+    color: white;
     display: inline-block;
     width: 40%;
     padding: 10px;
@@ -106,14 +158,14 @@ li.dropdown {
 }
 
 .output {
-    background-color: #f9f9f9;
+    background-color: #0b1b54;
 }
 
 #banner {
     width: 100%;
 }
 
-path {fill: lightgray; stroke: white; z-index: 1;}
+path {fill: white; stroke: white; z-index: 1;}
 path:hover {fill: black; z-index: 1;}
 div.tooltip {
     z-index: 10;
@@ -123,9 +175,8 @@ div.tooltip {
     height: 200px;
     padding: 2px;
     font: 40px sans-serif;
-    background: lightsteelblue;
+    background: black;
     border: 0px;
-    border-radius: 8px;
     pointer-events: none;
 }
 input.year {

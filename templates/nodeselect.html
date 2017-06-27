@@ -7,20 +7,6 @@
 
 	<link href="{{url_for('static', filename='css/general.css')}}" rel="stylesheet">
 
-	<style type="text/css">
-
-		.nodewindow {
-			border: 2px solid #21205F;
-    		border-radius: 4px;
-    		display: inline-block;
-		}
-
-		.nodes {
-    		white-space: nowrap;
-		}
-
-	</style>
-
 	<script type="text/javascript">
 
 	function get(id) {
@@ -41,14 +27,19 @@
 
 </head>
 
+<style>
+* {
+ font-size: 100%;
+ font-family: Segoe UI;
+}
+</style>
+
 <body>
-<img id = "banner" src = "{{url_for('static', filename = 'GAT_header_1-9.jpg')}}" style = "width:100%; position:fixed;" alt = "Banner Image"/> 
-<br><br><br><br><br><br><br><br><br><br>
 
 <ul>
 	<li class="dropdown">
-			<a href="{{ url_for('upload') }}">Home</a>
-		</li>
+		<a href="{{ url_for('upload') }}">Home</a>
+	</li>
 	<li class="dropdown">
 		<a href="#" class="dropbtn" style = "color:grey;">View</a>
 		<div class="dropdown-content">
@@ -61,7 +52,10 @@
 			<a href="#" style = "color: grey">Manual</a>
 		</div>
 	</li>
-	</ul><br>
+	</ul>
+
+<br><br><br>
+
 
 <div id="help" style="display:none;">
 	<button onClick = "closeHelp(this)">Close Help</button>
@@ -77,25 +71,9 @@
 		<div class = "nodewindow">
 			{{node}} Column:<br>
 			<label><input type = "checkbox" name = "{{ node + 'IsNode' }}">is a nodeset?</label><br>
-			<!--
-			Nodeset class: 
-			<select name="{{ node + 'Class' }}">
-				<option value="Agent">Agent</option>
-				<option value="Organization">Organization</option>
-				<option value="Knowledge">Knowledge</option>
-				<option value="Resource">Resource</option>
-				<option value="Belief">Belief</option>
-				<option value="Event">Event</option>
-				<option value="Task">Task</option>
-				<option value="Location">Location</option>
-				<option value="Role">Role</option>
-				<option value="Action">Action</option>
-				<option value="Other">Other</option>
-			</select> <br>
-			-->
 			Nodeset name: <input type = "text" name = "{{ node + 'Name' }}" value = "{{ node }}">
-
 		</div>
+
 
 	{% endfor %}
 
@@ -107,11 +85,5 @@
 </form>
 
 </body>
-
-
-
-
-
-
-
 </html>
+

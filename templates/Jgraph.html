@@ -9,9 +9,28 @@
     <title>Jgraph</title>
   </head>
 
+  <style>
+
+  body {
+    background: #003faa; /* For browsers that do not support gradients */
+    background: -webkit-linear-gradient(#000b37, #003faa, #000b37); /* For Safari 5.1 to 6.0 */
+    background: -o-linear-gradient(#000b37, #003faa, #000b37); /* For Opera 11.1 to 12.0 */
+    background: -moz-linear-gradient(#000b37, #003faa, #000b37); /* For Firefox 3.6 to 15 */
+    background: linear-gradient(#000b37, #003faa, #000b37); /* Standard syntax */
+    height: 100%;
+    margin: 0;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+  }
+  * {
+   font-size: 100%;
+   font-family: Segoe UI;
+  }
+  </style>
+
   <body>
 
-    <div><button class="back-btn" style = "position:fixed;top:0;left:0"><a href="{{url_for('visualize', case_num=case_num)}}">BACK</a></button><div>
+    <div><button class="back-btn" style = "position:fixed;top:0;left:0;color:white;"><a href="{{url_for('visualize', case_num=case_num)}}">BACK</a></button><div>
 
     <div class="graph"></div>
     <div class="label"></div>
