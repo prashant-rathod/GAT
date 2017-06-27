@@ -52,7 +52,7 @@ li b, .dropdown-img {
 
 li a, .dropbtn {
     display: inline-block;
-    color: white; 
+    color: white;
     text-align: center;
     padding: 14px 16px;
     text-decoration: none;
@@ -104,6 +104,7 @@ li.dropdown {
 
 .output-button-bar {
     background-color: #21205F;
+    width: 100%;
 }
 
 .output-button-bar button {

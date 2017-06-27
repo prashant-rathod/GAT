@@ -71,6 +71,22 @@
 		<div class = "nodewindow">
 			{{node}} Column:<br>
 			<label><input type = "checkbox" name = "{{ node + 'IsNode' }}">is a nodeset?</label><br>
+
+			Nodeset class: 
+			<select name="{{ node + 'Class' }}">
+				<option value="Agent">Agent</option>
+				<option value="Organization">Organization</option>
+				<option value="Knowledge">Knowledge</option>
+				<option value="Resource">Resource</option>
+				<option value="Belief">Belief</option>
+				<option value="Event">Event</option>
+				<option value="Task">Task</option>
+				<option value="Location">Location</option>
+				<option value="Role">Role</option>
+				<option value="Action">Action</option>
+				<option value="Other">Other</option>
+			</select> <br>
+		
 			Nodeset name: <input type = "text" name = "{{ node + 'Name' }}" value = "{{ node }}">
 		</div>
 
@@ -86,4 +102,3 @@
 
 </body>
 </html>
-

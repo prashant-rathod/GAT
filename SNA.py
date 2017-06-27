@@ -23,6 +23,7 @@ class SNA():
         self.load_centrality_dict = {}
         self.communicability_centrality_dict = {}
         self.communicability_centrality_exp_dict = {}
+        self.node_attributes_dict = {}
     # Read xlsx file and save the header and all the rows (vector) containing features
     # Input: xlsx file, sheet
     def readFile(self, excel_file, sheet):
@@ -49,18 +50,31 @@ class SNA():
     # nodeSet = names that define a set of node. For example, we can define Person, Faction Leader, and Party Leader as "Agent"
     # note: len(name) = len(nodeSet), else code fails
     def createNodeList(self, name, nodeSet):
+        # Need to specify what sets from data are attributes of other sets (e.g. is title an attribute of name, or vice versa?)
         header, list = self.header, self.list          #need to use header for role analysis
-        counter = 0                                    #counter for the nodeSet
+        featureNo = 0 # which feature is being assessed
         self.nodeSet = nodeSet
         for feature in name:
-            nodeList = []
+            #nodesCollected = []
+            nodeList = [] # make this a container of (node, attribute dict) tuples https://networkx.github.io/documentation/networkx-1.9/reference/generated/networkx.DiGraph.add_nodes_from.html
             for row in list:
-                if row[feature] != '':
-                    if row[feature] not in nodeList:
-                        nodeList.append(row[feature])
-            self.G.add_nodes_from(nodeList, bipartite = nodeSet[counter])
-            counter+=1
+                counter = 0
+                nodeAttr = {}
+                for item in row:
+                    if item != row[feature]:
+                        #create dict with corresponding node set
+                        nodeAttr[header[counter]] = item
+                    if item == row[feature]:
+                        if row[feature] not in [x['name'] for x in nodeList]:
+                            nodeList.append({'name': row[feature], 'attributes': nodeAttr})
+                            #nodesCollected.append
+                    counter += 1
+                # Add attributes based on header input
+            for node in nodeList:
+                self.G.add_node(node['name'],node['attributes'],bipartite=nodeSet[featureNo])
+            featureNo+=1
         self.nodes = nx.nodes(self.G)
+        print(self.nodes)
     #create a list of edges that connect among sets
     #This part is currently still testing.
     #Right now trying to see if the graph is displayed successfully, but later on need to add a argument that passes the
@@ -94,7 +108,7 @@ class SNA():
         self.G = self.temp
 
     # remove edge and node. Note that when we remove a certain node, edges that are
-    # connted to such node are also deleted.
+    # connected to such nodes are also deleted.
 
     def removeNode(self, node):
         if self.G.has_node(node):
@@ -106,6 +120,18 @@ class SNA():
         if self.G.has_edge(node1,node2):
             self.G.remove_edge(node1,node2)
 
+    # Change an attribute of a node
+    def changeAttribute(self, node,  value, attribute="bipartite"):
+        if self.G.has_node(node):
+            self.G.node[node][attribute] = value
+            print("New attribute for "+node+": "+self.G.node[node][attribute])
+
+    # Change node name
+    def relabelNode(self, oldNode, newNode):
+        if self.G.has_node(oldNode):
+            self.G.add_node(newNode, self.G.node[oldNode])
+            self.G.remove_node(oldNode)
+        self.nodes = nx.nodes(self.G)
 
     # Check if node exists 
     def is_node(self, node):
@@ -163,6 +189,10 @@ class SNA():
         self.communicability_centrality_dict = nx.communicability_centrality(self.G)
     def communicability_centrality_exp(self):
         self.communicability_centrality_exp_dict = nx.communicability_centrality(self.G)
+    def node_attributes(self):
+        self.node_attributes_dict = self.G.node
+    def get_node_attributes(self,node):
+        return self.G.node[node]
     def get_eigenvector_centrality(self, lst=[]):
         if len(lst) == 0:
             return self.eigenvector_centrality_dict
@@ -349,14 +379,17 @@ class SNA():
         data['nodes'] = nodes_property
         return data
 
+
 ############
 ####TEST####
 ############
+'''
 Graph = SNA("iran.xlsx", "2011")
 Graph.createNodeList([1,4], ["Agent", "Institution"])
 Graph.createEdgeList([1,4])
-# test = Graph.getNodes()
-# Graph.graph_2D({"Agent":['y',50], "Institution":['b',50]}, label=True)
+
+test = Graph.getNodes()
+Graph.graph_2D({"Agent":['y',50], "Institution":['b',50]}, label=True)
 Graph.clustering()
 Graph.latapy_clustering()
 Graph.robins_alexander_clustering()
@@ -368,7 +401,7 @@ Graph.eigenvector_centrality()
 Graph.load_centrality()
 Graph.communicability_centrality()
 Graph.communicability_centrality_exp()
-
+'''
 # print(Graph.get_clustering())
 # print(Graph.get_closeness_centrality())
 # print(Graph.get_betweenness_centrality())
@@ -380,6 +413,3 @@ Graph.communicability_centrality_exp()
 # print(Graph.get_load_centrality())
 # print(Graph.get_communicability_centrality())
 # print(Graph.get_communicability_centrality_exp())
-
-
-

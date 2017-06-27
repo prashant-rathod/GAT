@@ -1,16 +1,9 @@
 ############################## IMPORTS ##############################
 
-# download stopwords
-import nltk
-download_path = None
-if home == "/home/wsgi":
-    download_path =  "/opt/python/current/app/"
-    print(download_path)
-nltk.download('stopwords', download_dir=download_path)
-
 import os
 import string
-from radar import graph
+import nltk
+from .radar import graph
 from operator import itemgetter
 from nltk.tokenize import sent_tokenize, word_tokenize
 from nltk.corpus import stopwords
@@ -22,11 +15,10 @@ from nltk.collocations import BigramCollocationFinder, TrigramCollocationFinder
 from nltk.metrics.association import QuadgramAssocMeasures
 from nltk import QuadgramCollocationFinder
 
-
 ############################## CONSTANTS ##############################
 
 alph = list(string.ascii_lowercase)
-bad_pos_list = ['CC', 'CD', 'DT', 'EX', 'IN', 'MD', 'PDT', 'PRP', 'PRP$', 'TO', 'UH', 'WDT', 'WP', 'WP$', 'WRB']
+bad_pos_list = ['CC', 'CD', 'DT', 'EX', 'FW', 'LS', 'IN', 'MD', 'PDT', 'PRP', 'PRP$', 'TO', 'UH', 'WDT', 'WP', 'WP$', 'WRB', 'SYM', 'RP', 'JJ','JJR',"JJS"]
 stop_words = set(stopwords.words('english'))
 stop_words.update([u"'s", u"''", u"``", u"com", u"http"])
 lemmatizer = WordNetLemmatizer()
@@ -71,7 +63,7 @@ def getFilesRecurse(path):
 
 # reads lexicon from txt file
 def readLexicon():
-    f = open('static/lexicon.txt', 'r')
+    f = open('lexicon.txt', 'r')
     raw = f.read().split('\n')
     for n in range(0, len(raw), 10):
         word = raw[n].split('\t')[0]
@@ -139,6 +131,10 @@ def characteristicDictionary(pathnames):
             # phrase extraction (lengths 2-4) initialization
             file_phrases = []
             words = raw.split(' ')
+            for word in words:
+                stopWords = set(stopwords.words('english'))
+                #check what stopwords is
+                words = [w for w in words if w not in stopWords]
             finder = BigramCollocationFinder.from_words(words)
             finder.apply_freq_filter(3)
             best = finder.nbest(bigram_measures.pmi, 25)
@@ -190,7 +186,7 @@ def characteristicDictionary(pathnames):
                         lemma = lemmatizer.lemmatize(tagged[i][0], pos=pos)
                         if lemma not in stop_words:
                             if tagged[i][1] not in bad_pos_list:
-                                if len(lemma) > 2:
+                                if len(lemma) > 3:
                                     if lemma not in file_dic.keys():
                                         file_dic[lemma] = 'unseen'
                                     if lemma in dic:
@@ -289,8 +285,6 @@ def searchTropes(dic, keywords, minimum_sentiment_strength, min_emotion):
 
 # creates a radar chart for a trope given its associated emotions
 def createPolygon(trope, scaled_emotions):
-    if !os.path.isdir('out'):
-        os.mkdir('out')
     file_name = 'out/' + trope + '.png'
     file_name = file_name.replace(' ', '_')
     graph(trope, emotions[2:], scaled_emotions, optimum, file_name)
@@ -299,12 +293,16 @@ def createPolygon(trope, scaled_emotions):
 
 if __name__ == '__main__':
     # finds keywords and tropes
-    readLexicon() # put into static folder
-    pathnames = getFilesRecurse('corpus') # This should be a variable in the UI: user uploads multiple files, I put them in a 'temporary' folder, then point to that folder. Eventually we'll get folder uploads hopefully
-    dic = characteristicDictionary(pathnames)
-    keywords = searchKeywords(dic, .5, .05) # not sure if these constants should be customizable
-    tropes = searchTropes(dic, keywords, .45, 30) # likewise
 
+    # first thing to do is run the stopwords, need to check if stopwords are being done correctly
+
+    readLexicon()
+    pathnames = getFilesRecurse('corpus')
+    dic = characteristicDictionary(pathnames)
+    keywords = searchKeywords(dic, .5, .05)
+    tropes = searchTropes(dic, keywords, .75, 30)
+    for item in tropes:
+        print(item)
     # creates polygon graphs
     for item in tropes:
-        createPolygon(item[0], item[4]) # saves image
+        createPolygon(item[0], item[4])

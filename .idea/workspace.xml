@@ -1,7 +1,212 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="9301f241-3918-4a1f-be1f-5c5ee39136d9" name="Default" comment="" />
+    <list default="true" id="9301f241-3918-4a1f-be1f-5c5ee39136d9" name="Default" comment="">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/GAT_NLP_JamesWu/megam_0.92/abffs.cmi" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/GAT_NLP_JamesWu/megam_0.92/abffs.cmo" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/GAT_NLP_JamesWu/megam_0.92/abffs.cmx" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/GAT_NLP_JamesWu/megam_0.92/abffs.o" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/GAT_NLP_JamesWu/megam_0.92/arry.cmi" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/GAT_NLP_JamesWu/megam_0.92/arry.cmx" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/GAT_NLP_JamesWu/megam_0.92/arry.o" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/GAT_NLP_JamesWu/megam_0.92/bfgs.cmi" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/GAT_NLP_JamesWu/megam_0.92/bfgs.cmx" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/GAT_NLP_JamesWu/megam_0.92/bfgs.o" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/GAT_NLP_JamesWu/megam_0.92/bitvec.cmi" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/GAT_NLP_JamesWu/megam_0.92/bitvec.cmo" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/GAT_NLP_JamesWu/megam_0.92/bitvec.cmx" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/GAT_NLP_JamesWu/megam_0.92/bitvec.o" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/GAT_NLP_JamesWu/megam_0.92/cg.cmi" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/GAT_NLP_JamesWu/megam_0.92/cg.cmo" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/GAT_NLP_JamesWu/megam_0.92/cg.cmx" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/GAT_NLP_JamesWu/megam_0.92/cg.o" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/GAT_NLP_JamesWu/megam_0.92/data.cmi" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/GAT_NLP_JamesWu/megam_0.92/data.cmo" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/GAT_NLP_JamesWu/megam_0.92/data.cmx" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/GAT_NLP_JamesWu/megam_0.92/data.o" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/GAT_NLP_JamesWu/megam_0.92/fastdot.cmi" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/GAT_NLP_JamesWu/megam_0.92/fastdot.cmo" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/GAT_NLP_JamesWu/megam_0.92/fastdot.cmx" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/GAT_NLP_JamesWu/megam_0.92/fastdot.o" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/GAT_NLP_JamesWu/megam_0.92/intHashtbl.cmi" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/GAT_NLP_JamesWu/megam_0.92/intHashtbl.cmo" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/GAT_NLP_JamesWu/megam_0.92/intHashtbl.cmx" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/GAT_NLP_JamesWu/megam_0.92/intHashtbl.o" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/GAT_NLP_JamesWu/megam_0.92/kernelmap.cmi" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/GAT_NLP_JamesWu/megam_0.92/kernelmap.cmo" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/GAT_NLP_JamesWu/megam_0.92/kernelmap.cmx" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/GAT_NLP_JamesWu/megam_0.92/kernelmap.o" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/GAT_NLP_JamesWu/megam_0.92/main.cmi" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/GAT_NLP_JamesWu/megam_0.92/main.cmo" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/GAT_NLP_JamesWu/megam_0.92/main.cmx" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/GAT_NLP_JamesWu/megam_0.92/main.o" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/GAT_NLP_JamesWu/megam_0.92/megam.opt" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/GAT_NLP_JamesWu/megam_0.92/pa.cmi" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/GAT_NLP_JamesWu/megam_0.92/pa.cmo" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/GAT_NLP_JamesWu/megam_0.92/pa.cmx" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/GAT_NLP_JamesWu/megam_0.92/pa.o" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/GAT_NLP_JamesWu/megam_0.92/perceptron.cmi" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/GAT_NLP_JamesWu/megam_0.92/perceptron.cmo" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/GAT_NLP_JamesWu/megam_0.92/perceptron.cmx" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/GAT_NLP_JamesWu/megam_0.92/perceptron.o" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/GAT_NLP_JamesWu/megam_0.92/radapt.cmi" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/GAT_NLP_JamesWu/megam_0.92/radapt.cmo" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/GAT_NLP_JamesWu/megam_0.92/radapt.cmx" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/GAT_NLP_JamesWu/megam_0.92/radapt.o" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/GAT_NLP_JamesWu/megam_0.92/util.cmi" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/GAT_NLP_JamesWu/megam_0.92/util.cmo" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/GAT_NLP_JamesWu/megam_0.92/util.cmx" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/GAT_NLP_JamesWu/megam_0.92/util.o" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/GAT_NLP_JamesWu/megam_0.92/wsemlm.cmi" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/GAT_NLP_JamesWu/megam_0.92/wsemlm.cmo" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/GAT_NLP_JamesWu/megam_0.92/wsemlm.cmx" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/GAT_NLP_JamesWu/megam_0.92/wsemlm.o" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/nb_sentiment_classifier.pkl" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/static/css/font-awesome-4.7.0/fonts/FontAwesome.otf" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/static/css/font-awesome-4.7.0/fonts/fontawesome-webfont.eot" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/static/css/font-awesome-4.7.0/fonts/fontawesome-webfont.ttf" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/static/css/font-awesome-4.7.0/fonts/fontawesome-webfont.woff" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/static/css/font-awesome-4.7.0/fonts/fontawesome-webfont.woff2" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/static/sample/NLP/isil/out/others.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.gitignore" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/GAT_NLP_JamesWu/POS_Tags.csv" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/GAT_NLP_JamesWu/README.md" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/GAT_NLP_JamesWu/language_detector.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/GAT_NLP_JamesWu/megam_0.92/.depend" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/GAT_NLP_JamesWu/megam_0.92/Makefile" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/GAT_NLP_JamesWu/megam_0.92/README" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/GAT_NLP_JamesWu/megam_0.92/abffs.ml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/GAT_NLP_JamesWu/megam_0.92/adapt.ml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/GAT_NLP_JamesWu/megam_0.92/arry.ml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/GAT_NLP_JamesWu/megam_0.92/bfgs.ml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/GAT_NLP_JamesWu/megam_0.92/bitvec.ml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/GAT_NLP_JamesWu/megam_0.92/bns.ml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/GAT_NLP_JamesWu/megam_0.92/cGopt.ml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/GAT_NLP_JamesWu/megam_0.92/cg.ml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/GAT_NLP_JamesWu/megam_0.92/data.ml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/GAT_NLP_JamesWu/megam_0.92/extLog.ml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/GAT_NLP_JamesWu/megam_0.92/fastdot.ml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/GAT_NLP_JamesWu/megam_0.92/fastdot_c.c" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/GAT_NLP_JamesWu/megam_0.92/intHashtbl.ml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/GAT_NLP_JamesWu/megam_0.92/kernelmap.ml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/GAT_NLP_JamesWu/megam_0.92/main.ml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/GAT_NLP_JamesWu/megam_0.92/megam.ml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/GAT_NLP_JamesWu/megam_0.92/pa.ml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/GAT_NLP_JamesWu/megam_0.92/perceptron.ml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/GAT_NLP_JamesWu/megam_0.92/quartic.ml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/GAT_NLP_JamesWu/megam_0.92/radapt.ml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/GAT_NLP_JamesWu/megam_0.92/util.ml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/GAT_NLP_JamesWu/megam_0.92/wsemlm.ml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/GAT_NLP_JamesWu/parser.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/GAT_NLP_JamesWu/scraper.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/GAT_NLP_JamesWu/testArticle.txt" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lifecycle/clean.sh" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lifecycle/deploy.sh" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lifecycle/restart.sh" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lifecycle/setup.sh" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lifecycle/ssh.sh" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lifecycle/virtual.conf" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/nltk_downloads/track_me" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/scraper/newspaper_parser.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/scraper/scrapedArticles/How_Iran_closed_the_Mosul_'horseshoe'_and_changed_Iraq_war.txt" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/scraper/scrapedArticles/Industry_minister_attends_Iran's_second_exclusive_fair_in_Baghdad.txt" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/scraper/scrapedArticles/Iran_to_export_water,_electricity_to_Iraq.txt" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/scraper/scrapedArticles/Law_legalising_Iraq's_Hashd_al-Shaabi_assures_militias'_funding_and_facilitates_political_engagement_but_hinders_country's_reconciliation_project.txt" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/scraper/scrapedArticles/PressTV-Iran_builds_$2.5_billion_power_plant_in_Iraq.txt" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/scraper/url_parser.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/static/css/font-awesome-4.7.0/css/font-awesome.min.css" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/static/css/font-awesome-4.7.0/fonts/fontawesome-webfont.svg" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/static/css/font-awesome-4.7.0/less/animated.less" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/static/css/font-awesome-4.7.0/less/bordered-pulled.less" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/static/css/font-awesome-4.7.0/less/core.less" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/static/css/font-awesome-4.7.0/less/fixed-width.less" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/static/css/font-awesome-4.7.0/less/font-awesome.less" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/static/css/font-awesome-4.7.0/less/icons.less" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/static/css/font-awesome-4.7.0/less/larger.less" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/static/css/font-awesome-4.7.0/less/list.less" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/static/css/font-awesome-4.7.0/less/mixins.less" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/static/css/font-awesome-4.7.0/less/path.less" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/static/css/font-awesome-4.7.0/less/rotated-flipped.less" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/static/css/font-awesome-4.7.0/less/screen-reader.less" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/static/css/font-awesome-4.7.0/less/stacked.less" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/static/css/font-awesome-4.7.0/less/variables.less" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/static/css/font-awesome-4.7.0/scss/_animated.scss" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/static/css/font-awesome-4.7.0/scss/_bordered-pulled.scss" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/static/css/font-awesome-4.7.0/scss/_core.scss" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/static/css/font-awesome-4.7.0/scss/_fixed-width.scss" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/static/css/font-awesome-4.7.0/scss/_icons.scss" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/static/css/font-awesome-4.7.0/scss/_larger.scss" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/static/css/font-awesome-4.7.0/scss/_list.scss" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/static/css/font-awesome-4.7.0/scss/_mixins.scss" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/static/css/font-awesome-4.7.0/scss/_path.scss" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/static/css/font-awesome-4.7.0/scss/_rotated-flipped.scss" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/static/css/font-awesome-4.7.0/scss/_screen-reader.scss" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/static/css/font-awesome-4.7.0/scss/_stacked.scss" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/static/css/font-awesome-4.7.0/scss/_variables.scss" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/static/css/font-awesome-4.7.0/scss/font-awesome.scss" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/static/js/jgraphManual.js" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/static/sample/NLP/sample_sentiment.txt" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/GAT-NikitaZemlevskiy-2-5/AutoCorrelation.py" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/GAT-NikitaZemlevskiy-2-5/Econometrics.py" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/GAT-NikitaZemlevskiy-2-5/GSA.py" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/GAT-NikitaZemlevskiy-2-5/README.md" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/GAT-NikitaZemlevskiy-2-5/Regionalization.py" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/GAT-NikitaZemlevskiy-2-5/Smoothing.py" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/GAT-NikitaZemlevskiy-2-5/SpatialDynamics.py" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/GAT-NikitaZemlevskiy-2-5/Weights.py" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/GAT-NikitaZemlevskiy-2-5/index.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/GAT-NikitaZemlevskiy-2-5/kartograph-test.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/GAT-NikitaZemlevskiy-2-5/mymap.svg" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/GAT-NikitaZemlevskiy-2-5/regionalization.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/GAT-NikitaZemlevskiy-2-5/sample.csv" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/GAT-NikitaZemlevskiy-2-5/sigma-test.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/GAT-NikitaZemlevskiy-2-5/sigma.min.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/GAT-NikitaZemlevskiy-2-5/template.csv" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/GAT-NikitaZemlevskiy-2-5/templates/.gitkeep" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/GAT-NikitaZemlevskiy-2-5/templates/html-in-div.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/GAT-NikitaZemlevskiy-2-5/us48.dbf" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/GAT-NikitaZemlevskiy-2-5/us48.shp" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/GAT-NikitaZemlevskiy-2-5/us48.shx" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/GAT-NikitaZemlevskiy-2-5/usjoin.csv" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/GAT-NikitaZemlevskiy-2-5/zoomtest.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/GAT_GSA/kartograph-temp/.idea/kartograph-Port.iml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/GAT_GSA/kartograph-temp/.idea/misc.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/GAT_GSA/kartograph-temp/.idea/modules.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/GAT_GSA/kartograph-temp/.idea/workspace.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/GSA/AutoCorrelation.py" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/GSA/README.md" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/GSA/us48.shp" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/GSA/us48.shx" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/GSA/usjoin.csv" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/STA250 Syllabus.pdf" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/experiments/forloop.py" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/experiments/multipleSubmit.py" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/experiments/mymap.svg" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/experiments/reg.py" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/experiments/templates/forloop.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/experiments/templates/ms.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/experiments/templates/regionalization.html" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/filesavingtest.py" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/genMap" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/helloworld.py" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/lab1.pdf" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/lab2.pdf" afterPath="" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/GAT_NLP/main.py" afterPath="$PROJECT_DIR$/GAT_NLP/main.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/GAT_NLP/radar_runner.py" afterPath="$PROJECT_DIR$/GAT_NLP/radar_runner.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/README.md" afterPath="$PROJECT_DIR$/README.md" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/SNA.py" afterPath="$PROJECT_DIR$/SNA.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/application.py" afterPath="$PROJECT_DIR$/application.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/nltkDraw.py" afterPath="$PROJECT_DIR$/nltkDraw.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/requirements.txt" afterPath="$PROJECT_DIR$/requirements.txt" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/static/css/general.css" afterPath="$PROJECT_DIR$/static/css/general.css" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/static/js/jgraph.js" afterPath="$PROJECT_DIR$/static/js/jgraph.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/static/js/jgraph_test1.min.js" afterPath="$PROJECT_DIR$/static/js/jgraph_test1.min.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/templates/Jgraph.html" afterPath="$PROJECT_DIR$/templates/Jgraph.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/templates/nodeselect.html" afterPath="$PROJECT_DIR$/templates/nodeselect.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/templates/upload.html" afterPath="$PROJECT_DIR$/templates/upload.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/templates/visualizations.html" afterPath="$PROJECT_DIR$/templates/visualizations.html" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -12,30 +217,44 @@
   <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="nodeselect.html" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/templates/nodeselect.html">
+      <file leaf-file-name="upload.html" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/templates/upload.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="681">
-              <caret line="87" column="7" lean-forward="false" selection-start-line="87" selection-start-column="7" selection-end-line="87" selection-end-column="7" />
+            <state relative-caret-position="2535">
+              <caret line="169" column="0" lean-forward="false" selection-start-line="169" selection-start-column="0" selection-end-line="169" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="visualizations.html" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/templates/visualizations.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="362">
+              <caret line="105" column="8" lean-forward="false" selection-start-line="105" selection-start-column="8" selection-end-line="105" selection-end-column="8" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Jgraph.html" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/templates/Jgraph.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-2739">
+              <caret line="34" column="0" lean-forward="false" selection-start-line="34" selection-start-column="0" selection-end-line="34" selection-end-column="0" />
               <folding>
-                <marker date="1498592837000" expanded="false" signature="2041:2057" ph="..." />
+                <element signature="n#style#0;n#button#0;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="upload.html" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/templates/upload.html">
+      <file leaf-file-name="general.css" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/static/css/general.css">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-129">
-              <caret line="168" column="0" lean-forward="false" selection-start-line="168" selection-start-column="0" selection-end-line="168" selection-end-column="0" />
-              <folding>
-                <marker date="1498592837000" expanded="true" signature="10232:10288" ph="..." />
-                <marker date="1498592837000" expanded="true" signature="10232:10605" ph="..." />
-                <marker date="1498592837000" expanded="true" signature="10232:10687" ph="..." />
-                <marker date="1498592837000" expanded="true" signature="10232:10694" ph="..." />
-                <marker date="1498592837000" expanded="true" signature="10319:10595" ph="..." />
-              </folding>
+            <state relative-caret-position="771">
+              <caret line="176" column="0" lean-forward="true" selection-start-line="176" selection-start-column="0" selection-end-line="176" selection-end-column="0" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -53,9 +272,11 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/templates/Jgraph.html" />
-        <option value="$PROJECT_DIR$/templates/nodeselect.html" />
         <option value="$PROJECT_DIR$/templates/upload.html" />
+        <option value="$PROJECT_DIR$/templates/nodeselect.html" />
+        <option value="$PROJECT_DIR$/templates/visualizations.html" />
+        <option value="$PROJECT_DIR$/templates/Jgraph.html" />
+        <option value="$PROJECT_DIR$/static/css/general.css" />
       </list>
     </option>
   </component>
@@ -107,6 +328,38 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="templates" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="GAT" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="GAT" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="static" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="GAT" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="GAT" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="static" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="css" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -275,15 +528,16 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1498592119809</updated>
-      <workItem from="1498592121846" duration="781000" />
+      <workItem from="1498592121846" duration="1340000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="781000" />
+    <option name="totallyTimeSpent" value="1340000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1440" height="900" extended-state="0" />
+    <editor active="true" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -299,7 +553,7 @@
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -327,24 +581,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/templates/Jgraph.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-2739">
-          <caret line="34" column="0" lean-forward="false" selection-start-line="34" selection-start-column="0" selection-end-line="34" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/templates/nodeselect.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="681">
-          <caret line="87" column="7" lean-forward="false" selection-start-line="87" selection-start-column="7" selection-end-line="87" selection-end-column="7" />
-          <folding>
-            <marker date="1498592837000" expanded="false" signature="2041:2057" ph="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/static/css/main.css">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -353,33 +589,47 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/static/css/general.css">
+    <entry file="file://$PROJECT_DIR$/templates/nodeselect.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        <state relative-caret-position="711">
+          <caret line="104" column="0" lean-forward="true" selection-start-line="104" selection-start-column="0" selection-end-line="104" selection-end-column="0" />
+          <folding>
+            <element signature="n#style#0;n#input#0;n#form#0;n#body#0;n#html#0;n#!!top" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/templates/upload.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2535">
+          <caret line="169" column="0" lean-forward="false" selection-start-line="169" selection-start-column="0" selection-end-line="169" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/templates/visualizations.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-2298">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        <state relative-caret-position="362">
+          <caret line="105" column="8" lean-forward="false" selection-start-line="105" selection-start-column="8" selection-end-line="105" selection-end-column="8" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/templates/upload.html">
+    <entry file="file://$PROJECT_DIR$/templates/Jgraph.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-129">
-          <caret line="168" column="0" lean-forward="false" selection-start-line="168" selection-start-column="0" selection-end-line="168" selection-end-column="0" />
+        <state relative-caret-position="-2739">
+          <caret line="34" column="0" lean-forward="false" selection-start-line="34" selection-start-column="0" selection-end-line="34" selection-end-column="0" />
           <folding>
-            <marker date="1498592837000" expanded="true" signature="10232:10288" ph="..." />
-            <marker date="1498592837000" expanded="true" signature="10232:10605" ph="..." />
-            <marker date="1498592837000" expanded="true" signature="10232:10687" ph="..." />
-            <marker date="1498592837000" expanded="true" signature="10232:10694" ph="..." />
-            <marker date="1498592837000" expanded="true" signature="10319:10595" ph="..." />
+            <element signature="n#style#0;n#button#0;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/static/css/general.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="771">
+          <caret line="176" column="0" lean-forward="true" selection-start-line="176" selection-start-column="0" selection-end-line="176" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>

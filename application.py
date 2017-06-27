@@ -1,13 +1,12 @@
-from flask import Flask, render_template, request, redirect, url_for, session, jsonify
 import matplotlib
+from flask import Flask, render_template, request, redirect, url_for, jsonify
+
 matplotlib.use('Agg')
 import os
 import nltkDraw
 import SNA as sna
 import xlrd
 import tempfile
-import shutil
-import matplotlib.pyplot as plt
 import csv
 import json
 import networkx as nx
@@ -16,11 +15,11 @@ import GAT_GSA
 import GAT_GSA.MapGenerator
 #import GAT_GSA.GSA_flask
 from numpy import array, matrix
-import pprint
 import copy
 import sys
-print(sys.getdefaultencoding())
 import random
+import GAT_NLP_JamesWu.parser as nlp_james
+import scraper.url_parser as url_parser
 # import Alok's and James' and Nikita's tools
 
 ''' Before running:
@@ -43,7 +42,7 @@ import random
 		matplotlib: http://cfss.uchicago.edu/slides/week10_flaskPlotting.pdf
 
 		Couple options: Do we run all things that we can run, then when the user asks for them we just show?
-		Or do we perform the function when they choose it? 
+		Or do we perform the function when they choose it?
 		The first seems easier for me, but less efficient and intuitive overall.
 		For the second, I'd have to find a way to run the programs by pressing a menu button
 		CS250 design decisions popping up here no?
@@ -51,7 +50,7 @@ import random
 		Users will log in?
 		We can save their files in their user directory
 
-		Big things: 
+		Big things:
 			Saving files on server so we can upload files that aren't in the same directory as the other
 			Managing said files. Some we don't want to save, right? They'll take up a ton of space
 			SNA prompts
@@ -106,7 +105,7 @@ for color in colors:
 	hexColors[color] = hexVal
 
 # the following few store helper methods are used to store user-uploaded files
-# tempfile is a python package 
+# tempfile is a python package
 # essentially what we're doing is copying their uploaded data to a randomly named folder or filename which is how we store it on the server
 # then we use these folders and files to do our analysis
 # some of the storing has to be done in a specialized manner, which is the reason for the storeNLP and storeGSA methods
@@ -127,7 +126,6 @@ def storeNLP(file_list):
 	source_dir = tempfile.mkdtemp(dir=tempdir) + '/'
 	for f in file_list:
 		f.save(source_dir + f.filename)
-	print(source_dir)
 	# this line is necessary because of how AWS creates default permissions for newly created files and folders
 	os.chmod(source_dir, 0o755)
 	return source_dir
@@ -142,7 +140,6 @@ def storeGSA(file_list):
 		f.save(source_dir + f.filename)
 		if f.filename.endswith(".shp"):
 			shapefile = source_dir + f.filename
-	print(source_dir)
 	#see previous comment
 	os.chmod(source_dir, 0o755)
 	return shapefile
@@ -174,10 +171,16 @@ def upload():
 		fileDict['GSA_file_list']		= request.files.getlist('GSA_Input_map')
 		fileDict['NLP_Input_corpus'] 	= storeNLP(request.files.getlist('NLP_Input_corpus'))
 		fileDict['NLP_Input_LDP']		= storefile(request.files['NLP_Input_LDP'])
+		fileDict['NLP_Input_Sentiment']	= storefile(request.files['NLP_Input_Sentiment'])
+
 		terms = request.form.get('NLP_LDP_terms')
 		term_array						= terms.split(',') if (terms != '' and terms != None) else None
 		if term_array != None:
 			fileDict['NLP_LDP_terms']	= [term.strip() for term in term_array]
+
+		fileDict["NLP_INPUT_NER"] = request.form.get("NLP_INPUT_NER")
+		fileDict["NLP_INPUT_IOB"] = request.form.get("NLP_INPUT_IOB")
+
 		fileDict['SNA_Input'] 			= storefile(request.files['SNA_Input'])
 		#fileDict['NLP_Type'] 			= request.form['NLP_Type']
 
@@ -211,7 +214,7 @@ def upload():
 
 # the <int:case_num> is part of the URL
 # why do we have case_num? Before, when we didn't, everyone accessing the webiste simultaneously was affecting the same internal data
-# e.g. if person 1 made an SNA visuazliaiton, then person 2 came in a second later and did their SNA visualization, then 
+# e.g. if person 1 made an SNA visuazliaiton, then person 2 came in a second later and did their SNA visualization, then
 # person 2's data would overwrite person 1's data and person 1 would see person 2's data
 # now, each person using GAT has a (almost certainly) unique case number associated with their internal data so this doesn't happen
 # you can see, once you go past the upload page, the URL is appended with a number
@@ -249,13 +252,14 @@ def visualize(case_num):
 	NLP_dir 			= fileDict.get('NLP_Input_corpus')
 	NLP_file_LDP		= fileDict.get('NLP_Input_LDP')
 	NLP_LDP_terms		= fileDict.get('NLP_LDP_terms')
+	NLP_file_sentiment 	= fileDict.get('NLP_Input_Sentiment')
+	NLP_NER_sentence 	= fileDict.get('NLP_INPUT_NER')
+	NLP_IOB_sentence 	= fileDict.get('NLP_INPUT_IOB')
 	SNA_file 			= fileDict.get('SNA_Input')
 	#NLP_type 			= fileDict.get('NLP_Type')
 	research_question 	= fileDict.get('research_question')
 	tropes 				= fileDict.get('tropes')
-	if research_question == '':
-		research_question = "None specified"
-	research_question = None # temporary: Smart Search is under development
+	#research_question = None # temporary: Smart Search is under development
 	graph 				= fileDict.get('graph')
 	GSA_sample			= fileDict.get('GSA_data')
 	error = False
@@ -311,19 +315,53 @@ def visualize(case_num):
 	fileDict['NLP_images'] = radar_runner.generate(NLP_dir, tropes)
 	gsaCSV, mymap = tempParseGSA(GSA_file_CSV, GSA_file_SHP)
 	if GSA_file_SVG != None:
-		print("here")
 		gsaCSV, mymap = parseGSA(GSA_file_CSV, GSA_file_SVG)
 
 	if gsaCSV == None and mymap == True:
 		error = True
 		mymap = None
 
+	#################James WU's NLP methods:###########################
+	nlp_sentiment = None
+	if NLP_file_sentiment != None:
+		import os.path
+		if not os.path.isfile("nb_sentiment_classifier.pkl"):
+			nlp_james.trainSentimentClassifier()
+		with open(NLP_file_sentiment) as file:
+			nlp_sentiment = nlp_james.predictSentiment(file.read())
+	####### To perform sentiment analysis on scraped data from URL - Ryan Steed 7 Jun 2017 #####
+	'''
+	if research_question[3] != None:
+		print("Analyzing research question")
+		import os.path
+		if not os.path.isfile("nb_sentiment_classifier.pkl"):
+			nlp_james.trainSentimentClassifier()
+		nlp_sentiment = nlp_james.predictSentiment(research_question[3])
+	'''
+	######Temporarily turned off as per Tony's request:##################
+	ner = None
+	if NLP_NER_sentence != None and NLP_NER_sentence.strip() != "":
+		tags = nlp_james.npChunking(NLP_NER_sentence)
+		ner = nlp_james.treeTraverseString(tags)
 	#if request.method == 'POST':
 
+	iob = None
+	if NLP_IOB_sentence != None:
+		ne_tree = nlp_james.NEChunker(NLP_IOB_sentence)
+		iob = nlp_james.IOB_Tagging(ne_tree)
+	######Temporarily turned off as per Tony's request##################
+	#################James WU's NLP methods###########################
+
+	###########scrape inputted url and return text:##############
+	if research_question != None and research_question.strip() != "":
+		print("RESEARCH QUESTION: " + research_question)
+		research_question = url_parser.write_articles([research_question.strip()])
+
+	research_question = research_question if research_question != None else None
 
 	# pass files into parsers/tools created by Alok and James
 	# this part will be done at the coding session
-	# how will the output look? 
+	# how will the output look?
 	# oh yeah we need 3 different options for the 3 different NLP tools - DONE
 	# go to http://werkzeug.pocoo.org/docs/0.11/datastructures/ to see how to read files
 	# probably best to save the flask file objects as python file objects then use python file i/o
@@ -334,6 +372,8 @@ def visualize(case_num):
 
 	copy_of_graph = copy.deepcopy(graph)
 	fileDict['copy_of_graph'] = copy_of_graph
+
+	nlp_data_show = nlp_sentiment != None or ner != None or iob != None
 
 	return render_template('visualizations.html', 
 		research_question = research_question,
@@ -351,7 +391,11 @@ def visualize(case_num):
 		auto = auto,
 		sp_dyn = sp_dyn,
 		error=error,
-		case_num = case_num
+		case_num = case_num,
+		nlp_sentiment = nlp_sentiment,
+		nlp_ner = ner,
+		nlp_iob = iob,
+		nlp_data_show = nlp_data_show
 		)
 
 ###########################
@@ -450,7 +494,6 @@ def SNA2Dplot(graph, request, label=True):
 	if graph == None:
 		return None
 	if request.form.get("options") == None:
-		print(graph.nodeSet)
 		i = 0
 		for nodeSet in graph.nodeSet:
 			attr[nodeSet] = [colors[i],50]
@@ -528,19 +571,24 @@ def get_data(case_num):
 						eigenvector=eigenvector,
 				   		betweenness=betweenness
 						)
-
-	cluster=None
-	if graph.clustering_dict != {}:
-		cluster = "clustering = " + str(round(graph.clustering_dict.get(name),4));
+	if graph.clustering_dict != {} and graph.clustering_dict != None:
+		cluster = str(round(graph.clustering_dict.get(name),4));
 	else:
-		cluster="clustering N/A"
-
-	eigenvector = "eigenvector centrality = " + str(round(graph.eigenvector_centrality_dict.get(name),4));
-	betweenness = "betweenness centrality = " + str(round(graph.betweenness_centrality_dict.get(name),4));
-	return jsonify(name=name, 
-				   cluster=cluster, 
+		cluster="clustering not available"
+	if graph.eigenvector_centrality_dict != {} and graph.eigenvector_centrality_dict != None:
+		eigenvector = str(round(graph.eigenvector_centrality_dict.get(name),4));
+	else:
+		eigenvector="clustering not available"
+	if graph.betweenness_centrality_dict != {} and graph.betweenness_centrality_dict != None:
+		betweenness = str(round(graph.betweenness_centrality_dict.get(name),4));
+	else:
+		betweenness="clustering not available"
+	attributes = graph.get_node_attributes(name)
+	toJsonify = dict(name=name,
+				   cluster=cluster,
 				   eigenvector=eigenvector,
-				   betweenness=betweenness)
+				   betweenness=betweenness, attributes=attributes)
+	return jsonify(toJsonify)
 
 @application.route("/_remove_node/<int:case_num>")
 def remove_node(case_num):
@@ -635,9 +683,7 @@ def parseGSA(GSA_file_CSV, GSA_file_SVG):
 @application.route('/sample/<int:case_num>/<path:sample_path>')
 def sample(sample_path, case_num):
 	fileDict = caseDict[case_num]
-	print(sample_path)
 	arr = sample_path.split('/')
-	print(url_for('static', filename = ''))
 	if arr[0] == 'GSA':
 		fileDict['GSA_Input_CSV'] = url_for('static', filename = "sample/GSA/" + arr[1])[1:]
 		fileDict['GSA_Input_SHP'] = url_for('static', filename = "sample/GSA/" + arr[2])[1:]
@@ -665,8 +711,12 @@ def sample(sample_path, case_num):
             6.61742518]]))
 		#return fileDict['GSA_file_CSV'] + " " + fileDict['GSA_file_SVG']
 	if arr[0] == 'NLP':
-		fileDict['NLP_Input_corpus'] = url_for('static', filename = "sample/NLP/" + arr[1] + '/')[1:]
-		return redirect(url_for('choose_tropes', case_num = case_num))
+		if arr[1] == 'iran':
+			fileDict['NLP_Input_Sentiment'] = 'static/sample/NLP/sample_sentiment.txt'
+			return redirect(url_for('visualize', case_num = case_num))
+		else:
+			fileDict['NLP_Input_corpus'] = url_for('static', filename = "sample/NLP/" + arr[1] + '/')[1:]
+			return redirect(url_for('choose_tropes', case_num = case_num))
 	if arr[0] == 'SNA':
 		fileDict['SNA_Input'] = url_for('static', filename = "sample/SNA/" + arr[1])[1:]
 		return redirect(url_for('sheetSelect', case_num = case_num))
@@ -709,6 +759,12 @@ def checkExtensions(case_num):
 	if nlp_file != None:
 		if not nlp_file.endswith('.txt'):
 			errors.append("Error: please upload txt file for NLP Lexical Dispersion Plot.")
+
+	sentiment_file = fileDict["NLP_Input_Sentiment"]
+	if sentiment_file != None:
+		if not sentiment_file.endswith('.txt'):
+			errors.append("Error: please upload txt file for Sentiment Analysis.")
+
 	if terms != None and nlp_file == None:
 		errors.append("Error: please upload txt file for NLP Lexical Dispersion Plot.")
 

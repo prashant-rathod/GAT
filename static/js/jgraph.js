@@ -11,6 +11,7 @@ if (typeof require === 'function') {
         require('./TrackballControls');
     }
 }
+
 THREE.Matrix3.prototype.getInverse = function (a, b) {
     'use strict';
     var c = a.elements, d = this.elements;
@@ -76,10 +77,22 @@ var jgraph = (function () {
             this.directionalLight.position.set(1, 1, 1);
             this.nodes = [];
             this.edges = [];
+            this.nodes_edges = [];
 
-            // these are used when the user wants to reset the graph
+            // stores the default graph
+            // used when the user resets the modified graph
             this.tempNodes = [];
             this.tempEdges = [];
+
+            // these are used when the user wants to undo the graph
+            this.undoNodes = [];
+            this.undoEdges = [];
+            this.undoNodesNum = [];
+
+
+            // this.redoNodes = [];
+            // this.redoEdges = [];
+            // this.redoNodesNum = [];
 
             this.arrows = [];
             this.materials = {};
@@ -138,7 +151,7 @@ var jgraph = (function () {
                         self.materials[edge.color] = self.makeMaterial(edge.color);
                     }
                 }
-                n1 = self.nodes[map[edge.source.toString()]]; 
+                n1 = self.nodes[map[edge.source.toString()]];
                 n2 = self.nodes[map[edge.target.toString()]];
                 material = self.materials[edge.hasOwnProperty('color') ?
                         edge.color : self.defaultEdgeColor];
@@ -175,90 +188,141 @@ var jgraph = (function () {
                 }
             });
 
-            self.nodes_edges = self.nodes.concat(self.edges);
+            $.each(self.nodes.concat(this.edges), function (i, value) {          // remove all the nodes/edges from the visualization
+                self.nodes_edges.push(value);
+            });
+
+            $.each(self.nodes, function (i, value) {          // remove all the nodes/edges from the visualization
+                self.tempNodes.push(value);
+            });
+
+            $.each(self.edges, function (i, value) {          // remove all the nodes/edges from the visualization
+                self.tempEdges.push(value);
+            });
+
 
             if (this.runOptimization) {
                 this.optimize();
             }
         },
 
-
         /**
+        * Remove the node that user requests
         * Reload the new 3D visualization after the user requests a removal of node.
         */
 
-        reset: function() {
-            self = this;
-            
-            $.each(this.nodes.concat(this.edges).concat(this.arrows), function (i, value) {
-                self.scene.remove(value);
-            });
-
-            self.nodes = self.tempNodes;
-            self.edges = self.tempEdges;
-            self.nodes_edges = self.nodes.concat(self.edges);
-
-            $.each(self.nodes_edges, function (i, value) {          // remove all the nodes/edges from the visualization
-                self.scene.remove(value);
-            });
-        },
-
-
-        reload: function(node){
-            var node_num, i, j, k, removeList, self, removalNode;
+        removeNode: function(node){
+            var node_num, i, j, k, removeList, self, removalNode, updatedNodes;
+            removalNode = '';
 
             self = this;
             removeList = [];
+            updatedNodes = [];  // stores all the nodes that has been updated previousdly (more precisely, decremeted by 1)
 
             if (node !== "NULL") {
-                for (i = 0; i < this.nodes.length; i += 1) {            // find the node and remove
-                    if (this.nodes[i].name === node) {
-                        removalNode = this.nodes[i];
-                        this.nodes.splice(i, 1);
+                for (i = 0; i < self.nodes.length; i += 1) {            // find the node and remove
+                    if (self.nodes[i].name === node) {
+                        removalNode = self.nodes[i];
+                        self.nodes.splice(i, 1);
                         node_num = i;
                         break;
                     }
                 }
 
-                for (j = 0; j < this.edges.length; j += 1){         // Remove all the edges that are   
-                                                                    // conected to the node that has been removed
-                    if (this.edges[j].source === node_num) {        // Shift the source & target by 1,because
-                        removeList.push(this.edges[j]);            // the nodes are defined by the index in self.nodes.
-                   
-                    }
-                    else if (this.edges[j].target === node_num) {
-                        removeList.push(this.edges[j]);
-
+                for (j = 0; j < self.edges.length; j += 1){                                           // Remove all the edges that are
+                                                                                                      // conected to the node that has been removed
+                    if (self.edges[j].source === node_num || self.edges[j].target === node_num) {     // Shift the source & target by 1,because
+                        removeList.push(self.edges[j]);                                               // the nodes are defined by the index in self.nodes.
                     } else {
-
-                        if (this.edges[j].source > node_num) {
-                            this.edges[j].source -= 1;
+                        if (self.edges[j].source > node_num) {
+                            self.edges[j].source -= 1;
                         }
-
-                        if (this.edges[j].target > node_num) {
-                            this.edges[j].target -= 1;
+                        if (self.edges[j].target > node_num) {
+                            self.edges[j].target -= 1;
                         }
                     }
                 }
             }
 
+            if (removalNode === '') {  // quit function when the node that user imput
+                return;
+            }
+
+            self.undoNodesNum.push(node_num);
+            self.undoNodes.push(removalNode);
+
+            // remove the last undo statment (queue)
+            // only store 5 undo statments for memeroy purpose
+            // debugging (currently not working)
+            // if (self.undoNodes.length > 5) {
+            //     self.undoEdges.shift();
+            //     self.undoNodes.shift();
+            //     self.undoNodesNum.shift();
+            //     self.undoEdges.push(removeList);
+            // } else {
+            //     self.undoEdges.push(removeList);
+            // }
+            // console.log(self.undoNodes);
+
             for (k = 0; k < removeList.length; k += 1){
                 self.edges.splice(self.edges.indexOf(removeList[k]), 1);
             }
-            
+
             removeList.push(removalNode);
 
             $.each(removeList, function (i, value) {          // remove all the nodes/edges from the visualization
                 self.scene.remove(value);
             });
 
-            self.nodes_edges = self.nodes.concat(self.edges);
+            $.each(self.nodes.concat(this.edges), function (i, value) {          // remove all the nodes/edges from the visualization
+                self.nodes_edges.push(value);
+            });
 
             if (this.runOptimization) {
                 this.optimize();
             }
         },
 
+
+        /*
+        * undo function. Undo task (removing node)
+        * debugging
+        */
+
+        // undo: function(){
+        //     var self = this;
+        //     if (self.undoNodes.length !== 0) {
+        //         var node = self.undoNodes.pop();
+        //         var nodeNum = self.undoNodesNum.pop();
+        //         var edge = self.edges.pop();
+        //         console.log(edge);
+
+        //         self.nodes.push(node);
+        //         self.nodes_edges.push(node);
+        //         self.scene.add(node);
+
+        //         $.each(edge, function (i, value) {
+        //             if (value.source === nodeNum) {
+        //                 value.source = self.nodes.length - 1;
+        //                 if (value.target > nodeNum) {
+        //                     target = target - 1;
+        //                 }
+        //                 self.nodes_edges.push(value);
+        //                 self.edges.push(value);
+        //                 self.scene.add(value);
+
+        //             } else if (value.target === nodeNum) {
+        //                 value.target = self.nodes.length - 1;
+        //                 if (value.source > nodeNum) {
+        //                     source = source - 1;
+        //                 }
+        //                 self.nodes_edges.push(value);
+        //                 self.edges.push(value);
+        //                 self.scene.add(value);
+        //             }
+        //         });
+        //     }
+        // },
 
 
         /**
@@ -273,10 +337,11 @@ var jgraph = (function () {
             this.draw(this.current);
         },
 
+
         /**
          * Fires a user-specified callback (function (node) {}) on node click
          */
-         
+
         onClick: function (callback) {
             var self = this;
             this.projector = new THREE.Projector();
@@ -412,7 +477,7 @@ var jgraph = (function () {
          */
 
          /*
-         * Brian Hur: Overwrote it for jgraph 
+         * Brian Hur: Overwrote it for jgraph
          */
 
         optimize: function (options) {

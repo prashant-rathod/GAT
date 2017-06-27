@@ -80,9 +80,10 @@
 		<li class="dropdown">
 			<a href="#" class="dropbtn">NLP</a>
 			<div class="dropdown-content">
-				<a href="{{url_for('sample', sample_path = 'NLP/united-states', case_num=case_num)}}">Run United States case</a>
+				<!--<a href="{{url_for('sample', sample_path = 'NLP/united-states', case_num=case_num)}}">Run United States case</a>-->
 				<a href="{{url_for('sample', sample_path = 'NLP/isil', case_num=case_num)}}">Run ISIL case</a>
-				<a href="{{url_for('sample', sample_path = 'NLP/AAH', case_num=case_num)}}">Run AAH case</a>
+				<a href="{{url_for('sample', sample_path = 'NLP/iran', case_num=case_num)}}">Run Sentiment Analysis on Iran Speech</a>
+				<!--<a href="{{url_for('sample', sample_path = 'NLP/AAH', case_num=case_num)}}">Run AAH case</a>-->
 			</div>
 		</li>
 		<li class="dropdown">
@@ -168,7 +169,7 @@
 		<span class="inputsectioncontainer">
 			<span>
 				<br>
-				<textarea name="research_question" rows="2" style="width:45%;" disabled>Enter a question:</textarea>
+				<textarea name="research_question" rows="2" style="width:45%;">Enter a url for scraping:</textarea>
 			</span>
 			<br><br><br>
 		</span>
@@ -181,7 +182,6 @@
 			</span>
 			<span class="nametag">
 			SNA
-			</span>
 			<span class="inputsection">
 				<br>
 				Upload .csv file for GSA:<br>
@@ -204,6 +204,21 @@
 				Enter terms you would like to perform LDP, separated by commas:<br>
 				<input type = "text" id = "NLP_LDP_terms" name = "NLP_LDP_terms"><br>
 				<input type = "button" id = "NLP_Clear" value = "Clear" onClick = "remove_NLP(this)">
+				<hr>
+				Upload .txt file for Sentiment Analysis:<br>
+				<input type = "file" id = "NLP_Input_Sentiment" name = "NLP_Input_Sentiment"><br>
+				<hr>
+
+				<!--
+				Enter sentence for Name Entity Recognition:<br>
+				<input type = "text" id = "NLP_INPUT_NER" name = "NLP_INPUT_NER"><br>
+				<hr>
+
+				Enter sentence for IOB Tagging:<br>
+				<input type = "text" id = "NLP_INPUT_IOB" name = "NLP_INPUT_IOB"><br>
+				<br>
+
+				-->
 				<input type = "submit" value = "SUBMIT">
 			</span>
 			<span class="inputsection">

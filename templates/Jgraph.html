@@ -6,6 +6,8 @@
     <link href="{{url_for('static', filename='css/general.css')}}" rel="stylesheet">
     <script src="{{url_for('static', filename='js/jquery-1.11.1.min.js')}}"></script>
     <script src="{{url_for('static', filename='js/jgraph_test1.min.js')}}"></script>
+    <script src="{{url_for('static', filename='js/jgraphManual.js')}}"></script>
+    <link rel="stylesheet" href="{{url_for('static', filename='css/font-awesome-4.7.0/css/font-awesome.min.css')}}">
     <title>Jgraph</title>
   </head>
 
@@ -39,7 +41,7 @@
       jgraph.create('.graph', {directed: false});
       jgraph.draw({{jgdata|safe}});
 
-      var onEnter, onExit, $d, hovered;
+      var onEnter, onExit, $d, hovered, currentNodeDict;
 
       $d = $('.label');
       $d.hide();
@@ -76,37 +78,33 @@
 
       //When node/edge is clicked, display information of the bottom right corner
       //Need to ask Tony specific file to make edges have properties
-      jgraph.onClick(function (node) {      
+      jgraph.onClick(function (node) {
         if (node.name !== "" && node.geometry.type === "SphereGeometry") {
-            $(function() {
-              $.getJSON('/_get_data/{{case_num}}', {
-                name: node.name,        
-              }, function(data) {
-                //currently hard coded, must be fixed soon
-                $("#name").text(data.name);
-                $("#cluster").text(data.cluster);
-                $("#eigenvalue_centrality").text(data.eigenvector);
-                $("#betweenness_centrality").text(data.betweenness);
-                $("#delete").val(data.name);
-              });
-            });
+          $.getJSON('/_get_data/{{case_num}}', {
+            name: node.name
+          }, function(data) {
+            update(data);
+            data['name'] = node.name
+            currentNodeDict = data;
+        });
         } else {
           $("#name").text(node.name);     // Need Tony to have xlsv file.
           $("#cluster").text("Null");
           $("#eigenvalue_centrality").text("Null");
           $("#betweenness_centrality").text("Null");
           $("#delete").val('');
-        }
+        };
       });
 
       //Takes the user input (node that user wants to remove) and removes it from SNA.
       $(function(){
-        $('a#removeNode').bind('click', function(){
+        $('#remove').bind('click', function(){
           $.getJSON('/_remove_node/{{case_num}}', {
             node: $('input[name=a]').val()
           }, function(data) {
             $('#message').text(data.result)
-            jgraph.reload(data.node)
+            location.reload() // quick page reload, TODO refresh only jgraph (mxgraph req?)
+            jgraph.reload(data.node) //doesn't exist??
           });
         });
       });
@@ -128,49 +126,120 @@
             jgraph.reset()
         });
       });
+      handleEditSubmit = function(nodeDict) {
+        console.log("submitted")
+        for (var feature in nodeDict['attributes']) {
+          inputtedValue = $('input[name="'+feature+'"]').val()
+          if (inputtedValue != nodeDict['attributes'][feature]) {
+            $.getJSON('/_change_attribute/{{case_num}}', {
+              node: $('input[name=a]').val(),
+              value: inputtedValue,
+              attribute: feature,
+            }, function(data) {
+              return
+            });
+          };
+        };
+        location.reload()
+      }
+      update = function(nodeDict) {
+        console.log("NodeDict:",nodeDict)
+        $("#delete").val(nodeDict['name']);
+        $("#measureInfo").empty()
+        $("#attributeInfo").empty()
+        $("#attributeInfo").append("<i id='editButton' class='fa fa-edit' onclick='handleEditButton()'></i>")
+        $("#name").text(nodeDict['name'])
+        // Need Tony to have xlsv file.
+        // append to $("#attributeInfo")
+        for (var key in nodeDict) {
+          if (nodeDict.hasOwnProperty(key)) {
+            if (key != "attributes" && key != "name") {
+              $("#measureInfo").append("<span id='"+key+"'>"+key+": "+nodeDict[key]+"</span><br>")
+            }
+          }
+        }
+        for (var feature in nodeDict['attributes']) {
+          $("#attributeInfo").append("<span id='"+feature+"'>"+feature+": "+nodeDict['attributes'][feature]+"</span><br>")
+        }
+      }
+      handleEditButton = function() {
+        $("#attributeInfo").empty()
+        for (var feature in currentNodeDict['attributes']) {
+          if (feature != 'name') {
+            $("#attributeInfo").append('<span>'+feature+': </span><input class="editInputs"id="'+feature+'" name="'+feature+'" value="'+currentNodeDict['attributes'][feature]+'"></input><br />');
+          }
+        }
+        $("#attributeInfo").append('<input id="editSubmitButton" type="submit" name="editSubmitButton" value="Submit" onclick="handleEditSubmit(currentNodeDict)" />')
+      }
     </script>
 
-
-    <div id = "nodeInfo" style = "position: fixed; bottom: 0; right: 0; border-style: solid">
-      <span id="name">Name</span> <br>
-      <span id="cluster">Clustering</span> <br>
-      <span id="eigenvalue_centrality">eigenvector centrality</span> <br>
-      <span id="betweenness_centrality">betweenness centrality</span> 
+    <div id="infoWindows" style = "position: fixed; bottom: 0; right: 0; border-style: solid">
+      <div class = "output-button-bar">
+        <i style="color:white;margin-left:4px" class="fa fa-window-maximize"
+      onclick="maximizeTabs()"></i>
+        <i style="color:white;margin-left:4px" class="fa fa-window-minimize"
+      onclick="minimizeTabs()"></i>
+        <span id="name"></span>
+        <span class="tab" style="float:right">
+          <button class="tablinks active" onclick="measuresToggle();">Measures</button>
+          <button id="attributesButton" class="tablinks" onclick="attributesToggle();">Attributes</button>
+          <button class="tablinks" onclick="propToggle();">Propensities</button>
+        </span>
+      </div>
+      <div id = "nodeInfo" style="padding:10px;border:none">
+        <div id="attributeInfo" class="tabcontent" style="display:none;border:none">
+          <div class="filler chooseRequest" position="center">Select a node to display attributes.</div>
+        </div>
+        <div id="measureInfo" class="tabcontent" style="border:none;">
+          <div class="filler">Select a node to display measures.</div>
+        </div>
+        <div id="propInfo" class="tabcontent" style="display:none;border:none">
+          <div class="filler chooseRequest" position="center">No node propensities currently available.</div>
+        </div>
+      </div>
     </div>
 
     <!-- Toolbar for removing nodes, undoing or redoing user's action-->
-    <div id = "toolbar" style = "position: fixed; top: 0; right: 0; border-style: solid">  
-      <p>
-        <input type="text" size=20 name=a id="delete"> <br><br>
+    <div class = "output-window" id = "nodeWindow" style = "position:fixed;top:0;right:0;border:solid;">
+
+      <div id = "toolbar">
+      <p style="margin-bottom:0px;margin-left:auto;margin-right:auto">
+        <input style="margin:4px;margin-left:6px" type="text" size=20 name=a id="delete"> <br><br>
         <span id="message"></span>
       </p>
-      <a href="javascript:void(0);" id="removeNode">remove node</a> <br>
+      <p style="text-align:center ; margin:2px"><input style="margin-right:auto;margin-left:auto;padding:5px" id="remove" type="submit" value="Remove Node" href="javascript:void(0)" ></p> <br>
       <!--a href="javascript:void(0);" id="undo">undo</a>
       <a href="javascript:void(0);" id="redo">redo</a>
       <a href="javascript:void(0);" id="redo">reset</a-->
     </div>
 
+    <div class = "output-button-bar">
+      <i style="color:white;margin-left:4px" class="fa fa-window-maximize fa-flip-vertical"
+      onclick="document.getElementById('toolbar').style.display='inline-block'"></i>
+
+      <i style="color:white;margin-left:4px" class="fa fa-window-minimize fa-flip-vertical"
+      onclick="document.getElementById('toolbar').style.display='none'"></i>
+    </div>
+    </div>
+
     <div class = "output-window" id = "SNA Options Window" style = "position:fixed;bottom:0;left:0;border:solid;">
 
-    <div class = "output-button-bar">
-      <button class="btn-hide"
-      onclick="document.getElementById('SNA Options').style.display='none'">hide</button>
+    <div class = "output-button-bar" style="text-align:right">
+      <i style="color:white" class="fa fa-window-minimize"
+      onclick="document.getElementById('SNA Options').style.display='none'"></i>
 
-      <button class="btn-show"
-      onclick="document.getElementById('SNA Options').style.display='inline-block'">show</button>
-
-      <button class="btn-close"
-      onclick="document.getElementById('SNA Options Window').style.display='none'">close</button>
+      <i style="color:white" class="fa fa-window-maximize"
+      onclick="document.getElementById('SNA Options').style.display='inline-block'"></i>
     </div>
 
     <div class = "output" id = "SNA Options">
     <h3><center>SNA Options</center></h3>
-  
+
       <form enctype = "multipart/form-data" method = "post">
         <b>Colors</b><br>
         {% for set in graph.nodeSet %}
 
-          {{set}}: 
+          {{set}}:
           <select name = "{{set}}Color">
             {% for c in colors %}
 
@@ -183,7 +252,7 @@
 
         {% endfor %}
 
-        <input type = "submit" value = "SUBMIT" name = "options">
+        <input style="margin-right:auto;margin-left:auto;margin-top:5px;margin-bottom:5px" type = "submit" value = "SUBMIT" name = "options">
 
       </form>
 
