@@ -5,6 +5,6 @@
 !.elasticbeanstalk/*.global.yml
 
 *.pyc
-.idea
+.idea/*
 *.pem
 nltk_downloads/*
