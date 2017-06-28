@@ -155,6 +155,10 @@
           $("#attributeInfo").append("<span id='"+feature+"'>"+feature+": "+nodeDict['attributes'][feature]+"</span><br>")
         }
       }
+      $(".minusAttrButton").click(function() {
+        var id = $(this).data("id");
+        $("*[data-id=" + id + "]").remove();
+      })
     </script>
 
     <div id="infoWindows" style = "position: fixed; bottom: 0; right: 0; border-style: solid">
@@ -199,16 +203,35 @@
       </div>
       <div id="addNodeWindow" class='slider closed'>
         <form id="addNodeForm" enctype="multipart/form-data" method="post">
-        <input type="text" id="addNodeFormName" placeholder="Node Name"></input>
-        <br />
-          Node Type: <select name="nodeSet">
-            {% for set in graph.nodeSet %}
-              <option value="{{set}}">
-                {{set}}
-              </option>
-            {% endfor %}
-          </select>
+          <div><input type="text" id="addNodeFormName" placeholder="Node Name"></input></div>
+          <br />
+          <table>
+            <tr>
+              <td>
+                Node Type:
+              </td>
+              <td>
+                <select name="nodeSet">
+                 {% for set in graph.nodeSet %}
+                   <option value="{{set}}">
+                     {{set}}
+                   </option>
+                 {% endfor %}
+               </select>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                Add Attribute:
+              </td>
+              <td id="addAttrTarget">
+                <div>
+                  <input type="text" name="attributes" placeholder="attribute: value" /> <i id="addAttrButton0" class='fa fa-plus-circle' onclick="handleAddAttributeClick()"></i>
+                </div>
+              </td>
+            </tr>
         </form>
+        </table>
         <div class="centeredIcon" onclick="showAddNodeWindow()">
           <i class='fa fa-arrow-circle-down'></i>
         </div>

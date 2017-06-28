@@ -66,3 +66,12 @@ showAddNodeWindow = function() {
   $("#toolbar").toggleClass("closed")
   $("#addNodeWindow").toggleClass("closed")
 }
+counter = 0
+handleAddAttributeClick = function() {
+  $("#addAttrButton"+counter).toggleClass("fa-plus-circle")
+  $("#addAttrButton"+counter).toggleClass("fa-minus-circle")
+  $("#addAttrButton"+counter).toggleClass("minusAttrButton")
+  $("#addAttrButton"+counter).attr("onclick","")
+  counter += 1
+  $("#addAttrTarget").append('<div><input type="text" name="attributes" placeholder="attribute: value" /> <i id="addAttrButton'+counter+'" class="fa fa-plus-circle" onclick="handleAddAttributeClick()"></i></div>')
+}
