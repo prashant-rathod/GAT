@@ -137,6 +137,7 @@
       update = function(nodeDict) {
         console.log("NodeDict:",nodeDict)
         $("#delete").val(nodeDict['name']);
+        $("#addNodeFormName").val(nodeDict['name']);
         $("#measureInfo").empty()
         $("#attributeInfo").empty()
         $("#attributeInfo").append("<i id='editButton' class='fa fa-edit' onclick='handleEditButton()'></i>")
@@ -154,15 +155,6 @@
           $("#attributeInfo").append("<span id='"+feature+"'>"+feature+": "+nodeDict['attributes'][feature]+"</span><br>")
         }
       }
-      handleEditButton = function() {
-        $("#attributeInfo").empty()
-        for (var feature in currentNodeDict['attributes']) {
-          if (feature != 'name') {
-            $("#attributeInfo").append('<span>'+feature+': </span><input class="editInputs"id="'+feature+'" name="'+feature+'" value="'+currentNodeDict['attributes'][feature]+'"></input><br />');
-          }
-        }
-        $("#attributeInfo").append('<input id="editSubmitButton" type="submit" name="editSubmitButton" value="Submit" onclick="handleEditSubmit(currentNodeDict)" />')
-      }
     </script>
 
     <div id="infoWindows" style = "position: fixed; bottom: 0; right: 0; border-style: solid">
@@ -178,9 +170,12 @@
           <button class="tablinks" onclick="propToggle();">Propensities</button>
         </span>
       </div>
-      <div id = "nodeInfo" style="padding:10px;border:none">
-        <div id="attributeInfo" class="tabcontent" style="display:none;border:none">
-          <div class="filler chooseRequest" position="center">Select a node to display attributes.</div>
+      <div id = "nodeInfo" style="border:none">
+        <div id="attributes" style="display:none" class='tabcontent'>
+          <div id="attributeInfo" class="slider2" style="border:none">
+            <div class="filler chooseRequest" position="center">Select a node to display attributes.</div>
+          </div>
+          <div class="slider2 closed" id="editAttributeInfo"></div>
         </div>
         <div id="measureInfo" class="tabcontent" style="border:none;">
           <div class="filler">Select a node to display measures.</div>
@@ -204,7 +199,7 @@
       </div>
       <div id="addNodeWindow" class='slider closed'>
         <form id="addNodeForm" enctype="multipart/form-data" method="post">
-        <input type="text" id="addNodeFormName"></input>
+        <input type="text" id="addNodeFormName" placeholder="Node Name"></input>
         <br />
           Node Type: <select name="nodeSet">
             {% for set in graph.nodeSet %}

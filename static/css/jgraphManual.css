@@ -23,7 +23,7 @@
 .tabcontent {
     width:100%;
     height: 100%;
-    height:100px;
+    padding:10px;
 }
 #name {
 	color: white;
@@ -48,6 +48,7 @@ i:hover {
 
 #infoWindows {
     width:450px;
+    height:auto;
 }
 #delete {
     margin:10px;
@@ -68,7 +69,7 @@ i:hover {
 
 /* div slide transition from https://davidwalsh.name/css-slide */
 .slider {
-    overflow: hidden;
+    overflow: scroll;
     max-height:123px;
 
 	transition-property: all;
@@ -78,9 +79,23 @@ i:hover {
 .slider.closed {
 	max-height: 0;
 }
+.slider2 {
+    overflow: scroll;
+    max-height:150px;
+
+	transition-property: all;
+	transition-duration: .5s;
+	transition-timing-function: cubic-bezier(0, 1, 0.5, 1);
+}
+.slider2.closed {
+	max-height: 0;
+}
 .output-window {
     height: auto;
     width: 200px;
+}
+#attributeInfo {
+    padding-right:20px
 }
 .centeredIcon {
     text-align:center;
@@ -88,11 +103,12 @@ i:hover {
     font-size:20px
 }
 #addNodeWindow {
-    font-size: 11px
+    font-size: 11px;
 }
 #addNodeWindow form {
     padding:10px
 }
 #addNodeWindow input {
-    width:90%
+    width:90%;
+    margin-bottom: 10px;
 }
