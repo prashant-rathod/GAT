@@ -8,6 +8,7 @@
     <script src="{{url_for('static', filename='js/jgraph_test1.min.js')}}"></script>
     <script src="{{url_for('static', filename='js/jgraphManual.js')}}"></script>
     <link rel="stylesheet" href="{{url_for('static', filename='css/font-awesome-4.7.0/css/font-awesome.min.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='css/jgraphManual.css')}}">
     <title>Jgraph</title>
   </head>
 
@@ -83,9 +84,20 @@
           $.getJSON('/_remove_node/{{case_num}}', {
             node: $('input[name=a]').val()
           }, function(data) {
-            $('#message').text(data.result)
-            location.reload() // quick page reload, TODO refresh only jgraph (mxgraph req?)
-            jgraph.reload(data.node) //doesn't exist??
+            return
+          });
+        });
+      });
+
+      //Takes the user input (node that user wants to add) and adds it to SNA.
+      $(function(){
+        $('#addNode').bind('click', function(){
+          $.getJSON('/_add_node/{{case_num}}', {
+            node: $('input[name=a]').val(),
+            attributes: {},
+            connections: []
+          }, function(data) {
+            $('#message').text(data.result) //doesn't exist??
           });
         });
       });
@@ -121,7 +133,6 @@
             });
           };
         };
-        location.reload()
       }
       update = function(nodeDict) {
         console.log("NodeDict:",nodeDict)
@@ -183,17 +194,30 @@
     <!-- Toolbar for removing nodes, undoing or redoing user's action-->
     <div class = "output-window" id = "nodeWindow" style = "position:fixed;top:0;right:0;border:solid;">
 
-      <div id = "toolbar">
-      <p style="margin-bottom:0px;margin-left:auto;margin-right:auto">
-        <input style="margin:4px;margin-left:6px" type="text" size=20 name=a id="delete"> <br><br>
-        <span id="message"></span>
-      </p>
-      <p style="text-align:center ; margin:2px"><input style="margin-right:auto;margin-left:auto;padding:5px" id="remove" type="submit" value="Remove Node" href="javascript:void(0)" ></p> <br>
+      <div id = "toolbar" class='slider'>
+        <input id="remove" type="submit" value="Remove Node" href="javascript:void(0)" >
+        <input id="add" type="submit" value="Add Node" onclick="showAddNodeWindow()"/>
+        <input type="text" placeholder="Node Name" size=20 name=a id="delete">
       <!--a href="javascript:void(0);" id="undo">undo</a>
       <a href="javascript:void(0);" id="redo">redo</a>
       <a href="javascript:void(0);" id="redo">reset</a-->
-    </div>
-
+      </div>
+      <div id="addNodeWindow" class='slider closed'>
+        <form id="addNodeForm" enctype="multipart/form-data" method="post">
+        <input type="text" id="addNodeFormName"></input>
+        <br />
+          Node Type: <select name="nodeSet">
+            {% for set in graph.nodeSet %}
+              <option value="{{set}}">
+                {{set}}
+              </option>
+            {% endfor %}
+          </select>
+        </form>
+        <div class="centeredIcon" onclick="showAddNodeWindow()">
+          <i class='fa fa-arrow-circle-down'></i>
+        </div>
+      </div>
     <div class = "output-button-bar">
       <i style="color:white;margin-left:4px" class="fa fa-window-maximize fa-flip-vertical"
       onclick="document.getElementById('toolbar').style.display='inline-block'"></i>

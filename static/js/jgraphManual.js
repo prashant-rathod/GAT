@@ -44,3 +44,13 @@ maximizeTabs = function() {
   $('#nodeInfo').css('display','inline-block');
   $('.tab').css('display','inline-block');
 }
+
+showAddNodeWindow = function() {
+  $("#toolbar").toggleClass("closed")
+  $("#addNodeWindow").toggleClass("closed")
+  if ( $("#delete").html() != "" ) {
+    console.log("something there!",$("#delete").html())
+    $("#addNodeFormName").val($("#delete").html())
+  }
+  $("#addNodeFormName").attr("placeholder", "Type a node name.")
+}
