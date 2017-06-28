@@ -598,7 +598,8 @@ def remove_node(case_num):
 	if graph.is_node(node):
 		result = "Node was successfully removed."
 		graph.removeNode(node)
-		graph.set_property()
+		jgvis(case_num)
+		print(result)
 		return jsonify(result=result, node=node)
 	result = "Node does not exist in network. Please enter again"
 	return jsonify(result=result, node="NULL")
@@ -614,6 +615,7 @@ def add_node(case_num):
 	graph.set_property()
 	if graph.is_node(node):
 		result = "Node ("+node+") was successfully added."
+		jgvis(case_num)
 		return jsonify(result=result, node=node)
 	return jsonify(result=result, node="NULL")
 
