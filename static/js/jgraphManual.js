@@ -48,13 +48,13 @@ maximizeTabs = function() {
 handleEditButton = function() {
   toggleEditWindow();
   $("#editAttributeInfo").empty();
+  $("#editAttributeInfo").append("<div class='centeredIcon' onclick='toggleEditWindow()'><i class='fa fa-window-close'></i></div>")
   for (var feature in currentNodeDict['attributes']) {
     if (feature != 'name') {
       $("#editAttributeInfo").append('<span>'+feature+': </span><input class="editInputs"id="'+feature+'" name="'+feature+'" value="'+currentNodeDict['attributes'][feature]+'"></input><br />');
     }
   }
   $("#editAttributeInfo").append('<input id="editSubmitButton" type="submit" name="editSubmitButton" value="Submit" onclick="handleEditSubmit(currentNodeDict)" />')
-  $("#editAttributeInfo").append("<div class='centeredIcon' onclick='toggleEditWindow()'><i class='fa fa-arrow-circle-down'></i></div>")
 };
 
 toggleEditWindow = function() {
