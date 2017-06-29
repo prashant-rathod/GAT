@@ -155,10 +155,11 @@
           $("#attributeInfo").append("<span id='"+feature+"'>"+feature+": "+nodeDict['attributes'][feature]+"</span><br>")
         }
       }
-      $(".minusAttrButton").click(function() {
-        var id = $(this).data("id");
-        $("*[data-id=" + id + "]").remove();
-      })
+      removeAttr = function(id) {
+        console.log("removing..")
+        var id = $('#addAttrButton'+id)
+        id.closest('div').remove();
+      };
     </script>
 
     <div id="infoWindows" style = "position: fixed; bottom: 0; right: 0; border-style: solid">
@@ -226,7 +227,7 @@
               </td>
               <td id="addAttrTarget">
                 <div>
-                  <input type="text" name="attributes" placeholder="attribute: value" /> <i id="addAttrButton0" class='fa fa-plus-circle' onclick="handleAddAttributeClick()"></i>
+                  <i id="addAttrButton0" class='fa fa-plus-circle' onclick="handleAddAttributeClick()"></i><input type="text" id="attribute0" name="attribute0" placeholder="attribute: value" />
                 </div>
               </td>
             </tr>

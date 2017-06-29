@@ -71,7 +71,8 @@ handleAddAttributeClick = function() {
   $("#addAttrButton"+counter).toggleClass("fa-plus-circle")
   $("#addAttrButton"+counter).toggleClass("fa-minus-circle")
   $("#addAttrButton"+counter).toggleClass("minusAttrButton")
-  $("#addAttrButton"+counter).attr("onclick","")
+  $("#addAttrButton"+counter).attr("onclick","removeAttr("+counter+")")
+  $("#attribute"+counter).attr("readonly","true")
   counter += 1
-  $("#addAttrTarget").append('<div><input type="text" name="attributes" placeholder="attribute: value" /> <i id="addAttrButton'+counter+'" class="fa fa-plus-circle" onclick="handleAddAttributeClick()"></i></div>')
+  $("#addAttrTarget").append('<div><i id="addAttrButton'+counter+'" class="fa fa-plus-circle" onclick="handleAddAttributeClick()"></i><input type="text" id="attribute'+counter+'" name="attribute'+counter+'" placeholder="attribute: value" /></div>')
 }
