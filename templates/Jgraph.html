@@ -92,17 +92,6 @@
         }
       });
 
-      //Takes the user input (node that user wants to remove) and removes it from SNA.
-      $(function(){
-        $('#remove').bind('click', function(){
-          $.getJSON('/_remove_node/{{case_num}}', {
-            node: $('input[name=a]').val()
-          }, function(data) {
-            return
-          });
-        });
-      });
-
       //Takes the user input (node that user wants to add) and adds it to SNA.
       $(function(){
         $('#addNode').bind('click', function(){
@@ -204,9 +193,11 @@
     <div class = "output-window" id = "nodeWindow" style = "position:fixed;top:0;right:0;border:solid;">
 
       <div id = "toolbar" class='slider'>
-        <input id="remove" type="submit" value="Remove Node" href="javascript:void(0)" >
         <input id="add" type="submit" value="Add Node" onclick="showAddNodeWindow()"/>
-        <input type="text" placeholder="Node Name" name=a id="delete">
+        <form id="removeNodeForm" enctype="multipart/form-data" method="post">
+          <input id="remove" name="removeNodeSubmit" type="submit" value="Remove Node" href="javascript:void(0)" >
+          <input type="text" placeholder="Node Name" name=a id="delete">
+        </form>
       <!--a href="javascript:void(0);" id="undo">undo</a>
       <a href="javascript:void(0);" id="redo">redo</a>
       <a href="javascript:void(0);" id="redo">reset</a-->

@@ -109,14 +109,17 @@ class SNA():
 
     # remove edge and node. Note that when we remove a certain node, edges that are
     # connected to such nodes are also deleted.
-
     def removeNode(self, node):
         if self.G.has_node(node):
             self.G.remove_node(node)
-            self.nodes.remove(node)
+            self.nodes = nx.nodes(self.G)
+        for edge in self.edges:
+            if node in edge:
+                self.edges.remove(edge)
+
     def addNode(self,node,attrDict={}, connections=[]):
         self.G.add_node(node,attrDict)
-        self.nodes.append(node)
+        self.nodes = nx.nodes(self.G)
         for i in connections:
             print("connecting to:",i)
             self.G.add_edge(node,i)

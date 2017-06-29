@@ -532,7 +532,8 @@ def SNA2Dand3D(graph, request, case_num, _3D = True, _2D = False, label = True):
 				colorInput.append(hexColors[c])
 
 	if request.form.get("removeNodeSubmit") != None:
-		graph.removeNode(request.form.get("nodeName"))
+		print("Removing node...")
+		graph.removeNode(request.form.get("a"))
 
 	# Get new node info, if available
 	if request.form.get("addNodeSubmit") != None:
