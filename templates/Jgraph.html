@@ -206,14 +206,14 @@
       <div id = "toolbar" class='slider'>
         <input id="remove" type="submit" value="Remove Node" href="javascript:void(0)" >
         <input id="add" type="submit" value="Add Node" onclick="showAddNodeWindow()"/>
-        <input type="text" placeholder="Node Name" size=20 name=a id="delete">
+        <input type="text" placeholder="Node Name" name=a id="delete">
       <!--a href="javascript:void(0);" id="undo">undo</a>
       <a href="javascript:void(0);" id="redo">redo</a>
       <a href="javascript:void(0);" id="redo">reset</a-->
       </div>
       <div id="addNodeWindow" class='slider closed'>
         <form id="addNodeForm" enctype="multipart/form-data" method="post">
-          <div><input type="text" id="addNodeFormName" placeholder="Node Name"></input></div>
+          <div><input name="nodeName" type="text" id="addNodeFormName" placeholder="Node Name"></input></div>
           <br />
           <table id="addNodeTable">
             <tr>
@@ -243,11 +243,16 @@
             </tr>
             <tr>
               <th colspan="2">
-                Select Nodes to Link
+                Click Nodes to Link
               </th>
             </tr>
             <tr>
               <td colspan="2" id='addLinkTarget'></td>
+            </tr>
+            <tr>
+              <td class="centered" colspan="2">
+                <input id="addNodeSubmit" type = "submit" value = "ADD" name = "addNodeSubmit">
+              </td>
             </tr>
         </form>
         </table>

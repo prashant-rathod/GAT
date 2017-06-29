@@ -116,9 +116,11 @@ class SNA():
             self.nodes.remove(node)
     def addNode(self,node,attrDict={}, connections=[]):
         self.G.add_node(node,attrDict)
+        self.nodes.append(node)
         for i in connections:
             print("connecting to:",i)
             self.G.add_edge(node,i)
+            self.edges.append([node,i])
 
     def removeEdge(self, node1, node2):
         if self.G.has_edge(node1,node2):

@@ -53,6 +53,8 @@ i:hover {
 #delete {
     margin:10px;
     margin-left: 35px;
+    width:auto;
+    text-align:center;
 }
 #remove {
     margin:10px;
@@ -112,7 +114,7 @@ i:hover {
     width:90%;
     text-align: center;
 }
-#addNodeWindow input {
+#addAttrTarget input {
     width: 80px;
 }
 i {
@@ -123,4 +125,12 @@ i {
 }
 #addNodeTable th {
     border-bottom: solid 1px #21205F
+}
+.centered {
+    text-align: center;
+}
+#addNodeSubmit {
+    display:inline-block;
+    margin-top:10%;
+    width: auto;
 }
