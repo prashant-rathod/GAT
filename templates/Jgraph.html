@@ -57,25 +57,39 @@
           $d.css({ left: event.pageX + 10, top: event.pageY + 10 });
       });
 
-
+      var attributeFlag = false;
       //When node/edge is clicked, display information of the bottom right corner
       //Need to ask Tony specific file to make edges have properties
       jgraph.onClick(function (node) {
-        if (node.name !== "" && node.geometry.type === "SphereGeometry") {
-          $.getJSON('/_get_data/{{case_num}}', {
-            name: node.name
-          }, function(data) {
-            update(data);
-            data['name'] = node.name
-            currentNodeDict = data;
-        });
-        } else {
-          $("#name").text(node.name);     // Need Tony to have xlsv file.
-          $("#cluster").text("Null");
-          $("#eigenvalue_centrality").text("Null");
-          $("#betweenness_centrality").text("Null");
-          $("#delete").val('');
-        };
+        if (attributeFlag == false) {
+          if (node.name !== "" && node.geometry.type === "SphereGeometry") {
+            $.getJSON('/_get_data/{{case_num}}', {
+              name: node.name
+            }, function(data) {
+              update(data);
+              data['name'] = node.name
+              currentNodeDict = data;
+          });
+          } else {
+            $("#name").text(node.name);     // Need Tony to have xlsv file.
+            $("#cluster").text("Null");
+            $("#eigenvalue_centrality").text("Null");
+            $("#betweenness_centrality").text("Null");
+            $("#delete").val('');
+          };
+        }
+        else {
+          if (node.name !== "" && node.geometry.type === "SphereGeometry") {
+            console.log("triggered..")
+            $.getJSON('/_get_data/{{case_num}}', {
+              name: node.name
+            }, function(data) {
+              handleAddLinkClick(node.name)
+          });
+          } else {
+            return
+          };
+        }
       });
 
       //Takes the user input (node that user wants to remove) and removes it from SNA.
@@ -155,11 +169,6 @@
           $("#attributeInfo").append("<span id='"+feature+"'>"+feature+": "+nodeDict['attributes'][feature]+"</span><br>")
         }
       }
-      removeAttr = function(id) {
-        console.log("removing..")
-        var id = $('#addAttrButton'+id)
-        id.closest('div').remove();
-      };
     </script>
 
     <div id="infoWindows" style = "position: fixed; bottom: 0; right: 0; border-style: solid">
@@ -206,7 +215,7 @@
         <form id="addNodeForm" enctype="multipart/form-data" method="post">
           <div><input type="text" id="addNodeFormName" placeholder="Node Name"></input></div>
           <br />
-          <table>
+          <table id="addNodeTable">
             <tr>
               <td>
                 Node Type:
@@ -227,9 +236,18 @@
               </td>
               <td id="addAttrTarget">
                 <div>
-                  <i id="addAttrButton0" class='fa fa-plus-circle' onclick="handleAddAttributeClick()"></i><input type="text" id="attribute0" name="attribute0" placeholder="attribute: value" />
+                  <i id="addAttrButton0" class='fa fa-plus-circle' onclick="handleAddAttributeClick()"></i>
+                  <input type="text" id="attribute0" name="attribute0" placeholder="attribute: value" />
                 </div>
               </td>
+            </tr>
+            <tr>
+              <th colspan="2">
+                Select Nodes to Link
+              </th>
+            </tr>
+            <tr>
+              <td colspan="2" id='addLinkTarget'></td>
             </tr>
         </form>
         </table>

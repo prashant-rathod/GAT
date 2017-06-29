@@ -115,3 +115,12 @@ i:hover {
 #addNodeWindow input {
     width: 80px;
 }
+i {
+  color:#21205F;
+}
+#addAttrTarget i {
+    font-size: 13px;
+}
+#addNodeTable th {
+    border-bottom: solid 1px #21205F
+}
