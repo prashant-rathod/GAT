@@ -109,12 +109,21 @@ class SNA():
 
     # remove edge and node. Note that when we remove a certain node, edges that are
     # connected to such nodes are also deleted.
-
     def removeNode(self, node):
         if self.G.has_node(node):
             self.G.remove_node(node)
-            self.nodes.remove(node)
+            self.nodes = nx.nodes(self.G)
+        for edge in self.edges:
+            if node in edge:
+                self.edges.remove(edge)
 
+    def addNode(self,node,attrDict={}, connections=[]):
+        self.G.add_node(node,attrDict)
+        self.nodes = nx.nodes(self.G)
+        for i in connections:
+            print("connecting to:",i)
+            self.G.add_edge(node,i)
+            self.edges.append([node,i])
 
     def removeEdge(self, node1, node2):
         if self.G.has_edge(node1,node2):
@@ -388,8 +397,8 @@ Graph = SNA("iran.xlsx", "2011")
 Graph.createNodeList([1,4], ["Agent", "Institution"])
 Graph.createEdgeList([1,4])
 
-test = Graph.getNodes()
-Graph.graph_2D({"Agent":['y',50], "Institution":['b',50]}, label=True)
+# test = Graph.getNodes()
+# Graph.graph_2D({"Agent":['y',50], "Institution":['b',50]}, label=True)
 Graph.clustering()
 Graph.latapy_clustering()
 Graph.robins_alexander_clustering()
@@ -413,3 +422,6 @@ Graph.communicability_centrality_exp()
 # print(Graph.get_load_centrality())
 # print(Graph.get_communicability_centrality())
 # print(Graph.get_communicability_centrality_exp())
+
+
+

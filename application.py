@@ -531,6 +531,38 @@ def SNA2Dand3D(graph, request, case_num, _3D = True, _2D = False, label = True):
 				c = request.form.get(nodeSet + "Color")
 				colorInput.append(hexColors[c])
 
+	if request.form.get("removeNodeSubmit") != None:
+		print("Removing node...")
+		graph.removeNode(request.form.get("a"))
+
+	# Get new node info, if available
+	if request.form.get("addNodeSubmit") != None:
+		print("Requesting new node data...")
+
+		node = request.form.get("nodeName")
+
+		attrDict = {
+			'bipartite': request.form.get("nodeSet")
+		}
+		i = 0
+		while (request.form.get("attribute"+str(i)) != None) and (request.form.get("attribute"+str(i)) != '') :
+			split = request.form.get("attribute"+str(i)).split(":")
+			key = split[0]
+			value = split[1]
+			dictForm = {key: value}
+			attrDict.update(dictForm)
+			i += 1
+
+		links = []
+		j = 0
+		while request.form.get("link"+str(j)) != None:
+			links.append(request.form.get("link"+str(j)))
+			j += 1
+
+		print("node, attrDict, connections",node,attrDict,links)
+		graph.addNode(node,attrDict,links)
+	copy_of_graph = copy.deepcopy(graph)
+	fileDict['copy_of_graph'] = copy_of_graph
 	#return based on inputs
 	ret3D = graph.create_json(graph.nodeSet, colorInput) if _3D else None
 	ret2D = graph.plot_2D(attr, label) if _2D else None
@@ -564,13 +596,22 @@ def get_data(case_num):
 	fileDict = caseDict[case_num]
 	graph = fileDict.get('copy_of_graph')
 	name = request.args.get('name', '', type=str)
-
 	if graph == None or len(graph.G) == 0:
 		return jsonify(	name=name,
 						cluster="Empty graph",
 						eigenvector=eigenvector,
 				   		betweenness=betweenness
 						)
+	if nx.algorithms.bipartite.is_bipartite(graph.G):
+		graph.clustering()
+	graph.closeness_centrality()
+	graph.betweenness_centrality()
+	graph.degree_centrality()
+	# graph.katz_centrality()
+	graph.eigenvector_centrality()
+	graph.load_centrality()
+	graph.communicability_centrality()
+	graph.communicability_centrality_exp()
 	if graph.clustering_dict != {} and graph.clustering_dict != None:
 		cluster = str(round(graph.clustering_dict.get(name),4));
 	else:
@@ -589,19 +630,6 @@ def get_data(case_num):
 				   eigenvector=eigenvector,
 				   betweenness=betweenness, attributes=attributes)
 	return jsonify(toJsonify)
-
-@application.route("/_remove_node/<int:case_num>")
-def remove_node(case_num):
-	fileDict = caseDict[case_num]
-	graph = fileDict.get('copy_of_graph')
-	node = request.args.get('node', '', type=str)
-	if graph.is_node(node):
-		result = "Node was successfully removed."
-		graph.removeNode(node)
-		graph.set_property()
-		return jsonify(result=result, node=node)
-	result = "Node does not exist in network. Please enter again"
-	return jsonify(result=result, node="NULL")
 
 @application.route("/_get_autocorrelation/<int:case_num>")
 def get_autocorrelation(case_num):

@@ -8,6 +8,7 @@
     <script src="{{url_for('static', filename='js/jgraph_test1.min.js')}}"></script>
     <script src="{{url_for('static', filename='js/jgraphManual.js')}}"></script>
     <link rel="stylesheet" href="{{url_for('static', filename='css/font-awesome-4.7.0/css/font-awesome.min.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='css/jgraphManual.css')}}">
     <title>Jgraph</title>
   </head>
 
@@ -75,36 +76,50 @@
           $d.css({ left: event.pageX + 10, top: event.pageY + 10 });
       });
 
-
+      var attributeFlag = false;
       //When node/edge is clicked, display information of the bottom right corner
       //Need to ask Tony specific file to make edges have properties
       jgraph.onClick(function (node) {
-        if (node.name !== "" && node.geometry.type === "SphereGeometry") {
-          $.getJSON('/_get_data/{{case_num}}', {
-            name: node.name
-          }, function(data) {
-            update(data);
-            data['name'] = node.name
-            currentNodeDict = data;
-        });
-        } else {
-          $("#name").text(node.name);     // Need Tony to have xlsv file.
-          $("#cluster").text("Null");
-          $("#eigenvalue_centrality").text("Null");
-          $("#betweenness_centrality").text("Null");
-          $("#delete").val('');
-        };
+        if (attributeFlag == false) {
+          if (node.name !== "" && node.geometry.type === "SphereGeometry") {
+            $.getJSON('/_get_data/{{case_num}}', {
+              name: node.name
+            }, function(data) {
+              update(data);
+              data['name'] = node.name
+              currentNodeDict = data;
+          });
+          } else {
+            $("#name").text(node.name);     // Need Tony to have xlsv file.
+            $("#cluster").text("Null");
+            $("#eigenvalue_centrality").text("Null");
+            $("#betweenness_centrality").text("Null");
+            $("#delete").val('');
+          };
+        }
+        else {
+          if (node.name !== "" && node.geometry.type === "SphereGeometry") {
+            console.log("triggered..")
+            $.getJSON('/_get_data/{{case_num}}', {
+              name: node.name
+            }, function(data) {
+              handleAddLinkClick(node.name)
+          });
+          } else {
+            return
+          };
+        }
       });
 
-      //Takes the user input (node that user wants to remove) and removes it from SNA.
+      //Takes the user input (node that user wants to add) and adds it to SNA.
       $(function(){
-        $('#remove').bind('click', function(){
-          $.getJSON('/_remove_node/{{case_num}}', {
-            node: $('input[name=a]').val()
+        $('#addNode').bind('click', function(){
+          $.getJSON('/_add_node/{{case_num}}', {
+            node: $('input[name=a]').val(),
+            attributes: {},
+            connections: []
           }, function(data) {
-            $('#message').text(data.result)
-            location.reload() // quick page reload, TODO refresh only jgraph (mxgraph req?)
-            jgraph.reload(data.node) //doesn't exist??
+            $('#message').text(data.result) //doesn't exist??
           });
         });
       });
@@ -140,11 +155,11 @@
             });
           };
         };
-        location.reload()
       }
       update = function(nodeDict) {
         console.log("NodeDict:",nodeDict)
         $("#delete").val(nodeDict['name']);
+        $("#addNodeFormName").val(nodeDict['name']);
         $("#measureInfo").empty()
         $("#attributeInfo").empty()
         $("#attributeInfo").append("<i id='editButton' class='fa fa-edit' onclick='handleEditButton()'></i>")
@@ -162,15 +177,6 @@
           $("#attributeInfo").append("<span id='"+feature+"'>"+feature+": "+nodeDict['attributes'][feature]+"</span><br>")
         }
       }
-      handleEditButton = function() {
-        $("#attributeInfo").empty()
-        for (var feature in currentNodeDict['attributes']) {
-          if (feature != 'name') {
-            $("#attributeInfo").append('<span>'+feature+': </span><input class="editInputs"id="'+feature+'" name="'+feature+'" value="'+currentNodeDict['attributes'][feature]+'"></input><br />');
-          }
-        }
-        $("#attributeInfo").append('<input id="editSubmitButton" type="submit" name="editSubmitButton" value="Submit" onclick="handleEditSubmit(currentNodeDict)" />')
-      }
     </script>
 
     <div id="infoWindows" style = "position: fixed; bottom: 0; right: 0; border-style: solid">
@@ -186,9 +192,12 @@
           <button class="tablinks" onclick="propToggle();">Propensities</button>
         </span>
       </div>
-      <div id = "nodeInfo" style="padding:10px;border:none">
-        <div id="attributeInfo" class="tabcontent" style="display:none;border:none">
-          <div class="filler chooseRequest" position="center">Select a node to display attributes.</div>
+      <div id = "nodeInfo" style="border:none">
+        <div id="attributes" style="display:none" class='tabcontent'>
+          <div id="attributeInfo" class="slider2" style="border:none">
+            <div class="filler chooseRequest" position="center">Select a node to display attributes.</div>
+          </div>
+          <div class="slider2 closed" id="editAttributeInfo"></div>
         </div>
         <div id="measureInfo" class="tabcontent" style="border:none;">
           <div class="filler">Select a node to display measures.</div>
@@ -202,17 +211,65 @@
     <!-- Toolbar for removing nodes, undoing or redoing user's action-->
     <div class = "output-window" id = "nodeWindow" style = "position:fixed;top:0;right:0;border:solid;">
 
-      <div id = "toolbar">
-      <p style="margin-bottom:0px;margin-left:auto;margin-right:auto">
-        <input style="margin:4px;margin-left:6px" type="text" size=20 name=a id="delete"> <br><br>
-        <span id="message"></span>
-      </p>
-      <p style="text-align:center ; margin:2px"><input style="margin-right:auto;margin-left:auto;padding:5px" id="remove" type="submit" value="Remove Node" href="javascript:void(0)" ></p> <br>
+      <div id = "toolbar" class='slider'>
+        <input id="add" type="submit" value="Add Node" onclick="showAddNodeWindow()"/>
+        <form id="removeNodeForm" enctype="multipart/form-data" method="post">
+          <input id="remove" name="removeNodeSubmit" type="submit" value="Remove Node" href="javascript:void(0)" >
+          <input type="text" placeholder="Node Name" name=a id="delete">
+        </form>
       <!--a href="javascript:void(0);" id="undo">undo</a>
       <a href="javascript:void(0);" id="redo">redo</a>
       <a href="javascript:void(0);" id="redo">reset</a-->
-    </div>
-
+      </div>
+      <div id="addNodeWindow" class='slider closed'>
+        <form id="addNodeForm" enctype="multipart/form-data" method="post">
+          <div><input name="nodeName" type="text" id="addNodeFormName" placeholder="Node Name"></input></div>
+          <br />
+          <table id="addNodeTable">
+            <tr>
+              <td>
+                Node Type:
+              </td>
+              <td>
+                <select name="nodeSet">
+                 {% for set in graph.nodeSet %}
+                   <option value="{{set}}">
+                     {{set}}
+                   </option>
+                 {% endfor %}
+               </select>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                Add Attribute:
+              </td>
+              <td id="addAttrTarget">
+                <div>
+                  <i id="addAttrButton0" class='fa fa-plus-circle' onclick="handleAddAttributeClick()"></i>
+                  <input type="text" id="attribute0" name="attribute0" placeholder="attribute: value" />
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <th colspan="2">
+                Click Nodes to Link
+              </th>
+            </tr>
+            <tr>
+              <td colspan="2" id='addLinkTarget'></td>
+            </tr>
+            <tr>
+              <td class="centered" colspan="2">
+                <input id="addNodeSubmit" type = "submit" value = "ADD" name = "addNodeSubmit">
+              </td>
+            </tr>
+        </form>
+        </table>
+        <div class="centeredIcon" onclick="showAddNodeWindow()">
+          <i class='fa fa-arrow-circle-down'></i>
+        </div>
+      </div>
     <div class = "output-button-bar">
       <i style="color:white;margin-left:4px" class="fa fa-window-maximize fa-flip-vertical"
       onclick="document.getElementById('toolbar').style.display='inline-block'"></i>
