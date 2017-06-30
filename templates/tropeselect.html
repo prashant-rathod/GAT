@@ -4,14 +4,10 @@
 
 <head>
 	<title>Trope select</title>
-
 	<link href="{{url_for('static', filename='css/general.css')}}" rel="stylesheet">
-
-	<style type="text/css">
-
-	</style>
-
+	<style type="text/css"></style>
 	<script type="text/javascript">
+
 	function selectAll(source) {
 		checkboxes = document.getElementsByTagName('input');
 		for(var i in checkboxes){
@@ -39,13 +35,16 @@
 	}
 
 	</script>
-
-
-
 </head>
 
+<style>
+* {
+ font-size: 100%;
+ font-family: Segoe UI;
+}
+</style>
+
 <body>
-<img id = "banner" src = "{{url_for('static', filename = 'GAT_header_1-9.jpg')}}" style = "width:100%;" alt = "Banner Image"/> <br>
 
 	<ul>
 		<li class="dropdown">
@@ -70,29 +69,23 @@
 	<p>This section allows you to select which tropes you would like to visualize along the 8 emotion scales.</p>
 </div>
 
+<br><br>
+
 <h3>Please choose which tropes you would like to visualize:</h3>
 
 <form enctype = "multipart/form-data" method = "post">
 
 	{% for trope in tropes %}
 
-		<label><input type = "checkbox" name = "{{ trope[0] }}">{{ trope[0] }}</label><br>
-
+		<label><input type = "checkbox" name = "{{ trope[0] }}">{{ trope[0] }}</label>
+	<br>
 	{% endfor %}
+
 
 	<input type = "button" onClick = "selectAll(this)" value = "Select All"><br>
 	<input type = "button" onClick = "deSelectAll(this)" value = "Clear all"><br>
-
 	<input type = "submit" value = "CONTINUE">
 
 </form>
-
 </body>
-
-
-
-
-
-
-
 </html>
