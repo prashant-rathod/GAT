@@ -162,7 +162,7 @@
         $("#addNodeFormName").val(nodeDict['name']);
         $("#measureInfo").empty()
         $("#attributeInfo").empty()
-        $("#attributeInfo").append("<i id='editButton' class='fa fa-edit' onclick='handleEditButton()'></i>")
+        $("#attributeInfo").append("<i id='editButton' class='rightIcon fa fa-edit' onclick='handleEditButton()'></i>")
         $("#name").text(nodeDict['name'])
         // Need Tony to have xlsv file.
         // append to $("#attributeInfo")
@@ -180,10 +180,10 @@
     </script>
 
     <div class = "output-window" id="infoWindows" style = "position: fixed; bottom: 0; right: 0; border-style: solid">
-      <div class = "output-button-bar">
-        <i style="color:white;margin-left:4px" class="fa fa-window-maximize"
+      <div class = "output-button-bar" id = "weirdOne">
+        <i style="margin-left:4px" class="fa fa-window-maximize"
       onclick="maximizeTabs()"></i>
-        <i style="color:white;margin-left:4px" class="fa fa-window-minimize"
+        <i style="margin-left:4px" class="fa fa-window-minimize"
       onclick="minimizeTabs()"></i>
         <span id="name"></span>
         <span class="tab" style="float:right">
@@ -223,7 +223,7 @@
       </div>
       <div id="addNodeWindow" class='slider closed'>
         <form id="addNodeForm" enctype="multipart/form-data" method="post">
-          <div><input name="nodeName" type="text" id="addNodeFormName" placeholder="Node Name"></input></div>
+          <div><input name="nodeName" type="text" id="addNodeFormName" placeholder="Enter Node Name"></input></div>
           <br />
           <table id="addNodeTable">
             <tr>
@@ -271,25 +271,25 @@
         </div>
       </div>
     <div class = "output-button-bar">
-      <i style="color:white;margin-left:4px" class="fa fa-window-maximize fa-flip-vertical"
+      <i style="margin-left:4px" class="fa fa-window-maximize fa-flip-vertical"
       onclick="document.getElementById('toolbar').style.display='inline-block'"></i>
 
-      <i style="color:white;margin-left:4px" class="fa fa-window-minimize fa-flip-vertical"
+      <i style="margin-left:4px" class="fa fa-window-minimize fa-flip-vertical"
       onclick="document.getElementById('toolbar').style.display='none'"></i>
     </div>
     </div>
 
-    <div class = "output-window" id = "SNA Options Window" style = "position:fixed;bottom:0;left:0;border:solid;">
+    <div class = "output-window" id = "SNAOptionsWindow" style = "position:fixed;bottom:0;left:0;border:solid;">
 
     <div class = "output-button-bar" style="text-align:right">
-      <i style="color:white" class="fa fa-window-minimize"
+      <i  class="fa fa-window-minimize"
       onclick="document.getElementById('SNA Options').style.display='none'"></i>
 
-      <i style="color:white" class="fa fa-window-maximize"
+      <i  class="fa fa-window-maximize"
       onclick="document.getElementById('SNA Options').style.display='inline-block'"></i>
     </div>
 
-    <div class = "output" id = "SNA Options">
+    <div class = "output" id = "SNAOptions">
     <h3><center>SNA Options</center></h3>
 
       <form enctype = "multipart/form-data" method = "post">
