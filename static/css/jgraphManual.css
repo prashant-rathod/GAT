@@ -9,7 +9,9 @@
     padding-bottom: 1px;
     transition: 0.3s;
 }
-
+::-webkit-scrollbar {
+    background-color: #0b1b54;
+}
 /* Change background color of buttons on hover */
 .tab button:hover {
     background-color: #0b1b54;
@@ -80,9 +82,9 @@ i:hover {
 
 /* div slide transition from https://davidwalsh.name/css-slide */
 .slider {
-    overflow: scroll;
-    max-height:123px;
-
+    overflow-y: scroll;
+    max-height:130px;
+    background-color: #0b1b54;
 	transition-property: all;
 	transition-duration: .5s;
 	transition-timing-function: cubic-bezier(0, 1, 0.5, 1);
