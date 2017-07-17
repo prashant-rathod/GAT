@@ -45,7 +45,7 @@ class SNA():
                     tempList.append(str(sh.cell(row,col).value))
             list.append(tempList)
         return header,list
-    #create set of nodes for bipartite graph
+    #create set of nodes for multipartite graph
     # name = names of the node. This is defined by the header. ex: Abbasi-Davani.F: Name  or Abbasi-Davani.F: Faction leader
     # nodeSet = names that define a set of node. For example, we can define Person, Faction Leader, and Party Leader as "Agent"
     # note: len(name) = len(nodeSet), else code fails
@@ -56,7 +56,7 @@ class SNA():
         self.nodeSet = nodeSet
         for feature in name:
             #nodesCollected = []
-            nodeList = [] # make this a container of (node, attribute dict) tuples https://networkx.github.io/documentation/networkx-1.9/reference/generated/networkx.DiGraph.add_nodes_from.html
+            nodeList = [] # make this a container of (node, attribute dict) tuples (see https://networkx.github.io/documentation/networkx-1.9/reference/generated/networkx.DiGraph.add_nodes_from.html)
             for row in list:
                 counter = 0
                 nodeAttr = {}
@@ -71,10 +71,9 @@ class SNA():
                     counter += 1
                 # Add attributes based on header input
             for node in nodeList:
-                self.G.add_node(node['name'],node['attributes'],bipartite=nodeSet[featureNo])
+                self.G.add_node(node['name'],node['attributes'],block=nodeSet[featureNo])
             featureNo+=1
         self.nodes = nx.nodes(self.G)
-        print(self.nodes)
     #create a list of edges that connect among sets
     #This part is currently still testing.
     #Right now trying to see if the graph is displayed successfully, but later on need to add a argument that passes the
@@ -91,6 +90,7 @@ class SNA():
         self.edges = edgeList
     def addEdges(self, pair):
         data = self.list
+        print(self.nodes)
         newEdgeList = []
         for row in data:
             if (row[pair[0]] != '' and row[pair[1]] != '') and (row[pair[0]] != row[pair[1]]):
@@ -377,10 +377,10 @@ class SNA():
         data = {}
         edges = []
         nodes_property = {}
-        bipartite = nx.get_node_attributes(self.G, 'bipartite')
+        block = nx.get_node_attributes(self.G, 'block')
         for edge in self.edges:
             edges.append({'source': edge[0], 'target': edge[1]})
-        for node, feature in bipartite.items():
+        for node, feature in block.items():
             temp = {}
             temp['color'] = color[name.index(feature)]
             nodes_property[node] = temp

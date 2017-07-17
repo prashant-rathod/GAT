@@ -20,7 +20,7 @@
   display: inline-block;
   width: 100%;
   height: 100%;
-  border-radius: 0px;
+  border-radius: 15px;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 
   -webkit-transition: all 1s cubic-bezier(0.165, 0.84, 0.44, 1);
@@ -135,58 +135,44 @@
 <section class="jumbotron last z-index-10" data-pages="parallax" style="height:100%">
     <div class="container-xs-height full-height inner">
         <div class="col-xs-height col-middle text-left">
-          <!-- START CONTENT -->
-          <div class="container">
-            <div class="row">
-              <div class="col-sm-10 col-sm-offset-1">
-                <div class="text-center sm-p-t-10">
-                  <h1 class="font-montserrat hidden-xs text-white"><img src="static/HermesLogo.png" height="100" alt="hermes logo"></h1>
-                  <h5 class="text-white"><span class="bold">Project Hermes 2.0</br>
-                  <span class="semi-bold">Open Source Intelligence Toolkit Created by LUCAS</span>
-                  </span></h5>
-                </div>
-              </div>
-            </div>
-			<br/><br/><br/>
-      <!-- Search Bar -->
-      <div class="row text-centered">
-        <input type="text" name="search" id="search" placeholder="URL to scrape...">
-      </div>
-         <div class="row">
-         <div class="col-md-3">
-         </div>
-
-				<div class="col-md-2">
-					<button class="btn btn-danger box_button" type="button" style="width: 100%" onclick="show2();" data-toggle="tooltip" title="Natural Language Processing: Actionable insights based on cutting-edge text analysis" data-placement="bottom" animation="true">
-					 <h5 class="semi-bold text-white"><b>NLP</b></h5>
-					</button>
+        <!-- START CONTENT -->
+			<div class="container">
+				<div class="row">
+					<div class="col-sm-10 col-sm-offset-1">
+						<div class="text-center sm-p-t-10">
+							<h1 class="font-montserrat hidden-xs text-white"><img src="static/HermesLogo.png" height="100" alt="hermes logo"></h1>
+							<h5 class="text-white"><span class="bold">Project Hermes 2.0</br>
+						</div>
+					</div>
 				</div>
-
-				<div class="col-md-2">
-					<button class="btn btn-complete box_button" type="button" style="width: 100%" onclick="show3();" data-toggle="tooltip" title="Social Network Analysis: Dynamic 3-dimensional network visualization and simulation" data-placement="bottom" animation="true">
-               <h5 class="semi-bold text-white"><b>SNA</b></h5></button>
+				<br/><br/><br/>
+				<!-- Search Bar -->
+				<div class="row text-centered">
+					<input type="text" name="search" id="search" placeholder="URL to scrape...">
 				</div>
-
-				<div class="col-md-2">
-					<button class="btn btn-success box_button" type="button" style="width: 100%" onclick="show4();" data-toggle="tooltip" title="Geospatial Analysis: Extending analysis techniques using the dimensions of space and time" data-placement="bottom" animation="true">
-					 <h5 class="semi-bold text-white"><b>GSA</b></h5>
-					</button>
+				<div class="row">
+					<div class="col-md-3"></div>
+					<div class="col-md-2">
+						<button class="btn btn-success box_button" type="button" style="width: 100%" onclick="show1();" data-toggle="tooltip" title="Natural Language Processing: Actionable insights based on cutting-edge text analysis" data-placement="bottom" animation="true">
+							<h5 class="semi-bold text-white"><b>NLP</b></h5>
+						</button>
+					</div>
+					<div class="col-md-2">
+						<button class="btn btn-success box_button" type="button" style="width: 100%" onclick="show2();" data-toggle="tooltip" title="Social Network Analysis: Dynamic 3-dimensional network visualization and simulation" data-placement="bottom" animation="true">
+							<h5 class="semi-bold text-white"><b>SNA</b></h5>
+						</button>
+					</div>
+					<div class="col-md-2">
+						<button class="btn btn-success box_button" type="button" style="width: 100%" onclick="show3();" data-toggle="tooltip" title="Geospatial Analysis: Extending analysis techniques using the dimensions of space and time" data-placement="bottom" animation="true">
+							<h5 class="semi-bold text-white"><b>GSA</b></h5>
+						</button>
+					</div>
 				</div>
-
-
-				 <div class="col-md-2"> </div>
-            </div>
-	   	</div>
-      </div>
+	   		</div>
+		</div>
     </div>
-
-	<div class="op-left bottom-right full-width full-vh z-index-0" data-vide-bg="openNEX/images/earth_video.mp4" data-vide-options="loop: true, muted: true, position: 50% 0%">
-   </div>
-
 </section>
-
-    <!-- END JUMBOTRON -->
-    <!-- START FOOTER -->
+<!-- START FOOTER -->
     <section class="z-index-1 pull-bottom-fixed full-width" data-pages="reveal-footer">
         <div class="container">
          <div class="row">
@@ -226,197 +212,74 @@
 
 	<script>
 		function show1(){
-
-			$('#smartsearch').modal('show');
-			$('#nlp_modal').modal('hide');
-			$('#sna_modal').modal('hide');
-			$('#gsa_modal').modal('hide');
-
-		}
-
-		function show2(){
-
-			$('#smartsearch').modal('hide');
 			$('#nlp_modal').modal('show');
 			$('#sna_modal').modal('hide');
 			$('#gsa_modal').modal('hide');
-
 		}
 
-		function show3(){
-
-			$('#smartsearch').modal('hide');
+		function show2(){
 			$('#nlp_modal').modal('hide');
 			$('#sna_modal').modal('show');
 			$('#gsa_modal').modal('hide');
-
 		}
 
-		function show4(){
-
-			$('#smartsearch').modal('hide');
+		function show3(){
 			$('#nlp_modal').modal('hide');
 			$('#sna_modal').modal('hide');
 			$('#gsa_modal').modal('show');
-
 		}
 
 		function openurl(link){
 				window.open(link);
 			}
 	</script>
-   <div class="modal fade slide-right" id="smartsearch" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-   <div class="modal-dialog modal-lg">
-
-    <div class="modal-content-wrapper">
-        <div class="modal-content table-block" style="background: rgba(255, 255, 255, 0.95); border: 0px; background-image: url('openNEX/images/test.png'); background-repeat: no-repeat; background-position: 50% 90%; background-size: 40%;">
-			<div style="margin-right: 27px;">
-				<button type="button" class="btn btn-danger btn-sm pull-right" data-dismiss="modal"><i class="fa fa-times fa-2x" aria-hidden="true" style="z-index:1000;"></i>
-				</button>
-			</div>
-
-			<br> <div class="modal-body v-align-left text-left">
-
-			<h3>Knowledge</h3>
-
-				<div class="panel panel-group panel-transparent" data-toggle="collapse" id="videos">
-				  <div class="panel panel-default">
-					<div class="panel-heading">
-					  <h4 class="panel-title">
-						<a class="" data-parent="#videos" data-toggle=
-						"collapse" href="#videostab" style="color: rgba(248, 148, 6, 1.0);">Videos</a>
-					  </h4>
-					</div>
-					<div class="panel-collapse collapse in" id="videostab">
-					  <div class="panel-body">
-
-							<p class="text-left">
-								Watch 2012 NEX Supercomputing Workshop
-								<a href="https://www.youtube.com/playlist?list=PL0oXBz7ulYiit3Txf5XqqVuC_BaUVO0BM" onclick="openurl('https://www.youtube.com/playlist?list=PL0oXBz7ulYiit3Txf5XqqVuC_BaUVO0BM')"><img src="openNEX/images/youtube.png" width="50px"></a>
-							</p>
-
-							<p class="text-left">
-								Watch 2014 OpenNEX Workshop
-								<a href="https://www.youtube.com/playlist?list=PL0oXBz7ulYigbBQ7VJNcEVowYJoQoRpra" onclick="openurl('https://www.youtube.com/playlist?list=PL0oXBz7ulYigbBQ7VJNcEVowYJoQoRpra')"><img src="openNEX/images/youtube.png" width="50px"></a>
-							</p>
-
-							<p class="text-left">
-								Watch 2016 OpenNEX Videos
-								<a href="https://www.youtube.com/playlist?list=PL0oXBz7ulYiiqjRR9tULFmPgu9KyYsuQ_" onclick="openurl('https://www.youtube.com/playlist?list=PL0oXBz7ulYiiqjRR9tULFmPgu9KyYsuQ_')"><img src="openNEX/images/youtube.png" width="50px"></a>
-							</p>
-
-
-					  </div>
-					</div>
-				  </div>
-				</div>
-
-				<!--div class="panel panel-group panel-transparent" data-toggle="collapse" id="wiki">
-				  <div class="panel panel-default">
-					<div class="panel-heading">
-					  <h4 class="panel-title">
-						<a class="collapsed" data-parent="#wiki" data-toggle=
-						"collapse" href="#wikitab" style="color: rgba(248, 148, 6, 1.0);">WiKi</a>
-					  </h4>
-					</div>
-					<div class="panel-collapse collapse" id="wikitab">
-					  <div class="panel-body">
-
-							<h5 class="text-left">
-								Coming soon....
-							</h5>
-
-					  </div>
-					</div>
-				  </div>
-				</div-->
-
-
-				<div class="panel panel-group panel-transparent" data-toggle="collapse" id="articles">
-				  <div class="panel panel-default">
-					<div class="panel-heading">
-					  <h4 class="panel-title">
-						<a class="collapsed" data-parent="#articles" data-toggle=
-						"collapse" href="#articlestab" style="color: rgba(248, 148, 6, 1.0);">Journal articles using OpenNEX data</a>
-					  </h4>
-					</div>
-					<div class="panel-collapse collapse" id="articlestab">
-					  <div class="panel-body">
-							<p class="text-left">
-								<ul type ="square">
-									<li>Thrasher, B., Xiong, J., Wang, W., Melton, F., Michaelis, A. and Nemani, R., 2013. <span class="semi-bold"><a href="http://onlinelibrary.wiley.com/doi/10.1002/2013EO370002/abstract" onclick="openurl('http://onlinelibrary.wiley.com/doi/10.1002/2013EO370002/abstract')">Downscaled climate projections suitable for resource management. Eos,</a></span> <i>Transactions American Geophysical Union</i>, 94(37), pp.321-323.</li>
-									<li>Monahan, W.B., Cook, T., Melton, F., Connor, J. and Bobowski, B., 2013. <span class="semi-bold"><a href="http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0083163" onclick="openurl('http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0083163')">Forecasting distributional responses of limber pine to climate change at management-relevant scales in Rocky Mountain National Park.</a></span> <i>PloS one</i>, 8(12), p.e83163.</li>
-									<li>Alder, J.R. and Hostetler, S.W., 2015. <span class="semi-bold"><a href="http://www.sciencedirect.com/science/article/pii/S1364815215000651" onclick="openurl('http://www.sciencedirect.com/science/article/pii/S1364815215000651')">Web based visualization of large climate data sets.</a></span><i> Environmental Modelling & Software</i>, 68, pp.175-180.</li>
-									<li>Chandramowli, S. and Felder, F.F., 2014. <span class="semi-bold"><a href="http://www.sciencedirect.com/science/article/pii/S1040619014000785" onclick="openurl('http://www.sciencedirect.com/science/article/pii/S1040619014000785')">Climate Change and Power Systems Planning—Opportunities and Challenges.</a></span><i> The Electricity Journal</i>, 27(4), pp.40-50.</li>
-									<li>Schwalm, D., Epps, C.W., Rodhouse, T.J., Monahan, W.B., Castillo, J.A., Ray, C. and Jeffress, M.R., 2016. <span class="semi-bold"><a href="http://onlinelibrary.wiley.com/doi/10.1111/gcb.13189/abstract?systemMessage=Wiley+Online+Library+will+be+unavailable+on+Saturday+30th+July+2016+from+08%3A00-11%3A00+BST+%2F+03%3A00-06%3A00+EST+%2F+15%3A00-18%3A00+SGT+for+essential+maintenance.Apologies+for+the+inconvenience." onclick="openurl('http://onlinelibrary.wiley.com/doi/10.1111/gcb.13189/abstract?systemMessage=Wiley+Online+Library+will+be+unavailable+on+Saturday+30th+July+2016+from+08%3A00-11%3A00+BST+%2F+03%3A00-06%3A00+EST+%2F+15%3A00-18%3A00+SGT+for+essential+maintenance.Apologies+for+the+inconvenience.')">Habitat availability and gene flow influence diverging local population trajectories under scenarios of climate change: a place‐based approach.</a></span><i> Global change biology</i>.</li>
-									<li>Liu, M., Rajagopalan, K., Chung, S.H., Jiang, X., Harrison, J., Nergui, T., Guenther, A., Miller, C., Reyes, J., Tague, C. and Choate, J., 2014. <span class="semi-bold"><a href="http://www.biogeosciences.net/11/2601/2014/" onclick="openurl('http://www.biogeosciences.net/11/2601/2014/')">What is the importance of climate model bias when projecting the impacts of climate change on land surface processes?.</a></span><i> Biogeosciences</i>, 11(10), pp.2601-2622.</li>
-									<li>Guo, H., Wang, L. and Liang, D., 2016. <span class="semi-bold"><a href="http://link.springer.com/article/10.1007/s11434-016-1041-y" onclick="openurl('http://link.springer.com/article/10.1007/s11434-016-1041-y')">Big Earth Data from space: a new engine for Earth science.</a></span><i> Science Bulletin</i>, 61(7), pp.505-513.</li>
-									<li>Egan, P.J. and Mullin, M., 2016. <span class="semi-bold"><a href="http://www.nature.com/nature/journal/v532/n7599/full/nature17441.html" onclick="openurl('http://www.nature.com/nature/journal/v532/n7599/full/nature17441.html')">Recent improvement and projected worsening of weather in the United States.</a></span><i> Nature</i>, 532(7599), pp.357-360.</li>
-									<li>Chang, T., Hansen, A.J. and Piekielek, N., 2014. <span class="semi-bold"><a href="http://journals.plos.org/plosone/article?id=10.1371%2Fjournal.pone.0111669" onclick="openurl('http://journals.plos.org/plosone/article?id=10.1371%2Fjournal.pone.0111669')">Patterns and variability of projected bioclimatic habitat for Pinus albicaulis in the Greater Yellowstone Area.</a></span> <i>PloS one</i>, 9(11), p.e111669.</li>
-									<li>Herring, J., VanDyke, M.S., Cummins, R.G. and Melton, F., 2016. <span class="semi-bold"><a href="https://nex.nasa.gov/nex/resources/386/" onclick="openurl('https://nex.nasa.gov/nex/resources/386/')">Communicating local climate risks online through an interactive data visualization.</a><span> <i>Environmental Communication</i>, pp.1-16.</li>
-									<li>Kerns, B.K., Kim, J.B., Kline, J.D. and Day, M.A., 2016. <span class="semi-bold"><a href="http://link.springer.com/article/10.1007/s10113-016-0934-2" onclick="openurl('http://link.springer.com/article/10.1007/s10113-016-0934-2')">US exposure to multiple landscape stressors and climate change.</a></span><i> Regional Environmental Change</i>, pp.1-12.</li>
-								</ul>
-							</p>
-					  </div>
-					</div>
-				  </div>
-				</div>
-            </div>
-        </div>
-    </div>
-    <!-- /.modal-content -->
-</div>
-<!-- /.modal-dialog -->
-</div>
-
 
 <div class="modal fade slide-right" id="nlp_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-<div class="modal-dialog modal-lg">
-    <div class="modal-content-wrapper">
-        <div class="modal-content table-block" style="background: rgba(255, 255, 255, 0.95); border: 0px; background-repeat: no-repeat; background-position: 50% 90%; background-size: 40%;">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content-wrapper">
+			<div class="modal-content table-block" style="background: rgba(255, 255, 255, 0.95); border: 0px; background-repeat: no-repeat; background-position: 50% 90%; background-size: 40%;">
 
-			<div style="margin-right: 27px;">
-				<button type="button" class="btn btn-danger btn-sm pull-right" data-dismiss="modal"><i class="fa fa-times fa-2x" aria-hidden="true" style="z-index:1000;"></i>
-				</button>
+				<div style="margin-right: 27px;">
+					<button type="button" class="btn btn-danger btn-sm pull-right" data-dismiss="modal"><i class="fa fa-times fa-2x" aria-hidden="true" style="z-index:1000;"></i>
+					</button>
+				</div>
+				<br>
+				<div class="modal-body v-align-left text-left">
+
+				<h3>Natural Language Processing</h3>
+
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h4 class="panel-title">Sample Cases</h4>
+					</div>
+					<div class="panel-body">
+						<a href="{{url_for('sample', sample_path = 'NLP/isil', case_num=case_num)}}">Run ISIL case</a><br>
+						<a href="{{url_for('sample', sample_path = 'NLP/iran', case_num=case_num)}}">Run Sentiment Analysis on Iran Speech</a>
+					</div>
+				</div>
+
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h4 class="panel-title">Data Input</h4>
+					</div>
+					<div class="panel-body">
+						Upload text files (.txt, .rtf):<br>
+						<p style = "font-size:10px">(Use Ctrl- or Shift-click to select multiple files)</p>
+						<input type = "file" id = "NLP_Input_corpus" name = "NLP_Input_corpus" multiple>
+						<hr>
+						Enter urls to scrape (comma separated):<br>
+						<input type = "text" id = "NLP_LDP_terms" name = "NLP_LDP_terms">
+						<hr>
+						<input type = "submit" value = "SUBMIT">
+					</div>
+				</div>
 			</div>
-
-			<br>
-			<div class="modal-body v-align-left text-left">
-
-			<h3>Natural Language Processing</h3>
-
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					<h4 class="panel-title">Sample Cases</h4>
-				</div>
-				<div class="panel-body">
-					<a href="{{url_for('sample', sample_path = 'NLP/isil', case_num=case_num)}}">Run ISIL case</a><br>
-					<a href="{{url_for('sample', sample_path = 'NLP/iran', case_num=case_num)}}">Run Sentiment Analysis on Iran Speech</a>
-				</div>
-			</div>
-
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					<h4 class="panel-title">Data Input</h4>
-				</div>
-				<div class="panel-body">
-					Upload text files (.txt, .rtf):<br>
-					<p style = "font-size:10px">(Use Ctrl- or Shift-click to select multiple files)</p>
-					<input type = "file" id = "NLP_Input_corpus" name = "NLP_Input_corpus" multiple>
-					<hr>
-					Enter urls to scrape (comma separated):<br>
-					<input type = "text" id = "NLP_LDP_terms" name = "NLP_LDP_terms">
-					<hr>
-					<input type = "submit" value = "SUBMIT">
-				</div>
-			</div>
-        </div>
-    </div>
-    <!-- /.modal-content -->
-</div>
+		</div>
+		<!-- /.modal-content -->
+	</div>
 <!-- /.modal-dialog -->
 </div>
-</div> <!-- Don't delete this divs even though they appear to serve no purpose -->
+</div> <!-- Don't delete this div even though they appear to serve no purpose -->
 
 <div class="modal fade slide-right" id="sna_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 <div class="modal-dialog modal-lg">
@@ -430,126 +293,36 @@
 
 			<br>
             <div class="modal-body v-align-left text-left">
-
-			<h3>Access</h3>
-
-				<div class="panel panel-group panel-transparent" data-toggle="collapse" id="awsaccess">
-				  <div class="panel panel-default">
+			<h3>Social Network Analysis</h3>
+				<div class="panel panel-default">
 					<div class="panel-heading">
-					  <h4 class="panel-title">
-						<a class="collapsed" data-parent="#awsaccess" data-toggle=
-						"collapse" href="#awsaccesstab" style="color: rgba(34, 167, 240, 1.0);">AWS</a>
-					  </h4>
+						<h4 class="panel-title">Sample Cases</a></h4>
 					</div>
-					<div class="panel-collapse collapse" id="awsaccesstab">
-					  <div class="panel-body">
-
-							<p class="text-left">
-								<a href="https://aws.amazon.com/nasa/nex/" onclick="openurl('https://aws.amazon.com/nasa/nex/')"><img src="openNEX/images/click_here.png" width="12%" onmouseover="this.src='openNEX/images/click_here_hover.png';" onfocus="this.src='openNEX/images/click_here_hover.png';" onmouseout="this.src='openNEX/images/click_here.png';" onblur="this.src='openNEX/images/click_here.png';"></a> for more information on Amazon Web Services (AWS)-hosted NASA <span class="semi-bold">NEX Climate Projections Datasets </span></br>
-
-							</p>
-
-
-					  </div>
+					<div class="panel-body">
+						<a href="{{url_for('sample', sample_path = 'SNA/iran.xlsx', case_num=case_num)}}">Run Iran Political Elite case</a><br>
+						<a href="{{url_for('sample', sample_path = 'SNA/AAH_for_SNA.xlsx', case_num=case_num)}}">Run AAH case</a><br>
+						<a href="{{url_for('sample', sample_path = 'SNA/roleTheorySample.xlsx', case_num=case_num)}}">Run Role Theory case</a><br>
 					</div>
-				  </div>
 				</div>
-
-
-				<div class="panel panel-group panel-transparent" data-toggle="collapse" id="nccsaccess">
-				  <div class="panel panel-default">
+				<div class="panel panel-default">
 					<div class="panel-heading">
-					  <h4 class="panel-title">
-						<a class="collapsed" data-parent="#nccsaccess" data-toggle=
-						"collapse" href="#nccsaccesstab" style="color: rgba(34, 167, 240, 1.0);">NCCS</a>
-					  </h4>
+						<h4 class="panel-title">Input Files</a></h4>
 					</div>
-					<div class="panel-collapse collapse" id="nccsaccesstab">
-					  <div class="panel-body">
+					<div class="panel-body">
+						<span class="inputsection">
+							<br>
+							Upload .csv file for GSA:<br>
+							<input type = "file" id = "GSA_Input_CSV" name = "GSA_Input_CSV" size = 20><br>
 
-							<p class="text-left">
-								<a href="https://cds.nccs.nasa.gov/nex/" onclick="openurl('https://cds.nccs.nasa.gov/nex/')"><img src="openNEX/images/click_here.png" width="12%" onmouseover="this.src='openNEX/images/click_here_hover.png';" onfocus="this.src='openNEX/images/click_here_hover.png';" onmouseout="this.src='openNEX/images/click_here.png';" onblur="this.src='openNEX/images/click_here.png';"></a> for NASA Center for Climate Simulation (NCCS)-hosted <span class="semi-bold">NEX-DCP30 Dataset </span></br></br>
-								<a href="https://cds.nccs.nasa.gov/nex-gddp/" onclick="openurl('https://cds.nccs.nasa.gov/nex-gddp/')"><img src="openNEX/images/click_here.png" width="12%" onmouseover="this.src='openNEX/images/click_here_hover.png';" onfocus="this.src='openNEX/images/click_here_hover.png';" onmouseout="this.src='openNEX/images/click_here.png';" onblur="this.src='openNEX/images/click_here.png';"></a> for NCCS-hosted <span class="semi-bold">NEX-GDDP Dataset </span></br>
-							</p>
+							Upload 3 files (.shp, .shx, .dfb) for GSA:<br>
+							<input type = "file" id = "GSA_Input_map" name = "GSA_Input_map" size = 20 multiple><br>
 
-					  </div>
+							<input type = "button" id = "GSA_Clear" value = "Clear" onClick = "remove_GSA(this)">
+							<input type = "submit" value = "SUBMIT">
+						</span>
 					</div>
-				  </div>
 				</div>
-
-
-				<div class="panel panel-group panel-transparent" data-toggle="collapse" id="nexsandbox">
-				  <div class="panel panel-default">
-					<div class="panel-heading">
-					  <h4 class="panel-title">
-						<a class="collapsed" data-parent="#nexsandbox" data-toggle=
-						"collapse" href="#nexsandboxtab" style="color: rgba(34, 167, 240, 1.0);">NEX Sandbox</a>
-					  </h4>
-					</div>
-					<div class="panel-collapse collapse" id="nexsandboxtab">
-					  <div class="panel-body">
-
-							<p class="text-left">
-								"NEX sandbox is a prototyping environment in which users have access to all NEX data, tools and smaller scale computing. Prototypes from the NEX sandbox can be easily scaled up and deployed on the NASA High Performance Computing (HPC) system. Any NASA researcher can request access to the sandbox, and if approved should have access within 24 hours. Any non-NASA user in the United States can request access to the sandbox, and if approved should have access within 48 hours. To find out more about the NEX sandbox and how to request access, visit the <a href="https://nex.nasa.gov" onclick="openurl('https://nex.nasa.gov')"><b>NEX portal</b></a> and/or the <a href="https://nex.nasa.gov/nex/static/htdocs/site/extra/kb/index.php?CategoryID=33" onclick="openurl('https://nex.nasa.gov/nex/static/htdocs/site/extra/kb/index.php?CategoryID=33')"><b>sandbox documentation </b></a>".
-							</p>
-
-					  </div>
-					</div>
-				  </div>
-				</div>
-
-
-				<div class="panel panel-group panel-transparent" data-toggle="collapse" id="azureaccess">
-				  <div class="panel panel-default">
-					<div class="panel-heading">
-					  <h4 class="panel-title">
-						<a class="collapsed" data-parent="#azureaccess" data-toggle=
-						"collapse" href="#azureaccesstab" style="color: rgba(34, 167, 240, 1.0);">Azure</a>
-					  </h4>
-					</div>
-					<div class="panel-collapse collapse" id="azureaccesstab">
-					  <div class="panel-body">
-
-							<h5 class="text-left">
-								Coming soon....
-							</h5>
-
-					  </div>
-					</div>
-				  </div>
-				</div>
-
-
-				<div class="panel panel-group panel-transparent" data-toggle="collapse" id="gcaccess">
-				  <div class="panel panel-default">
-					<div class="panel-heading">
-					  <h4 class="panel-title">
-						<a class="collapsed" data-parent="#gcaccess" data-toggle=
-						"collapse" href="#gcaccesstab" style="color: rgba(34, 167, 240, 1.0);">Google Cloud</a>
-					  </h4>
-					</div>
-					<div class="panel-collapse collapse" id="gcaccesstab">
-					  <div class="panel-body">
-
-							<h5 class="text-left">
-								Coming soon....
-							</h5>
-
-					  </div>
-					</div>
-				  </div>
-				</div>
-
-
-
-
             </div>
-
-
-
-
-
-
         </div>
     </div>
     <!-- /.modal-content -->
@@ -565,220 +338,32 @@
         <div class="modal-content table-block" style="background: rgba(255, 255, 255, 0.95); border: 0px; background-image: url('openNEX/images/test.png'); background-repeat: no-repeat; background-position: 50% 90%; background-size: 40%;">
 
 			<div style="margin-right: 27px;">
-				<button type="button" class="btn btn-danger btn-sm pull-right" data-dismiss="modal"><i class="fa fa-times fa-2x" aria-hidden="true" style="z-index:1000;"></i>
-				</button>
+				<button type="button" class="btn btn-danger btn-sm pull-right" data-dismiss="modal"><i class="fa fa-times fa-2x" aria-hidden="true" style="z-index:1000;"></i></button>
 			</div>
-
 			<br>
             <div class="modal-body v-align-left text-left">
-
-			<h3>Applications</h3>
-
-				<div class="panel panel-group panel-transparent" data-toggle="collapse" id="geapplication">
-				  <div class="panel panel-default">
+				<h3>Geospatial Analysis</h3>
+				<div class="panel panel-default">
 					<div class="panel-heading">
-					  <h4 class="panel-title">
-						<a class="collapsed" data-parent="#geapplication" data-toggle=
-						"collapse" href="#geapplicationtab" style="color: rgba(63, 195, 128, 1.0);">Google Earth Engine</a>
-					  </h4>
+						<h4 class="panel-title">Sample Cases</h4>
 					</div>
-					<div class="panel-collapse collapse" id="geapplicationtab">
-					  <div class="panel-body">
-
-							<p class="text-left">
-								Use Google Earth Engine to analyze NEX-DCP30 data
-								<br><br>
-
-
-								<center>
-							   <a href="https://www.youtube.com/watch?v=0P1jH5nsIdk&list=PL0oXBz7ulYiiqjRR9tULFmPgu9KyYsuQ_&index=3" target="_default" onclick="openurl('https://www.youtube.com/watch?v=0P1jH5nsIdk&list=PL0oXBz7ulYiiqjRR9tULFmPgu9KyYsuQ_&index=3')"><img src="openNEX/images/ge_app.png" width="50%" onmouseover="this.src='openNEX/images/ge_app_hover.png';" onfocus="this.src='openNEX/images/ge_app_hover.png';" onmouseout="this.src='openNEX/images/ge_app.png';" onblur="this.src='openNEX/images/ge_app.png';">
-								</center>
-								</a>
-
-
-							</p>
-
-
-					  </div>
+					<div class="panel-body">
+						<a href="{{url_for('sample', sample_path = 'GSA/usjoin.csv/us48.shp', case_num=case_num)}}">Run United States Income case</a><br>
+						<a href="{{url_for('static', filename = 'sample/GSA/template.csv', case_num=case_num)}}" download>Download Template</a>
 					</div>
-				  </div>
 				</div>
 
-
-				<div class="panel panel-group panel-transparent" data-toggle="collapse" id="posapplication">
-				  <div class="panel panel-default">
+				<div class="panel panel-default">
 					<div class="panel-heading">
-					  <h4 class="panel-title">
-						<a class="collapsed" data-parent="#posapplication" data-toggle=
-						"collapse" href="#posapplicationtab" style="color: rgba(63, 195, 128, 1.0);">Planet OS</a>
-					  </h4>
+						<h4 class="panel-title">Input Data</h4>
 					</div>
-					<div class="panel-collapse collapse" id="posapplicationtab">
-					  <div class="panel-body">
-
-							<p class="text-left">
-								Access the Planet OS Climate Data Access Tool
-								<br><br>
-
-
-								<center>
-							   <a href="http://opennex.planetos.com/" target="_default" onclick="openurl('http://opennex.planetos.com/')"><img src="openNEX/images/planetos_app.png" width="50%" onmouseover="this.src='openNEX/images/clickhere_hover.png';" onfocus="this.src='openNEX/images/clickhere_hover.png';" onmouseout="this.src='openNEX/images/planetos_app.png';" onblur="this.src='openNEX/images/planetos_app.png';">
-								</center>
-								</a>
-
-
-							</p>
-
-
-
-
-					  </div>
+					<div class="panel-body">
+						Upload .csv file for GSA:<br>
+						<input type = "file" id = "GSA_Input_CSV" name = "GSA_Input_CSV" size = 20><br>
+						Upload 3 files (.shp, .shx, .dfb) for GSA:<br>
+						<input type = "file" id = "GSA_Input_map" name = "GSA_Input_map" size = 20 multiple><br>
+						<input type = "submit" value = "SUBMIT">
 					</div>
-				  </div>
-				</div>
-
-
-
-
-				<div class="panel panel-group panel-transparent" data-toggle="collapse" id="habsevenapplication">
-				  <div class="panel panel-default">
-					<div class="panel-heading">
-					  <h4 class="panel-title">
-						<a class="collapsed" data-parent="#habsevenapplication" data-toggle=
-						"collapse" href="#habsevenapplicationtab" style="color: rgba(63, 195, 128, 1.0);">HabitatSeven</a>
-					  </h4>
-					</div>
-					<div class="panel-collapse collapse" id="habsevenapplicationtab">
-					  <div class="panel-body">
-
-							<p class="text-left">
-								Explore climate data web visualization on climatedata.us
-								<br><br>
-
-
-								<center>
-							   <a href="http://climatedata.us/#map" target="_default" onclick="openurl('http://climatedata.us/#map')"><img src="openNEX/images/hab7_app.png" width="50%" onmouseover="this.src='openNEX/images/hab7_app_hover.png';" onfocus="this.src='openNEX/images/hab7_app_hover.png';" onmouseout="this.src='openNEX/images/hab7_app.png';" onblur="this.src='openNEX/images/hab7_app.png';">
-								</center>
-								</a>
-
-
-							</p>
-
-					  </div>
-					</div>
-				  </div>
-				</div>
-
-
-				<div class="panel panel-group panel-transparent" data-toggle="collapse" id="berkeleyapplication">
-				  <div class="panel panel-default">
-					<div class="panel-heading">
-					  <h4 class="panel-title">
-						<a class="collapsed" data-parent="#berkeleyapplication" data-toggle=
-						"collapse" href="#berkeleyapplicationtab" style="color: rgba(63, 195, 128, 1.0);">Berkeley GIF</a>
-					  </h4>
-					</div>
-					<div class="panel-collapse collapse" id="berkeleyapplicationtab">
-					  <div class="panel-body">
-
-							<p class="text-left">
-								Play with Berkeley's Geospatial Innovation Facility (GIF) created climate vizualization web application
-								<br><br>
-
-
-								<center>
-							   <a href="https://dev-ecoengine.berkeley.edu/static/nasanex/" target="_default" onclick="openurl('https://dev-ecoengine.berkeley.edu/static/nasanex/')"><img src="openNEX/images/berkeley_app.png" width="50%" onmouseover="this.src='openNEX/images/berkeley_app_hover.png';" onfocus="this.src='openNEX/images/berkeley_app_hover.png';" onmouseout="this.src='openNEX/images/berkeley_app.png';" onblur="this.src='openNEX/images/berkeley_app.png';">
-								</center>
-								</a>
-
-
-							</p>
-
-					  </div>
-					</div>
-				  </div>
-				</div>
-
-
-					<div class="panel panel-group panel-transparent" data-toggle="collapse" id="climexpapplication">
-				  <div class="panel panel-default">
-					<div class="panel-heading">
-					  <h4 class="panel-title">
-						<a class="collapsed" data-parent="#climexpapplication" data-toggle=
-						"collapse" href="#climexpapplicationtab" style="color: rgba(63, 195, 128, 1.0);">THE CLIMATE EXPLORER</a>
-					  </h4>
-					</div>
-					<div class="panel-collapse collapse" id="climexpapplicationtab">
-					  <div class="panel-body">
-
-							<p class="text-left">
-								Explore U.S Climate Resiliency Toolkit's Climate Explorer
-								<br><br>
-
-
-								<center>
-							   <a href="https://toolkit.climate.gov/climate-explorer2/" target="_default" onclick="openurl('https://toolkit.climate.gov/climate-explorer2/')"><img src="openNEX/images/climate_exp_app.png" width="50%" onmouseover="this.src='openNEX/images/climate_exp_app_hover.png';" onfocus="this.src='openNEX/images/climate_exp_app_hover.png';" onmouseout="this.src='openNEX/images/climate_exp_app.png';" onblur="this.src='openNEX/images/climate_exp_app.png';">
-								</center>
-								</a>
-
-
-							</p>
-
-					  </div>
-					</div>
-				  </div>
-				</div>
-
-
-
-				<div class="panel panel-group panel-transparent" data-toggle="collapse" id="usgsapplication">
-				  <div class="panel panel-default">
-					<div class="panel-heading">
-					  <h4 class="panel-title">
-						<a class="collapsed" data-parent="#usgsapplication" data-toggle=
-						"collapse" href="#usgsapplicationtab" style="color: rgba(63, 195, 128, 1.0);">USGS NCCV</a>
-					  </h4>
-					</div>
-					<div class="panel-collapse collapse" id="usgsapplicationtab">
-					  <div class="panel-body">
-
-							<p class="text-left">
-								Explore USGS's National Climate Change Viewer (NCCV) Web Application
-								<br><br>
-
-
-								<center>
-							   <a href="https://www2.usgs.gov/climate_landuse/clu_rd/nccv/viewer.asp" target="_default" onclick="openurl('https://www2.usgs.gov/climate_landuse/clu_rd/nccv/viewer.asp')"><img src="openNEX/images/usgs_nccv_app.png" width="50%" onmouseover="this.src='openNEX/images/usgs_nccv_app_hover.png';" onfocus="this.src='openNEX/images/usgs_nccv_app_hover.png';" onmouseout="this.src='openNEX/images/usgs_nccv_app.png';" onblur="this.src='openNEX/images/usgs_nccv_app.png';">
-								</center>
-								</a>
-
-
-							</p>
-
-					  </div>
-					</div>
-				  </div>
-				</div>
-
-
-				<div class="panel panel-group panel-transparent" data-toggle="collapse" id="codesnipapplication">
-				  <div class="panel panel-default">
-					<div class="panel-heading">
-					  <h4 class="panel-title">
-						<a class="collapsed" data-parent="#codesnipapplication" data-toggle=
-						"collapse" href="#codesnipapplicationtab" style="color: rgba(63, 195, 128, 1.0);">Code Snippets (docker)</a>
-					  </h4>
-					</div>
-					<div class="panel-collapse collapse" id="codesnipapplicationtab">
-					  <div class="panel-body">
-
-							<h5 class="text-left">
-								Coming soon....
-							</h5>
-
-					  </div>
-					</div>
-				  </div>
 				</div>
             </div>
         </div>

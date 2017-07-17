@@ -445,6 +445,8 @@ def nodeSelect(case_num):
 			i+=1
 
 		fileDict['nodesetNums'] = nodeset
+		print("nodeset",nodeset)
+		print("colnames",nodeColNames)
 		graph.createNodeList(nodeset,nodeColNames)
 		return redirect(url_for('edgeSelect', case_num = case_num))
 
@@ -458,9 +460,7 @@ def edgeSelect(case_num):
 	graph = fileDict['graph']
 
 	nodes = fileDict['nodesetNums']
-
 	combos = allCombos(nodes, case_num)
-	print(combos)
 	fileDict['combos'] = combos
 
 	if request.method == 'POST':
@@ -517,6 +517,7 @@ def SNA2Dand3D(graph, request, case_num, _3D = True, _2D = False, label = True):
 	#make both
 	attr = {}
 	colorInput = []
+
 	if request.form.get("options") == None:
 		i = 0
 		for nodeSet in graph.nodeSet:
@@ -542,7 +543,7 @@ def SNA2Dand3D(graph, request, case_num, _3D = True, _2D = False, label = True):
 		node = request.form.get("nodeName")
 
 		attrDict = {
-			'bipartite': request.form.get("nodeSet")
+			'block': request.form.get("nodeSet")
 		}
 		i = 0
 		while (request.form.get("attribute"+str(i)) != None) and (request.form.get("attribute"+str(i)) != '') :
@@ -565,6 +566,7 @@ def SNA2Dand3D(graph, request, case_num, _3D = True, _2D = False, label = True):
 	fileDict['copy_of_graph'] = copy_of_graph
 	#return based on inputs
 	ret3D = graph.create_json(graph.nodeSet, colorInput) if _3D else None
+	print("graph.nodeset",graph.nodeSet)
 	ret2D = graph.plot_2D(attr, label) if _2D else None
 	fileDict['jgdata'] = ret3D
 	return ret3D, ret2D, attr
