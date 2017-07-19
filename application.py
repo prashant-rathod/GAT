@@ -429,28 +429,22 @@ def nodeSelect(case_num):
 	fileDict['graph'] = graph
 
 	if request.method == 'POST':
-		
-		nodeset = []
-		colNames = []
+
 		nodeColNames = []
 		i = 0
 		for header in graph.header:
 			fileDict[header + "IsNode"] = True if request.form.get(header + "IsNode")=="on" else False
-			if fileDict[header + "IsNode"] == True:
-				nodeset.append(i)
 			#fileDict[header + "Class"] = request.form[header + "Class"]
 			fileDict[header + "Name"] = request.form[header + "Name"]
 			if fileDict[header + "IsNode"] == True:
 				nodeColNames.append(fileDict[header + "Name"])
 			i+=1
 
-		fileDict['nodesetNums'] = nodeset
-		print("nodeset",nodeset)
+		fileDict['nodeColNames'] = nodeColNames
 		print("colnames",nodeColNames)
-		graph.createNodeList(nodeset,nodeColNames)
+		graph.createNodeList(nodeColNames)
 		return redirect(url_for('edgeSelect', case_num = case_num))
 
-	
 	return render_template("nodeselect.html",
 		nodes = graph.header, case_num = case_num)
 
@@ -458,15 +452,13 @@ def nodeSelect(case_num):
 def edgeSelect(case_num):
 	fileDict = caseDict[case_num]
 	graph = fileDict['graph']
-
-	nodes = fileDict['nodesetNums']
-	combos = allCombos(nodes, case_num)
+	combos = fileDict['nodeColNames']
 	fileDict['combos'] = combos
 
 	if request.method == 'POST':
 		for combo in combos:
-			if request.form.get(combo[2]) == "on":
-				graph.addEdges([combo[0],combo[1]])
+			if request.form.get(combo) == "on":
+				graph.createEdgeList(combo)
 
 		graph.closeness_centrality()
 		graph.degree_centrality()
@@ -478,7 +470,7 @@ def edgeSelect(case_num):
 	return render_template("edgeselect.html",
 		combos = combos, case_num = case_num)
 
-def allCombos(n, case_num):
+def allCombos(n, case_num): # deprecated
 	fileDict = caseDict[case_num]
 	graph = fileDict['graph']
 	h = graph.header
@@ -578,12 +570,8 @@ def jgvis(case_num):
 	#jgdata = fileDict.get('jgdata')
 	graph = fileDict.get('copy_of_graph')
 	jgdata, SNAbpPlot, attr = SNA2Dand3D(graph, request, case_num)
-
-
 	if request.method == 'POST':
 		jgdata, SNAbpPlot, attr = SNA2Dand3D(graph, request, case_num)
-
-
 	return render_template("Jgraph.html", 
 			jgdata = jgdata, 
 			attr = attr, 
