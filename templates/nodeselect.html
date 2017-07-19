@@ -22,7 +22,20 @@
 	}
 
 	</script>
-
+	<style>
+		table {
+			background-color: #071138;
+			border: solid white;
+			border-collapse: collapse;
+		}
+		table .centered {
+			text-align: center
+		}
+		th,td {
+			padding: 5px;
+			border-top: solid thin white;
+		}
+	</style>
 
 
 </head>
@@ -54,50 +67,47 @@
 	</li>
 	</ul>
 
-<br><br><br>
+<br>
 
 
 <div id="help" style="display:none;">
 	<button onClick = "closeHelp(this)">Close Help</button>
-	<p>Each box in this section corresponds to a column in your specified spreadsheet. Each column should correspond to a set of nodes, or nodeset. If you check the "is a nodeset?" box, then every value in that column will represent a node in the network. If you do not, then the values in that column will not be in the network. You may also elect to rename nodesets; the default value is the column name in the spreadsheet. The next page will allow you to select which relationships between the nodesets you would like to visualize and analyze.</p>
+	<p>Each box in this section corresponds to a column in your specified spreadsheet. Each column should correspond to a set of nodes, or nodeset. If you check the "is a nodeset?" box, then every value in that column will represent a node in the network. If you do not, then the values in that column will be attributes of nodes in the network. You may also elect to rename nodesets; the default value is the column name in the spreadsheet. The next page will allow you to select which relationships between the nodesets you would like to visualize and analyze.</p>
 </div>
 
 <form enctype = "multipart/form-data" method = "post" style = "display:inline;">
-
-	<div class = "nodes">
-
-	{% for node in nodes %}
-
-		<div class = "nodewindow">
-			{{node}} Column:<br>
-			<label><input type = "checkbox" name = "{{ node + 'IsNode' }}">is a nodeset?</label><br>
-
-			Nodeset class: 
-			<select name="{{ node + 'Class' }}">
-				<option value="Agent">Agent</option>
-				<option value="Organization">Organization</option>
-				<option value="Knowledge">Knowledge</option>
-				<option value="Resource">Resource</option>
-				<option value="Belief">Belief</option>
-				<option value="Event">Event</option>
-				<option value="Task">Task</option>
-				<option value="Location">Location</option>
-				<option value="Role">Role</option>
-				<option value="Action">Action</option>
-				<option value="Other">Other</option>
-			</select> <br>
-		
-			Nodeset name: <input type = "text" name = "{{ node + 'Name' }}" value = "{{ node }}">
-		</div>
-
-
-	{% endfor %}
-
-	</div>
-
-	<br>
-	<input type = "submit" value = "CONTINUE" style = "position: fixed;">
-
+	<table>
+		<tr>
+			<th>Data Column</th>
+			<th>Nodeset?</th>
+			<th>Class</th>
+			<th>Label</th>
+		</tr>
+		{% for node in nodes %}
+		<tr>
+			<td>{{node}}</td>
+			<td class="centered"><label><input type = "checkbox" name = "{{ node + 'IsNode' }}"></label></td>
+			<td>
+				<select name="{{ node + 'Class' }}">
+					<option value="Agent">Agent</option>
+					<option value="Organization">Organization</option>
+					<option value="Knowledge">Knowledge</option>
+					<option value="Resource">Resource</option>
+					<option value="Belief">Belief</option>
+					<option value="Event">Event</option>
+					<option value="Task">Task</option>
+					<option value="Location">Location</option>
+					<option value="Role">Role</option>
+					<option value="Action">Action</option>
+					<option value="Other">Other</option>
+				</select>
+			</td>
+			<td><input type = "text" name = "{{ node + 'Name' }}" value = "{{ node }}"></td>
+		</tr>
+		{% endfor -%}
+	</table>
+	<br/>
+	<input type = "submit" value = "CONTINUE" style="box-sizing:border-box;"/>
 </form>
 
 </body>
