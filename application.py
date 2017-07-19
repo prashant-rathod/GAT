@@ -96,8 +96,19 @@ caseDict = {}
 tempdir = 'static/temp/'
 
 # don't worry about this color shit. It's used by the SNA visualization
-colorDict = {"b": "blue", "g": "green", "r": "red", "c": "cyan", "m": "magenta", "y": "yellow", "k": "black", "w": "white"}
-colors = ["b", "g", "r", "c", "m", "y", "k", "w"]
+colorDict = {
+    "b": "blue",
+    "g": "green",
+    "r": "red",
+    "c": "cyan",
+    "m": "magenta",
+    "y": "yellow",
+    "k": "black",
+    "w": "white",
+    "orange": "orange",
+    "purple": "purple",
+}
+colors = ["b", "g", "r", "c", "m", "y", "k", "w","orange","purple"]
 hexColors = {}
 for color in colors:
 	rgbVal = matplotlib.colors.colorConverter.to_rgb(color)
@@ -490,7 +501,7 @@ def SNA2Dplot(graph, request, label=True):
 		for nodeSet in graph.nodeSet:
 			attr[nodeSet] = [colors[i],50]
 			i += 1
-			if i == 8:
+			if i > len(colors) + 1:
 				i = 0
 	else:
 		for nodeSet in graph.nodeSet:
