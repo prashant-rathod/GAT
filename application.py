@@ -96,8 +96,19 @@ caseDict = {}
 tempdir = 'static/temp/'
 
 # don't worry about this color shit. It's used by the SNA visualization
-colorDict = {"b": "blue", "g": "green", "r": "red", "c": "cyan", "m": "magenta", "y": "yellow", "k": "black", "w": "white"}
-colors = ["b", "g", "r", "c", "m", "y", "k", "w"]
+colorDict = {
+    "b": "blue",
+    "g": "green",
+    "r": "red",
+    "c": "cyan",
+    "m": "magenta",
+    "y": "yellow",
+    "k": "black",
+    "w": "white",
+    "orange": "orange",
+    "purple": "purple",
+}
+colors = ["b", "g", "r", "c", "m", "y", "k", "w","orange","purple"]
 hexColors = {}
 for color in colors:
 	rgbVal = matplotlib.colors.colorConverter.to_rgb(color)
@@ -429,26 +440,22 @@ def nodeSelect(case_num):
 	fileDict['graph'] = graph
 
 	if request.method == 'POST':
-		
-		nodeset = []
-		colNames = []
+
 		nodeColNames = []
 		i = 0
 		for header in graph.header:
 			fileDict[header + "IsNode"] = True if request.form.get(header + "IsNode")=="on" else False
-			if fileDict[header + "IsNode"] == True:
-				nodeset.append(i)
 			#fileDict[header + "Class"] = request.form[header + "Class"]
 			fileDict[header + "Name"] = request.form[header + "Name"]
 			if fileDict[header + "IsNode"] == True:
 				nodeColNames.append(fileDict[header + "Name"])
 			i+=1
 
-		fileDict['nodesetNums'] = nodeset
-		graph.createNodeList(nodeset,nodeColNames)
+		fileDict['nodeColNames'] = nodeColNames
+		print("colnames",nodeColNames)
+		graph.createNodeList(nodeColNames)
 		return redirect(url_for('edgeSelect', case_num = case_num))
 
-	
 	return render_template("nodeselect.html",
 		nodes = graph.header, case_num = case_num)
 
@@ -456,17 +463,13 @@ def nodeSelect(case_num):
 def edgeSelect(case_num):
 	fileDict = caseDict[case_num]
 	graph = fileDict['graph']
-
-	nodes = fileDict['nodesetNums']
-
-	combos = allCombos(nodes, case_num)
-	print(combos)
+	combos = fileDict['nodeColNames']
 	fileDict['combos'] = combos
 
 	if request.method == 'POST':
 		for combo in combos:
-			if request.form.get(combo[2]) == "on":
-				graph.addEdges([combo[0],combo[1]])
+			if request.form.get(combo) == "on":
+				graph.createEdgeList(combo)
 
 		graph.closeness_centrality()
 		graph.degree_centrality()
@@ -478,7 +481,7 @@ def edgeSelect(case_num):
 	return render_template("edgeselect.html",
 		combos = combos, case_num = case_num)
 
-def allCombos(n, case_num):
+def allCombos(n, case_num): # deprecated
 	fileDict = caseDict[case_num]
 	graph = fileDict['graph']
 	h = graph.header
@@ -498,7 +501,7 @@ def SNA2Dplot(graph, request, label=True):
 		for nodeSet in graph.nodeSet:
 			attr[nodeSet] = [colors[i],50]
 			i += 1
-			if i == 8:
+			if i > len(colors) + 1:
 				i = 0
 	else:
 		for nodeSet in graph.nodeSet:
@@ -517,6 +520,7 @@ def SNA2Dand3D(graph, request, case_num, _3D = True, _2D = False, label = True):
 	#make both
 	attr = {}
 	colorInput = []
+
 	if request.form.get("options") == None:
 		i = 0
 		for nodeSet in graph.nodeSet:
@@ -542,7 +546,7 @@ def SNA2Dand3D(graph, request, case_num, _3D = True, _2D = False, label = True):
 		node = request.form.get("nodeName")
 
 		attrDict = {
-			'bipartite': request.form.get("nodeSet")
+			'block': request.form.get("nodeSet")
 		}
 		i = 0
 		while (request.form.get("attribute"+str(i)) != None) and (request.form.get("attribute"+str(i)) != '') :
@@ -565,6 +569,7 @@ def SNA2Dand3D(graph, request, case_num, _3D = True, _2D = False, label = True):
 	fileDict['copy_of_graph'] = copy_of_graph
 	#return based on inputs
 	ret3D = graph.create_json(graph.nodeSet, colorInput) if _3D else None
+	print("graph.nodeset",graph.nodeSet)
 	ret2D = graph.plot_2D(attr, label) if _2D else None
 	fileDict['jgdata'] = ret3D
 	return ret3D, ret2D, attr
@@ -576,12 +581,8 @@ def jgvis(case_num):
 	#jgdata = fileDict.get('jgdata')
 	graph = fileDict.get('copy_of_graph')
 	jgdata, SNAbpPlot, attr = SNA2Dand3D(graph, request, case_num)
-
-
 	if request.method == 'POST':
 		jgdata, SNAbpPlot, attr = SNA2Dand3D(graph, request, case_num)
-
-
 	return render_template("Jgraph.html", 
 			jgdata = jgdata, 
 			attr = attr, 

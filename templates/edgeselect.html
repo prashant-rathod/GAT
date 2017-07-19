@@ -69,13 +69,13 @@
 	<p>This section allows you to select which nodesets, specified in the prior page, will be linked to which other nodesets. For example, if you select "Column1 x Column2", then for every row in the spreadsheet, the node in Column 1 will connect to the node in Column 2.</p>
 </div>
 
-<h3>Please choose which relationships you would like to include in your network:</h3>
+<h3>Please choose the source node set:</h3>
 
 <form enctype = "multipart/form-data" method = "post">
 
 	{% for combo in combos %}
 
-		<label><input type = "checkbox" name = "{{ combo[2] }}">{{ combo[2] }}</label><br>
+		<label><input type = "checkbox" name = "{{ combo }}">{{ combo }}</label><br>
 
 	{% endfor %}
 

@@ -24,6 +24,7 @@ class SNA():
         self.communicability_centrality_dict = {}
         self.communicability_centrality_exp_dict = {}
         self.node_attributes_dict = {}
+        self.nodeSet
     # Read xlsx file and save the header and all the rows (vector) containing features
     # Input: xlsx file, sheet
     def readFile(self, excel_file, sheet):
@@ -31,70 +32,67 @@ class SNA():
         sh = workbook.sheet_by_name(sheet)
         header = [str(sh.cell(0,col).value).strip("\n") for col in range(sh.ncols)]
         New_ncols = sh.ncols - 1
-        # If any, delete all the emtpy features in the header
+        # If any, delete all the empty features in the header
         while header[New_ncols] == '':
             header.remove(header[New_ncols])
             New_ncols -= 1
+        # a list of nodes
         list = []
         for row in range(1,sh.nrows):
             tempList = []
             for col in range(New_ncols + 1):
-                if type(sh.cell(row,col).value) == type(""):
-                    tempList.append(sh.cell(row,col).value.strip("\n"))
+                feature = str(sh.cell(0, col).value).strip("\n")
+                cell = sh.cell(row,col).value
+                if type(cell) == type(""):
+                    val = cell.strip("\n")
                 else:
-                    tempList.append(str(sh.cell(row,col).value))
+                    val = str(cell)
+                if val != "": # handle empty cells
+                    # Make each node a dict with node name and node header, to assign later
+                    tempList.append({'val': val, 'header': feature, 'attributes': {}}) # need to define attributes later
             list.append(tempList)
-        return header,list
-    #create set of nodes for bipartite graph
+        # remove repeated column titles
+        consolidatedHeader = []
+        for feature in header:
+            if feature not in consolidatedHeader:
+                consolidatedHeader.append(feature)
+        return consolidatedHeader,list
+    #create set of nodes for multipartite graph
     # name = names of the node. This is defined by the header. ex: Abbasi-Davani.F: Name  or Abbasi-Davani.F: Faction leader
     # nodeSet = names that define a set of node. For example, we can define Person, Faction Leader, and Party Leader as "Agent"
     # note: len(name) = len(nodeSet), else code fails
-    def createNodeList(self, name, nodeSet):
-        # Need to specify what sets from data are attributes of other sets (e.g. is title an attribute of name, or vice versa?)
-        header, list = self.header, self.list          #need to use header for role analysis
-        featureNo = 0 # which feature is being assessed
+    def createNodeList(self, nodeSet):
+        for row in self.list:
+            for node in row:
+                if node['header'] in nodeSet and node['val'] != "":
+                    # strip empty cells
+                    self.G.add_node(node['val'],node['attributes'],block=node['header'])
         self.nodeSet = nodeSet
-        for feature in name:
-            #nodesCollected = []
-            nodeList = [] # make this a container of (node, attribute dict) tuples https://networkx.github.io/documentation/networkx-1.9/reference/generated/networkx.DiGraph.add_nodes_from.html
-            for row in list:
-                counter = 0
-                nodeAttr = {}
-                for item in row:
-                    if item != row[feature]:
-                        #create dict with corresponding node set
-                        nodeAttr[header[counter]] = item
-                    if item == row[feature]:
-                        if row[feature] not in [x['name'] for x in nodeList]:
-                            nodeList.append({'name': row[feature], 'attributes': nodeAttr})
-                            #nodesCollected.append
-                    counter += 1
-                # Add attributes based on header input
-            for node in nodeList:
-                self.G.add_node(node['name'],node['attributes'],bipartite=nodeSet[featureNo])
-            featureNo+=1
         self.nodes = nx.nodes(self.G)
-        print(self.nodes)
-    #create a list of edges that connect among sets
-    #This part is currently still testing.
-    #Right now trying to see if the graph is displayed successfully, but later on need to add a argument that passes the
-    #list of features that we want the graph to display in bipartite
-    def createEdgeList(self, featureList):
+        print("nodes",self.nodes)
+    def createEdgeList(self, sourceSet):
         list = self.list
+
         edgeList = []
         for row in list:
-            for i in range(len(featureList)):
-                for j in range(len(featureList) - 1):
-                    if (row[featureList[i]] != '' and row[featureList[j]] != '') and (row[featureList[i]] != row[featureList[j]]):
-                        edgeList.append((row[featureList[i]],row[featureList[j]]))
+            for node in row:
+                if node['header'] == sourceSet:
+                    source = node['val']
+            for node in row:
+                if node['val'] != source and node['header'] in self.nodeSet:
+                    edgeList.append((source,node['val']))
         self.G.add_edges_from(edgeList)
         self.edges = edgeList
-    def addEdges(self, pair):
+        print("edges",self.G.edges())
+    def addEdges(self, pair): # deprecated, needs fixing - doesn't handle new dict structure
         data = self.list
+        print(self.nodes)
         newEdgeList = []
         for row in data:
-            if (row[pair[0]] != '' and row[pair[1]] != '') and (row[pair[0]] != row[pair[1]]):
-                newEdgeList.append((row[pair[0]], row[pair[1]]))
+            first = row[pair[0]]['val']
+            second = row[pair[1]]['val']
+            if (first != '' and second != '') and (first != second):
+                newEdgeList.append((first, second))
         self.G.add_edges_from(newEdgeList)
         self.edges.extend(newEdgeList)
 
@@ -334,7 +332,7 @@ class SNA():
                 removeEdge.append(n[i])
         for j in range(len(removeEdge)):
             n.remove(removeEdge[j])
-        jgraph.draw(nx.edges(self.G), directed="false")
+        jgraph.draw(nx.edges(self.G), directed="true")
     
     #note: this is for Vinay's UI
     def plot_2D(self, attr, label=False):
@@ -377,10 +375,10 @@ class SNA():
         data = {}
         edges = []
         nodes_property = {}
-        bipartite = nx.get_node_attributes(self.G, 'bipartite')
+        block = nx.get_node_attributes(self.G, 'block')
         for edge in self.edges:
             edges.append({'source': edge[0], 'target': edge[1]})
-        for node, feature in bipartite.items():
+        for node, feature in block.items():
             temp = {}
             temp['color'] = color[name.index(feature)]
             nodes_property[node] = temp

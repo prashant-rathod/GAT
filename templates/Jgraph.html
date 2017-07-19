@@ -39,8 +39,13 @@
     <div class="label"></div>
 
     <script type="text/javascript">
-      jgraph.create('.graph', {directed: false});
-      jgraph.draw({{jgdata|safe}});
+      jgraph.create('.graph', {directed: true});
+      try {
+        jgraph.draw({{jgdata|safe}});
+      }
+      catch (err) {
+       console.log(err)
+      };
 
       var onEnter, onExit, $d, hovered, currentNodeDict;
 
@@ -283,10 +288,10 @@
 
     <div class = "output-button-bar" style="text-align:right">
       <i  class="fa fa-window-minimize"
-      onclick="document.getElementById('SNA Options').style.display='none'"></i>
+      onclick="document.getElementById('SNAOptions').style.display='none'"></i>
 
       <i  class="fa fa-window-maximize"
-      onclick="document.getElementById('SNA Options').style.display='inline-block'"></i>
+      onclick="document.getElementById('SNAOptions').style.display='inline-block'"></i>
     </div>
 
     <div class = "output" id = "SNAOptions">
