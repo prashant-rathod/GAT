@@ -97,16 +97,16 @@ tempdir = 'static/temp/'
 
 # don't worry about this color shit. It's used by the SNA visualization
 colorDict = {
-    "b": "blue",
-    "g": "green",
-    "r": "red",
-    "c": "cyan",
-    "m": "magenta",
-    "y": "yellow",
-    "k": "black",
-    "w": "white",
-    "orange": "orange",
-    "purple": "purple",
+	"b": "blue",
+	"g": "green",
+	"r": "red",
+	"c": "cyan",
+	"m": "magenta",
+	"y": "yellow",
+	"k": "black",
+	"w": "white",
+	"orange": "orange",
+	"purple": "purple",
 }
 colors = ["b", "g", "r", "c", "m", "y", "k", "w","orange","purple"]
 hexColors = {}
@@ -125,9 +125,9 @@ def storefile(inFile):
 		return
 	suffix = '.' + inFile.filename.split('.')[-1]
 	f = tempfile.NamedTemporaryFile(
-            dir=tempdir,
-            suffix=suffix,
-            delete=False)
+			dir=tempdir,
+			suffix=suffix,
+			delete=False)
 	inFile.save(f)
 	return f.name
 
@@ -172,7 +172,7 @@ def upload():
 	if request.method == 'POST':
 
 		for f in request.files:
-		 	print(str(f) + ": " + str(request.files.get(f)))
+			print(str(f) + ": " + str(request.files.get(f)))
 
 		# here the use of fileDict is probably more clear
 		# the strings used to index request.files come from the HTML name of the input field
@@ -426,7 +426,8 @@ def sheetSelect(case_num):
 		return redirect(url_for('nodeSelect', case_num = case_num))
 
 	if request.method == 'POST':
-		fileDict['sheet'] = request.form.get('sheet')
+		fileDict['nodeSheet'] = request.form.get('nodeSheet')
+		fileDict['attrSheet'] = request.form.get('attrSheet')
 		return redirect(url_for('nodeSelect', case_num = case_num))
 
 	return render_template("sheetselect.html",
@@ -436,50 +437,60 @@ def sheetSelect(case_num):
 def nodeSelect(case_num):
 
 	fileDict = caseDict[case_num]
-	graph = sna.SNA(fileDict['SNA_Input'], fileDict['sheet'])
+	graph = sna.SNA( fileDict['SNA_Input'], nodeSheet = fileDict['nodeSheet'], attrSheet = fileDict['attrSheet'] )
 	fileDict['graph'] = graph
 
 	if request.method == 'POST':
 
 		nodeColNames = []
+		sourceColNames = []
 		i = 0
 		for header in graph.header:
 			fileDict[header + "IsNode"] = True if request.form.get(header + "IsNode")=="on" else False
+			fileDict[header + "IsSource"] = True if request.form.get(header + "IsSource") == "on" else False
 			#fileDict[header + "Class"] = request.form[header + "Class"]
 			fileDict[header + "Name"] = request.form[header + "Name"]
 			if fileDict[header + "IsNode"] == True:
 				nodeColNames.append(fileDict[header + "Name"])
+			if fileDict[header + "IsSource"] == True:
+				sourceColNames.append(fileDict[header + "Name"])
 			i+=1
-
 		fileDict['nodeColNames'] = nodeColNames
+		fileDict['sourceColNames'] = sourceColNames
 		print("colnames",nodeColNames)
 		graph.createNodeList(nodeColNames)
-		return redirect(url_for('edgeSelect', case_num = case_num))
+		graph.loadAttributes()
+		for colName in sourceColNames:
+			graph.createEdgeList(colName)
+		graph.closeness_centrality()
+		graph.degree_centrality()
+		graph.betweenness_centrality()
+		return redirect(url_for('visualize', case_num=case_num))
 
 	return render_template("nodeselect.html",
 		nodes = graph.header, case_num = case_num)
 
-@application.route('/edgeinfo/<int:case_num>', methods = ['GET', 'POST'])
-def edgeSelect(case_num):
-	fileDict = caseDict[case_num]
-	graph = fileDict['graph']
-	combos = fileDict['nodeColNames']
-	fileDict['combos'] = combos
-
-	if request.method == 'POST':
-		for combo in combos:
-			if request.form.get(combo) == "on":
-				graph.createEdgeList(combo)
-
-		graph.closeness_centrality()
-		graph.degree_centrality()
-		graph.betweenness_centrality()
-
-		return redirect(url_for('visualize', case_num = case_num))
-
-
-	return render_template("edgeselect.html",
-		combos = combos, case_num = case_num)
+# @application.route('/edgeinfo/<int:case_num>', methods = ['GET', 'POST']) # deprecated by Ryan Steed 20 Jul 2017, replaced by check box in nodeselect.html
+# def edgeSelect(case_num):
+# 	fileDict = caseDict[case_num]
+# 	graph = fileDict['graph']
+# 	combos = fileDict['nodeColNames']
+# 	fileDict['combos'] = combos
+#
+# 	if request.method == 'POST':
+# 		for combo in combos:
+# 			if request.form.get(combo) == "on":
+# 				graph.createEdgeList(combo)
+#
+# 		graph.closeness_centrality()
+# 		graph.degree_centrality()
+# 		graph.betweenness_centrality()
+#
+# 		return redirect(url_for('visualize', case_num = case_num))
+#
+#
+# 	return render_template("edgeselect.html",
+# 		combos = combos, case_num = case_num)
 
 def allCombos(n, case_num): # deprecated
 	fileDict = caseDict[case_num]
@@ -601,7 +612,7 @@ def get_data(case_num):
 		return jsonify(	name=name,
 						cluster="Empty graph",
 						eigenvector=eigenvector,
-				   		betweenness=betweenness
+						betweenness=betweenness
 						)
 	if nx.algorithms.bipartite.is_bipartite(graph.G):
 		graph.clustering()
@@ -717,27 +728,27 @@ def sample(sample_path, case_num):
 		fileDict['GSA_Input_CSV'] = url_for('static', filename = "sample/GSA/" + arr[1])[1:]
 		fileDict['GSA_Input_SHP'] = url_for('static', filename = "sample/GSA/" + arr[2])[1:]
 		fileDict['GSA_data'] = (0.001, 0.002, array([[ 252.,   27.,    1.,    0.,    0.],
-       [  28.,  226.,   20.,    0.,    0.],
-       [   1.,   25.,  239.,   15.,    0.],
-       [   0.,    0.,   18.,  237.,   22.],
-       [   0.,    0.,    0.,   24.,  257.]]), matrix([[ 0.9       ,  0.09642857,  0.00357143,  0.        ,  0.        ],
-        [ 0.10218978,  0.82481752,  0.0729927 ,  0.        ,  0.        ],
-        [ 0.00357143,  0.08928571,  0.85357143,  0.05357143,  0.        ],
-        [ 0.        ,  0.        ,  0.06498195,  0.85559567,  0.07942238],
-        [ 0.        ,  0.        ,  0.        ,  0.08540925,  0.91459075]]), array([[ 0.31780822,  0.26712329,  0.13561644,  0.23013699,  0.04931507],
-       [ 0.32951514,  0.25812019,  0.13180606,  0.1625608 ,  0.1179978 ],
-       [ 0.3007761 ,  0.26782838,  0.22843755,  0.16869234,  0.03426563],
-       [ 0.29380902,  0.25603358,  0.30535152,  0.03903463,  0.10577125],
-       [-0.        ,  0.09811321,  0.09433962,  0.25660377,  0.5509434 ]]), matrix([[   3.98789072,   11.01167278,   35.43877551,  100.43628118,
-          166.20696764],
-        [  28.92208853,    4.19293283,   26.38095238,   91.37845805,
-          157.14914451],
-        [  55.71301248,   28.32683784,    5.07303106,   64.99750567,
-          130.76819213],
-        [  85.41208655,   58.02591192,   29.69907407,    6.15356836,
-           65.77068646],
-        [  97.12041989,   69.73424525,   41.40740741,   11.70833333,
-            6.61742518]]))
+	   [  28.,  226.,   20.,    0.,    0.],
+	   [   1.,   25.,  239.,   15.,    0.],
+	   [   0.,    0.,   18.,  237.,   22.],
+	   [   0.,    0.,    0.,   24.,  257.]]), matrix([[ 0.9       ,  0.09642857,  0.00357143,  0.        ,  0.        ],
+		[ 0.10218978,  0.82481752,  0.0729927 ,  0.        ,  0.        ],
+		[ 0.00357143,  0.08928571,  0.85357143,  0.05357143,  0.        ],
+		[ 0.        ,  0.        ,  0.06498195,  0.85559567,  0.07942238],
+		[ 0.        ,  0.        ,  0.        ,  0.08540925,  0.91459075]]), array([[ 0.31780822,  0.26712329,  0.13561644,  0.23013699,  0.04931507],
+	   [ 0.32951514,  0.25812019,  0.13180606,  0.1625608 ,  0.1179978 ],
+	   [ 0.3007761 ,  0.26782838,  0.22843755,  0.16869234,  0.03426563],
+	   [ 0.29380902,  0.25603358,  0.30535152,  0.03903463,  0.10577125],
+	   [-0.        ,  0.09811321,  0.09433962,  0.25660377,  0.5509434 ]]), matrix([[   3.98789072,   11.01167278,   35.43877551,  100.43628118,
+		  166.20696764],
+		[  28.92208853,    4.19293283,   26.38095238,   91.37845805,
+		  157.14914451],
+		[  55.71301248,   28.32683784,    5.07303106,   64.99750567,
+		  130.76819213],
+		[  85.41208655,   58.02591192,   29.69907407,    6.15356836,
+		   65.77068646],
+		[  97.12041989,   69.73424525,   41.40740741,   11.70833333,
+			6.61742518]]))
 		#return fileDict['GSA_file_CSV'] + " " + fileDict['GSA_file_SVG']
 	if arr[0] == 'NLP':
 		if arr[1] == 'iran':

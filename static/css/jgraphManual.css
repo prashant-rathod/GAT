@@ -31,8 +31,9 @@
     padding:10px;
 }
 #name {
-	color: white;
+	color: #0b1b54;
 	font-size: 10px;
+	font-weight: bold;
     position:fixed;
     width: 150px;
     height: 12px;
