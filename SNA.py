@@ -332,11 +332,11 @@ class SNA():
     # draw 2D graph
     # attr is a dictionary that has color and size as its value.
     def graph_2D(self, attr, label=False):
-        bipartite = nx.get_node_attributes(self.G, 'bipartite')
+        block = nx.get_node_attributes(self.G, 'block')
         Nodes = nx.nodes(self.G)
         pos = nx.spring_layout(self.G)
         labels = {}
-        for node in bipartite:
+        for node in block:
             labels[node] = node
         for node in set(self.nodeSet):
             nx.draw_networkx_nodes(self.G, pos,
@@ -366,16 +366,21 @@ class SNA():
 
     #note: this is for Vinay's UI
     def plot_2D(self, attr, label=False):
+        print("attr", attr)
         plt.clf()
         block = nx.get_node_attributes(self.G, 'block')
-        Nodes = nx.nodes(self.G)
+        print("block",block)
         pos = nx.spring_layout(self.G)
         labels = {}
         for node in block:
             labels[node] = node
+            print("node",node)
         for node in set(self.nodeSet):
+            print("Node",node)
+            print("attr[node]",attr[node])
             nx.draw_networkx_nodes(self.G, pos,
                                    with_labels=False,
+                                   nodelist = [key for key, val in block.items() if val == node],
                                    node_color = attr[node][0],
                                    node_size = attr[node][1],
                                    alpha=0.8)
@@ -383,8 +388,8 @@ class SNA():
         for key,value in pos.items():
             pos[key][1] += 0.01
         if label == True:
-            nx.draw_networkx_labels(self.G, pos, labels, font_size=8)
-        limits=plt.axis('off')
+            nx.draw_networkx_labels(self.G, pos, labels, font_size=7)
+        plt.axis('off')
         f = tempfile.NamedTemporaryFile(
             dir='static/temp',
             suffix = '.png', delete=False)
