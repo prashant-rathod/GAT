@@ -508,7 +508,7 @@ def allCombos(n, case_num): # deprecated
 
     return combos
 
-def SNA2Dplot(graph, request, label=True):
+def SNA2Dplot(graph, request, label=False):
     attr = {}
     if graph == None:
         return None
@@ -528,7 +528,7 @@ def SNA2Dplot(graph, request, label=True):
 
 # makes more sense to make a whole SNA viz method that outputs both 2D and 3D if so desired
 # 2D is probably not desired in any case though
-def SNA2Dand3D(graph, request, case_num, _3D = True, _2D = False, label = True):
+def SNA2Dand3D(graph, request, case_num, _3D = True, _2D = False, label = False):
     fileDict = caseDict[case_num]
     if graph == None:
         return None, None, None
@@ -586,6 +586,7 @@ def SNA2Dand3D(graph, request, case_num, _3D = True, _2D = False, label = True):
     #return based on inputs
     ret3D = graph.create_json(graph.nodeSet, colorInput) if _3D else None
     print("graph.nodeset",graph.nodeSet)
+    label = True if not label and len(graph.nodes) < 20 else False
     ret2D = graph.plot_2D(attr, label) if _2D else None
     fileDict['jgdata'] = ret3D
     return ret3D, ret2D, attr
