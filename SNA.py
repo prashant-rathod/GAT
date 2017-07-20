@@ -90,8 +90,14 @@ class SNA():
             nodeID = row[0]['val']
             for cell in row[1:]:
                 if nodeID in self.nodes:
-                    self.changeAttribute(nodeID,cell['val'],cell['header'])
-                    print("Changing attribute",cell['header'],"for node",nodeID,"to",cell['val'])
+                    attrList = []
+                    node = self.G.node[nodeID]
+                    print(node)
+                    if cell['header'] in self.G.node[nodeID]:
+                        attrList.append(node[cell['header']])
+                    attrList.append(cell['val'])
+                    self.changeAttribute(nodeID,attrList,cell['header'])
+                    print("Changing attribute",cell['header'],"for node",nodeID,"to",attrList)
 
     def createEdgeList(self, sourceSet):
         list = self.list
@@ -154,7 +160,7 @@ class SNA():
     def changeAttribute(self, node,  value, attribute="bipartite"):
         if self.G.has_node(node):
             self.G.node[node][attribute] = value
-            print("New attribute for "+node+": "+self.G.node[node][attribute])
+            print("New attribute for "+node+": "+str(self.G.node[node][attribute]))
         self.nodes = nx.nodes(self.G)
 
     # Change node name
