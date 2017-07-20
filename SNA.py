@@ -72,7 +72,7 @@ class SNA():
         print("nodes",self.nodes)
     def createEdgeList(self, sourceSet):
         list = self.list
-
+        source = None
         edgeList = []
         for row in list:
             for node in row:
