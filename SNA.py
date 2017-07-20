@@ -367,11 +367,11 @@ class SNA():
     #note: this is for Vinay's UI
     def plot_2D(self, attr, label=False):
         plt.clf()
-        bipartite = nx.get_node_attributes(self.G, 'bipartite')
+        block = nx.get_node_attributes(self.G, 'block')
         Nodes = nx.nodes(self.G)
         pos = nx.spring_layout(self.G)
         labels = {}
-        for node in bipartite:
+        for node in block:
             labels[node] = node
         for node in set(self.nodeSet):
             nx.draw_networkx_nodes(self.G, pos,

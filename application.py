@@ -322,7 +322,8 @@ def visualize(case_num):
 
     #visualizations
     nltkPlot = nltkDraw.plot(NLP_file_LDP, NLP_LDP_terms)
-    jgdata, SNAbpPlot, attr = SNA2Dand3D(graph, request, case_num)
+    jgdata, SNAbpPlot, attr = SNA2Dand3D(graph, request, case_num, _2D = True)
+    fileDict['SNAbpPlot'] = '/' + SNAbpPlot
     fileDict['NLP_images'] = radar_runner.generate(NLP_dir, tropes)
     gsaCSV, mymap = tempParseGSA(GSA_file_CSV, GSA_file_SHP)
     if GSA_file_SVG != None:
@@ -422,7 +423,8 @@ def sheetSelect(case_num):
 
     # if workbook only has one sheet, the user shouldn't have to specify it
     if len(fileDict['sheets']) == 1:
-        fileDict['sheet'] = fileDict['sheets'][0]
+        fileDict['nodeSheet'] = fileDict['sheets'][0]
+        fileDict['attrSheet'] = None
         return redirect(url_for('nodeSelect', case_num = case_num))
 
     if request.method == 'POST':
@@ -459,7 +461,8 @@ def nodeSelect(case_num):
         fileDict['sourceColNames'] = sourceColNames
         print("colnames",nodeColNames)
         graph.createNodeList(nodeColNames)
-        graph.loadAttributes()
+        if fileDict['attrSheet'] != None:
+            graph.loadAttributes()
         for colName in sourceColNames:
             graph.createEdgeList(colName)
         graph.closeness_centrality()
@@ -470,10 +473,10 @@ def nodeSelect(case_num):
     return render_template("nodeselect.html",
         nodes = graph.header, case_num = case_num)
 
-@application.route('/edgeinfo/<int:case_num>', methods = ['GET', 'POST']) # deprecated by Ryan Steed 20 Jul 2017, replaced by check box in nodeselect.html
+@application.route('/edgeinfo/<int:case_num>', methods = ['GET', 'POST'])
 def edgeSelect(case_num):
     import warnings
-    warnings.warn(message, DeprecationWarning, stacklevel=2)
+    warnings.warn(message, DeprecationWarning, stacklevel=2) # deprecated by Ryan Steed 20 Jul 2017, replaced by check box in nodeselect.html
     fileDict = caseDict[case_num]
     graph = fileDict['graph']
     combos = fileDict['nodeColNames']
@@ -593,11 +596,12 @@ def jgvis(case_num):
     fileDict = caseDict[case_num]
     #jgdata = fileDict.get('jgdata')
     graph = fileDict.get('copy_of_graph')
-    jgdata, SNAbpPlot, attr = SNA2Dand3D(graph, request, case_num)
+    jgdata, SNAbpPlot, attr = SNA2Dand3D(graph, request, case_num, _2D = False)
     if request.method == 'POST':
-        jgdata, SNAbpPlot, attr = SNA2Dand3D(graph, request, case_num)
+        jgdata, SNAbpPlot, attr = SNA2Dand3D(graph, request, case_num, _2D = True)
     return render_template("Jgraph.html",
             jgdata = jgdata,
+            SNAbpPlot = SNAbpPlot,
             attr = attr,
             graph = graph,
             colorDict = colorDict,
