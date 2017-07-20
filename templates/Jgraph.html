@@ -174,6 +174,7 @@
         for (var key in nodeDict) {
           if (nodeDict.hasOwnProperty(key)) {
             if (key != "attributes" && key != "name") {
+              console.log(key, nodeDict[key])
               $("#measureInfo").append("<span id='"+key+"'>"+key+": "+nodeDict[key]+"</span><br>")
             }
           }

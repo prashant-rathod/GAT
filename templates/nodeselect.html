@@ -80,6 +80,7 @@
 		<tr>
 			<th>Data Column</th>
 			<th>Nodeset?</th>
+			<th>Source?</th>
 			<th>Class</th>
 			<th>Label</th>
 		</tr>
@@ -87,6 +88,7 @@
 		<tr>
 			<td>{{node}}</td>
 			<td class="centered"><label><input type = "checkbox" name = "{{ node + 'IsNode' }}"></label></td>
+			<td class="centered"><label><input type = "checkbox" name = "{{ node + 'IsSource' }}"></label></td>
 			<td>
 				<select name="{{ node + 'Class' }}">
 					<option value="Agent" {% if 'Agent' in node %} selected="selected" {% endif %} >Agent</option>

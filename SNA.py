@@ -7,8 +7,10 @@ import matplotlib.pyplot as plt
 import tempfile
 
 class SNA():
-    def __init__(self,excel_file, sheet):
-        self.header, self.list = self.readFile(excel_file, sheet)
+    def __init__(self, excel_file, nodeSheet, attrSheet = None):
+        self.header, self.list = self.readFile(excel_file, nodeSheet)
+        if attrSheet != None:
+            self.attrHeader, self.attrList = self.readFile( excel_file, attrSheet)
         self.G = nx.complete_multipartite_graph()
         self.nodes = []
         self.edges = []
@@ -24,18 +26,23 @@ class SNA():
         self.communicability_centrality_dict = {}
         self.communicability_centrality_exp_dict = {}
         self.node_attributes_dict = {}
-        self.nodeSet
-    # Read xlsx file and save the header and all the rows (vector) containing features
+        self.nodeSet = []
+        self.attrSheet = attrSheet
+
+    # Read xlsx file and save the header and all the cells, each a dict with value and header label
     # Input: xlsx file, sheet
     def readFile(self, excel_file, sheet):
+
         workbook = xlrd.open_workbook(excel_file)
         sh = workbook.sheet_by_name(sheet)
         header = [str(sh.cell(0,col).value).strip("\n") for col in range(sh.ncols)]
         New_ncols = sh.ncols - 1
+
         # If any, delete all the empty features in the header
         while header[New_ncols] == '':
             header.remove(header[New_ncols])
             New_ncols -= 1
+
         # a list of nodes
         list = []
         for row in range(1,sh.nrows):
@@ -49,14 +56,17 @@ class SNA():
                     val = str(cell)
                 if val != "": # handle empty cells
                     # Make each node a dict with node name and node header, to assign later
-                    tempList.append({'val': val, 'header': feature, 'attributes': {}}) # need to define attributes later
+                    tempList.append({'val': val, 'header': feature}) # need to define attributes later
             list.append(tempList)
+
         # remove repeated column titles
         consolidatedHeader = []
         for feature in header:
             if feature not in consolidatedHeader:
                 consolidatedHeader.append(feature)
+
         return consolidatedHeader,list
+
     #create set of nodes for multipartite graph
     # name = names of the node. This is defined by the header. ex: Abbasi-Davani.F: Name  or Abbasi-Davani.F: Faction leader
     # nodeSet = names that define a set of node. For example, we can define Person, Faction Leader, and Party Leader as "Agent"
@@ -66,10 +76,29 @@ class SNA():
             for node in row:
                 if node['header'] in nodeSet and node['val'] != "":
                     # strip empty cells
-                    self.G.add_node(node['val'],node['attributes'],block=node['header'])
+                    self.G.add_node(node['val'], block=node['header'])
         self.nodeSet = nodeSet
         self.nodes = nx.nodes(self.G)
         print("nodes",self.nodes)
+
+    # Input: header list and list of attributes with header label from attribute sheet
+    # Output: updated list of nodes with attributes
+    def loadAttributes(self):
+        print("header",self.attrHeader)
+        print("list",self.attrList)
+        for row in self.attrList:
+            nodeID = row[0]['val']
+            for cell in row[1:]:
+                if nodeID in self.nodes:
+                    attrList = []
+                    node = self.G.node[nodeID]
+                    print(node)
+                    if cell['header'] in self.G.node[nodeID]:
+                        attrList.append(node[cell['header']])
+                    attrList.append(cell['val'])
+                    self.changeAttribute(nodeID,attrList,cell['header'])
+                    print("Changing attribute",cell['header'],"for node",nodeID,"to",attrList)
+
     def createEdgeList(self, sourceSet):
         list = self.list
         source = None
@@ -131,7 +160,8 @@ class SNA():
     def changeAttribute(self, node,  value, attribute="bipartite"):
         if self.G.has_node(node):
             self.G.node[node][attribute] = value
-            print("New attribute for "+node+": "+self.G.node[node][attribute])
+            print("New attribute for "+node+": "+str(self.G.node[node][attribute]))
+        self.nodes = nx.nodes(self.G)
 
     # Change node name
     def relabelNode(self, oldNode, newNode):
@@ -140,7 +170,7 @@ class SNA():
             self.G.remove_node(oldNode)
         self.nodes = nx.nodes(self.G)
 
-    # Check if node exists 
+    # Check if node exists
     def is_node(self, node):
         return self.G.has_node(node)
 
@@ -302,11 +332,11 @@ class SNA():
     # draw 2D graph
     # attr is a dictionary that has color and size as its value.
     def graph_2D(self, attr, label=False):
-        bipartite = nx.get_node_attributes(self.G, 'bipartite')
+        block = nx.get_node_attributes(self.G, 'block')
         Nodes = nx.nodes(self.G)
         pos = nx.spring_layout(self.G)
         labels = {}
-        for node in bipartite:
+        for node in block:
             labels[node] = node
         for node in set(self.nodeSet):
             nx.draw_networkx_nodes(self.G, pos,
@@ -333,19 +363,24 @@ class SNA():
         for j in range(len(removeEdge)):
             n.remove(removeEdge[j])
         jgraph.draw(nx.edges(self.G), directed="true")
-    
+
     #note: this is for Vinay's UI
     def plot_2D(self, attr, label=False):
+        print("attr", attr)
         plt.clf()
-        bipartite = nx.get_node_attributes(self.G, 'bipartite')
-        Nodes = nx.nodes(self.G)
+        block = nx.get_node_attributes(self.G, 'block')
+        print("block",block)
         pos = nx.spring_layout(self.G)
         labels = {}
-        for node in bipartite:
+        for node in block:
             labels[node] = node
+            print("node",node)
         for node in set(self.nodeSet):
+            print("Node",node)
+            print("attr[node]",attr[node])
             nx.draw_networkx_nodes(self.G, pos,
                                    with_labels=False,
+                                   nodelist = [key for key, val in block.items() if val == node],
                                    node_color = attr[node][0],
                                    node_size = attr[node][1],
                                    alpha=0.8)
@@ -353,8 +388,8 @@ class SNA():
         for key,value in pos.items():
             pos[key][1] += 0.01
         if label == True:
-            nx.draw_networkx_labels(self.G, pos, labels, font_size=8)
-        limits=plt.axis('off')
+            nx.draw_networkx_labels(self.G, pos, labels, font_size=7)
+        plt.axis('off')
         f = tempfile.NamedTemporaryFile(
             dir='static/temp',
             suffix = '.png', delete=False)
@@ -366,7 +401,7 @@ class SNA():
         plotPng = f.name.split('/')[-1]
         plotPng = plotPng.split('\\')[-1]
         return plotPng
-     
+
     #create json file for 3 dimensional graph
     #name ex: {name, institution}, {faction leaders, institution}, etc...
     #color: {"0xgggggg", "0xaaaaaa"} etc. (Takes a hexadecimal "String").

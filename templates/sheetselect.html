@@ -39,15 +39,27 @@
 		</li>
 	</ul>
 
-<h3>Please choose which sheet you would like to use:</h3>
+<h3>Please select node and attribute data sheets:</h3>
 
 <form enctype = "multipart/form-data" method = "post">
 
-	<select name="sheet">
+    <p>Node Sheet: </p>
+	<select name="nodeSheet">
 
 	{% for sheet in sheets %}
 
-		<option value="{{ sheet }}">{{ sheet }}</option>
+		<option value="{{ sheet }}" {% if 'Node' in sheet -%} selected = "selected" {% endif -%} >{{ sheet }}</option>
+
+	{% endfor %}
+
+	</select><br>
+
+    <p>Attribute Sheet: </p>
+	<select name="attrSheet">
+
+	{% for sheet in sheets %}
+
+		<option value="{{ sheet }}" {% if 'Attr' in sheet -%} selected = "selected" {% endif -%} >{{ sheet }}</option>
 
 	{% endfor %}
 
