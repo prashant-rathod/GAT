@@ -1,240 +1,385 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>GSA, NLP, SNA Analysis</title>
-	<link href="{{url_for('static', filename='css/uploadStyle.css')}}" rel="stylesheet">
-	<!link src="stylesheet" type="text/css" href="././static/css/uploadStyle.css">
-	<script src="static/js/jquery-1.11.1.min.js"></script>
-	<script type="text/javascript">
-	function remove_GSA(source) {
-		document.getElementById("GSA_Input_CSV").value = "";
-		document.getElementById("GSA_Input_map").value = "";
-	}
-
-	function remove_NLP(source) {
-		document.getElementById("NLP_Input_corpus").value = "";
-		document.getElementById("NLP_Input_LDP").value = "";
-		document.getElementById("NLP_LDP_terms").value = "";
-	}
-
-	function remove_SNA(source) {
-		document.getElementById("SNA_Input").value = "";
-	}
-
-	function closeAllHelp(source) {
-		comps = ["GSA-help","NLP-help","SNA-help","all-help"]
-		for (var i = comps.length - 1; i >= 0; i--) {
-			document.getElementById(comps[i]).style.display = "none";
-		};
-	}
-
-	function openAllHelp(source) {
-		comps = ["all-help","GSA-help","NLP-help","SNA-help"]
-		for (var i = comps.length - 1; i >= 0; i--) {
-			document.getElementById(comps[i]).style.display = "block";
-		};
-	}
-
-	function openComponentHelp(comp) {
-		document.getElementById("all-help").style.display = "block";
-		document.getElementById(comp).style.display = "block";
-	}
-
-	function openAbout(source){
-		document.getElementById("about").style.display = "block";
-	}
-
-	function closeAbout(source){
-		document.getElementById("about").style.display = "none";
-	}
-
-	</script>
-</head>
+   <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+   <title>Project Hermes 2.0 2017</title>
+   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+   <meta name="apple-mobile-web-app-capable" content="yes">
+   <meta name="apple-touch-fullscreen" content="yes">
+   <meta name="apple-mobile-web-app-status-bar-style" content="default">
+   <meta name="description" content="Project Hermes 2.0">
+   <meta name="keywords" content="computational security studies, AWS, Hermes, NLP, GSA, SNA">
+   <link href="static/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+   <link href="static/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+   <link class="main-stylesheet" href="static/css/custom.css" rel="stylesheet" type="text/css" />
+   <link class="main-stylesheet" href="static/css/floatsocial.css" rel="stylesheet" type="text/css" />
+   <link class="main-stylesheet" href="static/css/lucas-css.css" rel="stylesheet" type="text/css" />
 <style>
-* {
- font-size: 100%;
- font-family: Segoe UI;
+.box_button {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+  height: 100%;
+  border-radius: 15px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+
+  -webkit-transition: all 1s cubic-bezier(0.165, 0.84, 0.44, 1);
+  transition: all 1s cubic-bezier(0.165, 0.84, 0.44, 1);
 }
+
+.box_button::after {
+  content: "";
+  border-radius: 0px;
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  opacity: 0;
+  -webkit-transition: all 1s cubic-bezier(0.165, 0.84, 0.44, 1);
+  transition: all 1s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.box_button:hover {
+  -webkit-transform: scale(1.25, 1.25);
+  transform: scale(1.25, 1.25);
+}
+
+.box_button:hover::after {
+    opacity: 1;
+}
+
+.modal-dialog{
+    position: relative;
+    display: table; //This is important
+    overflow-y: auto;
+    overflow-x: auto;
+
+}
+
+.tooltip.left .tooltip-inner {
+    background-color: #f0f4f8;
+	color: #2c3e50;
+	width: 200px;
+	height: 60px;
+	padding-top:5px;
+	padding-bottom:5px;
+	font-size: 12px;
+	margin-right: 30px;
+	border-radius: 10px;
+}
+
+.tooltip.left .tooltip-arrow {
+    border-left-color: #f0f4f8;
+	margin-right: 30px;
+}
+
+.tooltip.bottom .tooltip-inner {
+    background-color: #f0f4f8;
+	color: #2c3e50;
+	width: 200px;
+	height: 60px;
+	padding-top:5px;
+	padding-bottom:5px;
+	font-size: 12px;
+	margin-top: 20px;
+	border-radius: 10px;
+}
+
+.tooltip.bottom .tooltip-arrow {
+    border-bottom-color: #f0f4f8;
+	margin-top: 20px;
+}
+
+.tooltip.top .tooltip-inner {
+    background-color: #f0f4f8;
+	color: #2c3e50;
+	width: 200px;
+	height: 60px;
+	padding-top:5px;
+	padding-bottom:5px;
+	font-size: 12px;
+	margin-bottom: 20px;
+	border-radius: 10px;
+}
+
+.tooltip.top .tooltip-arrow {
+    border-top-color: #f0f4f8;
+	margin-bottom: 20px;
+}
+
+.tooltip.right .tooltip-inner {
+    background-color: #f0f4f8;
+	color: #2c3e50;
+	width: 200px;
+	height: 70px;
+	padding-top:5px;
+	padding-bottom:5px;
+	font-size: 12px;
+	margin-left: 30px;
+	border-radius: 10px;
+}
+
+.tooltip.right .tooltip-arrow {
+    border-right-color: #f0f4f8;
+	margin-left: 30px;
+}
+
 </style>
-<body>
+</head>
+<body class="pace-dark">
+<!-- BEGIN JUMBOTRON -->
 
-	<ul>
-		<li class="dropdown">
-			<a href="{{ url_for('upload') }}">Home</a>
-		</li>
+<section class="jumbotron last z-index-10" data-pages="parallax" style="height:100%">
+    <div class="container-xs-height full-height inner">
+        <div class="col-xs-height col-middle text-center">
+        <!-- START CONTENT -->
+        <br/>
+			<div class="container">
+				<div class="row">
+					<div class="col-sm-10 col-sm-offset-1">
+						<div class="text-center sm-p-t-10">
+							<h1 class="font-montserrat hidden-xs text-white"><img src="static/GATLogo.png" height="250" alt="hermes logo"></h1>
+							<h5 class="text-white"><span class="bold">Project Hermes 2.0</br>
+						</div>
+					</div>
+				</div>
+				<br/><br/>
+				<!-- Search Bar -->
+				<div class="row text-centered">
+					<input type="text" name="search" id="search" placeholder="URL to scrape...">
+				</div>
+				<div class="row">
+					<div class="col-md-3"></div>
+					<div class="col-md-2">
+						<button class="btn btn-success box_button" type="button" style="width: 100%" onclick="show1();" data-toggle="tooltip" title="Natural Language Processing: Actionable insights based on cutting-edge text analysis" data-placement="bottom" animation="true">
+							<h5 class="semi-bold text-white"><b>NLP</b></h5>
+						</button>
+					</div>
+					<div class="col-md-2">
+						<button class="btn btn-success box_button" type="button" style="width: 100%" onclick="show2();" data-toggle="tooltip" title="Social Network Analysis: Dynamic 3-dimensional network visualization and simulation" data-placement="bottom" animation="true">
+							<h5 class="semi-bold text-white"><b>SNA</b></h5>
+						</button>
+					</div>
+					<div class="col-md-2">
+						<button class="btn btn-success box_button" type="button" style="width: 100%" onclick="show3();" data-toggle="tooltip" title="Geospatial Analysis: Extending analysis techniques using the dimensions of space and time" data-placement="bottom" animation="true">
+							<h5 class="semi-bold text-white"><b>GSA</b></h5>
+						</button>
+					</div>
+				</div>
+	   		</div>
+		</div>
+    </div>
+</section>
+<!-- START FOOTER -->
+    <section class="z-index-1 pull-bottom-fixed full-width" data-pages="reveal-footer">
+        <div class="container">
+         <div class="row">
+            <div class="col-sm-4 text-left" >
+            </div>
+            <div class="col-sm-4 text-center" >
+              <p class="fs-14"
+               <a href="mailto:william.rivera@duke.edu" target="_top"><span class="glyphicon glyphicon-envelope"></span></a><br/><span>
+                  <a href="" target="_blank">Contact Us</a><br>
+				  <a href="http://css-lucas.com" target="_blank">LUCAS Website</a><br>
+                  <a href="/help" target="_self">Help Page</a>
+               </span>
+               </p>
+            </div>
+            <div class="col-sm-4 text-right">
+            </div>
+          </div>
+        </div>
+      <section class="p-t-10 p-b-10 bg-master-darkest">
+        <div class="container">
+          <div class="row">
+            <div class="col-sm-12 text-center">
+              <p class="fs-11 no-margin font-arial text-white small-text">2015-2017 LUCAS. Last Updated: 07/10/2017.
+              </p>
+            </div>
+
+          </div>
+        </div>
+      </section>
+    </section>
+    <!-- END FOOTER -->
 
 
-		<li class="dropdown">
-			<a href="#" class="dropbtn" style = "color:grey">Load</a>
-			<!--div class="dropdown-content">
-				<a href="#">Uploads</a>
-			</div-->
-		</li>
-		<li class="dropdown">
-			<a href="#" class="dropbtn">GSA</a>
-			<div class="dropdown-content">
-				<a href="{{url_for('sample', sample_path = 'GSA/usjoin.csv/us48.shp', case_num=case_num)}}">Run United States Income case</a>
-				<a href="{{url_for('static', filename = 'sample/GSA/template.csv', case_num=case_num)}}" download>Download Template</a>
+    <script type="text/javascript" src="static/js/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="static/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="static/js/custom.frontend.js"></script>
+
+	<script>
+		function show1(){
+			$('#nlp_modal').modal('show');
+			$('#sna_modal').modal('hide');
+			$('#gsa_modal').modal('hide');
+		}
+
+		function show2(){
+			$('#nlp_modal').modal('hide');
+			$('#sna_modal').modal('show');
+			$('#gsa_modal').modal('hide');
+		}
+
+		function show3(){
+			$('#nlp_modal').modal('hide');
+			$('#sna_modal').modal('hide');
+			$('#gsa_modal').modal('show');
+		}
+
+		function openurl(link){
+				window.open(link);
+			}
+	</script>
+
+<div class="modal fade slide-right" id="nlp_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content-wrapper">
+			<div class="modal-content table-block" style="background: rgba(255, 255, 255, 0.95); border: 0px; background-repeat: no-repeat; background-position: 50% 90%; background-size: 40%;">
+
+				<div style="margin-right: 27px;">
+					<button type="button" class="btn btn-danger btn-sm pull-right" data-dismiss="modal"><i class="fa fa-times fa-2x" aria-hidden="true" style="z-index:1000;"></i>
+					</button>
+				</div>
+				<br>
+				<div class="modal-body v-align-left text-left">
+
+				<h3>Natural Language Processing</h3>
+
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h4 class="panel-title">Sample Cases</h4>
+					</div>
+					<div class="panel-body">
+						<a href="{{url_for('sample', sample_path = 'NLP/isil', case_num=case_num)}}">Run ISIL case</a><br>
+						<a href="{{url_for('sample', sample_path = 'NLP/iran', case_num=case_num)}}">Run Sentiment Analysis on Iran Speech</a>
+					</div>
+				</div>
+
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h4 class="panel-title">Data Input</h4>
+					</div>
+					<div class="panel-body">
+						Upload text files (.txt, .rtf):<br>
+						<p style = "font-size:10px">(Use Ctrl- or Shift-click to select multiple files)</p>
+						<input type = "file" id = "NLP_Input_corpus" name = "NLP_Input_corpus" multiple>
+						<hr>
+						Enter urls to scrape (comma separated):<br>
+						<input type = "text" id = "NLP_LDP_terms" name = "NLP_LDP_terms">
+						<hr>
+						<input type = "submit" value = "SUBMIT">
+					</div>
+				</div>
 			</div>
-		</li>
-		<li class="dropdown">
-			<a href="#" class="dropbtn">NLP</a>
-			<div class="dropdown-content">
-				<!--<a href="{{url_for('sample', sample_path = 'NLP/united-states', case_num=case_num)}}">Run United States case</a>-->
-				<a href="{{url_for('sample', sample_path = 'NLP/isil', case_num=case_num)}}">Run ISIL case</a>
-				<a href="{{url_for('sample', sample_path = 'NLP/iran', case_num=case_num)}}">Run Sentiment Analysis on Iran Speech</a>
-				<!--<a href="{{url_for('sample', sample_path = 'NLP/AAH', case_num=case_num)}}">Run AAH case</a>-->
-			</div>
-		</li>
-		<li class="dropdown">
-			<a href="#" class="dropbtn">SNA</a>
-			<div class="dropdown-content">
-				<a href="{{url_for('sample', sample_path = 'SNA/iran.xlsx', case_num=case_num)}}">Run Iran Political Elite case</a>
-				<a href="{{url_for('sample', sample_path = 'SNA/AAH_for_SNA.xlsx', case_num=case_num)}}">Run AAH case</a>
-				<a href="{{url_for('sample', sample_path = 'SNA/roleTheorySample.xlsx', case_num=case_num)}}">Run Role Theory case</a>
-				<a href="{{url_for('sample', sample_path = 'SNA/CaseStudy_Turkey.xlsx', case_num=case_num)}}">Run Turkey case</a>
-			</div>
-		</li>
-		<li class="dropdown">
-			<a href="#" class="dropbtn" style = "color:grey;">View</a>
-			<div class="dropdown-content">
-			</div>
-		</li>
-		<li class="dropdown">
-			<a href="#" class="dropbtn">Help</a>
-			<div class="dropdown-content">
-				<a href="#" onClick = "openComponentHelp('GSA-help')" >GSA</a>
-				<a href="#" onClick = "openComponentHelp('NLP-help')">NLP</a>
-				<a href="#" onClick = "openComponentHelp('SNA-help')">SNA</a>
-				<a href="#" onClick = "openAllHelp(this)">All</a>
-				<a href="#" style = "color: grey">Manual</a>
-			</div>
-		</li>
-		<li class="dropdown">
-			<a href="#" class="dropbtn">About</a>
-			<div class="dropdown-content">
-				<a href="#" onClick = "openAbout(this)">About the tool</a>
-				<a target="_blank" href="http://computationalsecuritystudies.org">LUCAS Website</a>
-			</div>
-		</li>
-	</ul>
-
-	<br>
-
-	{% if errors %}
-
-	<br>
-
-	{% for error in errors %}
-		<p style = "color:red;">{{ error }}</p><br>
-	{% endfor %}
-
-	<br><br>
-
-	{% endif %}
-
-	<div id = "about" style="display:none; color:white">
-		<button onClick = "closeAbout(this)">Close About</button>
-		<p>Complex problems in complex spaces require complex analytic tools. That is the guiding principle behind the Geospatial Analysis Toolkit (GAT) currently under development by LUCAS for the Department of Defense’s Minerva Initiative Resources and Resiliency grant. The Geospatial Analysis Toolkit is designed to be a comprehensive computational security analysis tool that incorporates social network analysis and semantic and sentiment analysis, with a Smart Graphic User Interface (GUI) and Smart Search functionality, grounded in geospatial analysis. It will enable Smart Search capability by location, proper name, or subject keyword. The Smart GUI will produce geographic-based displays of the interconnections of resources, infrastructure, and other geographical features presented as layers to enable particularized or general geo-analysis. The Smart GUI will also enable semantic and sentiment analysis as well as social network analysis visualized for geospatial analysis. The semantic and sentiment and the social network analysis modules will also be visualized independently, allowing for more specified types of analyses.</p>
-		<p>The principal investigator will be the lab’s director, Dr. Tony Rivera, who is a Visiting Assistant Professor at the Social Science Research Institute (SSRI) with a secondary appointment in Political Science.  The project team includes instructors, graduate students, and undergraduates from multiple departments, including Political Science, the Sanford School of Public Policy, and the Nicholas School of the Environment.</p>
+		</div>
+		<!-- /.modal-content -->
 	</div>
-	<div id="all-help" style="display:none; color:white"">
-		<button onClick = "closeAllHelp(this)">Close Help</button>
-		<div id = "GSA-help" style="display:none;">
-		<font face="Segoe UI">
-			<b>GSA Information:</b>
-			<p>Our Geospatial Analysis component takes in a Scalable Vector Graphics map and a comma-separated value file (.csv) of spatial and temporal data.You can download a template of what your CSV file should look like under GSA > Download Template. The csv file and SVG file should correspond to one another. You can also choose the sample case which is described below. It outputs a map with the data visualized on it.</p>
-			<b>Sample Cases:</b><br>
-			<li>United States Income: This dataset visualizes the average household income of each of the 48 US mainland states over several decades.</li>
-			</font>
-		</div><br>
-		<div id = "NLP-help" style="display:none; color:white"">
-		<font face="Segoe UI">
-			<b>NLP Information:</b>
-			<p>Our Natural Language Processing component takes in a selection of text (.txt) files. You can also choose one of the sample text selections which are described below. The tool identifies tropes in the corpus. For each trope, it returns a radar chart visualizing how strongly the trope is associated with 8 emotions.</p>
-			<b>Sample Cases:</b><br>
-			<li>United States: These texts contain quotes and/or social media posts from US officials or influential people regarding ISIS in Mosul. The texts are mainly negative with a common theme of referring to ISIS as a tumor or other cancerous forms invading Iraq. These were found through google news searches as well as through Facebook, Instagram, and Twitter posts. </li>
-			<li>ISIL: These are statements released by Ninawa Wilayah, the Iraqi governorate of which Mosul is the capital
-			(Ninawa Wilayah was mostly controlled by ISIL before the liberation efforts started); Amaq, ISIL’s official news outlet; and Jazirah, another ISIL-owned news outlet operating in Mosul. The text files were created using a web scraping tool, from the English translations made available online by the moderators of the Syrian Civil War thread on Reddit.</li>
-			</font>
-		</div><br>
-		<div id = "SNA-help" style="display:none; color:white"">
-		<font face="Segoe UI">
-			<b>SNA Information:</b>
-			<p>	Our Social Network Analysis takes in an Excel spreadsheet (.xlsx or .xls). You can also choose one of the sample cases which are described below. After going through various input steps (for which more help is available on the corresponding pages), the tool returns a 3-dimensional visualization of the network which you can manipulate. Note: If you upload an excel document with only 1 sheet, the tool passes over the sheet selection tool. Otherwise, you must specify which sheet you would like to use.</p>
-			<b>Sample Cases:</b><br>
-			<li>Iran Political Elite: This is a dataset of the relationships between Iranian political leaders, factions, institutions, and other entities during selected years between 2006-2014.</li>
-			</div><br>
-		</font>
-	</div>
-	<form enctype = "multipart/form-data" method = "post">
-		<span class="inputsectioncontainer">
-			<span>
-				<br>
-				<textarea name="research_question" rows="2" style="width:45%;">Enter a url for scraping:</textarea>
-			</span>
-			<br><br><br>
-		</span>
-		<span class="inputsectioncontainer">
-			<span class="nametag">
-			GSA
-			</span>
-			<span class="nametag">
-			NLP
-			</span>
-			<span class="nametag">
-			SNA
-			</span>
-			<span class="inputsection">
-				<br>
-				Upload .csv file for GSA:<br>
-				<input type = "file" id = "GSA_Input_CSV" name = "GSA_Input_CSV" size = 20><br>
+<!-- /.modal-dialog -->
+</div>
+</div> <!-- Don't delete this div even though they appear to serve no purpose -->
 
-				Upload 3 files (.shp, .shx, .dfb) for GSA:<br>
-				<input type = "file" id = "GSA_Input_map" name = "GSA_Input_map" size = 20 multiple><br>
+<div class="modal fade slide-right" id="sna_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal-dialog modal-lg">
+    <div class="modal-content-wrapper">
+        <div class="modal-content table-block" style="background: rgba(255, 255, 255, 0.95); border: 0px; background-image: url('openNEX/images/test.png'); background-repeat: no-repeat; background-position: 50% 90%; background-size: 40%;">
 
-				<input type = "button" id = "GSA_Clear" value = "Clear" onClick = "remove_GSA(this)">
-				<input type = "submit" value = "SUBMIT">
-			</span>
-			<span class="inputsection">
-				<br>
-				Upload .txt corpus for NLP:<br>
-				<p style = "font-size:10px">(Use Ctrl- or Shift-click to select multiple files)</p>
-				<input type = "file" id = "NLP_Input_corpus" name = "NLP_Input_corpus" multiple><br>
-				<hr>
-				Upload .txt file for Lexical Dispersion Plot:<br>
-				<input type = "file" id = "NLP_Input_LDP" name = "NLP_Input_LDP"><br>
-				Enter terms you would like to perform LDP, separated by commas:<br>
-				<input type = "text" id = "NLP_LDP_terms" name = "NLP_LDP_terms"><br>
-				<input type = "button" id = "NLP_Clear" value = "Clear" onClick = "remove_NLP(this)">
-				<hr>
-				Upload .txt file for Sentiment Analysis:<br>
-				<input type = "file" id = "NLP_Input_Sentiment" name = "NLP_Input_Sentiment"><br>
-				<hr>
+			<div style="margin-right: 27px;">
+				<button type="button" class="btn btn-danger btn-sm pull-right" data-dismiss="modal"><i class="fa fa-times fa-2x" aria-hidden="true" style="z-index:1000;"></i>
+				</button>
+			</div>
 
-				<!--
-				Enter sentence for Name Entity Recognition:<br>
-				<input type = "text" id = "NLP_INPUT_NER" name = "NLP_INPUT_NER"><br>
-				<hr>
+			<br>
+            <div class="modal-body v-align-left text-left">
+			<h3>Social Network Analysis</h3>
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h4 class="panel-title">Sample Cases</a></h4>
+					</div>
+					<div class="panel-body">
+						<a href="{{url_for('sample', sample_path = 'SNA/iran.xlsx', case_num=case_num)}}">Run Iran Political Elite case</a><br>
+						<a href="{{url_for('sample', sample_path = 'SNA/AAH_for_SNA.xlsx', case_num=case_num)}}">Run AAH case</a><br>
+						<a href="{{url_for('sample', sample_path = 'SNA/roleTheorySample.xlsx', case_num=case_num)}}">Run Role Theory case</a><br>
+					</div>
+				</div>
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h4 class="panel-title">Input Files</a></h4>
+					</div>
+					<div class="panel-body">
+						<span class="inputsection">
+							<br>
+							Upload .csv file for GSA:<br>
+							<input type = "file" id = "GSA_Input_CSV" name = "GSA_Input_CSV" size = 20><br>
 
-				Enter sentence for IOB Tagging:<br>
-				<input type = "text" id = "NLP_INPUT_IOB" name = "NLP_INPUT_IOB"><br>
-				<br>
+							Upload 3 files (.shp, .shx, .dfb) for GSA:<br>
+							<input type = "file" id = "GSA_Input_map" name = "GSA_Input_map" size = 20 multiple><br>
 
-				-->
-				<input type = "submit" value = "SUBMIT">
-			</span>
-			<span class="inputsection">
-				<br>
-				Upload .xlsx file for SNA:<br>
-				<input type = "file" id = "SNA_Input" name = "SNA_Input" size = 20 value="a"><br>
-				<input type = "button" id = "SNA_Clear" value = "Clear" onClick = "remove_SNA(this)">
-				<input type = "submit" value = "SUBMIT">
-			</span>
-		</span>
-		<br><br><br>
-		<hr class="style1">
-		<input type = "submit" value = "SUBMIT">
-	</form>
-</body>
+							<input type = "button" id = "GSA_Clear" value = "Clear" onClick = "remove_GSA(this)">
+							<input type = "submit" value = "SUBMIT">
+						</span>
+					</div>
+				</div>
+            </div>
+        </div>
+    </div>
+    <!-- /.modal-content -->
+</div>
+<!-- /.modal-dialog -->
+</div>
+
+
+
+<div class="modal fade slide-right" id="gsa_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal-dialog modal-lg">
+    <div class="modal-content-wrapper">
+        <div class="modal-content table-block" style="background: rgba(255, 255, 255, 0.95); border: 0px; background-image: url('openNEX/images/test.png'); background-repeat: no-repeat; background-position: 50% 90%; background-size: 40%;">
+
+			<div style="margin-right: 27px;">
+				<button type="button" class="btn btn-danger btn-sm pull-right" data-dismiss="modal"><i class="fa fa-times fa-2x" aria-hidden="true" style="z-index:1000;"></i></button>
+			</div>
+			<br>
+            <div class="modal-body v-align-left text-left">
+				<h3>Geospatial Analysis</h3>
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h4 class="panel-title">Sample Cases</h4>
+					</div>
+					<div class="panel-body">
+						<a href="{{url_for('sample', sample_path = 'GSA/usjoin.csv/us48.shp', case_num=case_num)}}">Run United States Income case</a><br>
+						<a href="{{url_for('static', filename = 'sample/GSA/template.csv', case_num=case_num)}}" download>Download Template</a>
+					</div>
+				</div>
+
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h4 class="panel-title">Input Data</h4>
+					</div>
+					<div class="panel-body">
+						Upload .csv file for GSA:<br>
+						<input type = "file" id = "GSA_Input_CSV" name = "GSA_Input_CSV" size = 20><br>
+						Upload 3 files (.shp, .shx, .dfb) for GSA:<br>
+						<input type = "file" id = "GSA_Input_map" name = "GSA_Input_map" size = 20 multiple><br>
+						<input type = "submit" value = "SUBMIT">
+					</div>
+				</div>
+            </div>
+        </div>
+    </div>
+    <!-- /.modal-content -->
+</div>
+<!-- /.modal-dialog -->
+</div>
+
+
+<script>
+$(document).ready(function(){
+    $('[data-toggle="tooltip"]').tooltip();
+	$('[data-toggle="tooltip2"]').tooltip();
+});
+</script>
+
 </html>

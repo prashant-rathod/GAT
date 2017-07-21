@@ -409,7 +409,9 @@ def visualize(case_num):
         nlp_iob = iob,
         nlp_data_show = nlp_data_show
         )
-
+@application.route('/help', methods = ['GET', 'POST'])
+def help():
+    return render_template('help.html')
 ###########################
 #### SNA input methods ####
 ###########################
