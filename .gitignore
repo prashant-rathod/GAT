@@ -8,3 +8,4 @@
 .idea/*
 *.pem
 nltk_downloads/*
+static/temp/*
