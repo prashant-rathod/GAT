@@ -409,9 +409,14 @@ def visualize(case_num):
         nlp_iob = iob,
         nlp_data_show = nlp_data_show
         )
+
 @application.route('/help', methods = ['GET', 'POST'])
 def help():
     return render_template('help.html')
+
+@application.route('/contact', methods = ['GET', 'POST'])
+def contact():
+    return render_template('contact_us.html')
 ###########################
 #### SNA input methods ####
 ###########################
