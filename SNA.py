@@ -79,25 +79,24 @@ class SNA():
                     self.G.add_node(node['val'], block=node['header'])
         self.nodeSet = nodeSet
         self.nodes = nx.nodes(self.G)
-        print("nodes",self.nodes)
 
     # Input: header list and list of attributes with header label from attribute sheet
     # Output: updated list of nodes with attributes
     def loadAttributes(self):
-        print("header",self.attrHeader)
-        print("list",self.attrList)
+        #print("header",self.attrHeader)
+        #print("list",self.attrList)
         for row in self.attrList:
             nodeID = row[0]['val']
             for cell in row[1:]:
                 if nodeID in self.nodes:
                     attrList = []
                     node = self.G.node[nodeID]
-                    print(node)
+                    #print(node)
                     if cell['header'] in self.G.node[nodeID]:
                         attrList.append(node[cell['header']])
                     attrList.append(cell['val'])
                     self.changeAttribute(nodeID,attrList,cell['header'])
-                    print("Changing attribute",cell['header'],"for node",nodeID,"to",attrList)
+                    #print("Changing attribute",cell['header'],"for node",nodeID,"to",attrList)
 
     def createEdgeList(self, sourceSet):
         list = self.list
@@ -108,14 +107,20 @@ class SNA():
                 if node['header'] == sourceSet:
                     source = node['val']
             for node in row:
-                if node['val'] != source and node['header'] in self.nodeSet:
-                    edgeList.append((source,node['val']))
+                subAttrs = ["W", "SENT", "SZE", "AMT"]
+                if node['header'] in subAttrs:  # add an attribute to a link that already exists
+                    prevNode = row[row.index(node) - 1]
+                    edgeList = [ (source,prevNode['val'],{node['header']:node['val']}) for x in edgeList if x == (source,prevNode['val']) ] # list comprehension to replace old link with new attributed link
+                elif node['val'] != source and node['header'] in self.nodeSet:
+                    edgeList.append( (source,node['val']) ) # create a new link
+
         self.G.add_edges_from(edgeList)
         self.edges = edgeList
-        print("edges",self.G.edges())
+        #print("edges",self.G.edges())
+
     def addEdges(self, pair): # deprecated, needs fixing - doesn't handle new dict structure
         data = self.list
-        print(self.nodes)
+        #print(self.nodes)
         newEdgeList = []
         for row in data:
             first = row[pair[0]]['val']
@@ -148,7 +153,7 @@ class SNA():
         self.G.add_node(node,attrDict)
         self.nodes = nx.nodes(self.G)
         for i in connections:
-            print("connecting to:",i)
+            #print("connecting to:",i)
             self.G.add_edge(node,i)
             self.edges.append([node,i])
 
@@ -160,7 +165,7 @@ class SNA():
     def changeAttribute(self, node,  value, attribute="bipartite"):
         if self.G.has_node(node):
             self.G.node[node][attribute] = value
-            print("New attribute for "+node+": "+str(self.G.node[node][attribute]))
+            #print("New attribute for "+node+": "+str(self.G.node[node][attribute]))
         self.nodes = nx.nodes(self.G)
 
     # Change node name
@@ -366,18 +371,18 @@ class SNA():
 
     #note: this is for Vinay's UI
     def plot_2D(self, attr, label=False):
-        print("attr", attr)
+        #print("attr", attr)
         plt.clf()
         block = nx.get_node_attributes(self.G, 'block')
-        print("block",block)
+        #print("block",block)
         pos = nx.spring_layout(self.G)
         labels = {}
         for node in block:
             labels[node] = node
-            print("node",node)
+            #print("node",node)
         for node in set(self.nodeSet):
-            print("Node",node)
-            print("attr[node]",attr[node])
+            #print("Node",node)
+            #print("attr[node]",attr[node])
             nx.draw_networkx_nodes(self.G, pos,
                                    with_labels=False,
                                    nodelist = [key for key, val in block.items() if val == node],
@@ -444,17 +449,17 @@ Graph.load_centrality()
 Graph.communicability_centrality()
 Graph.communicability_centrality_exp()
 '''
-# print(Graph.get_clustering())
-# print(Graph.get_closeness_centrality())
-# print(Graph.get_betweenness_centrality())
-# print(Graph.get_degree_centrality())
-# print(Graph.get_latapy_clustering())
-# print(Graph.get_robins_alexander_clustering())
-# print(Graph.get_katz_centrality())
-# print(Graph.get_eigenvector_centrality())
-# print(Graph.get_load_centrality())
-# print(Graph.get_communicability_centrality())
-# print(Graph.get_communicability_centrality_exp())
+# #print(Graph.get_clustering())
+# #print(Graph.get_closeness_centrality())
+# #print(Graph.get_betweenness_centrality())
+# #print(Graph.get_degree_centrality())
+# #print(Graph.get_latapy_clustering())
+# #print(Graph.get_robins_alexander_clustering())
+# #print(Graph.get_katz_centrality())
+# #print(Graph.get_eigenvector_centrality())
+# #print(Graph.get_load_centrality())
+# #print(Graph.get_communicability_centrality())
+# #print(Graph.get_communicability_centrality_exp())
 
 
 
