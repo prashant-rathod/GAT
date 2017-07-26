@@ -359,7 +359,15 @@
 
 		<div class = "output" id = "SNA Data">
 		<h3><center>SNA Data</center></h3>
-		<image src="{{url_for('static', filename='temp/')}}{{ SNAbpPlot }}"></image>
+			{% if SNAbpPlot -%}
+				<p>2D Visualization:</p>
+				<image src="{{url_for('static', filename='temp/')}}{{ SNAbpPlot }}"></image>
+			{% endif -%}
+			{% if jgdata -%}
+				<p>Detailed Graph Info:</p>
+				<a href="{{url_for('static', filename='temp/')}}{{ jgdata }}"></a>
+			{% endif -%}
+
 		</div>
 	</div>
 	{% endif %}

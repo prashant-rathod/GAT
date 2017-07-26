@@ -20,7 +20,18 @@
 	function closeHelp(source) {
 		get("help").style.display = "none";
 	}
-
+	function toggleNodeSet(source) {
+	  checkboxes = document.getElementsByClassName("nodeset");
+	  for(var i=0, n=checkboxes.length;i<n;i++) {
+		checkboxes[i].checked = source.checked;
+	  }
+	}
+	function toggleSrcSet(source) {
+	  checkboxes = document.getElementsByClassName("srcset");
+	  for(var i=0, n=checkboxes.length;i<n;i++) {
+		checkboxes[i].checked = source.checked;
+	  }
+	}
 	</script>
 	<style>
 		table {
@@ -34,6 +45,10 @@
 		th,td {
 			padding: 5px;
 			border-top: solid thin white;
+		}
+		.last td {
+			border-bottom: solid thick white;
+			border-top: none;
 		}
 	</style>
 
@@ -84,11 +99,17 @@
 			<th>Class</th>
 			<th>Label</th>
 		</tr>
+		<tr class="last">
+			<td><i>Select all</i></td>
+			<td class="centered"><input  type = "checkbox" onclick="toggleNodeSet(this)"></td>
+			<td class="centered"><input  type = "checkbox" onclick="toggleSrcSet(this)"></td>
+			<td colspan="2"></td>
+		</tr>
 		{% for node in nodes %}
 		<tr>
 			<td>{{node}}</td>
-			<td class="centered"><label><input type = "checkbox" name = "{{ node + 'IsNode' }}"></label></td>
-			<td class="centered"><label><input type = "checkbox" name = "{{ node + 'IsSource' }}"></label></td>
+			<td class="centered"><label><input class="nodeset" type = "checkbox" name = "{{ node + 'IsNode' }}"></label></td>
+			<td class="centered"><label><input class="srcset" type = "checkbox" name = "{{ node + 'IsSource' }}"></label></td>
 			<td>
 				<select name="{{ node + 'Class' }}">
 					<option value="Agent" {% if 'Agent' in node %} selected="selected" {% endif %} >Agent</option>

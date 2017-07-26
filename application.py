@@ -463,8 +463,7 @@ def nodeSelect(case_num):
         graph.createNodeList(nodeColNames)
         if fileDict['attrSheet'] != None:
             graph.loadAttributes()
-        for colName in sourceColNames:
-            graph.createEdgeList(colName)
+        graph.createEdgeList(sourceColNames)
         graph.closeness_centrality()
         graph.degree_centrality()
         graph.betweenness_centrality()
@@ -585,7 +584,6 @@ def SNA2Dand3D(graph, request, case_num, _3D = True, _2D = False, label = False)
     fileDict['copy_of_graph'] = copy_of_graph
     #return based on inputs
     ret3D = graph.create_json(graph.nodeSet, colorInput) if _3D else None
-    print("graph.nodeset",graph.nodeSet)
     label = True if not label and len(graph.nodes) < 20 else False
     ret2D = graph.plot_2D(attr, label) if _2D else None
     fileDict['jgdata'] = ret3D

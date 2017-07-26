@@ -8,6 +8,7 @@ import tempfile
 
 class SNA():
     def __init__(self, excel_file, nodeSheet, attrSheet = None):
+        self.subAttrs = ["W", "Sent", "SZE", "AMT"]
         self.header, self.list = self.readFile(excel_file, nodeSheet)
         if attrSheet != None:
             self.attrHeader, self.attrList = self.readFile( excel_file, attrSheet)
@@ -62,7 +63,7 @@ class SNA():
         # remove repeated column titles
         consolidatedHeader = []
         for feature in header:
-            if feature not in consolidatedHeader:
+            if ( feature not in consolidatedHeader ) and ( feature not in self.subAttrs ) :
                 consolidatedHeader.append(feature)
 
         return consolidatedHeader,list
@@ -103,17 +104,17 @@ class SNA():
         source = None
         edgeList = []
         for row in list:
+            sourceNodes = []
             for node in row:
-                if node['header'] == sourceSet:
-                    source = node['val']
-            for node in row:
-                subAttrs = ["W", "SENT", "SZE", "AMT"]
-                if node['header'] in subAttrs:  # add an attribute to a link that already exists
-                    prevNode = row[row.index(node) - 1]
-                    edgeList = [ (source,prevNode['val'],{node['header']:node['val']}) for x in edgeList if x == (source,prevNode['val']) ] # list comprehension to replace old link with new attributed link
-                elif node['val'] != source and node['header'] in self.nodeSet:
-                    edgeList.append( (source,node['val']) ) # create a new link
-
+                if node['header'] in sourceSet:
+                    sourceNodes.append(node['val'])
+            for source in sourceNodes:
+                for node in row:
+                    if node['header'] in self.subAttrs:  # add an attribute to a link that already exists
+                        prevNode = row[row.index(node) - 1]
+                        edgeList = [ (source,prevNode['val'],{node['header']:node['val']}) for x in edgeList if x == (source,prevNode['val']) ] # list comprehension to replace old link with new attributed link
+                    elif node['val'] != source and node['header'] in self.nodeSet:
+                        edgeList.append( (source,node['val']) ) # create a new link
         self.G.add_edges_from(edgeList)
         self.edges = edgeList
         #print("edges",self.G.edges())
