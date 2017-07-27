@@ -9,11 +9,11 @@
    <meta name="apple-mobile-web-app-status-bar-style" content="default">
    <meta name="description" content="Project Hermes 2.0">
    <meta name="keywords" content="computational security studies, AWS, Hermes, NLP, GSA, SNA">
-   <link href="../static/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
-   <link href="../static/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
-   <link class="main-stylesheet" href="../static/css/custom.css" rel="stylesheet" type="text/css" />
-   <link class="main-stylesheet" href="../static/css/floatsocial.css" rel="stylesheet" type="text/css" />
-   <link class="main-stylesheet" href="../static/css/lucas-css.css" rel="stylesheet" type="text/css" />
+   <link href="static/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+   <link href="static/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+   <link class="main-stylesheet" href="static/css/custom.css" rel="stylesheet" type="text/css" />
+   <link class="main-stylesheet" href="static/css/floatsocial.css" rel="stylesheet" type="text/css" />
+   <link class="main-stylesheet" href="static/css/lucas-css.css" rel="stylesheet" type="text/css" />
 <style>
 .box_button {
   position: relative;
@@ -131,8 +131,9 @@
 </head>
 <body class="pace-dark">
 <!-- BEGIN JUMBOTRON -->
+
 <section class="jumbotron last z-index-10" data-pages="parallax" style="height:100%">
-    <div class="container-xs-height full-height inner" align='center'>
+    <div class="container-xs-height full-height inner">
         <div class="col-xs-height col-middle text-center">
         <!-- START CONTENT -->
         <br/>
@@ -140,13 +141,12 @@
 				<div class="row">
 					<div class="col-sm-10 col-sm-offset-1">
 						<div class="text-center sm-p-t-10">
-							<h1 class="font-montserrat hidden-xs text-white"><img src="../static/GATLogo.png" alt="hermes logo" style="width:47.5%; height:47.5%; object-fit:contain;"></h1>
-                            <br>
-							<h5 class="text-white"><span class="bold">Project Hermes 2.0</h5>
+							<h1 class="font-montserrat hidden-xs text-white"><img src="static/GATLogo.png" height="250" alt="hermes logo"></h1>
+							<h5 class="text-white"><span class="bold">Project Hermes 2.0</br>
 						</div>
 					</div>
 				</div>
-				<br/>
+				<br/><br/>
 				<!-- Search Bar -->
 				<div class="row text-centered">
 					<input type="text" name="search" id="search" placeholder="URL to scrape...">
@@ -180,12 +180,10 @@
             <div class="col-sm-4 text-left" >
             </div>
             <div class="col-sm-4 text-center" >
-              <p class="fs-14">
-              <br>
-               <span>
-                  <a href="mailto:william.rivera@duke.edu" target="_blank">Contact Us</a><br>
+              <p class="fs-14"
+                  <a href="/contact" target="_self">Contact Us</a><br>
 				  <a href="http://css-lucas.com" target="_blank">LUCAS Website</a><br>
-                  <a href="" target="_blank">Help Page</a>
+                  <a href="/help" target="_self">Help Page</a>
                </span>
                </p>
             </div>
@@ -197,7 +195,7 @@
         <div class="container">
           <div class="row">
             <div class="col-sm-12 text-center">
-              <p class="fs-11 no-margin font-arial text-white small-text">2015-2017 LUCAS. Last Updated: 07/25/2017.
+              <p class="fs-11 no-margin font-arial text-white small-text">2015-2017 LUCAS. Last Updated: 07/10/2017.
               </p>
             </div>
 
@@ -208,9 +206,9 @@
     <!-- END FOOTER -->
 
 
-    <script type="text/javascript" src="../static/js/jquery-1.11.1.min.js"></script>
-    <script type="text/javascript" src="../static/js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="../static/js/custom.frontend.js"></script>
+    <script type="text/javascript" src="static/js/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="static/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="static/js/custom.frontend.js"></script>
 
 	<script>
 		function show1(){
@@ -239,17 +237,16 @@
 <div class="modal fade slide-right" id="nlp_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	<div class="modal-dialog modal-lg">
 		<div class="modal-content-wrapper">
-        	<div class="background-wrapper"></div>
-			<div class="modal-content table-block" style="background: rgba(187, 222, 251, .0); border: 0px; background-repeat: no-repeat; background-position: 50% 90%; background-size: 40%;">
+			<div class="modal-content table-block" style="background: rgba(255, 255, 255, 0.95); border: 0px; background-repeat: no-repeat; background-position: 50% 90%; background-size: 40%;">
 
 				<div style="margin-right: 27px;">
-					<button type="button" class="btn btn-danger btn-sm pull-right" data-dismiss="modal"><i class="fa fa-times-circle fa-2x" aria-hidden="true" style="z-index:1000;"></i>
+					<button type="button" class="btn btn-danger btn-sm pull-right" data-dismiss="modal"><i class="fa fa-times fa-2x" aria-hidden="true" style="z-index:1000;"></i>
 					</button>
 				</div>
 				<br>
 				<div class="modal-body v-align-left text-left">
 
-				<h3 style='color:white'>Natural Language Processing</h3>
+				<h3>Natural Language Processing</h3>
 
 				<div class="panel panel-default">
 					<div class="panel-heading">
@@ -287,17 +284,16 @@
 <div class="modal fade slide-right" id="sna_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 <div class="modal-dialog modal-lg">
     <div class="modal-content-wrapper">
-    <div class="background-wrapper"></div>
-       <div class="modal-content table-block" style="background: rgba(187, 222, 251, .0); border: 0px; background-repeat: no-repeat; background-position: 50% 90%; background-size: 40%;">
+        <div class="modal-content table-block" style="background: rgba(255, 255, 255, 0.95); border: 0px; background-image: url('openNEX/images/test.png'); background-repeat: no-repeat; background-position: 50% 90%; background-size: 40%;">
 
 			<div style="margin-right: 27px;">
-				<button type="button" class="btn btn-danger btn-sm pull-right" data-dismiss="modal"><i class="fa fa-times-circle fa-2x" aria-hidden="true" style="z-index:1000;"></i>
+				<button type="button" class="btn btn-danger btn-sm pull-right" data-dismiss="modal"><i class="fa fa-times fa-2x" aria-hidden="true" style="z-index:1000;"></i>
 				</button>
 			</div>
 
 			<br>
             <div class="modal-body v-align-left text-left">
-			<h3 style='color:white'>Social Network Analysis</h3>
+			<h3>Social Network Analysis</h3>
 				<div class="panel panel-default">
 					<div class="panel-heading">
 						<h4 class="panel-title">Sample Cases</a></h4>
@@ -310,13 +306,18 @@
 				</div>
 				<div class="panel panel-default">
 					<div class="panel-heading">
-						<h4 class="panel-title">Data Input</a></h4>
+						<h4 class="panel-title">Input Files</a></h4>
 					</div>
 					<div class="panel-body">
 						<span class="inputsection">
 							<br>
-							Upload .xlsx file for SNA:<br>
-							<input type = "file" id = "SNA_Input" name = "SNA_Input" size = 20 value="a"><br>
+							Upload .csv file for GSA:<br>
+							<input type = "file" id = "GSA_Input_CSV" name = "GSA_Input_CSV" size = 20><br>
+
+							Upload 3 files (.shp, .shx, .dfb) for GSA:<br>
+							<input type = "file" id = "GSA_Input_map" name = "GSA_Input_map" size = 20 multiple><br>
+
+							<input type = "button" id = "GSA_Clear" value = "Clear" onClick = "remove_GSA(this)">
 							<input type = "submit" value = "SUBMIT">
 						</span>
 					</div>
@@ -334,15 +335,14 @@
 <div class="modal fade slide-right" id="gsa_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 <div class="modal-dialog modal-lg">
     <div class="modal-content-wrapper">
-    <div class="background-wrapper"></div>
-        <div class="modal-content table-block" style="background: rgba(187, 222, 251, .0); border: 0px; background-repeat: no-repeat; background-position: 50% 90%; background-size: 40%;">
+        <div class="modal-content table-block" style="background: rgba(255, 255, 255, 0.95); border: 0px; background-image: url('openNEX/images/test.png'); background-repeat: no-repeat; background-position: 50% 90%; background-size: 40%;">
 
 			<div style="margin-right: 27px;">
-				<button type="button" class="btn btn-danger btn-sm pull-right" data-dismiss="modal"><i class="fa fa-times-circle fa-2x" aria-hidden="true" style="z-index:1000;"></i></button>
+				<button type="button" class="btn btn-danger btn-sm pull-right" data-dismiss="modal"><i class="fa fa-times fa-2x" aria-hidden="true" style="z-index:1000;"></i></button>
 			</div>
 			<br>
             <div class="modal-body v-align-left text-left">
-				<h3 style='color:white'>Geospatial Analysis</h3>
+				<h3>Geospatial Analysis</h3>
 				<div class="panel panel-default">
 					<div class="panel-heading">
 						<h4 class="panel-title">Sample Cases</h4>
@@ -355,7 +355,7 @@
 
 				<div class="panel panel-default">
 					<div class="panel-heading">
-						<h4 class="panel-title">Data Input</h4>
+						<h4 class="panel-title">Input Data</h4>
 					</div>
 					<div class="panel-body">
 						Upload .csv file for GSA:<br>
@@ -379,7 +379,6 @@ $(document).ready(function(){
     $('[data-toggle="tooltip"]').tooltip();
 	$('[data-toggle="tooltip2"]').tooltip();
 });
-
 </script>
 
 </html>
