@@ -475,7 +475,7 @@ def nodeSelect(case_num):
 @application.route('/edgeinfo/<int:case_num>', methods = ['GET', 'POST'])
 def edgeSelect(case_num):
     import warnings
-    warnings.warn(message, DeprecationWarning, stacklevel=2) # deprecated by Ryan Steed 20 Jul 2017, replaced by check box in nodeselect.html
+    warnings.warn("deprecated", DeprecationWarning, stacklevel=2) # deprecated by Ryan Steed 20 Jul 2017, replaced by check box in nodeselect.html
     fileDict = caseDict[case_num]
     graph = fileDict['graph']
     combos = fileDict['nodeColNames']

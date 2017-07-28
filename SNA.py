@@ -93,15 +93,21 @@ class SNA():
                     attrList = []
                     node = self.G.node[nodeID]
                     #print(node)
-                    if cell['header'] in self.G.node[nodeID]:
-                        attrList.append(node[cell['header']])
-                    attrList.append(cell['val'])
-                    self.changeAttribute(nodeID,attrList,cell['header'])
-                    #print("Changing attribute",cell['header'],"for node",nodeID,"to",attrList)
+                    if cell['header'] in self.subAttrs:  # handle subattributes, e.g. weight
+                        prevCell = row[row.index(cell) - 1]
+                        attrList = [ (prevCell['val'],{cell['header']:cell['val']}) for x in node[prevCell['header']] if x == prevCell['val'] ]
+                        self.changeAttribute(nodeID, attrList, prevCell['header'])
+                        print("Changing attribute", prevCell['header'], "for node", nodeID, "to", attrList)
+                        # add the attribute as an attr-of-attr
+                    else: # if the attribute is not a subattribute
+                        if cell['header'] in self.G.node[nodeID]:
+                            attrList.append(node[cell['header']])
+                        attrList.append(cell['val'])
+                        self.changeAttribute(nodeID,attrList,cell['header'])
+                        print("Changing attribute",cell['header'],"for node",nodeID,"to",attrList)
 
     def createEdgeList(self, sourceSet):
         list = self.list
-        source = None
         edgeList = []
         for row in list:
             sourceNodes = []
@@ -110,10 +116,7 @@ class SNA():
                     sourceNodes.append(node['val'])
             for source in sourceNodes:
                 for node in row:
-                    if node['header'] in self.subAttrs:  # add an attribute to a link that already exists
-                        prevNode = row[row.index(node) - 1]
-                        edgeList = [ (source,prevNode['val'],{node['header']:node['val']}) for x in edgeList if x == (source,prevNode['val']) ] # list comprehension to replace old link with new attributed link
-                    elif node['val'] != source and node['header'] in self.nodeSet:
+                    if node['val'] != source and node['header'] in self.nodeSet:
                         edgeList.append( (source,node['val']) ) # create a new link
         self.G.add_edges_from(edgeList)
         self.edges = edgeList
