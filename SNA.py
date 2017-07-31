@@ -8,7 +8,7 @@ import tempfile
 
 class SNA():
     def __init__(self, excel_file, nodeSheet, attrSheet = None):
-        self.subAttrs = ["W", "Sent", "SZE", "AMT"]
+        self.subAttrs = ["W", "SENT", "SZE", "AMT"]
         self.header, self.list = self.readFile(excel_file, nodeSheet)
         if attrSheet != None:
             self.attrHeader, self.attrList = self.readFile( excel_file, attrSheet)
@@ -89,22 +89,35 @@ class SNA():
         for row in self.attrList:
             nodeID = row[0]['val']
             for cell in row[1:]:
-                if nodeID in self.nodes:
-                    attrList = []
-                    node = self.G.node[nodeID]
-                    #print(node)
-                    if cell['header'] in self.subAttrs:  # handle subattributes, e.g. weight
-                        prevCell = row[row.index(cell) - 1]
-                        attrList = [ (prevCell['val'],{cell['header']:cell['val']}) for x in node[prevCell['header']] if x == prevCell['val'] ]
-                        self.changeAttribute(nodeID, attrList, prevCell['header'])
-                        print("Changing attribute", prevCell['header'], "for node", nodeID, "to", attrList)
-                        # add the attribute as an attr-of-attr
-                    else: # if the attribute is not a subattribute
-                        if cell['header'] in self.G.node[nodeID]:
-                            attrList.append(node[cell['header']])
-                        attrList.append(cell['val'])
-                        self.changeAttribute(nodeID,attrList,cell['header'])
-                        print("Changing attribute",cell['header'],"for node",nodeID,"to",attrList)
+                if cell['val'] != '':
+                    if nodeID in self.nodes:
+                        attrList = []
+                        node = self.G.node[nodeID]
+                        if cell['header'] in self.subAttrs:  # handle subattributes, e.g. weight
+                            prevCell = row[row.index(cell) - 1]
+                            key = {}
+                            while prevCell['header'] in self.subAttrs:
+                                key[prevCell['header']] = prevCell['val']
+                                prevCell = row[row.index(prevCell) - 1]
+                                print("found duplicate, backing up")
+                            key[cell['header']] = cell['val']
+                            print("key",key)
+                            attrList = [ [x,key] for x in node[prevCell['header']] if prevCell['val'] in x ]
+                            for x in node[prevCell['header']]:
+                                if prevCell['val'] in x:
+                                    attrList.append( [x,key] )
+                                else:
+                                    attrList.append( x )
+
+                            print("adding subattr",key,"to",prevCell['val'])
+                            attrID = prevCell['header']
+                            # add the attribute as an attr-of-attr
+                        else: # if the attribute is not a subattribute
+                            if cell['header'] in self.G.node[nodeID]:
+                                attrList = (node[cell['header']])
+                            attrList.append([cell['val']])
+                            attrID = cell['header']
+                        self.changeAttribute(nodeID,attrList,attrID)
 
     def createEdgeList(self, sourceSet):
         list = self.list
@@ -134,6 +147,50 @@ class SNA():
         self.G.add_edges_from(newEdgeList)
         self.edges.extend(newEdgeList)
 
+    def calculatePropensities(self,emo):
+        for edge in self.edges: # for every edge, calculate propensities and append as an attribute
+            emoPropList = self.emoProp(edge) if emo else None
+            self.G[edge[0]][edge[1]]['Emotion'] = emoPropList if len(emoPropList)>1 else None
+            if len(emoPropList) > 1:
+                print("For edge between",edge[0],"&",edge[1],"emotional propensities:",emoPropList)
+
+    def emoProp(self, edge):
+        emoProps = []
+        source = self.G.node[edge[0]]
+        target = self.G.node[edge[1]]
+        for attr in ( target if len(source) > len(target) else source ):
+            if attr != 'block' and source.get(attr) is not None and target.get(attr) is not None:
+                for src_val in source.get(attr):
+                    for trg_val in target.get(attr):
+                        if len(src_val) > 1 and len(trg_val) > 1:
+                            src_w = float(src_val[1]["W"]) if "W" in src_val[1] else None
+                            trg_w = float(trg_val[1]["W"]) if "W" in trg_val[1] else None
+                            if src_w is not None and trg_w is not None:
+                                # Checking to see if the attribute for each node is equal:
+                                if src_val[0] == trg_val[0]:
+                                    # Checking to see if each node's attribute weights fall within specified ranges:
+                                    if src_w >= 0.8 and trg_w >= 0.8:
+                                        emoProps.append("Trust")
+                                    elif src_w >= 0.6 and trg_w >= 0.6:
+                                        emoProps.append("Joy")
+                                    elif src_w >= 0.2 and trg_w >= 0.2:
+                                        emoProps.append("Anticipation")
+                                    else:
+                                        emoProps.append("None")
+                                # # Conditional statements for differing emotions:
+                                # else:
+                                #     # Checking to see if each node's attribute weights fall within specified ranges:
+                                #     if src_w >= 0.8 and trg_w >= 0.8:
+                                #         emoProps.append("Disgust")
+                                #     elif src_w >= 0.6 and trg_w >= 0.6:
+                                #         emoProps.append("Fear")
+                                #     elif src_w >= 0.6 and trg_w >= 0.4:
+                                #         emoProps.append("Anger")
+                                #     elif src_w >= 0.2 and trg_w >= 0.2:
+                                #         emoProps.append("Sadness")
+                                #     else:
+                                #         emoProps.append("None")
+        return emoProps
 
     # copy the origin social network graph created with user input data.
     # this will be later used to reset the modified graph to inital state
@@ -429,41 +486,3 @@ class SNA():
         data['edges'] = edges
         data['nodes'] = nodes_property
         return data
-
-
-############
-####TEST####
-############
-'''
-Graph = SNA("iran.xlsx", "2011")
-Graph.createNodeList([1,4], ["Agent", "Institution"])
-Graph.createEdgeList([1,4])
-
-# test = Graph.getNodes()
-# Graph.graph_2D({"Agent":['y',50], "Institution":['b',50]}, label=True)
-Graph.clustering()
-Graph.latapy_clustering()
-Graph.robins_alexander_clustering()
-Graph.closeness_centrality()
-Graph.betweenness_centrality()
-Graph.degree_centrality()
-Graph.katz_centrality()
-Graph.eigenvector_centrality()
-Graph.load_centrality()
-Graph.communicability_centrality()
-Graph.communicability_centrality_exp()
-'''
-# #print(Graph.get_clustering())
-# #print(Graph.get_closeness_centrality())
-# #print(Graph.get_betweenness_centrality())
-# #print(Graph.get_degree_centrality())
-# #print(Graph.get_latapy_clustering())
-# #print(Graph.get_robins_alexander_clustering())
-# #print(Graph.get_katz_centrality())
-# #print(Graph.get_eigenvector_centrality())
-# #print(Graph.get_load_centrality())
-# #print(Graph.get_communicability_centrality())
-# #print(Graph.get_communicability_centrality_exp())
-
-
-

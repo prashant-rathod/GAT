@@ -323,7 +323,7 @@ def visualize(case_num):
     #visualizations
     nltkPlot = nltkDraw.plot(NLP_file_LDP, NLP_LDP_terms)
     jgdata, SNAbpPlot, attr = SNA2Dand3D(graph, request, case_num, _2D = True)
-    fileDict['SNAbpPlot'] = '/' + SNAbpPlot
+    fileDict['SNAbpPlot'] = '/' + SNAbpPlot if SNAbpPlot != None else None
     fileDict['NLP_images'] = radar_runner.generate(NLP_dir, tropes)
     gsaCSV, mymap = tempParseGSA(GSA_file_CSV, GSA_file_SHP)
     if GSA_file_SVG != None:
@@ -445,25 +445,28 @@ def nodeSelect(case_num):
     if request.method == 'POST':
 
         nodeColNames = []
-        sourceColNames = []
+        # Commented code is for multiple source columns
+        # sourceColNames = []
         i = 0
         for header in graph.header:
             fileDict[header + "IsNode"] = True if request.form.get(header + "IsNode")=="on" else False
-            fileDict[header + "IsSource"] = True if request.form.get(header + "IsSource") == "on" else False
+            # fileDict[header + "IsSource"] = True if request.form.get(header + "IsSource") == "on" else False
             #fileDict[header + "Class"] = request.form[header + "Class"]
             fileDict[header + "Name"] = request.form[header + "Name"]
             if fileDict[header + "IsNode"] == True:
                 nodeColNames.append(fileDict[header + "Name"])
-            if fileDict[header + "IsSource"] == True:
-                sourceColNames.append(fileDict[header + "Name"])
+            # if fileDict[header + "IsSource"] == True:
+            #     sourceColNames.append(fileDict[header + "Name"])
             i+=1
         fileDict['nodeColNames'] = nodeColNames
-        fileDict['sourceColNames'] = sourceColNames
+        # fileDict['sourceColNames'] = sourceColNames
         print("colnames",nodeColNames)
         graph.createNodeList(nodeColNames)
+        graph.createEdgeList(nodeColNames[0])
         if fileDict['attrSheet'] != None:
             graph.loadAttributes()
-        graph.createEdgeList(sourceColNames)
+            graph.calculatePropensities(emo=True)
+        # Only the first column is a source
         graph.closeness_centrality()
         graph.degree_centrality()
         graph.betweenness_centrality()
