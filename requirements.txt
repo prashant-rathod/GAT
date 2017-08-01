@@ -14,6 +14,7 @@ matplotlib==2.0.2
 networkx==1.11
 nltk==3.2.4
 numpy==1.12.1
+pandas
 pexpect==4.2.1
 pickleshare==0.7.4
 prompt-toolkit==1.0.14
@@ -26,6 +27,8 @@ scikit-learn==0.18.1
 simplegeneric==0.8.1
 six==1.10.0
 sklearn
+spacy
+textacy
 traitlets==4.3.2
 wcwidth==0.1.7
 Werkzeug==0.12.2
