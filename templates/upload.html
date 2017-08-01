@@ -182,9 +182,9 @@
             <div class="col-sm-4 text-center" >
               <p class="fs-14">
                <span>
-                  <a href="mailto:william.rivera@duke.edu" target="_blank">Contact Us</a><br>
-				  <a href="http://css-lucas.com" target="_blank">LUCAS Website</a><br>
-                  <a href="../templates/help.html" target="_blank">Help Page</a>
+                  <a href="{{url_for('contact', case_num = case_num)}}" target="_self">Contact Us</a><br>
+		  <a href="http://css-lucas.com" target="_blank">LUCAS Website</a><br>
+                  <a href="{{url_for('help', case_num = case_num)}}" target="_self">Help Page</a>
                </span>
                </p>
             </div>

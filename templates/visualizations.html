@@ -118,7 +118,7 @@
 		The buttons will have to become buttons, indeed-->
 	<ul>
 		<li class="dropdown">
-			<a href="{{ url_for('upload') }}">Home</a>
+			<a href="#">Home</a>
 		</li>
 		<li class="dropdown">
 			<a href="#" class="dropbtn" style = "color:grey;">Cases</a>
@@ -162,7 +162,7 @@
 			<a href="#" class="dropbtn">Help</a>
 			<div class="dropdown-content">
 				<a href="#" onClick="openHelp(this)">GSA Output Help</a>
-				<a href="#" style="color:grey;">Manual</a>
+				<a href="{{url_for('help', case_num = case_num)}}">Help Page</a>
 			</div>
 		</li>
 	</ul>
@@ -209,7 +209,7 @@
 		<h3><center>GSA Visualization</center></h3>
 
 		{% if GSA_sample %}
-			<a href="{{url_for('reg')}}">Click here for regionalization visualization</a>
+			<a href="{{url_for('reg', case_num = case_num)}}">Click here for regionalization visualization</a>
 		{% endif %}
 
 		{% if gsaCSV %}

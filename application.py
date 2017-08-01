@@ -410,13 +410,13 @@ def visualize(case_num):
         nlp_data_show = nlp_data_show
         )
 
-@application.route('/help', methods = ['GET', 'POST'])
-def help():
-    return render_template('help.html')
+@application.route('/help/<int:case_num>', methods = ['GET', 'POST'])
+def help(case_num):
+    return render_template('help.html', case_num = case_num)
 
-@application.route('/contact', methods = ['GET', 'POST'])
-def contact():
-    return render_template('contact_us.html')
+@application.route('/contact/<int:case_num>', methods = ['GET', 'POST'])
+def contact(case_num):
+    return render_template('contact_us.html', case_num = case_num)
 ###########################
 #### SNA input methods ####
 ###########################
@@ -907,9 +907,9 @@ GSA_sample_autocorrelation=[
 [0.001, 0.001],
 [0.001, 0.001]]
 
-@application.route('/regionalization')
-def reg():
-    return render_template("regionalization-test.html")
+@application.route('/regionalization/<int:case_num>')
+def reg(case_num):
+    return render_template("regionalization-test.html", case_num = case_num)
 
 #################
 #### Running ####

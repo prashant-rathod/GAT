@@ -88,7 +88,7 @@
 			<a href="#" class="dropbtn">Help</a>
 			<div class="dropdown-content">
 				<a href="#" onClick="openHelp(this)">GSA Output Help</a>
-				<a href="#" style="color:grey;">Manual</a>
+				<a href="{{url_for('help', case_num = case_num)}}">Help Page</a>
 			</div>
 		</li>
 	</ul>
@@ -135,7 +135,7 @@
 		<h3><center>GSA Visualization</center></h3>
 
 		{% if GSA_sample %}
-			<a href="{{url_for('reg')}}">Click here for regionalization visualization</a>
+			<a href="{{url_for('reg', case_num = case_num)}}">Click here for regionalization visualization</a>
 		{% endif %}
 
 		{% if gsaCSV %}
