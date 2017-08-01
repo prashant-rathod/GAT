@@ -185,6 +185,8 @@
         $("#addNodeFormName").val(nodeDict['name']);
         $("#measureInfo").empty()
         $("#attributeInfo").empty()
+        $("#propInfo").empty()
+        $("#propInfo").append("<span>Select an edge to view propensities.</span>")
         $("#attributeInfo").append("<i id='editButton' class='rightIcon fa fa-edit' onclick='handleEditButton()'></i>")
         $("#name").text(nodeDict['name'])
         // Need Tony to have xlsv file.
