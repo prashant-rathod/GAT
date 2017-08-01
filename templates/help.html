@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <title>Help</title>
+   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+   <meta name="apple-mobile-web-app-capable" content="yes">
+   <meta name="apple-touch-fullscreen" content="yes">
+   <meta name="apple-mobile-web-app-status-bar-style" content="default">
+   <meta name="description" content="Project Hermes 2.0 help page">
+   <meta name="keywords" content="computational security studies, AWS, Hermes, NLP, GSA, SNA">
+   <link href="../static/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+   <link href="../static/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+   <link class="main-stylesheet" href="../static/css/custom-help.css" rel="stylesheet" type="text/css" />
+   <link class="main-stylesheet" href="../static/css/floatsocial.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div class="body-main">
+<br>
+<div class="toolbar">
+<li class="dropdown">
+			<a href="{{url_for('visualize',case_num = case_num)}}"><img src="../static/GATLogo.svg" alt="hermes logo" style="width:10%; height:10%; object-fit:contain;"></a>
+		</li>
+
+</div>
+<br>
+<div class="body-wrapper">
+<div class ="about">
+<h2>Project HERMES 2.0 Help Center</h2><br>
+		<p>Complex problems in complex spaces require complex analytic tools. That is the guiding principle behind the Geospatial Analysis Toolkit (GAT) currently under development by LUCAS for the Department of Defense’s Minerva Initiative Resources and Resiliency grant. The Geospatial Analysis Toolkit is designed to be a comprehensive computational security analysis tool that incorporates social network analysis and semantic and sentiment analysis, with a Smart Graphic User Interface (GUI) and Smart Search functionality, grounded in geospatial analysis. It will enable Smart Search capability by location, proper name, or subject keyword. The Smart GUI will produce geographic-based displays of the interconnections of resources, infrastructure, and other geographical features presented as layers to enable particularized or general geo-analysis. The Smart GUI will also enable semantic and sentiment analysis as well as social network analysis visualized for geospatial analysis. The semantic and sentiment and the social network analysis modules will also be visualized independently, allowing for more specified types of analyses.</p>
+		<p>The principal investigator will be the lab’s director, Dr. Tony Rivera, who is a Visiting Assistant Professor at the Social Science Research Institute (SSRI) with a secondary appointment in Political Science.  The project team includes instructors, graduate students, and undergraduates from multiple departments, including Political Science, the Sanford School of Public Policy, and the Nicholas School of the Environment.</p>
+	</div>
+	<div id="all-help">
+		<div id = "GSA-help">
+			<b>GSA Information:</b>
+			<p>Our Geospatial Analysis component takes in a Shapefile (.shp, .shx, .dbf) and a comma-separated value file (.csv) of spatial and temporal data. You can download a template of what your CSV file should look like under GSA > Download Template. The csv file and SVG file should correspond to one another. You can also choose the sample case which is described below. It outputs a map with the data visualized on it.</p>
+			<b>Sample Cases:</b><br>
+			<li>United States Income: This dataset visualizes the average household income of each of the 48 US mainland states over several decades.</li>
+		</div><br>
+		<div id = "NLP-help">
+			<b>NLP Information:</b>
+			<p>Our Natural Language Processing component takes in a selection of text (.txt) files. You can also choose one of the sample text selections which are described below. The tool identifies tropes in the corpus. For each trope, it returns a radar chart visualizing how strongly the trope is associated with 8 emotions.</p>
+			<b>Sample Cases:</b><br>
+			<li>United States: These texts contain quotes and/or social media posts from US officials or influential people regarding ISIS in Mosul. The texts are mainly negative with a common theme of referring to ISIS as a tumor or other cancerous forms invading Iraq. These were found through google news searches as well as through Facebook, Instagram, and Twitter posts. </li>
+			<li>ISIL: These are statements released by Ninawa Wilayah, the Iraqi governorate of which Mosul is the capital
+			(Ninawa Wilayah was mostly controlled by ISIL before the liberation efforts started); Amaq, ISIL’s official news outlet; and Jazirah, another ISIL-owned news outlet operating in Mosul. The text files were created using a web scraping tool, from the English translations made available online by the moderators of the Syrian Civil War thread on Reddit.</li>
+		</div><br>
+		<div id = "SNA-help">
+			<b>SNA Information:</b>
+			<p>	Our Social Network Analysis takes in an Excel spreadsheet (.xlsx or .xls). You can also choose one of the sample cases which are described below. After going through various input steps (for which more help is available on the corresponding pages), the tool returns a 3-dimensional visualization of the network which you can manipulate. Note: If you upload an excel document with only 1 sheet, the tool passes over the sheet selection tool. Otherwise, you must specify which sheet you would like to use.</p>
+			<b>Sample Cases:</b><br>
+			<li>Iran Political Elite: This is a dataset of the relationships between Iranian political leaders, factions, institutions, and other entities during selected years between 2006-2014.</li>
+			</div><br>
+	</div>
+    </div>
+</div>
+</body>
+</html>

@@ -20,6 +20,7 @@ import sys
 import random
 import GAT_NLP_JamesWu.parser as nlp_james
 import scraper.url_parser as url_parser
+from tzasacky_NLP import nlp_runner
 # import Alok's and James' and Nikita's tools
 
 ''' Before running:
@@ -184,10 +185,10 @@ def upload():
         fileDict['NLP_Input_LDP']		= storefile(request.files['NLP_Input_LDP'])
         fileDict['NLP_Input_Sentiment']	= storefile(request.files['NLP_Input_Sentiment'])
 
-        terms = request.form.get('NLP_LDP_terms')
-        term_array						= terms.split(',') if (terms != '' and terms != None) else None
-        if term_array != None:
-            fileDict['NLP_LDP_terms']	= [term.strip() for term in term_array]
+        #terms = request.form.get('NLP_LDP_terms')
+        #term_array						= terms.split(',') if (terms != '' and terms != None) else None
+        #if term_array != None:
+        #    fileDict['NLP_LDP_terms']	= [term.strip() for term in term_array]
 
         fileDict["NLP_INPUT_NER"] = request.form.get("NLP_INPUT_NER")
         fileDict["NLP_INPUT_IOB"] = request.form.get("NLP_INPUT_IOB")
@@ -213,7 +214,7 @@ def upload():
 
         # if a user does both SNA and NLP, as it stands, the NLP intermediary data will never be gotten to. This is a problem.
         if fileDict['NLP_Input_corpus']:
-            return redirect(url_for('choose_tropes', case_num=case_num))
+            return redirect(url_for('visualize', case_num=case_num))
 
         # if NLP chosen, allow them to pick from the different tools available
         # do i redirect to another url to choose then save the results then redirect to visualize?
@@ -262,7 +263,7 @@ def visualize(case_num):
     GSA_file_SVG 		= fileDict.get('GSA_Input_SVG')
     NLP_dir 			= fileDict.get('NLP_Input_corpus')
     NLP_file_LDP		= fileDict.get('NLP_Input_LDP')
-    NLP_LDP_terms		= fileDict.get('NLP_LDP_terms')
+    NLP_urls                    = fileDict.get('NLP_LDP_terms')
     NLP_file_sentiment 	= fileDict.get('NLP_Input_Sentiment')
     NLP_NER_sentence 	= fileDict.get('NLP_INPUT_NER')
     NLP_IOB_sentence 	= fileDict.get('NLP_INPUT_IOB')
@@ -321,9 +322,9 @@ def visualize(case_num):
     # 	GSA_geary = AC.geary(GSA_obs, GSA_weights)
 
     #visualizations
-    nltkPlot = nltkDraw.plot(NLP_file_LDP, NLP_LDP_terms)
+    #nltkPlot = nltkDraw.plot(NLP_file_LDP, NLP_LDP_terms)
     jgdata, SNAbpPlot, attr = SNA2Dand3D(graph, request, case_num, _2D = True)
-    fileDict['SNAbpPlot'] = '/' + SNAbpPlot if SNAbpPlot != None else None
+    fileDict['SNAbpPlot'] = '/' + str(SNAbpPlot)
     fileDict['NLP_images'] = radar_runner.generate(NLP_dir, tropes)
     gsaCSV, mymap = tempParseGSA(GSA_file_CSV, GSA_file_SHP)
     if GSA_file_SVG != None:
@@ -332,6 +333,29 @@ def visualize(case_num):
     if gsaCSV == None and mymap == True:
         error = True
         mymap = None
+    ####################### Tye Zasacky NLP ##########################
+    nlp_summary, nlp_entities, nlp_network, nlp_sources, nlp_tropes = None, None, None, None, None
+    if NLP_dir:
+        texts = nlp_runner.getTexts(NLP_dir)
+        parsedDocs = nlp_runner.preProcess(texts)
+        docs = parsedDocs['english']
+        lexicon = nlp_runner.readLexicon()
+        nlp_summary = nlp_runner.docSummary(docs)
+        nlp_entities = nlp_runner.entitySentiment(docs)
+        nlp_network = nlp_runner.sentimentGraph(docs)
+        nlp_tropes = nlp_runner.emotionalValences(docs, lexicon)
+ 
+    if NLP_urls:
+        articles = nlp_runner.getArticles(NLP_urls)
+        texts = [article.text for article in articles]
+        parsedDocs = nlp_runner.preProcess(texts)
+        docs = parsedDocs['english']
+        lexicon = nlp_runner.readLexicon()
+        nlp_summary = nlp_runner.docSummary(docs)
+        nlp_entities = nlp_runner.entitySentiment(docs)
+        #nlp_network = nlp_runner.sentimentGraph(docs)
+        nlp_sources = nlp_runner.sourceAnalysis(articles)
+        nlp_tropes = nlp_runner.emotionalValences(docs, lexicon)
 
     #################James WU's NLP methods:###########################
     nlp_sentiment = None
@@ -394,7 +418,7 @@ def visualize(case_num):
         attr = attr,
         colorDict = colorDict,
         colors = colors,
-        nltkPlot = nltkPlot,
+        #nltkPlot = nltkPlot,
         gsaCSV = gsaCSV,
         mymap = mymap,
         jgdata = jgdata,
@@ -407,9 +431,21 @@ def visualize(case_num):
         nlp_sentiment = nlp_sentiment,
         nlp_ner = ner,
         nlp_iob = iob,
-        nlp_data_show = nlp_data_show
+        nlp_data_show = nlp_data_show,
+        nlp_summary = nlp_summary,
+        nlp_entities = nlp_entities,
+        #nlp_network = nlp_network,
+        nlp_sources =  nlp_sources,
+        nlp_tropes = nlp_tropes
         )
 
+@application.route('/help/<int:case_num>', methods = ['GET', 'POST'])
+def help(case_num):
+    return render_template('help.html', case_num = case_num)
+
+@application.route('/contact/<int:case_num>', methods = ['GET', 'POST'])
+def contact(case_num):
+    return render_template('contact_us.html', case_num = case_num)
 ###########################
 #### SNA input methods ####
 ###########################
@@ -778,7 +814,7 @@ def sample(sample_path, case_num):
             return redirect(url_for('visualize', case_num = case_num))
         else:
             fileDict['NLP_Input_corpus'] = url_for('static', filename = "sample/NLP/" + arr[1] + '/')[1:]
-            return redirect(url_for('choose_tropes', case_num = case_num))
+            return redirect(url_for('visualize', case_num = case_num))
     if arr[0] == 'SNA':
         fileDict['SNA_Input'] = url_for('static', filename = "sample/SNA/" + arr[1])[1:]
         return redirect(url_for('sheetSelect', case_num = case_num))
@@ -817,10 +853,10 @@ def checkExtensions(case_num):
             errors.append("Error: please upload xls OR xlsx file for SNA.")
 
     nlp_file = fileDict['NLP_Input_LDP']
-    terms = fileDict.get('NLP_LDP_terms')
-    if nlp_file != None:
-        if not nlp_file.endswith('.txt'):
-            errors.append("Error: please upload txt file for NLP Lexical Dispersion Plot.")
+    #terms = fileDict.get('NLP_LDP_terms')
+    #if nlp_file != None:
+    #    if not nlp_file.endswith('.txt'):
+    #        errors.append("Error: please upload txt file for NLP Lexical Dispersion Plot.")
 
     sentiment_file = fileDict["NLP_Input_Sentiment"]
     if sentiment_file != None:
@@ -915,9 +951,9 @@ GSA_sample_autocorrelation=[
 [0.001, 0.001],
 [0.001, 0.001]]
 
-@application.route('/regionalization')
-def reg():
-    return render_template("regionalization-test.html")
+@application.route('/regionalization/<int:case_num>')
+def reg(case_num):
+    return render_template("regionalization-test.html", case_num = case_num)
 
 #################
 #### Running ####
