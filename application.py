@@ -611,8 +611,8 @@ def jgvis(case_num):
             case_num = case_num
         )
 
-@application.route("/_get_data/<int:case_num>")
-def get_data(case_num):
+@application.route("/_get_node_data/<int:case_num>")
+def get_node_data(case_num):
     fileDict = caseDict[case_num]
     graph = fileDict.get('copy_of_graph')
     name = request.args.get('name', '', type=str)
@@ -649,6 +649,20 @@ def get_data(case_num):
                    cluster=cluster,
                    eigenvector=eigenvector,
                    betweenness=betweenness, attributes=attributes)
+    return jsonify(toJsonify)
+
+@application.route("/_get_edge_data/<int:case_num>")
+def get_edge_data(case_num):
+    fileDict = caseDict[case_num]
+    graph = fileDict.get('copy_of_graph')
+    name = request.args.get('name', '', type=str)
+    if graph == None or len(graph.G) == 0:
+        return jsonify(name=name)
+    pair = name.split(",")
+    link = graph.G[pair[0]][pair[1]]
+    toJsonify = dict(name=name,source=pair[0],target=pair[1])
+    for attr in link:
+        toJsonify[attr] = link[attr]
     return jsonify(toJsonify)
 
 @application.route("/_get_autocorrelation/<int:case_num>")

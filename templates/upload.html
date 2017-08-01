@@ -73,7 +73,7 @@
 		<li class="dropdown">
 			<a href="#" class="dropbtn">GSA</a>
 			<div class="dropdown-content">
-				<a href="{{url_for('sample', sample_path = 'GSA/usjoin.csv/us48.shp', case_num=case_num)}}">Run United States Income case</a>
+				<a href="{{url_for('sample', sample_path = 'GSA/medata.csv/MiddleEast_adm0.shp', case_num=case_num)}}">Run Middle East case</a>
 				<a href="{{url_for('static', filename = 'sample/GSA/template.csv', case_num=case_num)}}" download>Download Template</a>
 			</div>
 		</li>
@@ -119,7 +119,6 @@
 			</div>
 		</li>
 	</ul>
-
 	<br>
 
 	{% if errors %}

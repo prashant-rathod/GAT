@@ -99,17 +99,13 @@ class SNA():
                             while prevCell['header'] in self.subAttrs:
                                 key[prevCell['header']] = prevCell['val']
                                 prevCell = row[row.index(prevCell) - 1]
-                                print("found duplicate, backing up")
                             key[cell['header']] = cell['val']
-                            print("key",key)
                             attrList = [ [x,key] for x in node[prevCell['header']] if prevCell['val'] in x ]
                             for x in node[prevCell['header']]:
                                 if prevCell['val'] in x:
                                     attrList.append( [x,key] )
                                 else:
                                     attrList.append( x )
-
-                            print("adding subattr",key,"to",prevCell['val'])
                             attrID = prevCell['header']
                             # add the attribute as an attr-of-attr
                         else: # if the attribute is not a subattribute
@@ -177,7 +173,7 @@ class SNA():
                                         emoProps.append("Anticipation")
                                     else:
                                         emoProps.append("None")
-                                # # Conditional statements for differing emotions:
+                                # # Conditional statements for differing emotions - haven't yet defined opposition:
                                 # else:
                                 #     # Checking to see if each node's attribute weights fall within specified ranges:
                                 #     if src_w >= 0.8 and trg_w >= 0.8:
@@ -190,6 +186,7 @@ class SNA():
                                 #         emoProps.append("Sadness")
                                 #     else:
                                 #         emoProps.append("None")
+        self.edges = nx.edges(self.G)
         return emoProps
 
     # copy the origin social network graph created with user input data.
@@ -478,7 +475,7 @@ class SNA():
         nodes_property = {}
         block = nx.get_node_attributes(self.G, 'block')
         for edge in self.edges:
-            edges.append({'source': edge[0], 'target': edge[1]})
+            edges.append({'source': edge[0], 'target': edge[1], 'name': edge[0] + "," + edge[1]})
         for node, feature in block.items():
             temp = {}
             temp['color'] = color[name.index(feature)]
