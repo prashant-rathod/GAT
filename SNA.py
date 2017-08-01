@@ -8,6 +8,7 @@ import tempfile
 
 class SNA():
     def __init__(self, excel_file, nodeSheet, attrSheet = None):
+        self.subAttrs = ["W", "SENT", "SZE", "AMT"]
         self.header, self.list = self.readFile(excel_file, nodeSheet)
         if attrSheet != None:
             self.attrHeader, self.attrList = self.readFile( excel_file, attrSheet)
@@ -62,7 +63,7 @@ class SNA():
         # remove repeated column titles
         consolidatedHeader = []
         for feature in header:
-            if feature not in consolidatedHeader:
+            if ( feature not in consolidatedHeader ) and ( feature not in self.subAttrs ) :
                 consolidatedHeader.append(feature)
 
         return consolidatedHeader,list
@@ -79,43 +80,60 @@ class SNA():
                     self.G.add_node(node['val'], block=node['header'])
         self.nodeSet = nodeSet
         self.nodes = nx.nodes(self.G)
-        print("nodes",self.nodes)
 
     # Input: header list and list of attributes with header label from attribute sheet
     # Output: updated list of nodes with attributes
     def loadAttributes(self):
-        print("header",self.attrHeader)
-        print("list",self.attrList)
+        #print("header",self.attrHeader)
+        #print("list",self.attrList)
         for row in self.attrList:
             nodeID = row[0]['val']
             for cell in row[1:]:
-                if nodeID in self.nodes:
-                    attrList = []
-                    node = self.G.node[nodeID]
-                    print(node)
-                    if cell['header'] in self.G.node[nodeID]:
-                        attrList.append(node[cell['header']])
-                    attrList.append(cell['val'])
-                    self.changeAttribute(nodeID,attrList,cell['header'])
-                    print("Changing attribute",cell['header'],"for node",nodeID,"to",attrList)
+                if cell['val'] != '':
+                    if nodeID in self.nodes:
+                        attrList = []
+                        node = self.G.node[nodeID]
+                        if cell['header'] in self.subAttrs:  # handle subattributes, e.g. weight
+                            prevCell = row[row.index(cell) - 1]
+                            key = {}
+                            while prevCell['header'] in self.subAttrs:
+                                key[prevCell['header']] = prevCell['val']
+                                prevCell = row[row.index(prevCell) - 1]
+                            key[cell['header']] = cell['val']
+                            attrList = [ [x,key] for x in node[prevCell['header']] if prevCell['val'] in x ]
+                            for x in node[prevCell['header']]:
+                                if prevCell['val'] in x:
+                                    attrList.append( [x,key] )
+                                else:
+                                    attrList.append( x )
+                            attrID = prevCell['header']
+                            # add the attribute as an attr-of-attr
+                        else: # if the attribute is not a subattribute
+                            if cell['header'] in self.G.node[nodeID]:
+                                attrList = (node[cell['header']])
+                            attrList.append([cell['val']])
+                            attrID = cell['header']
+                        self.changeAttribute(nodeID,attrList,attrID)
 
     def createEdgeList(self, sourceSet):
         list = self.list
-        source = None
         edgeList = []
         for row in list:
+            sourceNodes = []
             for node in row:
-                if node['header'] == sourceSet:
-                    source = node['val']
-            for node in row:
-                if node['val'] != source and node['header'] in self.nodeSet:
-                    edgeList.append((source,node['val']))
+                if node['header'] in sourceSet:
+                    sourceNodes.append(node['val'])
+            for source in sourceNodes:
+                for node in row:
+                    if node['val'] != source and node['header'] in self.nodeSet:
+                        edgeList.append( (source,node['val']) ) # create a new link
         self.G.add_edges_from(edgeList)
         self.edges = edgeList
-        print("edges",self.G.edges())
+        #print("edges",self.G.edges())
+
     def addEdges(self, pair): # deprecated, needs fixing - doesn't handle new dict structure
         data = self.list
-        print(self.nodes)
+        #print(self.nodes)
         newEdgeList = []
         for row in data:
             first = row[pair[0]]['val']
@@ -125,6 +143,51 @@ class SNA():
         self.G.add_edges_from(newEdgeList)
         self.edges.extend(newEdgeList)
 
+    def calculatePropensities(self,emo):
+        for edge in self.edges: # for every edge, calculate propensities and append as an attribute
+            emoPropList = self.emoProp(edge) if emo else None
+            self.G[edge[0]][edge[1]]['Emotion'] = emoPropList if len(emoPropList)>1 else None
+            if len(emoPropList) > 1:
+                print("For edge between",edge[0],"&",edge[1],"emotional propensities:",emoPropList)
+
+    def emoProp(self, edge):
+        emoProps = []
+        source = self.G.node[edge[0]]
+        target = self.G.node[edge[1]]
+        for attr in ( target if len(source) > len(target) else source ):
+            if attr != 'block' and source.get(attr) is not None and target.get(attr) is not None:
+                for src_val in source.get(attr):
+                    for trg_val in target.get(attr):
+                        if len(src_val) > 1 and len(trg_val) > 1:
+                            src_w = float(src_val[1]["W"]) if "W" in src_val[1] else None
+                            trg_w = float(trg_val[1]["W"]) if "W" in trg_val[1] else None
+                            if src_w is not None and trg_w is not None:
+                                # Checking to see if the attribute for each node is equal:
+                                if src_val[0] == trg_val[0]:
+                                    # Checking to see if each node's attribute weights fall within specified ranges:
+                                    if src_w >= 0.8 and trg_w >= 0.8:
+                                        emoProps.append("Trust")
+                                    elif src_w >= 0.6 and trg_w >= 0.6:
+                                        emoProps.append("Joy")
+                                    elif src_w >= 0.2 and trg_w >= 0.2:
+                                        emoProps.append("Anticipation")
+                                    else:
+                                        emoProps.append("None")
+                                # # Conditional statements for differing emotions - haven't yet defined opposition:
+                                # else:
+                                #     # Checking to see if each node's attribute weights fall within specified ranges:
+                                #     if src_w >= 0.8 and trg_w >= 0.8:
+                                #         emoProps.append("Disgust")
+                                #     elif src_w >= 0.6 and trg_w >= 0.6:
+                                #         emoProps.append("Fear")
+                                #     elif src_w >= 0.6 and trg_w >= 0.4:
+                                #         emoProps.append("Anger")
+                                #     elif src_w >= 0.2 and trg_w >= 0.2:
+                                #         emoProps.append("Sadness")
+                                #     else:
+                                #         emoProps.append("None")
+        self.edges = nx.edges(self.G)
+        return emoProps
 
     # copy the origin social network graph created with user input data.
     # this will be later used to reset the modified graph to inital state
@@ -148,7 +211,7 @@ class SNA():
         self.G.add_node(node,attrDict)
         self.nodes = nx.nodes(self.G)
         for i in connections:
-            print("connecting to:",i)
+            #print("connecting to:",i)
             self.G.add_edge(node,i)
             self.edges.append([node,i])
 
@@ -160,7 +223,7 @@ class SNA():
     def changeAttribute(self, node,  value, attribute="bipartite"):
         if self.G.has_node(node):
             self.G.node[node][attribute] = value
-            print("New attribute for "+node+": "+str(self.G.node[node][attribute]))
+            #print("New attribute for "+node+": "+str(self.G.node[node][attribute]))
         self.nodes = nx.nodes(self.G)
 
     # Change node name
@@ -366,18 +429,18 @@ class SNA():
 
     #note: this is for Vinay's UI
     def plot_2D(self, attr, label=False):
-        print("attr", attr)
+        #print("attr", attr)
         plt.clf()
         block = nx.get_node_attributes(self.G, 'block')
-        print("block",block)
+        #print("block",block)
         pos = nx.spring_layout(self.G)
         labels = {}
         for node in block:
             labels[node] = node
-            print("node",node)
+            #print("node",node)
         for node in set(self.nodeSet):
-            print("Node",node)
-            print("attr[node]",attr[node])
+            #print("Node",node)
+            #print("attr[node]",attr[node])
             nx.draw_networkx_nodes(self.G, pos,
                                    with_labels=False,
                                    nodelist = [key for key, val in block.items() if val == node],
@@ -412,7 +475,7 @@ class SNA():
         nodes_property = {}
         block = nx.get_node_attributes(self.G, 'block')
         for edge in self.edges:
-            edges.append({'source': edge[0], 'target': edge[1]})
+            edges.append({'source': edge[0], 'target': edge[1], 'name': edge[0] + "," + edge[1]})
         for node, feature in block.items():
             temp = {}
             temp['color'] = color[name.index(feature)]
@@ -420,41 +483,3 @@ class SNA():
         data['edges'] = edges
         data['nodes'] = nodes_property
         return data
-
-
-############
-####TEST####
-############
-'''
-Graph = SNA("iran.xlsx", "2011")
-Graph.createNodeList([1,4], ["Agent", "Institution"])
-Graph.createEdgeList([1,4])
-
-# test = Graph.getNodes()
-# Graph.graph_2D({"Agent":['y',50], "Institution":['b',50]}, label=True)
-Graph.clustering()
-Graph.latapy_clustering()
-Graph.robins_alexander_clustering()
-Graph.closeness_centrality()
-Graph.betweenness_centrality()
-Graph.degree_centrality()
-Graph.katz_centrality()
-Graph.eigenvector_centrality()
-Graph.load_centrality()
-Graph.communicability_centrality()
-Graph.communicability_centrality_exp()
-'''
-# print(Graph.get_clustering())
-# print(Graph.get_closeness_centrality())
-# print(Graph.get_betweenness_centrality())
-# print(Graph.get_degree_centrality())
-# print(Graph.get_latapy_clustering())
-# print(Graph.get_robins_alexander_clustering())
-# print(Graph.get_katz_centrality())
-# print(Graph.get_eigenvector_centrality())
-# print(Graph.get_load_centrality())
-# print(Graph.get_communicability_centrality())
-# print(Graph.get_communicability_centrality_exp())
-
-
-

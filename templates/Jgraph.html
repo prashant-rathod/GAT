@@ -87,7 +87,7 @@
       jgraph.onClick(function (node) {
         if (attributeFlag == false) {
           if (node.name !== "" && node.geometry.type === "SphereGeometry") {
-            $.getJSON('/_get_data/{{case_num}}', {
+            $.getJSON('/_get_node_data/{{case_num}}', {
               name: node.name
             }, function(data) {
               update(data);
@@ -105,7 +105,7 @@
         else {
           if (node.name !== "" && node.geometry.type === "SphereGeometry") {
             console.log("triggered..")
-            $.getJSON('/_get_data/{{case_num}}', {
+            $.getJSON('/_get_node_data/{{case_num}}', {
               name: node.name
             }, function(data) {
               handleAddLinkClick(node.name)
@@ -115,6 +115,24 @@
           };
         }
       });
+
+      jgraph.onClick(function (edge) {
+        if (attributeFlag == false) {
+          console.log("edge.name",edge.name)
+          if (edge.name != "" && edge.geometry.type === "CylinderGeometry") {
+            $.getJSON('/_get_edge_data/{{case_num}}', {
+              name: edge.name
+            }, function(data) {
+              updateEdge(data);
+              data['name'] = edge.name
+              currentEdgeDict = data;
+          });
+        }
+        else {
+          console.log("Can't choose an edge right now")
+        };
+       }
+     });
 
       //Takes the user input (node that user wants to add) and adds it to SNA.
       $(function(){
@@ -183,6 +201,33 @@
           $("#attributeInfo").append("<span id='"+feature+"'>"+feature+": "+nodeDict['attributes'][feature]+"</span><br>")
         }
       }
+      updateEdge = function(edgeDict) {
+        console.log("EdgeDict:",edgeDict)
+        $("#delete").val(edgeDict['name']);
+        $("#addNodeFormName").val(edgeDict['name']);
+        $("#measureInfo").empty()
+        $("#measureInfo").append("<div class='filler'>Edge information is contained in the propensities tab.</div>")
+        $("#propInfo").empty()
+        $("#attributeInfo").empty()
+        $("#attributeInfo").append("<div class='filler'>Edge information is contained in the propensities tab.</div>")
+        $("#name").text(edgeDict['source']+"x"+edgeDict['target'])
+        // append to $("#propInfo")
+        $("#propInfo").append("<span>Propensities for the link from <b>"+edgeDict['source']+"</b> to <b>"+edgeDict['target']+"</b>:</span>")
+        empty = true
+        for (var key in edgeDict) {
+          if (key != "source" && key != "target" && key != "name") {
+            if (edgeDict[key] != null) {
+              console.log(key, edgeDict[key])
+              $("#propInfo").append("<span id='"+key+"'>"+key+": "+edgeDict[key]+"</span><br>")
+              empty = false
+            }
+          }
+        }
+        if (empty) {
+          $("#propInfo").empty()
+          $("#propInfo").append("<span>No propensities apply to the edge from "+edgeDict['source']+" to "+edgeDict['target']+".</span>")
+        }
+      }
     </script>
 
     <div class = "output-window" id="infoWindows" style = "position: fixed; bottom: 0; right: 0; border-style: solid">
@@ -209,7 +254,7 @@
           <div class="filler">Select a node to display measures.</div>
         </div>
         <div id="propInfo" class="tabcontent" style="display:none;border:none">
-          <div class="filler chooseRequest" position="center">No node propensities currently available.</div>
+          <div class="filler chooseRequest" position="center">Select an edge to view propensities.</div>
         </div>
       </div>
     </div>

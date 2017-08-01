@@ -324,7 +324,7 @@ def visualize(case_num):
     #visualizations
     #nltkPlot = nltkDraw.plot(NLP_file_LDP, NLP_LDP_terms)
     jgdata, SNAbpPlot, attr = SNA2Dand3D(graph, request, case_num, _2D = True)
-    fileDict['SNAbpPlot'] = '/' + str(SNAbpPlot)
+    fileDict['SNAbpPlot'] = '/' + SNAbpPlot if SNAbpPlot != None else None
     fileDict['NLP_images'] = radar_runner.generate(NLP_dir, tropes)
     gsaCSV, mymap = tempParseGSA(GSA_file_CSV, GSA_file_SHP)
     if GSA_file_SVG != None:
@@ -481,26 +481,28 @@ def nodeSelect(case_num):
     if request.method == 'POST':
 
         nodeColNames = []
-        sourceColNames = []
+        # Commented code is for multiple source columns
+        # sourceColNames = []
         i = 0
         for header in graph.header:
             fileDict[header + "IsNode"] = True if request.form.get(header + "IsNode")=="on" else False
-            fileDict[header + "IsSource"] = True if request.form.get(header + "IsSource") == "on" else False
+            # fileDict[header + "IsSource"] = True if request.form.get(header + "IsSource") == "on" else False
             #fileDict[header + "Class"] = request.form[header + "Class"]
             fileDict[header + "Name"] = request.form[header + "Name"]
             if fileDict[header + "IsNode"] == True:
                 nodeColNames.append(fileDict[header + "Name"])
-            if fileDict[header + "IsSource"] == True:
-                sourceColNames.append(fileDict[header + "Name"])
+            # if fileDict[header + "IsSource"] == True:
+            #     sourceColNames.append(fileDict[header + "Name"])
             i+=1
         fileDict['nodeColNames'] = nodeColNames
-        fileDict['sourceColNames'] = sourceColNames
+        # fileDict['sourceColNames'] = sourceColNames
         print("colnames",nodeColNames)
         graph.createNodeList(nodeColNames)
+        graph.createEdgeList(nodeColNames[0])
         if fileDict['attrSheet'] != None:
             graph.loadAttributes()
-        for colName in sourceColNames:
-            graph.createEdgeList(colName)
+            graph.calculatePropensities(emo=True)
+        # Only the first column is a source
         graph.closeness_centrality()
         graph.degree_centrality()
         graph.betweenness_centrality()
@@ -512,7 +514,7 @@ def nodeSelect(case_num):
 @application.route('/edgeinfo/<int:case_num>', methods = ['GET', 'POST'])
 def edgeSelect(case_num):
     import warnings
-    warnings.warn(message, DeprecationWarning, stacklevel=2) # deprecated by Ryan Steed 20 Jul 2017, replaced by check box in nodeselect.html
+    warnings.warn("deprecated", DeprecationWarning, stacklevel=2) # deprecated by Ryan Steed 20 Jul 2017, replaced by check box in nodeselect.html
     fileDict = caseDict[case_num]
     graph = fileDict['graph']
     combos = fileDict['nodeColNames']
@@ -621,7 +623,6 @@ def SNA2Dand3D(graph, request, case_num, _3D = True, _2D = False, label = False)
     fileDict['copy_of_graph'] = copy_of_graph
     #return based on inputs
     ret3D = graph.create_json(graph.nodeSet, colorInput) if _3D else None
-    print("graph.nodeset",graph.nodeSet)
     label = True if not label and len(graph.nodes) < 20 else False
     ret2D = graph.plot_2D(attr, label) if _2D else None
     fileDict['jgdata'] = ret3D
@@ -646,8 +647,8 @@ def jgvis(case_num):
             case_num = case_num
         )
 
-@application.route("/_get_data/<int:case_num>")
-def get_data(case_num):
+@application.route("/_get_node_data/<int:case_num>")
+def get_node_data(case_num):
     fileDict = caseDict[case_num]
     graph = fileDict.get('copy_of_graph')
     name = request.args.get('name', '', type=str)
@@ -684,6 +685,20 @@ def get_data(case_num):
                    cluster=cluster,
                    eigenvector=eigenvector,
                    betweenness=betweenness, attributes=attributes)
+    return jsonify(toJsonify)
+
+@application.route("/_get_edge_data/<int:case_num>")
+def get_edge_data(case_num):
+    fileDict = caseDict[case_num]
+    graph = fileDict.get('copy_of_graph')
+    name = request.args.get('name', '', type=str)
+    if graph == None or len(graph.G) == 0:
+        return jsonify(name=name)
+    pair = name.split(",")
+    link = graph.G[pair[0]][pair[1]]
+    toJsonify = dict(name=name,source=pair[0],target=pair[1])
+    for attr in link:
+        toJsonify[attr] = link[attr]
     return jsonify(toJsonify)
 
 @application.route("/_get_autocorrelation/<int:case_num>")
