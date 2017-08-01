@@ -15,7 +15,7 @@ body {
     margin: 0;
     background-repeat: no-repeat;
     font-family: Segoe UI;
-    background: url("http://res.cloudinary.com/dl1azxsha/image/upload/v1497635072/background_lnd5xb.svg") no-repeat center center fixed; 
+    background: url("../landing_background.jpg") no-repeat center center fixed; 
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
@@ -185,3 +185,85 @@ input.year {
 label.range {
     font: 40px sans-serif;
 }
+
+/* Accordion CSS */
+
+.tab {
+  position: relative;
+  margin-bottom: 1px;
+  width: 100%;
+  color: #fff;
+  overflow: hidden;
+}
+input {
+  position: absolute;
+  opacity: 0;
+  z-index: -1;
+}
+label {
+  position: relative;
+  display: block;
+  padding: 0 0 0 1em;
+  background: #2149ce;
+  font-weight: bold;
+  line-height: 3;
+  cursor: pointer;
+}
+.blue label {
+  background: #2980b9;
+}
+.tab-content {
+  max-height: 0;
+  overflow: scroll;
+  background: #2149ce;
+  -webkit-transition: max-height .75s;
+  -o-transition: max-height .75s;
+  transition: max-height .75s;
+}
+.blue .tab-content {
+  background: #3498db;
+}
+.tab-content p {
+  margin: 1em;
+}
+/* :checked */
+input:checked ~ .tab-content {
+  max-height: 80%;
+}
+/* Icon */
+label::after {
+  position: absolute;
+  right: 0;
+  top: 0;
+  display: block;
+  width: 3em;
+  height: 3em;
+  line-height: 3;
+  text-align: center;
+  -webkit-transition: all .75s;
+  -o-transition: all .75s;
+  transition: all .75s;
+}
+input[type=checkbox] + label::after {
+  content: "+";
+}
+input[type=radio] + label::after {
+  content: "\25BC";
+}
+input[type=checkbox]:checked + label::after {
+    transform: rotate(315deg);
+}
+input[type=radio]:checked + label::after {
+    transform: rotateX(180deg);
+}
+
+th { 
+    border: medium;
+    text-align: left;
+}
+
+tr {
+    align-content: left;
+    border: medium;
+}
+
