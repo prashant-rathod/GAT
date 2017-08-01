@@ -280,7 +280,8 @@ class SNA():
     def betweenness_centrality(self):
         self.betweenness_centrality_dict = nx.betweenness_centrality(self.G)
     def eigenvector_centrality(self):
-        self.eigenvector_centrality_dict = nx.eigenvector_centrality(self.G, max_iter=500, tol=1e-01)
+        #self.eigenvector_centrality_dict = nx.eigenvector_centrality(self.G, max_iter=500, tol=1e-01)
+        self.eigenvector_centrality_dict = nx.eigenvector_centrality_numpy(self.G)
     def katz_centrality(self):
         self.katz_centrality_dict = centrality.katz_centrality(self.G)
     def load_centrality(self):

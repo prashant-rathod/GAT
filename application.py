@@ -324,7 +324,7 @@ def visualize(case_num):
     #visualizations
     #nltkPlot = nltkDraw.plot(NLP_file_LDP, NLP_LDP_terms)
     jgdata, SNAbpPlot, attr = SNA2Dand3D(graph, request, case_num, _2D = True)
-    fileDict['SNAbpPlot'] = '/' + str(SNAbpPlot)
+    fileDict['SNAbpPlot'] = '/' + SNAbpPlot if SNAbpPlot != None else None
     fileDict['NLP_images'] = radar_runner.generate(NLP_dir, tropes)
     gsaCSV, mymap = tempParseGSA(GSA_file_CSV, GSA_file_SHP)
     if GSA_file_SVG != None:

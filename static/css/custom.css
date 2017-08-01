@@ -727,8 +727,7 @@ h6.block {
 	left:0;
 	right:0;
 	bottom:0;
-        background-color:rgba(13, 71, 161, .7);
-        filter: blur(15px);
+        background-color:rgba(69,90,100,.8);
 	z-index:-1;
 }
 .blur-wrapper{
