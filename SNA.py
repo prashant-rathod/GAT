@@ -102,7 +102,7 @@ class SNA():
                                 prevCell = row[row.index(prevCell) - 1]
                             key[cell['header']] = cell['val']
                             for value in node[prevCell['header']]:
-                                print("AttrList 108:",attrList)
+                                #print("AttrList 108:",attrList)
                                 if prevCell['val'] in value:
                                     listFlag = True if type(value) is list else False
                                     attrList.append([value[0],key] if listFlag else [value,key])
@@ -156,7 +156,33 @@ class SNA():
     def propCalc(self, edge):
         emoProps = []
         roleProps = []
+        emoAttrSet = ["Belief","Symbol","Agent"]
         roleAttrSet = ["Belief","Resource"]
+        oppPairs = [
+            ("IDBNATTUR", "IDBNATKUR"),
+            ("IDBNATTUR","IDBPROUSA"),
+            ('ROBMOSSUN', 'ROBMOSSHI'),
+            ('IDBVEL', 'IDBSEC'),
+            ('POBNOT', 'IDBNATIRQ'),
+            ('POBNOT', 'IDBNATKUR'),
+            ('POBNOT', 'IDBNATIRN'),
+            ('IDBNATIRN', 'IDBNATIRQ'),
+            ('ROBANTJEW', 'ROBMOSSHI'),
+            ('TURGOVHOS_ERD', 'TURGOVHOS_ATA'),
+            ('TURGOVHOS_ERD', 'FLGTUR'),
+            ('IRQGOVHOS', 'IRNGOVHOG'),
+            ('TURGOVHOS_ERD', 'IRNGOVHOS_KAM')
+        ]
+        compPairs = [
+            ('IDBPROUSA', 'IDBPROEUR'),
+            ('IDBANTEUR', 'IDBANTUSA'),
+            ('POBNOT', 'IDBNATTUR'),
+            ('FLGKUR', 'TURGOVHOS_ERD'),
+            ('LANKUR', 'FLGTUR'),
+            ('IRQGOVHOG_ABD', 'TURGOVHOS_ERD'),
+            ('TURGOVHOS_ERD', 'IRQKURKRG_HOS'),
+            ('TURGOVHOS_ERD', 'TURGOVSPM_KIL'),
+        ]
         source = self.G.node[edge[0]]
         target = self.G.node[edge[1]]
         # Check if role attribute is present; if not, no role propensities calculated
@@ -177,35 +203,47 @@ class SNA():
                         src_w = float(src_val[1]["W"]) if "W" in src_val[1] else None
                         trg_w = float(trg_val[1]["W"]) if "W" in trg_val[1] else None
                         if src_w is not None and trg_w is not None:
-                            # Checking to see if the attribute for each node is equal:
+
+                            # Cooperative propensities
                             if src_val[0] == trg_val[0]:
                                 # Checking to see if each node's attribute weights fall within specified ranges:
                                 if src_w >= 0.8 and trg_w >= 0.8:
                                     emoProps.append(("Trust",attr,edge[0],src_val[0],edge[1],trg_val[0]))
-                                    print(emoProps)
-                                elif src_w >= 0.6 and trg_w >= 0.6:
-                                    emoProps.append("Joy")
+                                elif (0.6 <= src_w < 0.8 and 0.6 <= src_w < 0.8) or (src_w >= 0.8 and 0.6 <= trg_w):
+                                    emoProps.append(("Joy", attr, edge[0], src_val[0], edge[1], trg_val[0]))
                                     # print("Appended Joy using attribute", attr, "(", src_val, "&", trg_val, ")",
                                     #       "for node pair (", source, ",", target, ")")
-                                elif src_w >= 0.2 and trg_w >= 0.2:
-                                    emoProps.append("Anticipation")
+                                elif 0.2 <= src_w < 0.6 and 0.2 <= src_w < 0.6:
+                                    emoProps.append(("Anticipation", attr, edge[0], src_val[0], edge[1], trg_val[0]))
                                     # print("Appended Anticipation using attribute", attr, "(", src_val, "&", trg_val, ")",
                                     #       "for node pair (", source, ",", target, ")")
                                 else:
                                     emoProps.append("None")
-                            # # Conditional statements for differing emotions - haven't yet defined opposition:
-                            # else:
-                            #     # Checking to see if each node's attribute weights fall within specified ranges:
-                            #     if src_w >= 0.8 and trg_w >= 0.8:
-                            #         emoProps.append("Disgust")
-                            #     elif src_w >= 0.6 and trg_w >= 0.6:
-                            #         emoProps.append("Fear")
-                            #     elif src_w >= 0.6 and trg_w >= 0.4:
-                            #         emoProps.append("Anger")
-                            #     elif src_w >= 0.2 and trg_w >= 0.2:
-                            #         emoProps.append("Sadness")
-                            #     else:
-                            #         emoProps.append("None")
+
+                            # Coercive propensities:
+                            elif attr in emoAttrSet and (src_val,trg_val) in oppPairs or (trg_val,src_val) in oppPairs:
+                                # Checking to see if each node's attribute weights fall within specified ranges:
+                                if src_w >= 0.8 and trg_w >= 0.8:
+                                    emoProps.append(("Disgust", attr, edge[0], src_val[0], edge[1], trg_val[0]))
+                                elif 0.6 <= src_w < 0.8 and 0.6 <= src_w < 0.8:
+                                    emoProps.append(("Fear", attr, edge[0], src_val[0], edge[1], trg_val[0]))
+                                elif 0.4 <= src_w < 0.6 and 0.4 <= src_w < 0.6:
+                                    emoProps.append(("Anger", attr, edge[0], src_val[0], edge[1], trg_val[0]))
+                                elif 0.2 <= src_w < 0.4  and 0.2 <= src_w < 0.4:
+                                    emoProps.append(("Sadness", attr, edge[0], src_val[0], edge[1], trg_val[0]))
+                                else:
+                                    emoProps.append("None")
+
+                            # Competitive propensities
+                            elif attr in emoAttrSet and (src_val, trg_val) in compPairs or (trg_val,src_val) in oppPairs:
+                                # Checking to see if each node's attribute weights fall within specified ranges:
+                                if src_w >= 0.6 and trg_w >= 0.6:
+                                    emoProps.append(("Anticipation", attr, edge[0], src_val[0], edge[1], trg_val[0]))
+                                elif 0.2 <= src_w < 0.6 and 0.2 <= src_w < 0.6:
+                                    emoProps.append(("Surprise", attr, edge[0], src_val[0], edge[1], trg_val[0]))
+                                else:
+                                    emoProps.append("None")
+
 
                         ## Role Propensities
                         # Still need to add conditional opposites, like in emotion
@@ -214,12 +252,13 @@ class SNA():
                         trg_amt = float(trg_val[1]["AMT"]) if attr == "Resource" and "AMT" in trg_val[1] else None
                         if roleFlag and attr in roleAttrSet:
                             if src_val[0] == trg_val[0]:
-                                roleProps.append("Consumer or Provider" if attr == "Resource" else None)
+                                roleProps.append(["Consumer or Provider",.5] if attr == "Resource" else None)
                                 # print("Appended Cons. or Prov. using attribute", attr, "(", src_val, "&", trg_val, ")",
                                 #       "for node pair (", source, ",", target, ")")
-                                roleProps.append("Protector" if attr == "Belief" else None)
+                                roleProps.append(["Protector",.75] if attr == "Belief" else None)
                                 # print("Appended Protector using attribute", attr, "(", src_val, "&", trg_val, ")",
                                 #       "for node pair (", source, ",", target, ")")
+
 
 
 
