@@ -1,6 +1,6 @@
 #!/bin/bash
 
-INSTANCE_URL=ubuntu@ec2-52-38-189-7.us-west-2.compute.amazonaws.com
+INSTANCE_URL=ubuntu@ec2-52-37-61-214.us-west-2.compute.amazonaws.com
 PEM_NAME="aws-ec2-gat1.pem"
 
 echo "RESTARTING NGINX AND GUNICORN"
