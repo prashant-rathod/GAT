@@ -151,12 +151,13 @@ class SNA():
         for edge in self.edges: # for every edge, calculate propensities and append as an attribute
             emoPropList = self.propCalc(edge)[0] if emo else None
             self.G[edge[0]][edge[1]]['Emotion'] = emoPropList if len(emoPropList)>1 else None
-            if len(emoPropList) > 1:
-                print("For edge (",edge[0],",",edge[1],"), emoProps:")
+            if len(emoPropList) > 0:
+                print("For edge (",edge[0],",",edge[1],"):")
                 for emoProp in emoPropList:
                     print(emoProp)
             rolePropList = self.propCalc(edge)[1] if role else None
             self.G[edge[0]][edge[1]]['Role'] = rolePropList if len(rolePropList) > 1 else None
+        self.edges = nx.edges(self.G)
 
     def propCalc(self, edge):
         emoProps = []
@@ -176,7 +177,12 @@ class SNA():
             ('TURGOVHOS_ERD', 'TURGOVHOS_ATA'),
             ('TURGOVHOS_ERD', 'FLGTUR'),
             ('IRQGOVHOS', 'IRNGOVHOG'),
-            ('TURGOVHOS_ERD', 'IRNGOVHOS_KAM')
+            ('TURGOVHOS_ERD', 'IRNGOVHOS_KAM'),
+            ('IDBJHD','IDBPROUSA'),
+            ('IDBANT_IMGMOSISS','IDBJHD'),
+            ('IRQGOV','IMGMOSISS'),
+            ('IRNGOV','IMGMOSISS'),
+            ('POBNATIRQ','POBNATTUR')
         ]
         compPairs = [
             ('IDBPROUSA', 'IDBPROEUR'),
@@ -187,60 +193,54 @@ class SNA():
             ('IRQGOVHOG_ABD', 'TURGOVHOS_ERD'),
             ('TURGOVHOS_ERD', 'IRQKURKRG_HOS'),
             ('TURGOVHOS_ERD', 'TURGOVSPM_KIL'),
+            ('ROBMOSSUN','IDBJHD'),
+            ('FLGTUR','POBNOT')
         ]
         source = self.G.node[edge[0]]
         target = self.G.node[edge[1]]
         # Check if role attribute is present; if not, no role propensities calculated
         roleFlag = True if source.get("Role") is not None and target.get("Role") is not None else False
-
         for attr in ( target if len(source) > len(target) else source ):
             if attr != 'block' and source.get(attr) is not None and target.get(attr) is not None:
-                #print("Attribute",attr,"...")
                 for src_val in [x for x in source.get(attr) if len(x) > 1]:
-                    #print("Src val",src_val)
                     for trg_val in [x for x in target.get(attr) if len(x) > 1]:
-                        #print("Trg val",trg_val)
                         #####################################
                         ### Propensity assignment section ###
                         #####################################
-
                         ## Emotion Propensities
                         src_w = float(src_val[1]["W"]) if "W" in src_val[1] else None
                         trg_w = float(trg_val[1]["W"]) if "W" in trg_val[1] else None
                         if src_w is not None and trg_w is not None:
-
                             # Cooperative propensities
                             if src_val[0] == trg_val[0]:
                                 # Checking to see if each node's attribute weights fall within specified ranges:
                                 if src_w >= 0.6 and trg_w >= 0.6:
-                                    emoProps.append(("Trust",attr,edge[0],src_val[0],edge[1],trg_val[0]))
+                                    emoProps.append(("Trust",attr,src_val[0],trg_val[0]))
                                 else: # all others are joy
-                                    emoProps.append(("Joy", attr, edge[0], src_val[0], edge[1], trg_val[0]))
+                                    emoProps.append(("Joy", attr, src_val[0], trg_val[0]))
                                     # print("Appended Joy using attribute", attr, "(", src_val, "&", trg_val, ")",
                                     #       "for node pair (", source, ",", target, ")")
 
                             elif attr in emoAttrSet:
                                 # Competitive propensities
-                                if (src_val, trg_val) in compPairs or (trg_val,src_val) in compPairs:
+                                if (src_val[0], trg_val[0]) in compPairs or (trg_val[0],src_val[0]) in compPairs:
                                 # Checking to see if each node's attribute weights fall within specified ranges:
                                     if src_w < 0.6 and trg_w < 0.6:
-                                        emoProps.append(("Surprise", attr, edge[0], src_val[0], edge[1], trg_val[0]))
+                                        emoProps.append(("Surprise", attr, src_val[0], trg_val[0]))
                                     else:
-                                        emoProps.append(("Anticipation", attr, edge[0], src_val[0], edge[1], trg_val[0]))
+                                        emoProps.append(("Anticipation", attr, src_val[0], trg_val[0]))
 
                                 # Coercive propensities:
-                                elif (src_val, trg_val) in oppPairs or (trg_val,src_val) in oppPairs:
+                                elif (src_val[0], trg_val[0]) in oppPairs or (trg_val[0],src_val[0]) in oppPairs:
                                     # Checking to see if each node's attribute weights fall within specified ranges:
                                     if (src_w >= 0.8 and trg_w >= 0.6) or (src_w >= 0.6 and trg_w >= 0.6):
-                                        emoProps.append(("Sadness", attr, edge[0], src_val[0], edge[1], trg_val[0]))
+                                        emoProps.append(("Anger", attr, src_val[0], trg_val[0]))
                                     elif (src_w >= 0.6 and trg_w >= 0.4) or (src_w >= 0.4 and trg_w >= 0.6):
-                                        emoProps.append(("Anger", attr, edge[0], src_val[0], edge[1], trg_val[0]))
+                                        emoProps.append(("Sadness", attr, src_val[0], trg_val[0]))
                                     elif (src_w >= 0.4 and trg_w >= 0.2) or (src_w >= 0.2 and trg_w >= 0.4):
-                                        emoProps.append(("Fear", attr, edge[0], src_val[0], edge[1], trg_val[0]))
+                                        emoProps.append(("Fear", attr, src_val[0], trg_val[0]))
                                     elif (src_w >= 0.8 and trg_w >= 0.2) or (src_w >= 0.2 and trg_w >= 0.8):
-                                        emoProps.append(("Disgust", attr, edge[0], src_val[0], edge[1], trg_val[0]))
-                                    else:
-                                        emoProps.append("None")
+                                        emoProps.append(("Disgust", attr, src_val[0], trg_val[0]))
 
                         ## Role Propensities
                         # Still need to add conditional opposites, like in emotion
@@ -256,10 +256,6 @@ class SNA():
                                 # print("Appended Protector using attribute", attr, "(", src_val, "&", trg_val, ")",
                                 #       "for node pair (", source, ",", target, ")")
 
-
-
-
-        self.edges = nx.edges(self.G)
         return emoProps, roleProps
 
     # copy the origin social network graph created with user input data.
@@ -332,7 +328,6 @@ class SNA():
         self.communicability_centrality_exp()
 
     def averagePathRes(self,ta=20,iters=5):
-        print("calculating resilience")
         G = self.G.copy()
         print(list(nx.find_cliques(G)))
         initShortestPath = nx.average_shortest_path_length(G)
@@ -366,7 +361,6 @@ class SNA():
                 l.append(len(g.edges()))
                 if len(g.edges()) == max(l) and len(g.edges()) != 0:
                     finShortestPathList.append(nx.average_shortest_path_length(g, weight='Salience'))
-        print("finished iterations")
         # find mean of average shortest path from each iteration:
         finShortestPath = np.mean(finShortestPathList)
 
@@ -374,7 +368,6 @@ class SNA():
         qw_shortestPath = float(finShortestPath) / float(initShortestPath)
         t1 = t0 + ta
         resilience = integral(t0, t1, 5) / t1
-        print("resilience calculated:",resilience)
         return resilience
 
     # Find clustering coefficient for each nodes
