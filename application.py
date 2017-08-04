@@ -323,7 +323,7 @@ def visualize(case_num):
 
     #visualizations
     #nltkPlot = nltkDraw.plot(NLP_file_LDP, NLP_LDP_terms)
-    jgdata, SNAbpPlot, attr = SNA2Dand3D(graph, request, case_num, _2D = True)
+    jgdata, SNAbpPlot, attr, systemMeasures = SNA2Dand3D(graph, request, case_num, _2D = True)
     fileDict['SNAbpPlot'] = '/' + SNAbpPlot if SNAbpPlot != None else None
     fileDict['NLP_images'] = radar_runner.generate(NLP_dir, tropes)
     gsaCSV, mymap = tempParseGSA(GSA_file_CSV, GSA_file_SHP)
@@ -496,7 +496,6 @@ def nodeSelect(case_num):
             i+=1
         fileDict['nodeColNames'] = nodeColNames
         # fileDict['sourceColNames'] = sourceColNames
-        print("colnames",nodeColNames)
         graph.createNodeList(nodeColNames)
         graph.createEdgeList(nodeColNames[0])
         if fileDict['attrSheet'] != None:
@@ -626,7 +625,8 @@ def SNA2Dand3D(graph, request, case_num, _3D = True, _2D = False, label = False)
     label = True if not label and len(graph.nodes) < 20 else False
     ret2D = graph.plot_2D(attr, label) if _2D else None
     fileDict['jgdata'] = ret3D
-    return ret3D, ret2D, attr
+    systemMeasures = graph.averagePathRes()
+    return ret3D, ret2D, attr, systemMeasures
 
 
 @application.route('/snaviz/<int:case_num>', methods = ['GET', 'POST'])
@@ -634,9 +634,9 @@ def jgvis(case_num):
     fileDict = caseDict[case_num]
     #jgdata = fileDict.get('jgdata')
     graph = fileDict.get('copy_of_graph')
-    jgdata, SNAbpPlot, attr = SNA2Dand3D(graph, request, case_num, _2D = False)
+    jgdata, SNAbpPlot, attr, systemMeasures = SNA2Dand3D(graph, request, case_num, _2D = False)
     if request.method == 'POST':
-        jgdata, SNAbpPlot, attr = SNA2Dand3D(graph, request, case_num, _2D = True)
+        jgdata, SNAbpPlot, attr, systemMeasures = SNA2Dand3D(graph, request, case_num, _2D = True)
     return render_template("Jgraph.html",
             jgdata = jgdata,
             SNAbpPlot = SNAbpPlot,
@@ -644,7 +644,8 @@ def jgvis(case_num):
             graph = graph,
             colorDict = colorDict,
             colors = colors,
-            case_num = case_num
+            case_num = case_num,
+            systemMeasures = systemMeasures
         )
 
 @application.route("/_get_node_data/<int:case_num>")
@@ -682,9 +683,11 @@ def get_node_data(case_num):
         betweenness="clustering not available"
     attributes = graph.get_node_attributes(name)
     toJsonify = dict(name=name,
-                   cluster=cluster,
-                   eigenvector=eigenvector,
-                   betweenness=betweenness, attributes=attributes)
+                     cluster=cluster,
+                     eigenvector=eigenvector,
+                     betweenness=betweenness,
+                     resilience=resilience,
+                     attributes=attributes)
     return jsonify(toJsonify)
 
 @application.route("/_get_edge_data/<int:case_num>")

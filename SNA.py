@@ -5,7 +5,8 @@ from networkx.algorithms import centrality
 import xlrd
 import matplotlib.pyplot as plt
 import tempfile
-from itertools import combinations
+import random
+import numpy as np
 
 class SNA():
     def __init__(self, excel_file, nodeSheet, attrSheet = None):
@@ -146,10 +147,14 @@ class SNA():
         self.edges.extend(newEdgeList)
 
     def calculatePropensities(self,emo=True,role=True):
+        print("Iterating through", len(self.edges),"edges...")
         for edge in self.edges: # for every edge, calculate propensities and append as an attribute
             emoPropList = self.propCalc(edge)[0] if emo else None
             self.G[edge[0]][edge[1]]['Emotion'] = emoPropList if len(emoPropList)>1 else None
-
+            if len(emoPropList) > 1:
+                print("For edge (",edge[0],",",edge[1],"), emoProps:")
+                for emoProp in emoPropList:
+                    print(emoProp)
             rolePropList = self.propCalc(edge)[1] if role else None
             self.G[edge[0]][edge[1]]['Role'] = rolePropList if len(rolePropList) > 1 else None
 
@@ -207,43 +212,35 @@ class SNA():
                             # Cooperative propensities
                             if src_val[0] == trg_val[0]:
                                 # Checking to see if each node's attribute weights fall within specified ranges:
-                                if src_w >= 0.8 and trg_w >= 0.8:
+                                if src_w >= 0.6 and trg_w >= 0.6:
                                     emoProps.append(("Trust",attr,edge[0],src_val[0],edge[1],trg_val[0]))
-                                elif (0.6 <= src_w < 0.8 and 0.6 <= src_w < 0.8) or (src_w >= 0.8 and 0.6 <= trg_w):
+                                else: # all others are joy
                                     emoProps.append(("Joy", attr, edge[0], src_val[0], edge[1], trg_val[0]))
                                     # print("Appended Joy using attribute", attr, "(", src_val, "&", trg_val, ")",
                                     #       "for node pair (", source, ",", target, ")")
-                                elif 0.2 <= src_w < 0.6 and 0.2 <= src_w < 0.6:
-                                    emoProps.append(("Anticipation", attr, edge[0], src_val[0], edge[1], trg_val[0]))
-                                    # print("Appended Anticipation using attribute", attr, "(", src_val, "&", trg_val, ")",
-                                    #       "for node pair (", source, ",", target, ")")
-                                else:
-                                    emoProps.append("None")
 
-                            # Coercive propensities:
-                            elif attr in emoAttrSet and (src_val,trg_val) in oppPairs or (trg_val,src_val) in oppPairs:
+                            elif attr in emoAttrSet:
+                                # Competitive propensities
+                                if (src_val, trg_val) in compPairs or (trg_val,src_val) in compPairs:
                                 # Checking to see if each node's attribute weights fall within specified ranges:
-                                if src_w >= 0.8 and trg_w >= 0.8:
-                                    emoProps.append(("Disgust", attr, edge[0], src_val[0], edge[1], trg_val[0]))
-                                elif 0.6 <= src_w < 0.8 and 0.6 <= src_w < 0.8:
-                                    emoProps.append(("Fear", attr, edge[0], src_val[0], edge[1], trg_val[0]))
-                                elif 0.4 <= src_w < 0.6 and 0.4 <= src_w < 0.6:
-                                    emoProps.append(("Anger", attr, edge[0], src_val[0], edge[1], trg_val[0]))
-                                elif 0.2 <= src_w < 0.4  and 0.2 <= src_w < 0.4:
-                                    emoProps.append(("Sadness", attr, edge[0], src_val[0], edge[1], trg_val[0]))
-                                else:
-                                    emoProps.append("None")
+                                    if src_w < 0.6 and trg_w < 0.6:
+                                        emoProps.append(("Surprise", attr, edge[0], src_val[0], edge[1], trg_val[0]))
+                                    else:
+                                        emoProps.append(("Anticipation", attr, edge[0], src_val[0], edge[1], trg_val[0]))
 
-                            # Competitive propensities
-                            elif attr in emoAttrSet and (src_val, trg_val) in compPairs or (trg_val,src_val) in oppPairs:
-                                # Checking to see if each node's attribute weights fall within specified ranges:
-                                if src_w >= 0.6 and trg_w >= 0.6:
-                                    emoProps.append(("Anticipation", attr, edge[0], src_val[0], edge[1], trg_val[0]))
-                                elif 0.2 <= src_w < 0.6 and 0.2 <= src_w < 0.6:
-                                    emoProps.append(("Surprise", attr, edge[0], src_val[0], edge[1], trg_val[0]))
-                                else:
-                                    emoProps.append("None")
-
+                                # Coercive propensities:
+                                elif (src_val, trg_val) in oppPairs or (trg_val,src_val) in oppPairs:
+                                    # Checking to see if each node's attribute weights fall within specified ranges:
+                                    if (src_w >= 0.8 and trg_w >= 0.6) or (src_w >= 0.6 and trg_w >= 0.6):
+                                        emoProps.append(("Sadness", attr, edge[0], src_val[0], edge[1], trg_val[0]))
+                                    elif (src_w >= 0.6 and trg_w >= 0.4) or (src_w >= 0.4 and trg_w >= 0.6):
+                                        emoProps.append(("Anger", attr, edge[0], src_val[0], edge[1], trg_val[0]))
+                                    elif (src_w >= 0.4 and trg_w >= 0.2) or (src_w >= 0.2 and trg_w >= 0.4):
+                                        emoProps.append(("Fear", attr, edge[0], src_val[0], edge[1], trg_val[0]))
+                                    elif (src_w >= 0.8 and trg_w >= 0.2) or (src_w >= 0.2 and trg_w >= 0.8):
+                                        emoProps.append(("Disgust", attr, edge[0], src_val[0], edge[1], trg_val[0]))
+                                    else:
+                                        emoProps.append("None")
 
                         ## Role Propensities
                         # Still need to add conditional opposites, like in emotion
@@ -333,6 +330,53 @@ class SNA():
         self.load_centrality()
         self.communicability_centrality()
         self.communicability_centrality_exp()
+
+    def averagePathRes(self,ta=20):
+        print("calculating resilience")
+        G = self.G.copy()
+        initShortestPath = nx.average_shortest_path_length(G)
+        t0 = 0
+        finShortestPathList = []
+
+        # function to estimate integral
+        def integral(x0, x1, rectangles):
+            width = (float(x1) - float(x0)) / rectangles
+            sum1 = 0
+            for i in range(rectangles):
+                height = qw_shortestPath * (float(x0) + i * width)
+                area = height * width
+                sum1 += area
+            return sum1
+
+        # creating perturbation by removing random 10% of nodes and averaging result of x iterations
+        for k in range(0, 5):  # x can be changed here
+            print(k)
+            nList = G.nodes()
+            nNumber = G.number_of_nodes()
+            sample = int(nNumber * 0.1)  # percent of nodes removed can be changed here
+            rSample = random.sample(nList, sample)
+            G.remove_nodes_from(rSample)
+
+            # finding shortest path of largest subgraph in G after perturbation:
+            # (average shortest path cannot be calculated if a graph has unconnected nodes)
+            l = []
+            for g in nx.connected_component_subgraphs(G):
+                l.append(len(g.edges()))
+                if len(g.edges()) == max(l) and len(g.edges()) != 0:
+                    finShortestPathList.append(nx.average_shortest_path_length(g, weight='Salience'))
+            # return graph to initial state:
+            G = nx.Graph()
+            G.add_edges_from(self.edges)
+        print("finished iterations")
+        # find mean of average shortest path from each iteration:
+        finShortestPath = np.mean(finShortestPathList)
+
+        # solve for resilience using integral function:
+        qw_shortestPath = float(finShortestPath) / float(initShortestPath)
+        t1 = t0 + ta
+        resilience = integral(t0, t1, 5) / t1
+        print("resilience calculated:",resilience)
+        return resilience
 
     # Find clustering coefficient for each nodes
     def clustering(self):
