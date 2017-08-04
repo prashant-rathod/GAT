@@ -3,6 +3,7 @@ from flask import Flask, render_template, request, redirect, url_for, jsonify
 
 matplotlib.use('Agg')
 import os
+import subprocess
 import nltkDraw
 import SNA as sna
 import xlrd
@@ -344,7 +345,7 @@ def visualize(case_num):
         nlp_entities = nlp_runner.entitySentiment(docs)
         nlp_network = nlp_runner.sentimentGraph(docs)
         nlp_tropes = nlp_runner.emotionalValences(docs, lexicon)
- 
+
     if NLP_urls:
         articles = nlp_runner.getArticles(NLP_urls)
         texts = [article.text for article in articles]
@@ -954,6 +955,22 @@ GSA_sample_autocorrelation=[
 @application.route('/regionalization/<int:case_num>')
 def reg(case_num):
     return render_template("regionalization-test.html", case_num = case_num)
+
+@application.route('/log/server-error')
+def server_error():
+    return render_template("log.html", title = "Server Error", lines = tail('/var/log/nginx/error.log', 100))
+
+@application.route('/log/server-access')
+def server_access():
+    return render_template("log.html", title = "Server Access", lines = tail('/var/log/nginx/access.log', 100))
+
+@application.route('/log/python-out')
+def python_out():
+    return render_template("log.html", title = "Python Out", lines = tail('nohup.out', 100))
+
+def tail(f, n):
+    lines = subprocess.check_output("tail -n " + str(n)  + " " + f, shell = True).splitlines()
+    return [x.decode("utf-8") for x in lines]
 
 #################
 #### Running ####
