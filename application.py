@@ -567,6 +567,8 @@ def SNA2Dplot(graph, request, label=False):
 # 2D is probably not desired in any case though
 def SNA2Dand3D(graph, request, case_num, _3D = True, _2D = False, label = False):
     fileDict = caseDict[case_num]
+    systemMeasures = {}
+
     if graph == None:
         return None, None, None
 
@@ -618,6 +620,16 @@ def SNA2Dand3D(graph, request, case_num, _3D = True, _2D = False, label = False)
 
         print("node, attrDict, connections",node,attrDict,links)
         graph.addNode(node,attrDict,links)
+
+    # Calculate resilience when requested
+    if request.form.get("resilienceSubmit") != None:
+        print("calling resilience")
+        try:
+            systemMeasures["Resilience"] = graph.averagePathRes(iters=5)
+        except nx.exception.NetworkXError:
+            systemMeasures["Resilience"] = "Could not calculate resilience, graph is disconnected."
+
+
     copy_of_graph = copy.deepcopy(graph)
     fileDict['copy_of_graph'] = copy_of_graph
     #return based on inputs
@@ -625,7 +637,7 @@ def SNA2Dand3D(graph, request, case_num, _3D = True, _2D = False, label = False)
     label = True if not label and len(graph.nodes) < 20 else False
     ret2D = graph.plot_2D(attr, label) if _2D else None
     fileDict['jgdata'] = ret3D
-    systemMeasures = graph.averagePathRes()
+
     return ret3D, ret2D, attr, systemMeasures
 
 

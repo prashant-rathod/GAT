@@ -331,9 +331,10 @@ class SNA():
         self.communicability_centrality()
         self.communicability_centrality_exp()
 
-    def averagePathRes(self,ta=20):
+    def averagePathRes(self,ta=20,iters=5):
         print("calculating resilience")
         G = self.G.copy()
+        print(list(nx.find_cliques(G)))
         initShortestPath = nx.average_shortest_path_length(G)
         t0 = 0
         finShortestPathList = []
@@ -349,7 +350,8 @@ class SNA():
             return sum1
 
         # creating perturbation by removing random 10% of nodes and averaging result of x iterations
-        for k in range(0, 5):  # x can be changed here
+        for k in range(0, iters):  # x can be changed here
+            G = self.G.copy()
             print(k)
             nList = G.nodes()
             nNumber = G.number_of_nodes()
@@ -364,9 +366,6 @@ class SNA():
                 l.append(len(g.edges()))
                 if len(g.edges()) == max(l) and len(g.edges()) != 0:
                     finShortestPathList.append(nx.average_shortest_path_length(g, weight='Salience'))
-            # return graph to initial state:
-            G = nx.Graph()
-            G.add_edges_from(self.edges)
         print("finished iterations")
         # find mean of average shortest path from each iteration:
         finShortestPath = np.mean(finShortestPathList)
