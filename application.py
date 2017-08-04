@@ -623,7 +623,6 @@ def SNA2Dand3D(graph, request, case_num, _3D = True, _2D = False, label = False)
 
     # Calculate resilience when requested
     if request.form.get("resilienceSubmit") != None:
-        print("calling resilience")
         try:
             systemMeasures["Resilience"] = graph.averagePathRes(iters=5)
         except nx.exception.NetworkXError:
@@ -698,7 +697,6 @@ def get_node_data(case_num):
                      cluster=cluster,
                      eigenvector=eigenvector,
                      betweenness=betweenness,
-                     resilience=resilience,
                      attributes=attributes)
     return jsonify(toJsonify)
 
@@ -713,6 +711,7 @@ def get_edge_data(case_num):
     link = graph.G[pair[0]][pair[1]]
     toJsonify = dict(name=name,source=pair[0],target=pair[1])
     for attr in link:
+        print(link[attr])
         toJsonify[attr] = link[attr]
     return jsonify(toJsonify)
 

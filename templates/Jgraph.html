@@ -214,13 +214,13 @@
         $("#attributeInfo").append("<div class='filler'>Edge information is contained in the propensities tab.</div>")
         $("#name").text(edgeDict['source']+"x"+edgeDict['target'])
         // append to $("#propInfo")
-        $("#propInfo").append("<span>Propensities for the link from <b>"+edgeDict['source']+"</b> to <b>"+edgeDict['target']+"</b>:</span>")
+        $("#propInfo").append("<span>Propensities for the link from <b>"+edgeDict['source']+"</b> to <b>"+edgeDict['target']+"</b>:<br></span>")
         empty = true
         for (var key in edgeDict) {
           if (key != "source" && key != "target" && key != "name") {
             if (edgeDict[key] != null) {
               console.log(key, edgeDict[key])
-              $("#propInfo").append("<span id='"+key+"'>"+key+": "+edgeDict[key]+"</span><br>")
+              $("#propInfo").append("<span id='"+key+"'>"+key+": "+edgeDict[key][0][0]+" (shared attribute {"+edgeDict[key][0][1]+": "+edgeDict[key][0][2]+"})</span><br>")
               empty = false
             }
           }

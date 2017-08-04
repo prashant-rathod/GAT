@@ -150,7 +150,8 @@ class SNA():
         print("Iterating through", len(self.edges),"edges...")
         for edge in self.edges: # for every edge, calculate propensities and append as an attribute
             emoPropList = self.propCalc(edge)[0] if emo else None
-            self.G[edge[0]][edge[1]]['Emotion'] = emoPropList if len(emoPropList)>1 else None
+            self.G[edge[0]][edge[1]]['Emotion'] = emoPropList if len(emoPropList)>0 else None
+            print(self.G[edge[0]][edge[1]])
             if len(emoPropList) > 0:
                 print("For edge (",edge[0],",",edge[1],"):")
                 for emoProp in emoPropList:
@@ -158,6 +159,7 @@ class SNA():
             rolePropList = self.propCalc(edge)[1] if role else None
             self.G[edge[0]][edge[1]]['Role'] = rolePropList if len(rolePropList) > 1 else None
         self.edges = nx.edges(self.G)
+        print(self.edges)
 
     def propCalc(self, edge):
         emoProps = []
@@ -329,7 +331,6 @@ class SNA():
 
     def averagePathRes(self,ta=20,iters=5):
         G = self.G.copy()
-        print(list(nx.find_cliques(G)))
         initShortestPath = nx.average_shortest_path_length(G)
         t0 = 0
         finShortestPathList = []
@@ -347,7 +348,6 @@ class SNA():
         # creating perturbation by removing random 10% of nodes and averaging result of x iterations
         for k in range(0, iters):  # x can be changed here
             G = self.G.copy()
-            print(k)
             nList = G.nodes()
             nNumber = G.number_of_nodes()
             sample = int(nNumber * 0.1)  # percent of nodes removed can be changed here
