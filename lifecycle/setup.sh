@@ -11,7 +11,7 @@ sudo apt-get upgrade;
 sudo apt-get install nginx;
 
 sudo sed -i "1s/.*/user ubuntu;/" /etc/nginx/nginx.conf;
-sudo sed -i '/# server_names_hash_bucket_size 64;/a server_names_hash_bucket_size 128;' /etc/nginx/nginx/conf;
+sudo sed -i "/# server_names_hash_bucket_size 64;/a server_names_hash_bucket_size 128;" /etc/nginx/nginx/conf;
 
 cd;
 mkdir Projects;
