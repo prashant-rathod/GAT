@@ -97,19 +97,7 @@ caseDict = {}
 tempdir = 'static/temp/'
 
 # don't worry about this color shit. It's used by the SNA visualization
-colorDict = {
-    "b": "blue",
-    "g": "green",
-    "r": "red",
-    "c": "cyan",
-    "m": "magenta",
-    "y": "yellow",
-    "k": "black",
-    "w": "white",
-    "orange": "orange",
-    "purple": "purple",
-}
-colors = ["b", "g", "r", "c", "m", "y", "k", "w","orange","purple"]
+colors = ["DeepSkyBlue","Gold","ForestGreen","Ivory","DarkOrchid","Coral","DarkTurquoise","DarkCyan","Blue"]
 hexColors = {}
 for color in colors:
     rgbVal = matplotlib.colors.colorConverter.to_rgb(color)
@@ -416,7 +404,6 @@ def visualize(case_num):
         SNAbpPlot = SNAbpPlot,
         graph = copy_of_graph,
         attr = attr,
-        colorDict = colorDict,
         colors = colors,
         #nltkPlot = nltkPlot,
         gsaCSV = gsaCSV,
@@ -653,7 +640,6 @@ def jgvis(case_num):
             SNAbpPlot = SNAbpPlot,
             attr = attr,
             graph = graph,
-            colorDict = colorDict,
             colors = colors,
             case_num = case_num,
             systemMeasures = systemMeasures

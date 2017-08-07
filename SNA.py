@@ -156,14 +156,20 @@ class SNA():
                 print("For edge (",edge[0],",",edge[1],"):")
                 for emoProp in emoPropList:
                     print(emoProp)
+
             rolePropList = self.propCalc(edge)[1] if role else None
             self.G[edge[0]][edge[1]]['Role'] = rolePropList if len(rolePropList) > 1 else None
+
+            inflPropList = self.propCalc(edge)[2] if role else None
+            self.G[edge[0]][edge[1]]['Role'] = inflPropList if len(inflPropList) > 1 else None
+
         self.edges = nx.edges(self.G)
         print(self.edges)
 
     def propCalc(self, edge):
         emoProps = []
         roleProps = []
+        inflProps = []
         emoAttrSet = ["Belief","Symbol","Agent"]
         roleAttrSet = ["Belief","Resource"]
         oppPairs = [
@@ -258,7 +264,7 @@ class SNA():
                                 # print("Appended Protector using attribute", attr, "(", src_val, "&", trg_val, ")",
                                 #       "for node pair (", source, ",", target, ")")
 
-        return emoProps, roleProps
+        return emoProps, roleProps, inflProps
 
     # copy the origin social network graph created with user input data.
     # this will be later used to reset the modified graph to inital state
@@ -285,6 +291,8 @@ class SNA():
             #print("connecting to:",i)
             self.G.add_edge(node,i)
             self.edges.append([node,i])
+
+        ## Smart prediction prototype
 
     def removeEdge(self, node1, node2):
         if self.G.has_edge(node1,node2):
@@ -589,10 +597,11 @@ class SNA():
         block = nx.get_node_attributes(self.G, 'block')
         for edge in self.edges:
             if self.G[edge[0]][edge[1]]['Emotion'] is not None:
-                edges.append({'source': edge[0], 'target': edge[1], 'name': edge[0] + "," + edge[1], 'color':'0xffffff'}) # links with propensities are white
+                # links with propensities can be given hex code colors for arrow, edge; can also change arrow size
+                edges.append({'source': edge[0], 'target': edge[1], 'name': edge[0] + "," + edge[1], 'arrowColor':'0xE74C3C', 'arrowSize':2})
             else:
                 edges.append(
-                    {'source': edge[0], 'target': edge[1], 'name': edge[0] + "," + edge[1], 'color':'0x808080'})
+                    {'source': edge[0], 'target': edge[1], 'name': edge[0] + "," + edge[1]})
         for node, feature in block.items():
             temp = {}
             temp['color'] = color[name.index(feature)]
