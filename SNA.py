@@ -588,7 +588,11 @@ class SNA():
         nodes_property = {}
         block = nx.get_node_attributes(self.G, 'block')
         for edge in self.edges:
-            edges.append({'source': edge[0], 'target': edge[1], 'name': edge[0] + "," + edge[1]})
+            if self.G[edge[0]][edge[1]]['Emotion'] is not None:
+                edges.append({'source': edge[0], 'target': edge[1], 'name': edge[0] + "," + edge[1], 'color':'0xffffff'}) # links with propensities are white
+            else:
+                edges.append(
+                    {'source': edge[0], 'target': edge[1], 'name': edge[0] + "," + edge[1], 'color':'0x808080'})
         for node, feature in block.items():
             temp = {}
             temp['color'] = color[name.index(feature)]
