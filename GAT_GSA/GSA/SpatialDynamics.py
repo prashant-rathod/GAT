@@ -15,7 +15,7 @@ def markov(observations, w=None, numQuints=5, method="regular"):
     if method == "regular":  # non spatial analysis
         quintiles = np.array([pysal.Quantiles(y, k=numQuints).yb for y in observations]).transpose()
         result = pysal.Markov(quintiles)
-        s = result.steady_state
+        #s = result.steady_state
 
     else:
         observations = observations.transpose()
@@ -24,11 +24,11 @@ def markov(observations, w=None, numQuints=5, method="regular"):
             # standardize observations for smoother calculations:
             observations = observations / (observations.mean(axis=0))
             result = pysal.Spatial_Markov(observations, w, fixed=True, k=numQuints)
-            s = result.S
+            #s = result.S
 
         else:  # method == lisa
             result = pysal.LISA_Markov(observations, w)
-            s = result.steady_state
+            #s = result.steady_state
 
     return result.transitions, result.p, s, pysal.ergodic.fmpt(result.p)
 

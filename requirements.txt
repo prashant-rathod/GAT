@@ -21,6 +21,7 @@ prompt-toolkit==1.0.14
 ptyprocess==0.5.1
 Pygments==2.2.0
 pyparsing==2.2.0
+pysal
 python-dateutil==2.6.0
 pytz==2017.2
 scikit-learn==0.18.1

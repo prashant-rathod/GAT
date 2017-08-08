@@ -73,6 +73,7 @@ def regionalization():
 def autocorrelation():
     #replace variables here as above.
     observations = Weights.extractObservations("usjoin.csv", "ALL", [2008])
+    print(observations)
     w = Weights.generateWeightsUsingShapefile("us48.shp", idVariable="STATE_NAME")
     globalAutocorrelation = AutoCorrelation.globalAutocorrelation(observations, w)
     localAutocorrelation = AutoCorrelation.localAutocorrelation(observations, w)

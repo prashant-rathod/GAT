@@ -1,0 +1,2 @@
+Namespace(outfile='static/sample/GSA/mymap.svg', proj='mercator', source='static/sample/GSA/IRQ_adm1.shp')
+warning: could not encode to unicode

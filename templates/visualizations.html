@@ -242,10 +242,12 @@
 			<p id = "global_autocorrelation">Global Autocorrelation: {{ auto[1] }}</p><br>
 
 			<p><b>Spatial Dynamics Statistics</b></p>
-			<p>Matrix 1:<br> {% for row in sp_dyn[0] %}{{row}}<br>{% endfor %}</p>
-			<p>Matrix 2:<br> {% for row in sp_dyn[1] %}{{row}}<br>{% endfor %}</p>
-			<p>Matrix 3:<br> {% for row in sp_dyn[2] %}{{row}}<br>{% endfor %}</p>
-			<p>Matrix 4:<br> {% for row in sp_dyn[3] %}{{row}}<br>{% endfor %}</p>
+			<p>Transition Counts:<br> {% for row in sp_dyn[0] %}{{row}}<br>{% endfor %}</p>
+			<p>Transition Probabilities:<br> {% for row in sp_dyn[1] %}{{row}}<br>{% endfor %}</p>
+			{% if sp_dyn[2] != None %}
+			<p>Steady State Distributions:<br> {% for row in sp_dyn[2] %}{{row}}<br>{% endfor %}</p>
+			{% endif %}
+			<p>Mean Passage Time:<br> {% for row in sp_dyn[3] %}{{row}}<br>{% endfor %}</p>
 
 		{% endif %}
 
