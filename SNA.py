@@ -357,45 +357,43 @@ class SNA():
         self.node_connectivity()
         self.average_clustering()
 
-    def averagePathRes(self,ta=20,iters=5):
-
-        G = self.G.copy()
-        resilienceDict = {}
+    def find_cliques(self):
+        G = self.G.copy().to_undirected() # currently need undirected graph to find cliques with centrality method
+        cliques = []
 
         # Find central nodes
         centralities = [self.eigenvector_centrality_dict.get(node) for node in G.nodes()]
         scaled = list(sp.stats.zscore(centralities))
         for i in range(len(scaled)):
             scaled[i] = (G.nodes()[i],scaled[i])
-        selected = [key for key,val in scaled if val > 1.2816] # used z-score for top 20th percentile
+        selected = [key for key,val in scaled if val > 1] # used z-score for top 20th percentile
         # Make subgraphs from those nodes
-        def create_subgraph(G, sub_G, start_node):
-            for n in G.successors_iter(start_node):
-                sub_G.add_path([start_node, n])
-                create_subgraph(G, sub_G, n)
+        def find_subgraph(node,subGraph,depth):
+                nodeList = [(centralNode,target) for target in G.neighbors(centralNode)]
+                sub_G.add_edges_from(nodeList)
+                if depth > 0:
+                    for ancillary in G.neighbors(centralNode):
+                        find_subgraph(ancillary,subGraph,depth-1)
         for centralNode in selected:
-            subGraph = nx.DiGraph()
-            create_subgraph(G,subGraph,centralNode)
-            print("A subgraph:",subGraph)
+            sub_G = nx.DiGraph()
+            find_subgraph(centralNode,sub_G,2)
+            if len(list(sub_G.nodes())) > 5:
+                cliques.append(sub_G.to_undirected())
+
+        return cliques
+
+    def averagePathRes(self,ta=20,iters=5):
+
+        scaledResilienceDict = {}
+        toScale = []
+        cliques = self.find_cliques()
+
         # Find resilience of subgraphs
+        for clique in cliques:
 
+            print(list(clique.nodes()))
 
-        for clique in list(nx.enumerate_all_cliques(G.to_undirected())):
-            if len(clique) > 3: print(clique)
-
-        for clique in nx.k_clique_communities(G,2):
-            print("clique:",clique)
-            clique = list(clique)
-            ## Find central nodes
-            centralities = []
-            for node in clique:
-                if self.G.node[node]['block'] == 'ID':
-                    centralities.append(self.eigenvector_centrality_dict.get(node))
-            centralNode = list(clique)[centralities.index(max(centralities))] if len(centralities)>0 else None
-            print("Central node", centralNode)
-
-            ## Find resilience
-            initShortestPath = nx.average_shortest_path_length(G)
+            initShortestPath = nx.average_shortest_path_length(clique)
             t0 = 0
             finShortestPathList = []
 
@@ -411,7 +409,7 @@ class SNA():
 
             # creating perturbation by removing random 10% of nodes and averaging result of x iterations
             for k in range(0, iters):  # x can be changed here
-                G = self.G.copy()
+                G = clique.copy()
                 nList = G.nodes()
                 nNumber = G.number_of_nodes()
                 sample = int(nNumber * 0.1)  # percent of nodes removed can be changed here
@@ -432,12 +430,15 @@ class SNA():
             qw_shortestPath = float(finShortestPath) / float(initShortestPath)
             t1 = t0 + ta
             resilience = integral(t0, t1, 5) / t1
-            print("resilience",resilience)
 
-            resilienceDict[centralNode] = resilience
+            # add to list: resilience measure for each clique
+            toScale.append(resilience)
 
-        print(resilience)
-        return resilience
+        # scale resilience measures on a normal scale
+        for i in range(len(cliques)):
+            scaledResilienceDict[cliques[i].nodes()[0]] = sp.stats.percentileofscore(toScale,toScale[i])
+
+        return scaledResilienceDict
 
     # Find clustering coefficient for each nodes
     def clustering(self):

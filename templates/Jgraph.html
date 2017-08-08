@@ -237,7 +237,9 @@
           <div><b>System-wide Measures</b></div>
           {% for measure in systemMeasures -%}
             <div>
+              {% if measure != "Resilience" -%}
               {{ measure }}: {{ systemMeasures[measure] }}
+              {% endif -%}
             </div>
           {% endfor -%}
           <div id="resilienceInfo">
@@ -246,7 +248,24 @@
                 <input id="resilience" onclick="handleResilienceClick()" name="resilienceSubmit" type="submit" value="Calculate Resilience" href="javascript:void(0)" >
               </form>
             {% else -%}
-              <div>Resilience: {{ systemMeasures["Resilience"] }}</div>
+              <table id="resilienceTable">
+                <tr>
+                  <th colspan="3">
+                   Resilience
+                  </th>
+                </tr>
+              {% for cluster in systemMeasures['Resilience'] -%}
+                <tr>
+                  <td class="node">
+                    {{ cluster }}
+                  </td>
+                  <td>
+                    {{ systemMeasures['Resilience'][cluster][0] }}
+                  </td>
+                  <td class="colorCode" style="background-color:rgb({{systemMeasures['Resilience'][cluster][1]}}%,0%,{{systemMeasures['Resilience'][cluster][2]}}%)"></td>
+                </tr>
+              {% endfor -%}
+              </table>
             {% endif -%}
           </div>
           <div class="top-border"><b>Node-Dependent Measures</b></div>

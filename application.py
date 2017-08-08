@@ -619,9 +619,16 @@ def SNA2Dand3D(graph, request, case_num, _3D = True, _2D = False, label = False)
     # Calculate resilience when requested
     if request.form.get("resilienceSubmit") != None:
         try:
-            systemMeasures["Resilience"] = graph.averagePathRes(iters=5)
+            systemMeasures["Resilience"] = graph.averagePathRes(iters=5) # gets a scaled resilience value for each clique identified in network
+            # Add colors for each resilience measure
+            for cluster in systemMeasures["Resilience"]:
+                systemMeasures["Resilience"][cluster] = int(systemMeasures["Resilience"][cluster])
+                percentile = systemMeasures["Resilience"][cluster]
+                b = int(percentile)
+                r = int(100 - percentile)
+                systemMeasures["Resilience"][cluster] = [percentile,r,b]
         except nx.exception.NetworkXError:
-            systemMeasures["Resilience"] = "Could not calculate resilience, graph is disconnected."
+            systemMeasures["Resilience"] = "Could not calculate resilience, NetworkX error."
 
 
     copy_of_graph = copy.deepcopy(graph)

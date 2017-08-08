@@ -183,3 +183,12 @@ table {
 .wInput {
   width: 35px;
 }
+#resilienceTable {
+  width: 50%;
+}
+#resilienceTable .colorCode {
+  width: 5px;
+}
+#resilienceTable .node {
+  overflow: hidden;
+}
