@@ -234,6 +234,12 @@
           <div class="slider2 closed" id="editAttributeInfo"></div>
         </div>
         <div id="measureInfo" class="tabcontent" style="border:none;">
+          <div><b>System-wide Measures</b></div>
+          {% for measure in systemMeasures -%}
+            <div>
+              {{ measure }}: {{ systemMeasures[measure] }}
+            </div>
+          {% endfor -%}
           <div id="resilienceInfo">
             {% if systemMeasures.get("Resilience") == None -%}
               <form id="resilienceForm" enctype="multipart/form-data" method="post">
@@ -243,6 +249,7 @@
               <div>Resilience: {{ systemMeasures["Resilience"] }}</div>
             {% endif -%}
           </div>
+          <div class="top-border"><b>Node-Dependent Measures</b></div>
           <div id="nodeMeasureInfo">
             <div class="filler">Select a node to display node-dependent measures.</div>
           </div>

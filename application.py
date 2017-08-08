@@ -282,8 +282,6 @@ def visualize(case_num):
         #graph.katz_centrality()
         graph.eigenvector_centrality()
         graph.load_centrality()
-        graph.communicability_centrality()
-        graph.communicability_centrality_exp()
 
     #if GSA_file.filename == '' and NLP_file.filename == '' and SNA_file.filename == '':
         #return("No files uploaded")
@@ -609,6 +607,15 @@ def SNA2Dand3D(graph, request, case_num, _3D = True, _2D = False, label = False)
         print("node, attrDict, connections",node,attrDict,links)
         graph.addNode(node,attrDict,links)
 
+    # Add system measures dictionary
+    systemMeasures["Node Connectivity"] = graph.node_connectivity()
+    systemMeasures["Average Clustering"] = graph.average_clustering()
+    # systemMeasures["Attribute Assortivity"] = graph.attribute_assortivity() # Which attributes...? UI?
+    if graph.is_strongly_connected():
+        systemMeasures["Connection Strength"] = "Strong"
+    elif graph.is_weakly_connected():
+        systemMeasures["Connection Strength"] = "Weak"
+
     # Calculate resilience when requested
     if request.form.get("resilienceSubmit") != None:
         try:
@@ -656,20 +663,12 @@ def get_node_data(case_num):
                         eigenvector=eigenvector,
                         betweenness=betweenness
                         )
-    if nx.algorithms.bipartite.is_bipartite(graph.G):
-        graph.clustering()
     graph.closeness_centrality()
     graph.betweenness_centrality()
     graph.degree_centrality()
     # graph.katz_centrality()
     graph.eigenvector_centrality()
     graph.load_centrality()
-    graph.communicability_centrality()
-    graph.communicability_centrality_exp()
-    if graph.clustering_dict != {} and graph.clustering_dict != None:
-        cluster = str(round(graph.clustering_dict.get(name),4));
-    else:
-        cluster="clustering not available"
     if graph.eigenvector_centrality_dict != {} and graph.eigenvector_centrality_dict != None:
         eigenvector = str(round(graph.eigenvector_centrality_dict.get(name),4));
     else:

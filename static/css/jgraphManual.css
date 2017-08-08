@@ -169,7 +169,7 @@ table {
 #attributes input {
     margin-top: 5px;
 }
-#nodeMeasureInfo {
+.top-border {
     border-top: solid white;
     padding-top: 5px;
     margin-top: 10px;

@@ -15,7 +15,7 @@ class SNA():
         self.header, self.list = self.readFile(excel_file, nodeSheet)
         if attrSheet != None:
             self.attrHeader, self.attrList = self.readFile( excel_file, attrSheet)
-        self.G = nx.complete_multipartite_graph()
+        self.G = nx.DiGraph()
         self.nodes = []
         self.edges = []
         self.nodeSet = []
@@ -348,10 +348,13 @@ class SNA():
         self.katz_centrality()
         self.eigenvector_centrality()
         self.load_centrality()
-        self.communicability_centrality()
+        self.communicability_centrality() # Not available for directed graphs
         self.communicability_centrality_exp()
+        self.node_connectivity()
+        self.average_clustering()
 
     def averagePathRes(self,ta=20,iters=5):
+
         G = self.G.copy()
         resilienceDict = {}
 
@@ -546,6 +549,28 @@ class SNA():
                 if key in lst:
                     sub_dict[key] = value
             return sub_dict
+
+    # additional network-wide measures
+    # node connectivity:
+    def node_connectivity(self):
+        return nx.node_connectivity(self.G)
+
+    # average clustering coefficient:
+    def average_clustering(self):
+        return nx.average_clustering(self.G.to_undirected())
+
+    # attribute assortivity coefficient:
+    def attribute_assortivity(self, attr):
+        return nx.attribute_assortativity_coefficient(self.G, attr)
+
+    # is strongly connected:
+    def is_strongly_connected(self):
+        return nx.is_strongly_connected(self.G)
+
+    # is weakly connected:
+    def is_weakly_connected(self):
+        return nx.is_weakly_connected(self.G)
+
     # draw 2D graph
     # attr is a dictionary that has color and size as its value.
     def graph_2D(self, attr, label=False):
