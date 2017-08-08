@@ -39,7 +39,7 @@
     <div class="label"></div>
 
     <script type="text/javascript">
-      jgraph.create('.graph', {directed: true, edgeSize: .05});
+      jgraph.create('.graph', {directed: true, edgeSize: .05, arrowSize:.5});
       try {
         jgraph.draw({{jgdata|safe}});
       }
@@ -183,7 +183,7 @@
         console.log("NodeDict:",nodeDict)
         $("#delete").val(nodeDict['name']);
         $("#addNodeFormName").val(nodeDict['name']);
-        $("#measureInfo").empty()
+        $("#nodeMeasureInfo").empty()
         $("#attributeInfo").empty()
         $("#propInfo").empty()
         $("#propInfo").append("<span>Select an edge to view propensities.</span>")
@@ -195,7 +195,7 @@
           if (nodeDict.hasOwnProperty(key)) {
             if (key != "attributes" && key != "name") {
               console.log(key, nodeDict[key])
-              $("#measureInfo").append("<span id='"+key+"'>"+key+": "+nodeDict[key]+"</span><br>")
+              $("#nodeMeasureInfo").append("<span id='"+key+"'>"+key+": "+nodeDict[key]+"</span><br>")
             }
           }
         }
@@ -207,20 +207,20 @@
         console.log("EdgeDict:",edgeDict)
         $("#delete").val(edgeDict['name']);
         $("#addNodeFormName").val(edgeDict['name']);
-        $("#measureInfo").empty()
-        $("#measureInfo").append("<div class='filler'>Edge information is contained in the propensities tab.</div>")
+        $("#nodeMeasureInfo").empty()
+        $("#nodeMeasureInfo").append("<div class='filler'>Edge information is contained in the propensities tab.</div>")
         $("#propInfo").empty()
         $("#attributeInfo").empty()
         $("#attributeInfo").append("<div class='filler'>Edge information is contained in the propensities tab.</div>")
         $("#name").text(edgeDict['source']+"x"+edgeDict['target'])
         // append to $("#propInfo")
-        $("#propInfo").append("<span>Propensities for the link from <b>"+edgeDict['source']+"</b> to <b>"+edgeDict['target']+"</b>:</span>")
+        $("#propInfo").append("<span>Propensities for the link from <b>"+edgeDict['source']+"</b> to <b>"+edgeDict['target']+"</b>:<br></span>")
         empty = true
         for (var key in edgeDict) {
           if (key != "source" && key != "target" && key != "name") {
             if (edgeDict[key] != null) {
               console.log(key, edgeDict[key])
-              $("#propInfo").append("<span id='"+key+"'>"+key+": "+edgeDict[key]+"</span><br>")
+              $("#propInfo").append("<span id='"+key+"'>"+key+": "+edgeDict[key][0][0]+" (shared attribute {"+edgeDict[key][0][1]+": "+edgeDict[key][0][2]+"})</span><br>")
               empty = false
             }
           }
@@ -253,7 +253,18 @@
           <div class="slider2 closed" id="editAttributeInfo"></div>
         </div>
         <div id="measureInfo" class="tabcontent" style="border:none;">
-          <div class="filler">Select a node to display measures.</div>
+          <div id="resilienceInfo">
+            {% if systemMeasures.get("Resilience") == None -%}
+              <form id="resilienceForm" enctype="multipart/form-data" method="post">
+                <input id="resilience" onclick="handleResilienceClick()" name="resilienceSubmit" type="submit" value="Calculate Resilience" href="javascript:void(0)" >
+              </form>
+            {% else -%}
+              <div>Resilience: {{ systemMeasures["Resilience"] }}</div>
+            {% endif -%}
+          </div>
+          <div id="nodeMeasureInfo">
+            <div class="filler">Select a node to display node-dependent measures.</div>
+          </div>
         </div>
         <div id="propInfo" class="tabcontent" style="display:none;border:none">
           <div class="filler chooseRequest" position="center">Select an edge to view propensities.</div>
