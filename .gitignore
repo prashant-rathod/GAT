@@ -9,3 +9,4 @@
 *.pem
 nltk_downloads/*
 static/temp/*
+.DS_Store
