@@ -212,6 +212,10 @@ class SNA():
                         ## Emotion Propensities
                         src_w = float(src_val[1]["W"]) if "W" in src_val[1] else None
                         trg_w = float(trg_val[1]["W"]) if "W" in trg_val[1] else None
+                        # if no weight, use sentiment
+                        src_w = float(src_val[1]["SENT"]) if src_w is not None and "SENT" in src_val[1] else None
+                        trg_w = float(trg_val[1]["SENT"]) if trg_w is not None and "SENT" in trg_val[1] else None
+
                         if src_w is not None and trg_w is not None:
                             # Cooperative propensities
                             if src_val[0] == trg_val[0]:
@@ -357,6 +361,27 @@ class SNA():
 
         G = self.G.copy()
         resilienceDict = {}
+
+        # Find central nodes
+        centralities = [self.eigenvector_centrality_dict.get(node) for node in G.nodes()]
+        scaled = list(sp.stats.zscore(centralities))
+        for i in range(len(scaled)):
+            scaled[i] = (G.nodes()[i],scaled[i])
+        selected = [key for key,val in scaled if val > 1.2816] # used z-score for top 20th percentile
+        # Make subgraphs from those nodes
+        def create_subgraph(G, sub_G, start_node):
+            for n in G.successors_iter(start_node):
+                sub_G.add_path([start_node, n])
+                create_subgraph(G, sub_G, n)
+        for centralNode in selected:
+            subGraph = nx.DiGraph()
+            create_subgraph(G,subGraph,centralNode)
+            print("A subgraph:",subGraph)
+        # Find resilience of subgraphs
+
+
+        for clique in list(nx.enumerate_all_cliques(G.to_undirected())):
+            if len(clique) > 3: print(clique)
 
         for clique in nx.k_clique_communities(G,2):
             print("clique:",clique)

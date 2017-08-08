@@ -695,7 +695,6 @@ def get_edge_data(case_num):
     link = graph.G[pair[0]][pair[1]]
     toJsonify = dict(name=name,source=pair[0],target=pair[1])
     for attr in link:
-        print(link[attr])
         toJsonify[attr] = link[attr]
     return jsonify(toJsonify)
 
