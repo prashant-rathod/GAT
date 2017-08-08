@@ -591,10 +591,11 @@ def SNA2Dand3D(graph, request, case_num, _3D = True, _2D = False, label = False)
             'block': request.form.get("nodeSet")
         }
         i = 0
-        while (request.form.get("attribute"+str(i)) != None) and (request.form.get("attribute"+str(i)) != '') :
-            split = request.form.get("attribute"+str(i)).split(":")
-            key = split[0]
-            value = split[1]
+        while (request.form.get("attribute"+str(i)) is not None) and (request.form.get("attribute"+str(i)) != '') and (request.form.get("value"+str(i)) is not None) and (request.form.get("value"+str(i)) != ''):
+            key = request.form.get("attribute"+str(i))
+            value = request.form.get("value"+str(i))
+            if request.form.get("weight"+str(i)) is not None and request.form.get("weight"+str(i)) != '':
+                value = [value,{'W':request.form.get("weight"+str(i))}]
             dictForm = {key: value}
             attrDict.update(dictForm)
             i += 1
@@ -652,7 +653,6 @@ def get_node_data(case_num):
     name = request.args.get('name', '', type=str)
     if graph == None or len(graph.G) == 0:
         return jsonify(	name=name,
-                        cluster="Empty graph",
                         eigenvector=eigenvector,
                         betweenness=betweenness
                         )
@@ -680,7 +680,6 @@ def get_node_data(case_num):
         betweenness="clustering not available"
     attributes = graph.get_node_attributes(name)
     toJsonify = dict(name=name,
-                     cluster=cluster,
                      eigenvector=eigenvector,
                      betweenness=betweenness,
                      attributes=attributes)

@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 import tempfile
 import random
 import numpy as np
+import scipy as sp
 
 class SNA():
     def __init__(self, excel_file, nodeSheet, attrSheet = None):
@@ -147,15 +148,9 @@ class SNA():
         self.edges.extend(newEdgeList)
 
     def calculatePropensities(self,emo=True,role=True):
-        print("Iterating through", len(self.edges),"edges...")
         for edge in self.edges: # for every edge, calculate propensities and append as an attribute
             emoPropList = self.propCalc(edge)[0] if emo else None
             self.G[edge[0]][edge[1]]['Emotion'] = emoPropList if len(emoPropList)>0 else None
-            print(self.G[edge[0]][edge[1]])
-            if len(emoPropList) > 0:
-                print("For edge (",edge[0],",",edge[1],"):")
-                for emoProp in emoPropList:
-                    print(emoProp)
 
             rolePropList = self.propCalc(edge)[1] if role else None
             self.G[edge[0]][edge[1]]['Role'] = rolePropList if len(rolePropList) > 1 else None
@@ -164,7 +159,6 @@ class SNA():
             self.G[edge[0]][edge[1]]['Role'] = inflPropList if len(inflPropList) > 1 else None
 
         self.edges = nx.edges(self.G)
-        print(self.edges)
 
     def propCalc(self, edge):
         emoProps = []
@@ -209,7 +203,7 @@ class SNA():
         # Check if role attribute is present; if not, no role propensities calculated
         roleFlag = True if source.get("Role") is not None and target.get("Role") is not None else False
         for attr in ( target if len(source) > len(target) else source ):
-            if attr != 'block' and source.get(attr) is not None and target.get(attr) is not None:
+            if attr not in ['block','newNode'] and source.get(attr) is not None and target.get(attr) is not None:
                 for src_val in [x for x in source.get(attr) if len(x) > 1]:
                     for trg_val in [x for x in target.get(attr) if len(x) > 1]:
                         #####################################
@@ -223,9 +217,9 @@ class SNA():
                             if src_val[0] == trg_val[0]:
                                 # Checking to see if each node's attribute weights fall within specified ranges:
                                 if src_w >= 0.6 and trg_w >= 0.6:
-                                    emoProps.append(("Trust",attr,src_val[0],trg_val[0]))
+                                    emoProps.append(("Trust",attr,src_val[0],trg_val[0],src_w,trg_w))
                                 else: # all others are joy
-                                    emoProps.append(("Joy", attr, src_val[0], trg_val[0]))
+                                    emoProps.append(("Joy", attr, src_val[0], trg_val[0],src_w,trg_w))
                                     # print("Appended Joy using attribute", attr, "(", src_val, "&", trg_val, ")",
                                     #       "for node pair (", source, ",", target, ")")
 
@@ -234,21 +228,21 @@ class SNA():
                                 if (src_val[0], trg_val[0]) in compPairs or (trg_val[0],src_val[0]) in compPairs:
                                 # Checking to see if each node's attribute weights fall within specified ranges:
                                     if src_w < 0.6 and trg_w < 0.6:
-                                        emoProps.append(("Surprise", attr, src_val[0], trg_val[0]))
+                                        emoProps.append(("Surprise", attr, src_val[0], trg_val[0],src_w,trg_w))
                                     else:
-                                        emoProps.append(("Anticipation", attr, src_val[0], trg_val[0]))
+                                        emoProps.append(("Anticipation", attr, src_val[0], trg_val[0],src_w,trg_w))
 
                                 # Coercive propensities:
                                 elif (src_val[0], trg_val[0]) in oppPairs or (trg_val[0],src_val[0]) in oppPairs:
                                     # Checking to see if each node's attribute weights fall within specified ranges:
                                     if (src_w >= 0.8 and trg_w >= 0.6) or (src_w >= 0.6 and trg_w >= 0.6):
-                                        emoProps.append(("Anger", attr, src_val[0], trg_val[0]))
+                                        emoProps.append(("Anger", attr, src_val[0], trg_val[0],src_w,trg_w))
                                     elif (src_w >= 0.6 and trg_w >= 0.4) or (src_w >= 0.4 and trg_w >= 0.6):
-                                        emoProps.append(("Sadness", attr, src_val[0], trg_val[0]))
+                                        emoProps.append(("Sadness", attr, src_val[0], trg_val[0],src_w,trg_w))
                                     elif (src_w >= 0.4 and trg_w >= 0.2) or (src_w >= 0.2 and trg_w >= 0.4):
-                                        emoProps.append(("Fear", attr, src_val[0], trg_val[0]))
+                                        emoProps.append(("Fear", attr, src_val[0], trg_val[0],src_w,trg_w))
                                     elif (src_w >= 0.8 and trg_w >= 0.2) or (src_w >= 0.2 and trg_w >= 0.8):
-                                        emoProps.append(("Disgust", attr, src_val[0], trg_val[0]))
+                                        emoProps.append(("Disgust", attr, src_val[0], trg_val[0],src_w,trg_w))
 
                         ## Role Propensities
                         # Still need to add conditional opposites, like in emotion
@@ -286,13 +280,33 @@ class SNA():
 
     def addNode(self,node,attrDict={}, connections=[]):
         self.G.add_node(node,attrDict)
-        self.nodes = nx.nodes(self.G)
         for i in connections:
             #print("connecting to:",i)
             self.G.add_edge(node,i)
-            self.edges.append([node,i])
+        for k in attrDict: # add attributes based on user input
+            self.changeAttribute(node,[attrDict[k]],k)
+        self.changeAttribute(node,True,'newNode')
 
         ## Smart prediction prototype
+        for target in self.nodes:
+            emoProps, roleProps, inflProps = self.propCalc((node,target))
+            if len(emoProps) > 0:
+                w = []
+                for prop in emoProps:
+                    w.append(prop[4] * prop[5]) # add the product of the attribute weights to a list for each prop
+                w_avg = np.average(w) # find average propensity product weight
+                prob = np.random.binomial(1, w_avg)
+                # use w_avg as the probability for a bernoulli distribution
+                if prob:
+                    self.G.add_edge(node, target)
+                    self.G[node][target]['Emotion'] = emoProps
+                    self.G[node][target]['Role'] = roleProps if len(roleProps) > 0 else None
+                    self.G[node][target]['Influence'] = inflProps if len(inflProps) > 0 else None
+                    self.G[node][target]['Predicted'] = True
+
+
+        self.nodes = nx.nodes(self.G) # update node list
+        self.edges = nx.edges(self.G) # update edge list
 
     def removeEdge(self, node1, node2):
         if self.G.has_edge(node1,node2):
@@ -339,43 +353,62 @@ class SNA():
 
     def averagePathRes(self,ta=20,iters=5):
         G = self.G.copy()
-        initShortestPath = nx.average_shortest_path_length(G)
-        t0 = 0
-        finShortestPathList = []
+        resilienceDict = {}
 
-        # function to estimate integral
-        def integral(x0, x1, rectangles):
-            width = (float(x1) - float(x0)) / rectangles
-            sum1 = 0
-            for i in range(rectangles):
-                height = qw_shortestPath * (float(x0) + i * width)
-                area = height * width
-                sum1 += area
-            return sum1
+        for clique in nx.k_clique_communities(G,2):
+            print("clique:",clique)
+            clique = list(clique)
+            ## Find central nodes
+            centralities = []
+            for node in clique:
+                if self.G.node[node]['block'] == 'ID':
+                    centralities.append(self.eigenvector_centrality_dict.get(node))
+            centralNode = list(clique)[centralities.index(max(centralities))] if len(centralities)>0 else None
+            print("Central node", centralNode)
 
-        # creating perturbation by removing random 10% of nodes and averaging result of x iterations
-        for k in range(0, iters):  # x can be changed here
-            G = self.G.copy()
-            nList = G.nodes()
-            nNumber = G.number_of_nodes()
-            sample = int(nNumber * 0.1)  # percent of nodes removed can be changed here
-            rSample = random.sample(nList, sample)
-            G.remove_nodes_from(rSample)
+            ## Find resilience
+            initShortestPath = nx.average_shortest_path_length(G)
+            t0 = 0
+            finShortestPathList = []
 
-            # finding shortest path of largest subgraph in G after perturbation:
-            # (average shortest path cannot be calculated if a graph has unconnected nodes)
-            l = []
-            for g in nx.connected_component_subgraphs(G):
-                l.append(len(g.edges()))
-                if len(g.edges()) == max(l) and len(g.edges()) != 0:
-                    finShortestPathList.append(nx.average_shortest_path_length(g, weight='Salience'))
-        # find mean of average shortest path from each iteration:
-        finShortestPath = np.mean(finShortestPathList)
+            # function to estimate integral
+            def integral(x0, x1, rectangles):
+                width = (float(x1) - float(x0)) / rectangles
+                sum1 = 0
+                for i in range(rectangles):
+                    height = qw_shortestPath * (float(x0) + i * width)
+                    area = height * width
+                    sum1 += area
+                return sum1
 
-        # solve for resilience using integral function:
-        qw_shortestPath = float(finShortestPath) / float(initShortestPath)
-        t1 = t0 + ta
-        resilience = integral(t0, t1, 5) / t1
+            # creating perturbation by removing random 10% of nodes and averaging result of x iterations
+            for k in range(0, iters):  # x can be changed here
+                G = self.G.copy()
+                nList = G.nodes()
+                nNumber = G.number_of_nodes()
+                sample = int(nNumber * 0.1)  # percent of nodes removed can be changed here
+                rSample = random.sample(nList, sample)
+                G.remove_nodes_from(rSample)
+
+                # finding shortest path of largest subgraph in G after perturbation:
+                # (average shortest path cannot be calculated if a graph has unconnected nodes)
+                l = []
+                for g in nx.connected_component_subgraphs(G):
+                    l.append(len(g.edges()))
+                    if len(g.edges()) == max(l) and len(g.edges()) != 0:
+                        finShortestPathList.append(nx.average_shortest_path_length(g, weight='Salience'))
+            # find mean of average shortest path from each iteration:
+            finShortestPath = np.mean(finShortestPathList)
+
+            # solve for resilience using integral function:
+            qw_shortestPath = float(finShortestPath) / float(initShortestPath)
+            t1 = t0 + ta
+            resilience = integral(t0, t1, 5) / t1
+            print("resilience",resilience)
+
+            resilienceDict[centralNode] = resilience
+
+        print(resilience)
         return resilience
 
     # Find clustering coefficient for each nodes
@@ -596,15 +629,22 @@ class SNA():
         nodes_property = {}
         block = nx.get_node_attributes(self.G, 'block')
         for edge in self.edges:
-            if self.G[edge[0]][edge[1]]['Emotion'] is not None:
+            if self.G[edge[0]][edge[1]].get('Emotion') is not None:
                 # links with propensities can be given hex code colors for arrow, edge; can also change arrow size
                 edges.append({'source': edge[0], 'target': edge[1], 'name': edge[0] + "," + edge[1], 'arrowColor':'0xE74C3C', 'arrowSize':2})
+            if self.G[edge[0]][edge[1]].get('Predicted') is not None:
+                edges.append(
+                    {'source': edge[0], 'target': edge[1], 'name': edge[0] + "," + edge[1], 'color':'0xE74C3C', 'arrowColor': '0xE74C3C',
+                     'arrowSize': 2})
             else:
                 edges.append(
                     {'source': edge[0], 'target': edge[1], 'name': edge[0] + "," + edge[1]})
         for node, feature in block.items():
             temp = {}
-            temp['color'] = color[name.index(feature)]
+            if self.G.node[node].get('newNode') is True:
+                temp['color'] = '0xE74C3C'
+            else:
+                temp['color'] = color[name.index(feature)]
             nodes_property[node] = temp
         data['edges'] = edges
         data['nodes'] = nodes_property

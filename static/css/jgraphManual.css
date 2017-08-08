@@ -121,7 +121,7 @@ i:hover {
 }
 .output-window {
     height: auto;
-    width: 200px;
+    width: 300px;
 }
 .centeredIcon {
     text-align:center;
@@ -141,9 +141,6 @@ i:hover {
 #addNodeFormName {
     width:90%;
     text-align: center;
-}
-#addAttrTarget input {
-    width: 80px;
 }
 #addAttrTarget i {
     font-size: 13px;
@@ -176,4 +173,13 @@ table {
     border-top: solid white;
     padding-top: 5px;
     margin-top: 10px;
+}
+.attrInput {
+  width: 55px;
+}
+.valInput {
+  width: 55px;
+}
+.wInput {
+  width: 35px;
 }
