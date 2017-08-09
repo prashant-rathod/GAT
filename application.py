@@ -608,13 +608,23 @@ def SNA2Dand3D(graph, request, case_num, _3D = True, _2D = False, label = False)
         graph.addNode(node,attrDict,links)
 
     # Add system measures dictionary
-    systemMeasures["Node Connectivity"] = graph.node_connectivity()
+    # systemMeasures["Node Connectivity"] = graph.node_connectivity() # Currently only returning zero...
     systemMeasures["Average Clustering"] = graph.average_clustering()
     # systemMeasures["Attribute Assortivity"] = graph.attribute_assortivity() # Which attributes...? UI?
     if graph.is_strongly_connected():
         systemMeasures["Connection Strength"] = "Strong"
     elif graph.is_weakly_connected():
         systemMeasures["Connection Strength"] = "Weak"
+
+    # Add system measures descriptions to dictionary
+    systemMeasures["Description"] = {
+        'Average Clustering': 'A high clustering coefficient indicates that actors within the network are closely connected to a statistically significant degree. It is a sophisticated measure of the density of a network.',
+        'Connection Strength': 'Knowing whether a graph is strongly or weakly connected is helpful because it demonstrates the robustness of the graph based on its redundancy. If a graph is strongly connected, there are two links between each actor in the network, one in each direction. A strongly connected graph thus would likely have more redundant communication/information flow and be more difficult to perturb than a weakly connected graph.',
+        'Resilience':'The baseline value for resilience is determined by identifying the cliques associated with the most central nodes in the network, perturbing those subgraphs, and measuring the mean shortest path average over several perturbations. The results are scaled on a normal curve across all cliques and a percentile resilience is determined for each clique. A high percentile resilience denotes resilience to perturbation. These values are visualized on a color spectrum from red to blue, where red is low relative resilience and blue is high relative resilience.',
+        'AddNode': 'Introduces a new node to the network, complete with a user-defined name, user-defined attributes and known links. Using the DRAG link prediction model, node attributes are used to form likely connections and intelligently model the effects of external change on the network. New nodes and their predicted links are colored red for easy identification.',
+        'RemoveNode':'Removes the node inputted in the box below and any links to which it belongs.',
+        'eigenvector':'Centrality measure which sums the centralities of all adjacent nodes',
+    }
 
     # Calculate resilience when requested
     if request.form.get("resilienceSubmit") != None:

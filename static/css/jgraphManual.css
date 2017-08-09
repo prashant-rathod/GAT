@@ -49,12 +49,12 @@ body {
 	color: #0b1b54;
 	font-size: 10px;
 	font-weight: bold;
-    position:fixed;
-    width: 150px;
-    height: 12px;
-    padding-left: 15px;
-    padding-top: 3px;
-    overflow: hidden;
+  position:fixed;
+  width: 150px;
+  height: 15px;
+  padding-left: 15px;
+  padding-top: 3px;
+  overflow: hidden;
 }
 i:hover {
     cursor: pointer;
@@ -187,8 +187,37 @@ table {
   width: 50%;
 }
 #resilienceTable .colorCode {
-  width: 5px;
+  width: 10px;
+  height: 10px;
+  display: inline-block;
+}
+#resilienceTable td {
+  text-align: center;
 }
 #resilienceTable .node {
   overflow: hidden;
+  text-align: left;
+}
+.tooltip {
+  position: fixed;
+}
+.tooltip-inner {
+  background-color: white !important;
+  /*!important is not necessary if you place custom.css at the end of your css calls. For the purpose of this demo, it seems to be required in SO snippet*/
+  color: #000b37;
+}
+.tooltip.top .tooltip-arrow {
+  border-top-color: white;
+}
+.tooltip.right .tooltip-arrow {
+  border-right-color: white;
+}
+.tooltip.bottom .tooltip-arrow {
+  border-bottom-color: white;
+}
+.tooltip.left .tooltip-arrow {
+  border-left-color: white;
+}
+input, select {
+  color: #000b37
 }

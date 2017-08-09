@@ -2,11 +2,13 @@
 <html lang="en">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link href="{{url_for('static', filename='css/bootstrap.min.css')}}" rel="stylesheet">
     <link href="{{url_for('static', filename='css/main.css')}}" rel="stylesheet">
     <link href="{{url_for('static', filename='css/general.css')}}" rel="stylesheet">
     <script src="{{url_for('static', filename='js/jquery-1.11.1.min.js')}}"></script>
     <script src="{{url_for('static', filename='js/jgraph_test1.min.js')}}"></script>
     <script src="{{url_for('static', filename='js/jgraphManual.js')}}"></script>
+    <script src="{{url_for('static', filename='js/bootstrap.min.js')}}"></script>
     <link rel="stylesheet" href="{{url_for('static', filename='css/font-awesome-4.7.0/css/font-awesome.min.css')}}">
     <link rel="stylesheet" href="{{url_for('static', filename='css/jgraphManual.css')}}">
     <title>Jgraph</title>
@@ -180,6 +182,13 @@
             }
           }
         }
+        if ($("#eigenvector").length) {
+          $('#eigenvector').prepend('<i class="fa fa-info-circle white-tooltip" data-toggle="tooltip" data-placement="left" title="{{systemMeasures["Description"]["eigenvector"]}}"></i> ')
+        }
+        if ($("#betweenness").length) {
+          $('#betweenness').prepend('<i class="fa fa-info-circle white-tooltip" data-toggle="tooltip" data-placement="left" title="{{systemMeasures["Description"]["betweenness"]}}"></i> ')
+        }
+        $('[data-toggle="tooltip"]').tooltip();
         for (var feature in nodeDict['attributes']) {
           $("#attributeInfo").append("<span id='"+feature+"'>"+feature+": "+nodeDict['attributes'][feature]+"</span><br>")
         }
@@ -237,7 +246,8 @@
           <div><b>System-wide Measures</b></div>
           {% for measure in systemMeasures -%}
             <div>
-              {% if measure != "Resilience" -%}
+              {% if measure != "Resilience" and measure != "Description" -%}
+              <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="left" title="{{systemMeasures['Description'][measure]}}"></i>
               {{ measure }}: {{ systemMeasures[measure] }}
               {% endif -%}
             </div>
@@ -245,13 +255,21 @@
           <div id="resilienceInfo">
             {% if systemMeasures.get("Resilience") == None -%}
               <form id="resilienceForm" enctype="multipart/form-data" method="post">
-                <input id="resilience" onclick="handleResilienceClick()" name="resilienceSubmit" type="submit" value="Calculate Resilience" href="javascript:void(0)" >
+                <input id="resilience" onclick="handleResilienceClick()" name="resilienceSubmit" type="submit" value="Calculate Resilience" href="javascript:void(0)" data-toggle="tooltip" data-placement="left" title="{{systemMeasures['Description']['Resilience']}}">
               </form>
             {% else -%}
               <table id="resilienceTable">
                 <tr>
-                  <th colspan="3">
-                   Resilience
+                  <th style="text-align:center" colspan="2">
+                   <i class="fa fa-info-circle white-tooltip" data-toggle="tooltip" data-placement="top" title="{{systemMeasures['Description']['Resilience']}}"></i> Resilience
+                  </th>
+                </tr>
+                <tr>
+                  <th>
+                   Cliques
+                  </th>
+                  <th>
+                    Percentile
                   </th>
                 </tr>
               {% for cluster in systemMeasures['Resilience'] -%}
@@ -261,8 +279,8 @@
                   </td>
                   <td>
                     {{ systemMeasures['Resilience'][cluster][0] }}
+                    <div class="colorCode" style="background-color:rgb({{systemMeasures['Resilience'][cluster][1]}}%,0%,{{systemMeasures['Resilience'][cluster][2]}}%)"></div>
                   </td>
-                  <td class="colorCode" style="background-color:rgb({{systemMeasures['Resilience'][cluster][1]}}%,0%,{{systemMeasures['Resilience'][cluster][2]}}%)"></td>
                 </tr>
               {% endfor -%}
               </table>
@@ -283,9 +301,9 @@
     <div class = "output-window" id = "nodeWindow" style = "position:fixed;top:0;right:0;border:solid;">
 
       <div id = "toolbar" class='slider'>
-        <input id="add" type="submit" value="Add Node" onclick="showAddNodeWindow()"/>
+        <input data-toggle="tooltip" data-placement="left" title="{{systemMeasures['Description']['AddNode']}}" id="add" type="submit" value="Add Node" onclick="showAddNodeWindow()"/>
         <form id="removeNodeForm" enctype="multipart/form-data" method="post">
-          <input id="remove" name="removeNodeSubmit" type="submit" value="Remove Node" href="javascript:void(0)" >
+          <input data-toggle="tooltip" data-placement="left" title="{{systemMeasures['Description']['RemoveNode']}}"id="remove" name="removeNodeSubmit" type="submit" value="Remove Node" href="javascript:void(0)" >
           <input type="text" placeholder="Node Name" name=a id="delete">
         </form>
       <!--a href="javascript:void(0);" id="undo">undo</a>

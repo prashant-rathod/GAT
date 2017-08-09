@@ -98,3 +98,8 @@ handleResilienceClick = function() {
     console.log("Handling click...")
     $("#resilienceInfo").append("<div>Resilience is being calculated. This is a heavy process and may require 1-2 minutes for completion.</div>")
 }
+
+// Code for tooltips
+$(document).ready(function(){
+    $('[data-toggle="tooltip"]').tooltip();
+});

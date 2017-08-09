@@ -184,7 +184,14 @@ class SNA():
             ('IDBANT_IMGMOSISS','IDBJHD'),
             ('IRQGOV','IMGMOSISS'),
             ('IRNGOV','IMGMOSISS'),
-            ('POBNATIRQ','POBNATTUR')
+            ('POBNATIRQ','POBNATTUR'),
+            ('BELMS', 'BELSHI'),
+            ('BELAMH', 'BELNEO'),
+            ('BELKUR', 'BELNEO'),
+            ('BELAMH', 'BELIRH'),
+            ('BELPIS', 'BELIMS'),
+            ('BELSHI', 'BELSUN'),
+            ('BELUIQ', 'BELKUR'),
         ]
         compPairs = [
             ('IDBPROUSA', 'IDBPROEUR'),
@@ -196,7 +203,13 @@ class SNA():
             ('TURGOVHOS_ERD', 'IRQKURKRG_HOS'),
             ('TURGOVHOS_ERD', 'TURGOVSPM_KIL'),
             ('ROBMOSSUN','IDBJHD'),
-            ('FLGTUR','POBNOT')
+            ('FLGTUR','POBNOT'),
+            ('BELIRH', 'BELUIQ'),
+            ('BELAMH', 'BELPIS'),
+            ('BELAMH', 'BELKUR'),
+            ('BELAMH', 'BELIMS'),
+            ('BELAMH', 'BELUIQ'),
+            ('BELSUN', 'BELNEO'),
         ]
         source = self.G.node[edge[0]]
         target = self.G.node[edge[1]]
@@ -376,7 +389,7 @@ class SNA():
                         find_subgraph(ancillary,subGraph,depth-1)
         for centralNode in selected:
             sub_G = nx.DiGraph()
-            find_subgraph(centralNode,sub_G,2)
+            find_subgraph(centralNode,sub_G,3)
             if len(list(sub_G.nodes())) > 5:
                 cliques.append(sub_G.to_undirected())
 
