@@ -191,11 +191,11 @@
         $('[data-toggle="tooltip"]').tooltip();
         for (var feature in nodeDict['attributes']) {
           if (feature == "block") {
-            $("#attributeInfo").prepend("<span id='class'>Class: </span>")
-            $("#attributeInfo").prepend("<span>"+nodeDict['attributes'][feature]+"</span><br>")
+            $("#attributeInfo").append("<span id='class'>Class: </span>")
+            $("#attributeInfo").append("<span>"+nodeDict['attributes'][feature]+"</span><br>")
           }
           else {
-            $("#attributeInfo").prepend("<span id='"+feature+"'>"+feature+": </span>")
+            $("#attributeInfo").append("<span id='"+feature+"'>"+feature+": </span>")
             var list = []
             for (var item in nodeDict['attributes'][feature]) {
               console.log(nodeDict['attributes'][feature][item])
