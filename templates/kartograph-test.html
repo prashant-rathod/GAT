@@ -105,6 +105,14 @@
                     break;
                 }
             }
+            var tempYears = csvData.header;
+            for (var i = 0; i < tempYears.length; i++){
+                if (isNaN(parseFloat(tempYears[i])))
+                    tempYears.splice(i, 1);
+                else
+                    tempYears[i] = parseFloat(tempYears[i]);
+            }
+            csvData.years = tempYears;
             csvData.startYear = parseFloat(csvData.header[startYearIndex]);
             csvData.endYear = parseFloat(csvData.header[csvData.header.length - 1]);
             csvData.centers = {};
@@ -186,12 +194,16 @@
                 var startYear = csvData.startYear;
                 var endYear = csvData.endYear;
                 var index = number * (endYear - startYear) / 100;
-                var curYear = Math.round(index) + startYear;
+                var curYear = index + startYear;
                 //document.getElementById("yearLabel").innerHTML = "Year: " + curYear;
-                index = 2 + Math.round(index);
-                myValue.innerHTML = curYear;
                 myValue.parentElement.style.left = ppx + 'px';
 
+
+                curYear = csvData.years.reduce(function(prev, curr) {
+                    return (Math.abs(curr - curYear) < Math.abs(prev - curYear) ? curr : prev);
+                });
+                myValue.innerHTML = curYear;
+                index = csvData.header.indexOf(curYear);
 
                 for (var i=1; i < csvData.csv.length - 1; i++) {
                     var fields = csvData.csv[i];
@@ -202,8 +214,8 @@
 
                 var array = Object.keys(csvData.centers).map(function (key) { return csvData.centers[key]; });
                 var scale = kartograph.scale.sqrt(array, 'income').range([5, 20]);
-                d3.select("body").select("svg").selectAll("circle").attr("r", function(){return scale(csvData.centers[d3.select(this).attr("state")].income);});
-                $(function() {
+                d3.select("body").select("svg").selectAll("circle").attr("r", function(){ return scale(csvData.centers[d3.select(this).attr("state")].income);});
+                /*$(function() {
               $.getJSON('/_get_autocorrelation/{{case_num}}', {
                 year: curYear,
               }, function(data) {
@@ -212,7 +224,7 @@
                 $("#local_autocorrelation").text("Local Autocorrelation: " + String(data.loc));
                 $("#global_autocorrelation").text("Global Autocorrelation: " + String(data.glob));
               });
-            });
+            });*/
             };
             function initPanZoom() {
                 var panZoom = map.paper.panzoom();
