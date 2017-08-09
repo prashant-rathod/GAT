@@ -190,7 +190,27 @@
         }
         $('[data-toggle="tooltip"]').tooltip();
         for (var feature in nodeDict['attributes']) {
-          $("#attributeInfo").append("<span id='"+feature+"'>"+feature+": "+nodeDict['attributes'][feature]+"</span><br>")
+          if (feature == "block") {
+            $("#attributeInfo").prepend("<span id='class'>Class: </span>")
+            $("#attributeInfo").prepend("<span>"+nodeDict['attributes'][feature]+"</span><br>")
+          }
+          else {
+            $("#attributeInfo").prepend("<span id='"+feature+"'>"+feature+": </span>")
+            var list = []
+            for (var item in nodeDict['attributes'][feature]) {
+              console.log(nodeDict['attributes'][feature][item])
+              if ( Object.prototype.toString.call( nodeDict['attributes'][feature][item] ) === '[object Array]') {
+                list.push(nodeDict['attributes'][feature][item][0]+" ("+nodeDict['attributes'][feature][item][1]["W"]+") ")
+                // $("#attributeInfo").push("<span>"+nodeDict['attributes'][feature][item][0]+"</span></br>")
+              }
+              else {
+                list.push(nodeDict['attributes'][feature][item])
+                // $("#attributeInfo").push("<span>"+nodeDict['attributes'][feature][item]+"</span><br>")
+              }
+              console.log(list)
+            }
+            $("#attributeInfo").append("<span>"+list+"</span></br>")
+          }
         }
       }
       updateEdge = function(edgeDict) {
