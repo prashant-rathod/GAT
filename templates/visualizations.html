@@ -69,10 +69,11 @@
 
 		  // this is used later in the resizing and gesture demos
 		  window.dragMoveListener = dragMoveListener;
-		interact('.resize-drag')
+		interact('.resize-drag-outer')
 	  .draggable({
 	    onmove: window.dragMoveListener
 	  })
+	  .allowFrom('.resize-drag')
 	  .resizable({
 	    preserveAspectRatio: true,
 	    edges: { left: true, right: true, bottom: true, top: true }
@@ -193,9 +194,9 @@
 	<hr>
 
 	{% if gsaCSV %}
-	<div class = "output-window resize-drag" id = "GSA Visualization Window" style = "width: 50%; heigth: 50%">
+	<div class = "output-window resize-drag-outer" id = "GSA Visualization Window" style = "width: 50%; heigth: 50%">
 
-		<div class = "output-button-bar">
+		<div class = "output-button-bar resize-drag">
 			<button class="btn-hide"
 			onclick="document.getElementById('GSA Visualization').style.display='none'">hide</button>
 
@@ -220,9 +221,9 @@
 		</div>
 	</div>
 
-	<div class = "output-window resize-drag" id = "GSA Data Window">
+	<div class = "output-window resize-drag-outer" id = "GSA Data Window">
 
-		<div class = "output-button-bar">
+		<div class = "output-button-bar resize-drag">
 			<button class="btn-hide"
 			onclick="document.getElementById('GSA Data').style.display='none'">hide</button>
 
@@ -237,7 +238,7 @@
 		<h3><center>GSA Data</center></h3>
 
 		{% if GSA_sample %}
-			<p id="gsa_year" style="font-weight:bold;">Autocorrelation Statistics (for year 2008 -- Sample Case):</p>
+			<p id="gsa_year" style="font-weight:bold;">Autocorrelation Statistics:</p>
 			<p id = "local_autocorrelation">Local Autocorrelation: {{ auto[0] }}</p>
 			<p id = "global_autocorrelation">Global Autocorrelation: {{ auto[1] }}</p><br>
 
@@ -260,9 +261,9 @@
 	{% endif %}
 
         {% if nlp_summary %}
-	<div class = "output-window resize-drag" id = "NLP Visualization Window">
+	<div class = "output-window resize-drag-outer" id = "NLP Visualization Window">
 
-		<div class = "output-button-bar">
+		<div class = "output-button-bar resize-drag">
 			<button class="btn-hide"
 			onclick="document.getElementById('NLP Visualization').style.display='none'">hide</button>
 
@@ -356,9 +357,9 @@
 	<br>
 
 	{% if graph %}
-	<div class = "output-window resize-drag" id = "SNA Visualization Window">
+	<div class = "output-window resize-drag-outer" id = "SNA Visualization Window">
 
-		<div class = "output-button-bar">
+		<div class = "output-button-bar resize-drag">
 			<button class="btn-hide"
 			onclick="document.getElementById('SNA Visualization').style.display='none'">hide</button>
 
@@ -381,9 +382,9 @@
 		</div>
 	</div>
 
-	<div class = "output-window resize-drag" id = "SNA Data Window">
+	<div class = "output-window resize-drag-outer" id = "SNA Data Window">
 
-		<div class = "output-button-bar">
+		<div class = "output-button-bar resize-drag">
 			<button class="btn-hide"
 			onclick="document.getElementById('SNA Data').style.display='none'">hide</button>
 

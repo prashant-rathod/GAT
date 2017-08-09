@@ -2,7 +2,7 @@ import matplotlib
 import numpy as np
 from flask import Flask, render_template, request, redirect, url_for, jsonify
 
-from GAT_GSA.GSA import Weights, AutoCorrelation, SpatialDynamics
+from GAT_GSA.GSA import Weights, AutoCorrelation, SpatialDynamics, Util, Regionalization
 
 matplotlib.use('Agg')
 import os
@@ -282,9 +282,10 @@ def visualize(case_num):
 
     auto = None
     sp_dyn = None
+    svgNaming = GSA_sample[0]
     if GSA_sample != None:
-        auto = GSA_sample[0:2]
-        sp_dyn = [mat for mat in GSA_sample[2:]]
+        auto = GSA_sample[1:3]
+        sp_dyn = [mat for mat in GSA_sample[3:]]
         calc_ac(case_num)
 
 
@@ -330,7 +331,7 @@ def visualize(case_num):
     jgdata, SNAbpPlot, attr, systemMeasures = SNA2Dand3D(graph, request, case_num, _2D = True)
     fileDict['SNAbpPlot'] = '/' + SNAbpPlot if SNAbpPlot != None else None
     fileDict['NLP_images'] = radar_runner.generate(NLP_dir, tropes)
-    gsaCSV, mymap = tempParseGSA(GSA_file_CSV, GSA_file_SHP)
+    gsaCSV, mymap, nameMapping = tempParseGSA(GSA_file_CSV, GSA_file_SHP, fileDict['GSA_meta'][0], fileDict['GSA_meta'][1])
     if GSA_file_SVG != None:
         gsaCSV, mymap = parseGSA(GSA_file_CSV, GSA_file_SVG)
 
@@ -425,6 +426,8 @@ def visualize(case_num):
         #nltkPlot = nltkPlot,
         gsaCSV = gsaCSV,
         mymap = mymap,
+        svgNaming = svgNaming,
+        nameMapping = nameMapping,
         jgdata = jgdata,
         tropes = tropes,
         GSA_sample = GSA_sample,
@@ -746,7 +749,7 @@ def calc_ac(case_num):
 #### GSA methods ####
 #####################
 
-def tempParseGSA(GSA_file_CSV, GSA_file_SHP):
+def tempParseGSA(GSA_file_CSV, GSA_file_SHP, idVar, nameVar):
     if GSA_file_CSV == None or GSA_file_SHP == None:
         return (None, None)
 
@@ -755,7 +758,8 @@ def tempParseGSA(GSA_file_CSV, GSA_file_SHP):
         try:
             reader = csv.reader(csvfile)
             for row in reader:
-                gsaCSV.append(row)
+                tempRow = [x.replace("'", "APOSTROPHE") for x in row]
+                gsaCSV.append(tempRow)
         except:
             return (None, True)
 
@@ -771,7 +775,9 @@ def tempParseGSA(GSA_file_CSV, GSA_file_SHP):
             return (None, True)
     #print(data.replace('"', "'"))
     data = data.replace('"', "'")
-    return json.dumps(gsaCSV), json.dumps(data)
+    nameMapping = Util.getNameMapping(gsaSVG, idVar, nameVar)
+    nameMapping = {key : value.replace("'", "APOSTROPHE") for key, value in nameMapping.items()}
+    return json.dumps(str(gsaCSV).replace('"', "'")), json.dumps(data), json.dumps(str(nameMapping).replace('"', "'"))
 
 
 def parseGSA(GSA_file_CSV, GSA_file_SVG):
@@ -803,8 +809,8 @@ def sample(sample_path, case_num):
     if arr[0] == 'GSA':
         fileDict['GSA_Input_CSV'] = url_for('static', filename = "sample/GSA/" + arr[1])[1:]
         fileDict['GSA_Input_SHP'] = url_for('static', filename = "sample/GSA/" + arr[2])[1:]
-        if arr[1] == "us48.csv":
-            fileDict['GSA_data'] = (0.001, 0.002, array([[ 252.,   27.,    1.,    0.,    0.],
+        if arr[1] == "usjoin.csv":
+            fileDict['GSA_data'] = ('state-id', 0.001, 0.002, array([[ 252.,   27.,    1.,    0.,    0.],
             [  28.,  226.,   20.,    0.,    0.],
             [   1.,   25.,  239.,   15.,    0.],
             [   0.,    0.,   18.,  237.,   22.],
@@ -826,17 +832,19 @@ def sample(sample_path, case_num):
              65.77068646],
             [  97.12041989,   69.73424525,   41.40740741,   11.70833333,
             6.61742518]]))
+            fileDict['GSA_meta'] = ('data-state-id', 'data-state-name', "STATE_NAME", list(range(1979, 2009)), "state-name")
         else:
             #TODO: take in years instead of hard coding
+            #TODO: reorganize use of gsa_meta
             observations = Weights.extractObservations(fileDict['GSA_Input_CSV'], "ALL", ["2014.0"])
             w = Weights.generateWeightsUsingShapefile(fileDict['GSA_Input_SHP'], idVariable="NAME_1")
             globalAutoCorrelation = AutoCorrelation.globalAutocorrelation(observations, w)
             localAutoCorrelation = AutoCorrelation.localAutocorrelation(observations, w)
             observations = Weights.extractObservations(fileDict['GSA_Input_CSV'], "ALL", np.arange(2014, 2017, 0.25).tolist())
             spatialDynamics = SpatialDynamics.markov(observations, w, method="spatial")
-            fileDict['GSA_data'] = (localAutoCorrelation, globalAutoCorrelation,
+            fileDict['GSA_data'] = ('id-1', localAutoCorrelation, globalAutoCorrelation,
                                     spatialDynamics[0], spatialDynamics[1], spatialDynamics[2], spatialDynamics[3])
-            print("TEST PASSED")
+            fileDict['GSA_meta'] = ('data-id-1', 'data-name-1', "NAME_1", np.arange(2014, 2017, 0.25).tolist(), "name-1")
 
         #return fileDict['GSA_file_CSV'] + " " + fileDict['GSA_file_SVG']
     if arr[0] == 'NLP':
@@ -984,7 +992,31 @@ GSA_sample_autocorrelation=[
 
 @application.route('/regionalization/<int:case_num>')
 def reg(case_num):
-    return render_template("regionalization-test.html", case_num = case_num)
+    fileDict = caseDict[case_num]
+    GSA_file_CSV = fileDict.get('GSA_Input_CSV')
+    GSA_file_SHP = fileDict.get('GSA_Input_SHP')
+    gsa_meta = fileDict.get('GSA_meta')
+    svgNaming = fileDict.get('GSA_data')[0]
+    with open('static/sample/GSA/mymap.svg', 'r') as myfile:
+        mymap = myfile.read()
+
+    mymap = mymap.replace('"', "'")
+
+    observations = Weights.extractObservations(GSA_file_CSV, "ALL", gsa_meta[3])
+    w = Weights.generateWeightsUsingShapefile(GSA_file_SHP, idVariable=gsa_meta[2])
+
+    regions = Regionalization.generateRegions(w=w, observations=observations)[0]
+    regions = Regionalization.getNamesFromRegions(regions)
+    nameMapping = Util.getNameMapping('static/sample/GSA/mymap.svg', gsa_meta[0], gsa_meta[1])
+    nameMapping = {key: value.replace("'", "APOSTROPHE") for key, value in nameMapping.items()}
+    numRegs = len(set(regions.values()))
+    return render_template("regionalization-test.html",
+                           case_num = case_num,
+                           mymap = json.dumps(mymap),
+                           regions = json.dumps(regions),
+                           numRegs = numRegs,
+                           svgNaming = svgNaming,
+                           nameMapping = json.dumps(str(nameMapping)))
 
 @application.route('/log/server-error')
 def server_error():

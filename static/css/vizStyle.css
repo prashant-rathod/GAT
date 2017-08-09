@@ -165,7 +165,6 @@ li.dropdown {
     width: 100%;
 }
 
-path {fill: white; stroke: white; z-index: 1;}
 path:hover {fill: black; z-index: 1;}
 div.tooltip {
     z-index: 10;

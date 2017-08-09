@@ -47,6 +47,7 @@
         }
 
 
+
     </style>
 </head>
 
@@ -55,14 +56,15 @@
  font-size: 100%;
  font-family: Segoe UI;
 }
+
 </style>
 <body>
 <div id="mydiv" style="position:relative; top: 500px; width:40%; ; z-index: 10;">
-    <label for="mydiv" id="yearLabel"></label>
+    <!--<label for="mydiv" id="yearLabel"></label>-->
     <!--<span style="position:absolute; color:red; border:1px solid blue; min-width:100px;">
     <span id="myValue"></span>
     </span>-->
-    <input type="range" id="myRange" max="100" min="0" style="width:100%" list="testList">
+    <input type="range" id="myRange" max="100" min="0" style="width:100%;opacity: 1;" list="testList">
     <span style="position:absolute; color:red; border:1px solid blue; min-width:40px;">
         <span id="myValue"></span>
         </span>
@@ -85,16 +87,27 @@
 <script type="text/javascript">
         $(document).ready(function() {
             var csvData = {};
-            csvData.csv = JSON.parse('{{gsaCSV|safe}}');
+            var tempGsa = {{gsaCSV|safe}};
+            tempGsa = tempGsa.replace(/'/g, '"');
+            ///tempGsa = tempGsa.replace(/APOSTROPHE/g, "\\'");
+
+            tempGsa = tempGsa.replace(/APOSTROPHE/g, "'");
+            csvData.csv = JSON.parse(tempGsa);
             csvData.header = csvData.csv[0];
-            csvData.startYear = parseInt(csvData.header[2]);
-            csvData.endYear = parseInt(csvData.header[csvData.header.length - 1]);
-            //var centers = {{centersPy|safe}};
+            tempNameMapping = {{nameMapping|safe}};
+            tempNameMapping = tempNameMapping.replace(/'/g, '"');
+            tempNameMapping = tempNameMapping.replace(/APOSTROPHE/g, "'");
+            csvData.nameMapping = JSON.parse(tempNameMapping);
+            var startYearIndex = 1;
+            for (var i = 1; i < csvData.header.length; i++){
+                if (!isNaN(parseFloat(csvData.header[i]))){
+                    startYearIndex = i;
+                    break;
+                }
+            }
+            csvData.startYear = parseFloat(csvData.header[startYearIndex]);
+            csvData.endYear = parseFloat(csvData.header[csvData.header.length - 1]);
             csvData.centers = {};
-            //var projection = d3.geo.mercator().center([0, 0])
-            //for (var i = 0; i < centers.length; i++){
-            //    centers[i] = projection(centers[i]);
-            //}
 
             var myRange = document.querySelector('#myRange');
             var myValue = document.querySelector('#myValue');
@@ -113,10 +126,11 @@
                         csvData.paths = map.getLayer('mylayer').paths;
                         var paths = csvData.paths;
                         var centers = {};
+                        var naming = "{{svgNaming|safe}}";
                         for (var i = 0; i < paths.length; i++){
                             var bbox = paths[i].vpath._bbox;
                             var center = [(bbox[1] + bbox[3])/2, (bbox[0] + bbox[2])/2];
-                            centers[paths[i].data["state-name"]] = {location: center, id: paths[i].data["state-name"] };
+                            centers[csvData.nameMapping[paths[i].data[naming]]] = {location: center, id: csvData.nameMapping[paths[i].data[naming]]};
                         }
                         csvData.centers = centers;
                         /*var paths = map.getLayer('mylayer').paths;
@@ -130,15 +144,14 @@
                             var fields = csvData.csv[i];
                             //var name = fields[0].slice(1, -1);
                             var name = fields[0];
-                            csvData.centers[name].income = parseInt(fields[index]);
+                            csvData.centers[name].income = parseFloat(fields[index]);
                         }
                         year = year + csvData.startYear;
-                        document.getElementById("yearLabel").innerHTML = "Year: " + Math.round(year);
+                        //document.getElementById("yearLabel").innerHTML = "Year: " + Math.round(year);
                         myValue.innerHTML = year;
 
                         var array = Object.keys(csvData.centers).map(function (key) { return csvData.centers[key]; });
                         var scale = kartograph.scale.sqrt(array, 'income').range([5, 20]);
-                        console.log("TEST");
                         var svgContainer = d3.select("body").select("svg");/*append("svg").attr("width", map.getLayer('mylayer').paper.width).attr("height", map.getLayer('mylayer').paper.height);*/
                         var div = d3.select("body").append("div")
                             .attr("class", "tooltip")
@@ -148,40 +161,20 @@
                             var top = array[i].location[0] + "px";
                             var left = array[i].location[1] + "px";
 
-                            svgContainer.append("circle").attr("state", array[i].id).attr("cx", array[i].location[1]).attr("cy", array[i].location[0]).attr("r", scale(array[i].income)).style("fill", "purple").style("fill-opacity", .5)
-                            .on("mouseover", function(){div.transition().duration(200).style("opacity", .9);
-                                div .html("<p>" + d3.select(this).attr("state") + ":<br>" + csvData.centers[d3.select(this).attr("state")].income + "</p>").style("top", (d3.event.pageY - 50) + "px").style("left", (d3.event.pageX ) + "px");})
-                            .on("mousemove", function(){div .html("<p>" + d3.select(this).attr("state") + ":<br>" + csvData.centers[d3.select(this).attr("state")].income + "</p>").style("top", (d3.event.pageY - 50) + "px").style("left", (d3.event.pageX ) + "px");})
-                            .on("mouseout", function(){div.transition().duration(500).style("opacity", 0);});
+                            //var curScale = array[i].income == NaN ? 0 : scale(array[i].income);
+                            //if (array[i].income != NaN && scale(array[i].income) != NaN){
+                            if (!isNaN(array[i].income) && !isNaN(scale(array[i].income))){
+                                svgContainer.append("circle").attr("state", array[i].id).attr("cx", array[i].location[1]).attr("cy", array[i].location[0]).attr("r", scale(array[i].income)).style("fill", "purple").style("fill-opacity", .5)
+                                .on("mouseover", function(){div.transition().duration(200).style("opacity", .9);
+                                    div .html("<p>" + d3.select(this).attr("state") + ":<br>" + csvData.centers[d3.select(this).attr("state")].income + "</p>").style("top", (d3.event.pageY - 50) + "px").style("left", (d3.event.pageX ) + "px");})
+                                .on("mousemove", function(){div .html("<p>" + d3.select(this).attr("state") + ":<br>" + csvData.centers[d3.select(this).attr("state")].income + "</p>").style("top", (d3.event.pageY - 50) + "px").style("left", (d3.event.pageX ) + "px");})
+                                .on("mouseout", function(){div.transition().duration(500).style("opacity", 0);});
+                            }
                         }
                         initPanZoom();
 
             //});
 
-            //update bubble size based on year
-            /*var form = document.getElementById("frm1");
-            form.addEventListener("input", function () {
-                var number = document.getElementById("year").value;
-
-                var header = csvData.header;
-                var startYear = csvData.startYear;
-                var endYear = csvData.endYear;
-                var index = number * (endYear - startYear) / 100;
-                var curYear = Math.round(index) + startYear;
-                document.getElementById("yearLabel").innerHTML = "Year: " + curYear;
-                index = 2 + Math.round(index);
-
-                for (var i=1; i < csvData.csv.length - 1; i++) {
-                    var fields = csvData.csv[i];
-                    //var name = fields[0].slice(1, - 1);
-                    var name = fields[0];
-                    csvData.centers[name].income = parseInt(fields[index]);
-                }
-
-                var array = Object.keys(csvData.centers).map(function (key) { return csvData.centers[key]; });
-                var scale = kartograph.scale.sqrt(array, 'income').range([5, 20]);
-                d3.select("body").select("svg").selectAll("circle").attr("r", function(){return scale(csvData.centers[d3.select(this).attr("state")].income);});
-            });*/
 
 
             myRange.oninput = function(){
@@ -194,7 +187,7 @@
                 var endYear = csvData.endYear;
                 var index = number * (endYear - startYear) / 100;
                 var curYear = Math.round(index) + startYear;
-                document.getElementById("yearLabel").innerHTML = "Year: " + curYear;
+                //document.getElementById("yearLabel").innerHTML = "Year: " + curYear;
                 index = 2 + Math.round(index);
                 myValue.innerHTML = curYear;
                 myValue.parentElement.style.left = ppx + 'px';
@@ -204,7 +197,7 @@
                     var fields = csvData.csv[i];
                     //var name = fields[0].slice(1, - 1);
                     var name = fields[0];
-                    csvData.centers[name].income = parseInt(fields[index]);
+                    csvData.centers[name].income = parseFloat(fields[index]);
                 }
 
                 var array = Object.keys(csvData.centers).map(function (key) { return csvData.centers[key]; });
@@ -255,6 +248,7 @@
                 });
             }
         });
+
 
 
 
