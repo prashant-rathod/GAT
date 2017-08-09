@@ -216,7 +216,7 @@ class SNA():
         # Check if role attribute is present; if not, no role propensities calculated
         roleFlag = True if source.get("Role") is not None and target.get("Role") is not None else False
         for attr in ( target if len(source) > len(target) else source ):
-            if attr not in ['block','newNode'] and source.get(attr) is not None and target.get(attr) is not None:
+            if attr not in ['block','newNode','Name'] and source.get(attr) is not None and target.get(attr) is not None:
                 for src_val in [x for x in source.get(attr) if len(x) > 1]:
                     for trg_val in [x for x in target.get(attr) if len(x) > 1]:
                         #####################################
@@ -225,9 +225,6 @@ class SNA():
                         ## Emotion Propensities
                         src_w = float(src_val[1]["W"]) if "W" in src_val[1] else None
                         trg_w = float(trg_val[1]["W"]) if "W" in trg_val[1] else None
-                        # if no weight, use sentiment
-                        src_w = float(src_val[1]["SENT"]) if src_w is not None and "SENT" in src_val[1] else None
-                        trg_w = float(trg_val[1]["SENT"]) if trg_w is not None and "SENT" in trg_val[1] else None
 
                         if src_w is not None and trg_w is not None:
                             # Cooperative propensities
@@ -312,7 +309,7 @@ class SNA():
                 for prop in emoProps:
                     w.append(prop[4] * prop[5]) # add the product of the attribute weights to a list for each prop
                 w_avg = np.average(w) # find average propensity product weight
-                prob = np.random.binomial(1, w_avg)
+                prob = np.random.binomial(1, w_avg*1/2)
                 # use w_avg as the probability for a bernoulli distribution
                 if prob:
                     self.G.add_edge(node, target)
@@ -379,7 +376,8 @@ class SNA():
         scaled = list(sp.stats.zscore(centralities))
         for i in range(len(scaled)):
             scaled[i] = (G.nodes()[i],scaled[i])
-        selected = [key for key,val in scaled if val > 1] # used z-score for top 20th percentile
+        selected = [key for key,val in scaled if "BEL" in key] # used z-score for top 20th percentile, temporary change to only show beliefs
+        # TODO change back line above to "if val > 1.3" instead of "if 'BEL' in key"
         # Make subgraphs from those nodes
         def find_subgraph(node,subGraph,depth):
                 nodeList = [(centralNode,target) for target in G.neighbors(centralNode)]
@@ -389,7 +387,7 @@ class SNA():
                         find_subgraph(ancillary,subGraph,depth-1)
         for centralNode in selected:
             sub_G = nx.DiGraph()
-            find_subgraph(centralNode,sub_G,3)
+            find_subgraph(centralNode,sub_G,2)
             if len(list(sub_G.nodes())) > 5:
                 cliques.append(sub_G.to_undirected())
 
@@ -403,8 +401,6 @@ class SNA():
 
         # Find resilience of subgraphs
         for clique in cliques:
-
-            print(list(clique.nodes()))
 
             initShortestPath = nx.average_shortest_path_length(clique)
             t0 = 0

@@ -635,7 +635,8 @@ def SNA2Dand3D(graph, request, case_num, _3D = True, _2D = False, label = False)
         'Resilience':'The baseline value for resilience is determined by identifying the cliques associated with the most central nodes in the network, perturbing those subgraphs, and measuring the mean shortest path average over several perturbations. The results are scaled on a normal curve across all cliques and a percentile resilience is determined for each clique. A high percentile resilience denotes resilience to perturbation. These values are visualized on a color spectrum from red to blue, where red is low relative resilience and blue is high relative resilience.',
         'AddNode': 'Introduces a new node to the network, complete with a user-defined name, user-defined attributes and known links. Using the DRAG link prediction model, node attributes are used to form likely connections and intelligently model the effects of external change on the network. New nodes and their predicted links are colored red for easy identification.',
         'RemoveNode':'Removes the node inputted in the box below and any links to which it belongs.',
-        'eigenvector':'Centrality measure which sums the centralities of all adjacent nodes',
+        'eigenvector':'Centrality measure which sums the centralities of all adjacent nodes.',
+        'betweenness':'Centrality based on the shortest path that passes through the node.'
     }
 
     # Calculate resilience when requested
@@ -643,6 +644,7 @@ def SNA2Dand3D(graph, request, case_num, _3D = True, _2D = False, label = False)
         try:
             systemMeasures["Resilience"] = graph.averagePathRes(iters=5) # gets a scaled resilience value for each clique identified in network
             # Add colors for each resilience measure
+
             for cluster in systemMeasures["Resilience"]:
                 systemMeasures["Resilience"][cluster] = int(systemMeasures["Resilience"][cluster])
                 percentile = systemMeasures["Resilience"][cluster]

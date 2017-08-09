@@ -1,1 +1,0 @@
-Namespace(outfile='static/sample/GSA/mymap.svg', proj='mercator', source='static/sample/GSA/us48.shp')
