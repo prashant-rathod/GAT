@@ -83,13 +83,13 @@ body.pace-white .pace .pace-progress {
   top: 25px;
 }
 .jumbotron {
-  position: relative;
   overflow: hidden;
   display: block;
-  padding: 0;
+  padding: 20px;
   margin-bottom: 0;
   background: #000000 url('../landing_background.jpg') no-repeat center center fixed;
   background-size: cover;
+  position:relative;
 }
 .jumbotron .inner {
   position: relative;
@@ -321,6 +321,7 @@ body.pace-white .pace .pace-progress {
 .panel .panel-body.scrollable {
   margin-bottom: 20px;
 }
+
 
 /*------------------------------------------------------------------
 [5. Form Elements]
