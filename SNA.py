@@ -309,7 +309,7 @@ class SNA():
                 for prop in emoProps:
                     w.append(prop[4] * prop[5]) # add the product of the attribute weights to a list for each prop
                 w_avg = np.average(w) # find average propensity product weight
-                prob = np.random.binomial(1, w_avg*1/2)
+                prob = np.random.binomial(1, w_avg*3/4)
                 # use w_avg as the probability for a bernoulli distribution
                 if prob:
                     self.G.add_edge(node, target)
@@ -702,7 +702,7 @@ class SNA():
         for node, feature in block.items():
             temp = {}
             if self.G.node[node].get('newNode') is True:
-                temp['color'] = '0xE74C3C'
+                temp['color'] = '0x8B0000'
             else:
                 temp['color'] = color[name.index(feature)]
             nodes_property[node] = temp
