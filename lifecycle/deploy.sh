@@ -24,7 +24,7 @@ echo "FINISHING INSTALLATION"
 DEPLOY_SCRIPT="
 cd ~/Projects/GAT/;
 rm -rf lifecycle;
-
+sudo add-apt-repository ppa:ubuntugis/ppa;
 sudo apt-get update;
 sudo apt-get upgrade;
 sudo apt-get install build-essential;
@@ -38,6 +38,10 @@ sudo apt-get install zlib1g-dev;
 sudo apt-get install libfreetype6-dev;
 sudo apt-get install libgeos-dev;
 sudo apt-get install libgeos-c1v5;
+sudo apt-get install gdal-bin;
+sudo apt-get install libxslt1-dev python-dev python-shapely python-gdal python-pyproj python-pip;
+sudo apt install libgdal-dev;
+sudo pip2 install https://github.com/kartograph/kartograph.py/zipball/master -r https://raw.github.com/kartograph/kartograph.py/master/requirements.txt;
 sudo pip3 install -r requirements.txt;
 
 sudo chmod 777 nltk_downloads;
