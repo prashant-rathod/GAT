@@ -644,6 +644,7 @@ def SNA2Dand3D(graph, request, case_num, _3D = True, _2D = False, label = False)
         try:
             systemMeasures["Resilience"] = graph.averagePathRes(iters=5) # gets a scaled resilience value for each clique identified in network
             # Add colors for each resilience measure
+
             for cluster in systemMeasures["Resilience"]:
                 systemMeasures["Resilience"][cluster] = int(systemMeasures["Resilience"][cluster])
                 percentile = systemMeasures["Resilience"][cluster]
