@@ -47,7 +47,7 @@ sudo pip3 install -r requirements.txt;
 sudo chmod 777 nltk_downloads;
 sudo pip3 install gunicorn;
 
-sudo python -m spacy download en
+sudo python3 -m spacy download en
 
 sudo service nginx restart;
 "
