@@ -270,8 +270,9 @@ def visualize(case_num):
 
     auto = None
     sp_dyn = None
-    svgNaming = GSA_sample[0]
+    svgNaming = None
     if GSA_sample != None:
+        svgNaming = GSA_sample[0]
         auto = GSA_sample[1:3]
         sp_dyn = [mat for mat in GSA_sample[3:]]
         calc_ac(case_num)
@@ -317,7 +318,11 @@ def visualize(case_num):
     jgdata, SNAbpPlot, attr, systemMeasures = SNA2Dand3D(graph, request, case_num, _2D = True)
     fileDict['SNAbpPlot'] = '/' + SNAbpPlot if SNAbpPlot != None else None
     fileDict['NLP_images'] = radar_runner.generate(NLP_dir, tropes)
-    gsaCSV, mymap, nameMapping = tempParseGSA(GSA_file_CSV, GSA_file_SHP, fileDict['GSA_meta'][0], fileDict['GSA_meta'][1])
+    gsaCSV = None
+    mymap = None
+    nameMapping = None
+    if (GSA_file_CSV is not None and GSA_file_SHP is not None and fileDict.get('GSA_meta') is not None):
+        gsaCSV, mymap, nameMapping = tempParseGSA(GSA_file_CSV, GSA_file_SHP, fileDict['GSA_meta'][0], fileDict['GSA_meta'][1])
     if GSA_file_SVG != None:
         gsaCSV, mymap = parseGSA(GSA_file_CSV, GSA_file_SVG)
 
