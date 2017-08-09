@@ -64,10 +64,13 @@
     <!--<span style="position:absolute; color:red; border:1px solid blue; min-width:100px;">
     <span id="myValue"></span>
     </span>-->
-    <input type="range" id="myRange" max="100" min="0" style="width:100%;opacity: 1;" list="testList">
-    <span style="position:absolute; color:red; border:1px solid blue; min-width:40px;">
-        <span id="myValue"></span>
-        </span>
+    <div>
+        <input type="range" id="myRange" max="100" min="0" style="width:100%;opacity: 1" list="testList">
+        <span style="position:absolute; color:white; border:1px solid blue; min-width:40px;">
+            <span id="myValue"></span>
+            </span>
+    </div>
+
     <datalist id="testList">
         <option>0</option>
         <option>10</option>
@@ -81,7 +84,6 @@
         <option>90</option>
         <option>100</option>
     </datalist>
-
 </div>
 
 <script type="text/javascript">
@@ -105,6 +107,14 @@
                     break;
                 }
             }
+            var tempYears = csvData.header;
+            for (var i = 0; i < tempYears.length; i++){
+                if (isNaN(parseFloat(tempYears[i])))
+                    tempYears.splice(i, 1);
+                else
+                    tempYears[i] = parseFloat(tempYears[i]);
+            }
+            csvData.years = tempYears;
             csvData.startYear = parseFloat(csvData.header[startYearIndex]);
             csvData.endYear = parseFloat(csvData.header[csvData.header.length - 1]);
             csvData.centers = {};
@@ -186,12 +196,16 @@
                 var startYear = csvData.startYear;
                 var endYear = csvData.endYear;
                 var index = number * (endYear - startYear) / 100;
-                var curYear = Math.round(index) + startYear;
+                var curYear = index + startYear;
                 //document.getElementById("yearLabel").innerHTML = "Year: " + curYear;
-                index = 2 + Math.round(index);
-                myValue.innerHTML = curYear;
                 myValue.parentElement.style.left = ppx + 'px';
 
+
+                curYear = csvData.years.reduce(function(prev, curr) {
+                    return (Math.abs(curr - curYear) < Math.abs(prev - curYear) ? curr : prev);
+                });
+                myValue.innerHTML = curYear;
+                index = csvData.header.indexOf(curYear);
 
                 for (var i=1; i < csvData.csv.length - 1; i++) {
                     var fields = csvData.csv[i];
@@ -202,17 +216,17 @@
 
                 var array = Object.keys(csvData.centers).map(function (key) { return csvData.centers[key]; });
                 var scale = kartograph.scale.sqrt(array, 'income').range([5, 20]);
-                d3.select("body").select("svg").selectAll("circle").attr("r", function(){return scale(csvData.centers[d3.select(this).attr("state")].income);});
-                $(function() {
+                d3.select("body").select("svg").selectAll("circle").attr("r", function(){ return scale(csvData.centers[d3.select(this).attr("state")].income);});
+                /*$(function() {
               $.getJSON('/_get_autocorrelation/{{case_num}}', {
-                year: curYear,        
+                year: curYear,
               }, function(data) {
                 //currently hard coded, must be fixed soon
                 $("#gsa_year").text("Displaying Autocorrelation Statistics for year " + String(data.year));
                 $("#local_autocorrelation").text("Local Autocorrelation: " + String(data.loc));
                 $("#global_autocorrelation").text("Global Autocorrelation: " + String(data.glob));
               });
-            });
+            });*/
             };
             function initPanZoom() {
                 var panZoom = map.paper.panzoom();
@@ -257,4 +271,3 @@
 <div id="map"></div>
 </body>
 </html>
-

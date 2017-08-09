@@ -702,7 +702,7 @@ class SNA():
         for node, feature in block.items():
             temp = {}
             if self.G.node[node].get('newNode') is True:
-                temp['color'] = '0xE74C3C'
+                temp['color'] = '0x8B0000'
             else:
                 temp['color'] = color[name.index(feature)]
             nodes_property[node] = temp

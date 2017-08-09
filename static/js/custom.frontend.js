@@ -3,9 +3,9 @@
     'use strict';
 
     var Pages = function() {
-        this.VERSION = "1.0.0";
-        this.AUTHOR = "openNEX";
-        this.SUPPORT = "opennex.nasa@gmail.com";
+        this.VERSION = "1.0.1";
+        this.AUTHOR = "LUCAS";
+        this.SUPPORT = "Luc";
 
         this.pageScrollElement = 'html, body';
         this.$body = $('body');
