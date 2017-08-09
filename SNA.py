@@ -309,7 +309,7 @@ class SNA():
                 for prop in emoProps:
                     w.append(prop[4] * prop[5]) # add the product of the attribute weights to a list for each prop
                 w_avg = np.average(w) # find average propensity product weight
-                prob = np.random.binomial(1, w_avg*3/4)
+                prob = np.random.binomial(1, w_avg*1/2)
                 # use w_avg as the probability for a bernoulli distribution
                 if prob:
                     self.G.add_edge(node, target)
