@@ -1,6 +1,10 @@
 #!/usr/bin/python2.7
 from kartograph import Kartograph
 
+# conda execute
+# env:
+#  - python>=2.7.0
+
 import argparse
 
 parser = argparse.ArgumentParser()
