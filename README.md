@@ -55,15 +55,9 @@ Troubleshooting:
 Having multiple gunicorn processes running at once will lead to 500 errors from front end. How to fix if server errors are happening:
 1. $ ./ssh.sh
 2. Once on remote machine:
-3. $ ps –ef | grep gunicorn
-4. Kill all gunicorn processes in following fashion, one by one.
-5. $ kill -9 <PID of gunicorn process>
-6. check if there are any still left: $ ps –ef | grep gunicorn
-7. $ cd ~/Projects/GAT;
-8. start new gunicorn process in background with nohup:
-8. $ nohup gunicorn application:application -b localhost:8000 &
+3. $ pgrep -f gunicorn | xargs kill -9; nohup gunicorn application:application -b localhost:8000 &
 
-If errors persist and the problem was not multiple processes, ssh into the machine, and check out ~/nohup.out, /var/log/nginx/access.log and /var/log/nginx/error.log. The python console prints to nohup.out, while other errors and warnings print to error.log, and all requests are recorded in access.log.
+If errors persist and the problem was not multiple processes, ssh into the machine, and check out ~/nohup.out, /var/log/nginx/access.log and /var/log/nginx/error.log. The python console prints to nohup.out, while other errors and warnings print to error.log, and all requests are recorded in access.log. These have been made available on the app through the /log/python-out /log/server-error /log/server-access paths.
 
 You can check the status of nginx server by the following command $ sudo service nginx status
 
