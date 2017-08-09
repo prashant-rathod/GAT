@@ -101,19 +101,7 @@ caseDict = {}
 tempdir = 'static/temp/'
 
 # don't worry about this color shit. It's used by the SNA visualization
-colorDict = {
-    "b": "blue",
-    "g": "green",
-    "r": "red",
-    "c": "cyan",
-    "m": "magenta",
-    "y": "yellow",
-    "k": "black",
-    "w": "white",
-    "orange": "orange",
-    "purple": "purple",
-}
-colors = ["b", "g", "r", "c", "m", "y", "k", "w","orange","purple"]
+colors = ["DeepSkyBlue","Gold","ForestGreen","Ivory","DarkOrchid","Coral","DarkTurquoise","DarkCyan","Blue"]
 hexColors = {}
 for color in colors:
     rgbVal = matplotlib.colors.colorConverter.to_rgb(color)
@@ -299,8 +287,6 @@ def visualize(case_num):
         #graph.katz_centrality()
         graph.eigenvector_centrality()
         graph.load_centrality()
-        graph.communicability_centrality()
-        graph.communicability_centrality_exp()
 
     #if GSA_file.filename == '' and NLP_file.filename == '' and SNA_file.filename == '':
         #return("No files uploaded")
@@ -421,7 +407,6 @@ def visualize(case_num):
         SNAbpPlot = SNAbpPlot,
         graph = copy_of_graph,
         attr = attr,
-        colorDict = colorDict,
         colors = colors,
         #nltkPlot = nltkPlot,
         gsaCSV = gsaCSV,
@@ -611,10 +596,11 @@ def SNA2Dand3D(graph, request, case_num, _3D = True, _2D = False, label = False)
             'block': request.form.get("nodeSet")
         }
         i = 0
-        while (request.form.get("attribute"+str(i)) != None) and (request.form.get("attribute"+str(i)) != '') :
-            split = request.form.get("attribute"+str(i)).split(":")
-            key = split[0]
-            value = split[1]
+        while (request.form.get("attribute"+str(i)) is not None) and (request.form.get("attribute"+str(i)) != '') and (request.form.get("value"+str(i)) is not None) and (request.form.get("value"+str(i)) != ''):
+            key = request.form.get("attribute"+str(i))
+            value = request.form.get("value"+str(i))
+            if request.form.get("weight"+str(i)) is not None and request.form.get("weight"+str(i)) != '':
+                value = [value,{'W':request.form.get("weight"+str(i))}]
             dictForm = {key: value}
             attrDict.update(dictForm)
             i += 1
@@ -628,12 +614,38 @@ def SNA2Dand3D(graph, request, case_num, _3D = True, _2D = False, label = False)
         print("node, attrDict, connections",node,attrDict,links)
         graph.addNode(node,attrDict,links)
 
+    # Add system measures dictionary
+    # systemMeasures["Node Connectivity"] = graph.node_connectivity() # Currently only returning zero...
+    systemMeasures["Average Clustering"] = graph.average_clustering()
+    # systemMeasures["Attribute Assortivity"] = graph.attribute_assortivity() # Which attributes...? UI?
+    if graph.is_strongly_connected():
+        systemMeasures["Connection Strength"] = "Strong"
+    elif graph.is_weakly_connected():
+        systemMeasures["Connection Strength"] = "Weak"
+
+    # Add system measures descriptions to dictionary
+    systemMeasures["Description"] = {
+        'Average Clustering': 'A high clustering coefficient indicates that actors within the network are closely connected to a statistically significant degree. It is a sophisticated measure of the density of a network.',
+        'Connection Strength': 'Knowing whether a graph is strongly or weakly connected is helpful because it demonstrates the robustness of the graph based on its redundancy. If a graph is strongly connected, there are two links between each actor in the network, one in each direction. A strongly connected graph thus would likely have more redundant communication/information flow and be more difficult to perturb than a weakly connected graph.',
+        'Resilience':'The baseline value for resilience is determined by identifying the cliques associated with the most central nodes in the network, perturbing those subgraphs, and measuring the mean shortest path average over several perturbations. The results are scaled on a normal curve across all cliques and a percentile resilience is determined for each clique. A high percentile resilience denotes resilience to perturbation. These values are visualized on a color spectrum from red to blue, where red is low relative resilience and blue is high relative resilience.',
+        'AddNode': 'Introduces a new node to the network, complete with a user-defined name, user-defined attributes and known links. Using the DRAG link prediction model, node attributes are used to form likely connections and intelligently model the effects of external change on the network. New nodes and their predicted links are colored red for easy identification.',
+        'RemoveNode':'Removes the node inputted in the box below and any links to which it belongs.',
+        'eigenvector':'Centrality measure which sums the centralities of all adjacent nodes',
+    }
+
     # Calculate resilience when requested
     if request.form.get("resilienceSubmit") != None:
         try:
-            systemMeasures["Resilience"] = graph.averagePathRes(iters=5)
+            systemMeasures["Resilience"] = graph.averagePathRes(iters=5) # gets a scaled resilience value for each clique identified in network
+            # Add colors for each resilience measure
+            for cluster in systemMeasures["Resilience"]:
+                systemMeasures["Resilience"][cluster] = int(systemMeasures["Resilience"][cluster])
+                percentile = systemMeasures["Resilience"][cluster]
+                b = int(percentile)
+                r = int(100 - percentile)
+                systemMeasures["Resilience"][cluster] = [percentile,r,b]
         except nx.exception.NetworkXError:
-            systemMeasures["Resilience"] = "Could not calculate resilience, graph is disconnected."
+            systemMeasures["Resilience"] = "Could not calculate resilience, NetworkX error."
 
 
     copy_of_graph = copy.deepcopy(graph)
@@ -660,7 +672,6 @@ def jgvis(case_num):
             SNAbpPlot = SNAbpPlot,
             attr = attr,
             graph = graph,
-            colorDict = colorDict,
             colors = colors,
             case_num = case_num,
             systemMeasures = systemMeasures
@@ -673,24 +684,15 @@ def get_node_data(case_num):
     name = request.args.get('name', '', type=str)
     if graph == None or len(graph.G) == 0:
         return jsonify(	name=name,
-                        cluster="Empty graph",
                         eigenvector=eigenvector,
                         betweenness=betweenness
                         )
-    if nx.algorithms.bipartite.is_bipartite(graph.G):
-        graph.clustering()
     graph.closeness_centrality()
     graph.betweenness_centrality()
     graph.degree_centrality()
     # graph.katz_centrality()
     graph.eigenvector_centrality()
     graph.load_centrality()
-    graph.communicability_centrality()
-    graph.communicability_centrality_exp()
-    if graph.clustering_dict != {} and graph.clustering_dict != None:
-        cluster = str(round(graph.clustering_dict.get(name),4));
-    else:
-        cluster="clustering not available"
     if graph.eigenvector_centrality_dict != {} and graph.eigenvector_centrality_dict != None:
         eigenvector = str(round(graph.eigenvector_centrality_dict.get(name),4));
     else:
@@ -701,7 +703,6 @@ def get_node_data(case_num):
         betweenness="clustering not available"
     attributes = graph.get_node_attributes(name)
     toJsonify = dict(name=name,
-                     cluster=cluster,
                      eigenvector=eigenvector,
                      betweenness=betweenness,
                      attributes=attributes)
@@ -718,7 +719,6 @@ def get_edge_data(case_num):
     link = graph.G[pair[0]][pair[1]]
     toJsonify = dict(name=name,source=pair[0],target=pair[1])
     for attr in link:
-        print(link[attr])
         toJsonify[attr] = link[attr]
     return jsonify(toJsonify)
 

@@ -77,7 +77,7 @@ handleAddAttributeClick = function() {
   $("#addAttrButton"+counter).attr("onclick","removeAttr("+counter+")")
   $("#attribute"+counter).attr("readonly","true")
   counter += 1
-  $("#addAttrTarget").append('<div><i id="addAttrButton'+counter+'" class="fa fa-plus-circle" onclick="handleAddAttributeClick()"></i> <input type="text" id="attribute'+counter+'" name="attribute'+counter+'" placeholder="attribute: value" /></div>')
+  $("#addAttrTarget").append('<div><i id="addAttrButton'+counter+'" class="fa fa-plus-circle" onclick="handleAddAttributeClick()"></i><input class="attrInput" type="text" id="attribute'+counter+'" name="attribute'+counter+'" placeholder="Attribute" />:<input type="text" class="valInput" id="value'+counter+'" name="value'+counter+'" placeholder="Value" /><input type="text" class="wInput" id="weight'+counter+'" name="weight'+counter+'" placeholder="Weight" /></div>')
 }
 removeAttr = function(id) {
   console.log("removing..")
@@ -98,3 +98,8 @@ handleResilienceClick = function() {
     console.log("Handling click...")
     $("#resilienceInfo").append("<div>Resilience is being calculated. This is a heavy process and may require 1-2 minutes for completion.</div>")
 }
+
+// Code for tooltips
+$(document).ready(function(){
+    $('[data-toggle="tooltip"]').tooltip();
+});

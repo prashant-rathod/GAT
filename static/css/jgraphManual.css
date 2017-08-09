@@ -1,3 +1,18 @@
+body {
+  background: #003faa; /* For browsers that do not support gradients */
+  background: -webkit-linear-gradient(#000b37, #003faa, #000b37); /* For Safari 5.1 to 6.0 */
+  background: -o-linear-gradient(#000b37, #003faa, #000b37); /* For Opera 11.1 to 12.0 */
+  background: -moz-linear-gradient(#000b37, #003faa, #000b37); /* For Firefox 3.6 to 15 */
+  background: linear-gradient(#000b37, #003faa, #000b37); /* Standard syntax */
+  height: 100%;
+  margin: 0;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+* {
+ font-size: 100%;
+ font-family: Segoe UI;
+}
 /* Style the buttons inside the tab */
 .tab button {
     color: white;
@@ -34,12 +49,12 @@
 	color: #0b1b54;
 	font-size: 10px;
 	font-weight: bold;
-    position:fixed;
-    width: 150px;
-    height: 12px;
-    padding-left: 15px;
-    padding-top: 3px;
-    overflow: hidden;
+  position:fixed;
+  width: 150px;
+  height: 15px;
+  padding-left: 15px;
+  padding-top: 3px;
+  overflow: hidden;
 }
 i:hover {
     cursor: pointer;
@@ -106,7 +121,7 @@ i:hover {
 }
 .output-window {
     height: auto;
-    width: 200px;
+    width: 300px;
 }
 .centeredIcon {
     text-align:center;
@@ -126,9 +141,6 @@ i:hover {
 #addNodeFormName {
     width:90%;
     text-align: center;
-}
-#addAttrTarget input {
-    width: 80px;
 }
 #addAttrTarget i {
     font-size: 13px;
@@ -157,8 +169,55 @@ table {
 #attributes input {
     margin-top: 5px;
 }
-#nodeMeasureInfo {
+.top-border {
     border-top: solid white;
     padding-top: 5px;
     margin-top: 10px;
+}
+.attrInput {
+  width: 55px;
+}
+.valInput {
+  width: 55px;
+}
+.wInput {
+  width: 35px;
+}
+#resilienceTable {
+  width: 50%;
+}
+#resilienceTable .colorCode {
+  width: 10px;
+  height: 10px;
+  display: inline-block;
+}
+#resilienceTable td {
+  text-align: center;
+}
+#resilienceTable .node {
+  overflow: hidden;
+  text-align: left;
+}
+.tooltip {
+  position: fixed;
+}
+.tooltip-inner {
+  background-color: white !important;
+  /*!important is not necessary if you place custom.css at the end of your css calls. For the purpose of this demo, it seems to be required in SO snippet*/
+  color: #000b37;
+}
+.tooltip.top .tooltip-arrow {
+  border-top-color: white;
+}
+.tooltip.right .tooltip-arrow {
+  border-right-color: white;
+}
+.tooltip.bottom .tooltip-arrow {
+  border-bottom-color: white;
+}
+.tooltip.left .tooltip-arrow {
+  border-left-color: white;
+}
+input, select {
+  color: #000b37
 }
