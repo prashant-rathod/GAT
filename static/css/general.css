@@ -1,5 +1,5 @@
 body {
-    background: url("http://res.cloudinary.com/dl1azxsha/image/upload/v1497635072/background_lnd5xb.svg") no-repeat center center fixed;
+    background: url("../landing_background.svg") no-repeat center center fixed;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
