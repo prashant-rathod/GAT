@@ -300,7 +300,7 @@ def emotionalValences(docs, lexicon):
                 emotionScores.append((ent, scores))
     optimum = [max, max, max, max, max, max, max, max]
     # Now we have, entities, scores, labels, and optimums. We can create the radar graphs
-    for ent, scores in emotionScores:
+    for ent, scores in emotionScores[:6]:
         # Save the file in the temp folder
         f = tempfile.NamedTemporaryFile(dir='static/temp', suffix='.png', delete=False)
         radar.graph(trope=ent, values=scores, labels=emotionLabels, optimum=optimum, file_name=f)

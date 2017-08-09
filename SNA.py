@@ -379,7 +379,7 @@ class SNA():
         selected = [key for key,val in scaled if "BEL" in key] # used z-score for top 20th percentile, temporary change to only show beliefs
         # TODO change back line above to "if val > 1.3" instead of "if 'BEL' in key"
         # Make subgraphs from those nodes
-        def find_subgraph(node,subGraph,depth):
+        def find_subgraph(centralNode,subGraph,depth):
                 nodeList = [(centralNode,target) for target in G.neighbors(centralNode)]
                 sub_G.add_edges_from(nodeList)
                 if depth > 0:
@@ -471,7 +471,7 @@ class SNA():
     def betweenness_centrality(self):
         self.betweenness_centrality_dict = nx.betweenness_centrality(self.G)
     def eigenvector_centrality(self):
-        self.eigenvector_centrality_dict = nx.eigenvector_centrality(self.G, max_iter=500, tol=1e-01)
+        self.eigenvector_centrality_dict = nx.eigenvector_centrality(self.G)
         #self.eigenvector_centrality_dict = nx.eigenvector_centrality_numpy(self.G)
     def katz_centrality(self):
         self.katz_centrality_dict = centrality.katz_centrality(self.G)
