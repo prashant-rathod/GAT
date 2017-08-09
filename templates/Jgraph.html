@@ -191,16 +191,16 @@
         $('[data-toggle="tooltip"]').tooltip();
         for (var feature in nodeDict['attributes']) {
           if (feature == "block") {
-            $("#attributeInfo").append("<span id='class'>Class: </span>")
-            $("#attributeInfo").append("<span>"+nodeDict['attributes'][feature]+"</span><br>")
+            $("#attributeInfo").prepend("<span id='class'>Class: </span>")
+            $("#attributeInfo").prepend("<span>"+nodeDict['attributes'][feature]+"</span><br>")
           }
           else {
-            $("#attributeInfo").append("<span id='"+feature+"'>"+feature+": </span>")
+            $("#attributeInfo").prepend("<span id='"+feature+"'>"+feature+": </span>")
             var list = []
             for (var item in nodeDict['attributes'][feature]) {
               console.log(nodeDict['attributes'][feature][item])
               if ( Object.prototype.toString.call( nodeDict['attributes'][feature][item] ) === '[object Array]') {
-                list.push(nodeDict['attributes'][feature][item][0])
+                list.push(nodeDict['attributes'][feature][item][0]+" ("+nodeDict['attributes'][feature][item][1]["W"]+") ")
                 // $("#attributeInfo").push("<span>"+nodeDict['attributes'][feature][item][0]+"</span></br>")
               }
               else {
