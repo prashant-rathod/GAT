@@ -368,40 +368,40 @@ class SNA():
         self.average_clustering()
 
     def find_cliques(self):
-        G = self.G.copy().to_undirected() # currently need undirected graph to find cliques with centrality method
+        G = self.G.copy().to_undirected()  # currently need undirected graph to find cliques with centrality method
         cliques = []
-
         # Find central nodes
         centralities = [self.eigenvector_centrality_dict.get(node) for node in G.nodes()]
         scaled = list(sp.stats.zscore(centralities))
         for i in range(len(scaled)):
-            scaled[i] = (G.nodes()[i],scaled[i])
-        selected = [key for key,val in scaled if "BEL" in key] # used z-score for top 20th percentile, temporary change to only show beliefs
+            scaled[i] = (G.nodes()[i], scaled[i])
+        selected = [key for key, val in scaled if
+                    "BEL" in key]  # used z-score for top 20th percentile, temporary change to only show beliefs
+
         # TODO change back line above to "if val > 1.3" instead of "if 'BEL' in key"
         # Make subgraphs from those nodes
-        def find_subgraph(centralNode,subGraph,depth):
-                nodeList = [(centralNode,target) for target in G.neighbors(centralNode)]
-                sub_G.add_edges_from(nodeList)
-                if depth > 0:
-                    for ancillary in G.neighbors(centralNode):
-                        find_subgraph(ancillary,subGraph,depth-1)
+        def find_subgraph(centralNode, subGraph, depth):
+            nodeList = [(centralNode, target) for target in G.neighbors(centralNode)]
+            sub_G.add_edges_from(nodeList)
+            if depth > 0:
+                for ancillary in G.neighbors(centralNode):
+                    find_subgraph(ancillary, subGraph, depth - 1)
+
         for centralNode in selected:
             sub_G = nx.DiGraph()
-            find_subgraph(centralNode,sub_G,2)
+            find_subgraph(centralNode, sub_G, 2)
             if len(list(sub_G.nodes())) > 5:
                 cliques.append(sub_G.to_undirected())
-
-        return cliques
+        return cliques, selected
 
     def averagePathRes(self,ta=20,iters=5):
 
         scaledResilienceDict = {}
         toScale = []
-        cliques = self.find_cliques()
+        cliques, selected = self.find_cliques()
 
         # Find resilience of subgraphs
         for clique in cliques:
-
             initShortestPath = nx.average_shortest_path_length(clique)
             t0 = 0
             finShortestPathList = []
@@ -445,8 +445,8 @@ class SNA():
 
         # scale resilience measures on a normal scale
         for i in range(len(cliques)):
-            scaledResilienceDict[cliques[i].nodes()[0]] = sp.stats.percentileofscore(toScale,toScale[i])
-
+            #scaledResilienceDict[cliques[i].nodes()[0]] = sp.stats.percentileofscore(toScale,toScale[i])
+            scaledResilienceDict[selected[i]] = sp.stats.percentileofscore(toScale,toScale[i])
         return scaledResilienceDict
 
     # Find clustering coefficient for each nodes
@@ -471,7 +471,8 @@ class SNA():
     def betweenness_centrality(self):
         self.betweenness_centrality_dict = nx.betweenness_centrality(self.G)
     def eigenvector_centrality(self):
-        self.eigenvector_centrality_dict = nx.eigenvector_centrality(self.G)
+        self.eigenvector_centrality_dict = nx.eigenvector_centrality(self.G, max_iter=500, tol=1e-01)
+        #self.eigenvector_centrality_dict = nx.eigenvector_centrality(self.G)
         #self.eigenvector_centrality_dict = nx.eigenvector_centrality_numpy(self.G)
     def katz_centrality(self):
         self.katz_centrality_dict = centrality.katz_centrality(self.G)
