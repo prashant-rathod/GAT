@@ -277,12 +277,12 @@ class SNA():
 
         for centralNode in selected:
             sub_G = nx.DiGraph()
-            self.find_subgraph(G, centralNode, sub_G, 2)
+            self.find_subgraph(G, centralNode, sub_G, 3)
             if len(list(sub_G.nodes())) > 5:
                 cliques.append(sub_G.to_undirected())
         return cliques, selected
 
-    def averagePathRes(self,ta=20,iters=3):
+    def averagePathRes(self,ta=20,iters=5):
 
         scaledResilienceDict = {}
         toScale = []

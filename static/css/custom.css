@@ -610,7 +610,7 @@ h6.block {
 .font-heading {
   font-family: "Segoe UI", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
-/* Jumbotron 
+/* Jumbotron
 ------------------------------------
 */
 
@@ -734,7 +734,7 @@ h6.block {
 .blur-wrapper{
 	visibility:hidden;
 	height:100vh;
-	width:100vw;	
+	width:100vw;
 }
 /* Responsive Handlers: Modals
 ------------------------------------
@@ -974,7 +974,7 @@ h6.block {
   align-content: center;
   padding-top: 0%;
   padding-bottom: 0%;
-  
+
 }
 section.last:before {
   content: '';
