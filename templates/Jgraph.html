@@ -259,6 +259,7 @@
           $("#propInfo").append("<span>No propensities apply to the edge from "+edgeDict['source']+" to "+edgeDict['target']+".</span>")
         }
       }
+      $('[data-toggle="tooltip"]').tooltip();
     </script>
 
     <div class = "output-window" id="infoWindows" style = "position: fixed; bottom: 0; right: 0; border-style: solid">
@@ -294,7 +295,7 @@
           <div id="resilienceInfo">
             {% if systemMeasures.get("Resilience") == None -%}
               <form id="resilienceForm" enctype="multipart/form-data" method="post">
-                <input id="resilience" onclick="handleResilienceClick()" name="resilienceSubmit" type="submit" value="Calculate Resilience" href="javascript:void(0)" data-toggle="tooltip" data-placement="left" title="{{systemMeasures['Description']['Resilience']}}">
+                <input id="resilience" name="resilienceSubmit" type="submit" value="Calculate Resilience" href="javascript:void(0)" data-toggle="tooltip" data-placement="left" title="{{systemMeasures['Description']['Resilience']}}">
               </form>
             {% else -%}
               <table id="resilienceTable">

@@ -255,12 +255,12 @@ class SNA():
         self.average_clustering()
 
     # Make subgraphs from those nodes
-    def find_subgraph(self, centralNode, subGraph, depth):
+    def find_subgraph(self, G, centralNode, subGraph, depth):
         nodeList = [(centralNode, target) for target in G.neighbors(centralNode)]
         subGraph.add_edges_from(nodeList)
         if depth > 0:
-            for ancillary in self.G.neighbors(centralNode):
-                self.find_subgraph(ancillary, subGraph, depth - 1)
+            for ancillary in G.neighbors(centralNode):
+                self.find_subgraph(G, ancillary, subGraph, depth - 1)
 
     def find_cliques(self):
         G = self.G.copy().to_undirected()  # currently need undirected graph to find cliques with centrality method
@@ -277,12 +277,12 @@ class SNA():
 
         for centralNode in selected:
             sub_G = nx.DiGraph()
-            self.find_subgraph(centralNode, sub_G, 2)
+            self.find_subgraph(G, centralNode, sub_G, 2)
             if len(list(sub_G.nodes())) > 5:
                 cliques.append(sub_G.to_undirected())
         return cliques, selected
 
-    def averagePathRes(self,ta=20,iters=5):
+    def averagePathRes(self,ta=20,iters=3):
 
         scaledResilienceDict = {}
         toScale = []

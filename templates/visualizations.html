@@ -434,7 +434,7 @@
 			{% if systemMeasures -%}
 				<h4>System Measures</h4>
 				{% for measure in systemMeasures -%}
-					{% if measure not in ['Description'] -%}
+					{% if measure not in ['Description','Resilience'] -%}
 						<p>
 							{{measure}}: {{systemMeasures[measure]}}
 						</p>
