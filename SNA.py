@@ -8,6 +8,7 @@ import tempfile
 import random
 import numpy as np
 import scipy as sp
+import propensities
 
 class SNA():
     def __init__(self, excel_file, nodeSheet, attrSheet = None):
@@ -149,190 +150,16 @@ class SNA():
 
     def calculatePropensities(self,emo=True,role=True):
         for edge in self.edges: # for every edge, calculate propensities and append as an attribute
-            emoPropList = self.propCalc(edge)[0] if emo else None
+            emoPropList = propensities.propCalc(self,edge)[0] if emo else None
             self.G[edge[0]][edge[1]]['Emotion'] = emoPropList if len(emoPropList)>0 else None
 
-            rolePropList = self.propCalc(edge)[1] if role else None
+            rolePropList = propensities.propCalc(self,edge)[1] if role else None
             self.G[edge[0]][edge[1]]['Role'] = rolePropList if len(rolePropList) > 1 else None
 
-            inflPropList = self.propCalc(edge)[2] if role else None
-            self.G[edge[0]][edge[1]]['Role'] = inflPropList if len(inflPropList) > 1 else None
+            inflPropList = propensities.propCalc(self,edge)[2] if role else None
+            self.G[edge[0]][edge[1]]['Influence'] = inflPropList if len(inflPropList) > 1 else None
 
         self.edges = nx.edges(self.G)
-
-    def propCalc(self, edge):
-        emoProps = []
-        roleProps = []
-        inflProps = []
-        emoAttrSet = ["Belief","Symbol","Agent"]
-        roleAttrSet = ["Belief","Resource"]
-        oppPairs = [
-            ("IDBNATTUR", "IDBNATKUR"),
-            ("IDBNATTUR","IDBPROUSA"),
-            ('ROBMOSSUN', 'ROBMOSSHI'),
-            ('IDBVEL', 'IDBSEC'),
-            ('POBNOT', 'IDBNATIRQ'),
-            ('POBNOT', 'IDBNATKUR'),
-            ('POBNOT', 'IDBNATIRN'),
-            ('IDBNATIRN', 'IDBNATIRQ'),
-            ('ROBANTJEW', 'ROBMOSSHI'),
-            ('TURGOVHOS_ERD', 'TURGOVHOS_ATA'),
-            ('TURGOVHOS_ERD', 'FLGTUR'),
-            ('IRQGOVHOS', 'IRNGOVHOG'),
-            ('TURGOVHOS_ERD', 'IRNGOVHOS_KAM'),
-            ('IDBJHD','IDBPROUSA'),
-            ('IDBANT_IMGMOSISS','IDBJHD'),
-            ('IRQGOV','IMGMOSISS'),
-            ('IRNGOV','IMGMOSISS'),
-            ('POBNATIRQ','POBNATTUR'),
-            ('BELMS', 'BELSHI'),
-            ('BELAMH', 'BELNEO'),
-            ('BELKUR', 'BELNEO'),
-            ('BELAMH', 'BELIRH'),
-            ('BELPIS', 'BELIMS'),
-            ('BELSHI', 'BELSUN'),
-            ('BELUIQ', 'BELKUR'),
-        ]
-        compPairs = [
-            ('IDBPROUSA', 'IDBPROEUR'),
-            ('IDBANTEUR', 'IDBANTUSA'),
-            ('POBNOT', 'IDBNATTUR'),
-            ('FLGKUR', 'TURGOVHOS_ERD'),
-            ('LANKUR', 'FLGTUR'),
-            ('IRQGOVHOG_ABD', 'TURGOVHOS_ERD'),
-            ('TURGOVHOS_ERD', 'IRQKURKRG_HOS'),
-            ('TURGOVHOS_ERD', 'TURGOVSPM_KIL'),
-            ('ROBMOSSUN','IDBJHD'),
-            ('FLGTUR','POBNOT'),
-            ('BELIRH', 'BELUIQ'),
-            ('BELAMH', 'BELPIS'),
-            ('BELAMH', 'BELKUR'),
-            ('BELAMH', 'BELIMS'),
-            ('BELAMH', 'BELUIQ'),
-            ('BELSUN', 'BELNEO'),
-        ]
-        source = self.G.node[edge[0]]
-        target = self.G.node[edge[1]]
-        # Check if role attribute is present; if not, no role propensities calculated
-        roleFlag = True if source.get("Role") is not None and target.get("Role") is not None else False
-        for attr in ( target if len(source) > len(target) else source ):
-            if attr not in ['block','newNode','Name'] and source.get(attr) is not None and target.get(attr) is not None:
-                for src_val in [x for x in source.get(attr) if len(x) > 1]:
-                    for trg_val in [x for x in target.get(attr) if len(x) > 1]:
-                        #####################################
-                        ### Propensity assignment section ###
-                        #####################################
-
-                        ## Emotion & Influence Propensities ##
-
-                        src_w = float(src_val[1]["W"]) if "W" in src_val[1] else None
-                        trg_w = float(trg_val[1]["W"]) if "W" in trg_val[1] else None
-
-                        if src_w is not None and trg_w is not None:
-                            # Cooperative propensities:
-                            if src_val[0] == trg_val[0]:
-                                # Checking to see if each node's attribute weights fall within specified ranges:
-                                if src_w >= 0.6 and trg_w >= 0.6:
-                                    emoProps.append(("Trust",attr,src_val[0],trg_val[0],src_w,trg_w,src_w*trg_w))
-                                    inflProps += [
-                                        ("Reciprocation",attr,src_val[0],trg_val[0],src_w,trg_w,0.8),
-                                        ("Commitment & Consistency", attr, src_val[0], trg_val[0], src_w, trg_w, 0.8),
-                                        ("Social Proof", attr, src_val[0], trg_val[0], src_w, trg_w, 0.8),
-                                        ("Liking", attr, src_val[0], trg_val[0], src_w, trg_w, 0.8),
-                                        ("Authority", attr, src_val[0], trg_val[0], src_w, trg_w, 0.8),
-                                        ("Scarcity", attr, src_val[0], trg_val[0], src_w, trg_w, 0.8),
-                                    ]
-                                else: # all others are joy
-                                    emoProps.append(("Joy", attr, src_val[0], trg_val[0],src_w,trg_w,src_w*trg_w))
-                                    inflProps += [
-                                        ("Reciprocation", attr, src_val[0], trg_val[0], src_w, trg_w, 0.5),
-                                        ("Commitment & Consistency", attr, src_val[0], trg_val[0], src_w, trg_w, 0.5),
-                                        ("Social Proof", attr, src_val[0], trg_val[0], src_w, trg_w, 0.7),
-                                        ("Liking", attr, src_val[0], trg_val[0], src_w, trg_w, 0.8),
-                                        ("Authority", attr, src_val[0], trg_val[0], src_w, trg_w, 0.5),
-                                    ]
-
-                            elif attr in emoAttrSet:
-                                # Competitive propensities
-                                if (src_val[0], trg_val[0]) in compPairs or (trg_val[0],src_val[0]) in compPairs:
-                                # Checking to see if each node's attribute weights fall within specified ranges:
-                                    if src_w < 0.6 and trg_w < 0.6:
-                                        emoProps.append(("Surprise", attr, src_val[0], trg_val[0],src_w,trg_w,src_w*trg_w))
-                                        inflProps += [
-                                            ("Reciprocation", attr, src_val[0], trg_val[0], src_w, trg_w, 0.4),
-                                            ("Commitment & Consistency", attr, src_val[0], trg_val[0], src_w, trg_w,
-                                             0.2),
-                                        ]
-                                    else:
-                                        emoProps.append(("Anticipation", attr, src_val[0], trg_val[0],src_w,trg_w,src_w*trg_w))
-                                        inflProps += [
-                                            ("Reciprocation", attr, src_val[0], trg_val[0], src_w, trg_w, 0.5),
-                                            ("Commitment & Consistency", attr, src_val[0], trg_val[0], src_w, trg_w, 0.8),
-                                            ("Social Proof", attr, src_val[0], trg_val[0], src_w, trg_w, 0.5),
-                                            ("Liking", attr, src_val[0], trg_val[0], src_w, trg_w, 0.5),
-                                            ("Authority", attr, src_val[0], trg_val[0], src_w, trg_w, 0.7),
-                                            ("Scarcity", attr, src_val[0], trg_val[0], src_w, trg_w, 0.8),
-                                        ]
-
-                                # Coercive propensities:
-                                elif (src_val[0], trg_val[0]) in oppPairs or (trg_val[0],src_val[0]) in oppPairs:
-                                    # Checking to see if each node's attribute weights fall within specified ranges:
-                                    if (src_w >= 0.8 and trg_w >= 0.6) or (src_w >= 0.6 and trg_w >= 0.6):
-                                        emoProps.append(("Anger", attr, src_val[0], trg_val[0],src_w,trg_w,src_w*trg_w))
-                                        inflProps += [
-                                            ("Reciprocation", attr, src_val[0], trg_val[0], src_w, trg_w, 0.2),
-                                            ("Commitment & Consistency", attr, src_val[0], trg_val[0], src_w, trg_w,
-                                             0.2),
-                                            ("Social Proof", attr, src_val[0], trg_val[0], src_w, trg_w, 0.2),
-                                            ("Liking", attr, src_val[0], trg_val[0], src_w, trg_w, 0.2),
-                                            ("Authority", attr, src_val[0], trg_val[0], src_w, trg_w, 0.2),
-                                            ("Scarcity", attr, src_val[0], trg_val[0], src_w, trg_w, 0.5),
-                                        ]
-                                    elif (src_w >= 0.6 and trg_w >= 0.4) or (src_w >= 0.4 and trg_w >= 0.6):
-                                        emoProps.append(("Sadness", attr, src_val[0], trg_val[0],src_w,trg_w,src_w*trg_w))
-                                        inflProps += [
-                                            ("Social Proof", attr, src_val[0], trg_val[0], src_w, trg_w, 0.2),
-                                            ("Liking", attr, src_val[0], trg_val[0], src_w, trg_w, 0.2),
-                                            ("Authority", attr, src_val[0], trg_val[0], src_w, trg_w, 0.5),
-                                        ]
-                                    elif (src_w >= 0.4 and trg_w >= 0.2) or (src_w >= 0.2 and trg_w >= 0.4):
-                                        emoProps.append(("Fear", attr, src_val[0], trg_val[0],src_w,trg_w,src_w*trg_w))
-                                        inflProps += [
-                                            ("Reciprocation", attr, src_val[0], trg_val[0], src_w, trg_w, 0.8),
-                                            ("Commitment & Consistency", attr, src_val[0], trg_val[0], src_w, trg_w,
-                                             0.8),
-                                            ("Social Proof", attr, src_val[0], trg_val[0], src_w, trg_w, 0.8),
-                                            ("Liking", attr, src_val[0], trg_val[0], src_w, trg_w, 0.2),
-                                            ("Authority", attr, src_val[0], trg_val[0], src_w, trg_w, 0.8),
-                                            ("Scarcity", attr, src_val[0], trg_val[0], src_w, trg_w, 0.5),
-                                        ]
-                                    elif (src_w >= 0.8 and trg_w >= 0.2) or (src_w >= 0.2 and trg_w >= 0.8):
-                                        emoProps.append(("Disgust", attr, src_val[0], trg_val[0],src_w,trg_w,src_w*trg_w))
-                                        inflProps += [
-                                            ("Reciprocation", attr, src_val[0], trg_val[0], src_w, trg_w, 0.2),
-                                            ("Commitment & Consistency", attr, src_val[0], trg_val[0], src_w, trg_w, 0.2),
-                                            ("Social Proof", attr, src_val[0], trg_val[0], src_w, trg_w, 0.2),
-                                            ("Liking", attr, src_val[0], trg_val[0], src_w, trg_w, 0.2),
-                                            ("Authority", attr, src_val[0], trg_val[0], src_w, trg_w, 0.2),
-                                            ("Scarcity", attr, src_val[0], trg_val[0], src_w, trg_w, 0.4),
-                                        ]
-
-                        ## Role Propensities ##
-
-                        # Still need to add conditional opposites, like in emotion
-
-                        src_amt = float(src_val[1]["AMT"]) if attr == "Resource" and "AMT" in src_val[1] else None
-                        trg_amt = float(trg_val[1]["AMT"]) if attr == "Resource" and "AMT" in trg_val[1] else None
-                        if roleFlag and attr in roleAttrSet:
-                            if src_val[0] == trg_val[0]:
-                                roleProps.append(["Consumer or Provider",.5] if attr == "Resource" else None)
-                                # print("Appended Cons. or Prov. using attribute", attr, "(", src_val, "&", trg_val, ")",
-                                #       "for node pair (", source, ",", target, ")")
-                                roleProps.append(["Protector",.75] if attr == "Belief" else None)
-                                # print("Appended Protector using attribute", attr, "(", src_val, "&", trg_val, ")",
-                                #       "for node pair (", source, ",", target, ")")
-
-        return emoProps, roleProps, inflProps
 
     # copy the origin social network graph created with user input data.
     # this will be later used to reset the modified graph to inital state
@@ -427,6 +254,14 @@ class SNA():
         self.node_connectivity()
         self.average_clustering()
 
+    # Make subgraphs from those nodes
+    def find_subgraph(self, centralNode, subGraph, depth):
+        nodeList = [(centralNode, target) for target in G.neighbors(centralNode)]
+        subGraph.add_edges_from(nodeList)
+        if depth > 0:
+            for ancillary in self.G.neighbors(centralNode):
+                self.find_subgraph(ancillary, subGraph, depth - 1)
+
     def find_cliques(self):
         G = self.G.copy().to_undirected()  # currently need undirected graph to find cliques with centrality method
         cliques = []
@@ -439,17 +274,10 @@ class SNA():
                     "BEL" in key]  # used z-score for top 20th percentile, temporary change to only show beliefs
 
         # TODO change back line above to "if val > 1.3" instead of "if 'BEL' in key"
-        # Make subgraphs from those nodes
-        def find_subgraph(centralNode, subGraph, depth):
-            nodeList = [(centralNode, target) for target in G.neighbors(centralNode)]
-            sub_G.add_edges_from(nodeList)
-            if depth > 0:
-                for ancillary in G.neighbors(centralNode):
-                    find_subgraph(ancillary, subGraph, depth - 1)
 
         for centralNode in selected:
             sub_G = nx.DiGraph()
-            find_subgraph(centralNode, sub_G, 2)
+            self.find_subgraph(centralNode, sub_G, 2)
             if len(list(sub_G.nodes())) > 5:
                 cliques.append(sub_G.to_undirected())
         return cliques, selected

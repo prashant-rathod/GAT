@@ -19,6 +19,7 @@
 		<script type="text/javascript" src="../static/js/jquery-1.11.1.min.js"></script>
 		<script type="text/javascript" src="../static/js/bootstrap.min.js"></script>
 		<script type="text/javascript" src="../static/js/custom.frontend.js"></script>
+		<script type="text/javascript" src="../static/js/vizScript.js"></script>
   	<script type="text/javascript">
 	  function get(id) {
 			return document.getElementById(id);
@@ -196,21 +197,20 @@
 	</div>
 <!--<div class="bodywrapper">-->
 	{% if research_question %}
-	<div class = "output-window resize-drag-outer" id = "GSA Visualization Window" style = "width: 50%; heigth: 50%">
+	<div class = "output-window resize-drag-outer" id = "Scraped Text Window" style = "width: 50%; heigth: 50%">
 
 		<div class = "output-button-bar resize-drag">
-			<button class="btn-hide"
-			onclick="document.getElementById('GSA Visualization').style.display='none'">hide</button>
+			<span class="left-span">
+				<i class="btn btn-close fa fa-window-close-o"
+				onclick="document.getElementById('Scraped Text').style.display='none'"></i>
 
-			<button class="btn-show"
-			onclick="document.getElementById('GSA Visualization').style.display='inline-block'">show</button>
-
-			<button class="btn-close"
-			onclick="document.getElementById('GSA Visualization Window').style.display='none'">close</button>
+				<i class="btn btn-hide fa fa-window-minimize"
+				onclick="handleWindowResizeClick('Scraped Text',this)"></i>
+			</span>
+			<span class="right-span"><b>Scraped Text</b></span>
 		</div>
 
-		<div class = "output" id = "GSA Visualization">
-		<h3><center>Scraped Text</center></h3>
+		<div class = "output" id = "Scraped Text">
 			<br>
 			<!--Research question: {{ research_question }}-->
 			<div style="text-align:center"><b>{{ research_question[0] }}</b>
@@ -234,18 +234,17 @@
 	<div class = "output-window resize-drag-outer" id = "GSA Visualization Window" style = "width: 50%; heigth: 50%">
 
 		<div class = "output-button-bar resize-drag">
-			<button class="btn-hide"
-			onclick="document.getElementById('GSA Visualization').style.display='none'">hide</button>
+			<span class="left-span">
+				<i class="btn btn-close fa fa-window-close-o"
+				onclick="document.getElementById('GSA Visualization').style.display='none'"></i>
 
-			<button class="btn-show"
-			onclick="document.getElementById('GSA Visualization').style.display='inline-block'">show</button>
-
-			<button class="btn-close"
-			onclick="document.getElementById('GSA Visualization Window').style.display='none'">close</button>
+				<i class="btn btn-hide fa fa-window-minimize"
+				onclick="handleWindowResizeClick('GSA Visualization',this)"></i>
+			</span>
+			<span class="right-span"><b>GSA Visualization</b></span>
 		</div>
 
 		<div class = "output" id = "GSA Visualization">
-		<h3><center>GSA Visualization</center></h3>
 
 		{% if GSA_sample %}
 			<a href="{{url_for('reg', case_num = case_num)}}">Click here for regionalization visualization</a>
@@ -261,18 +260,17 @@
 	<div class = "output-window resize-drag-outer" id = "GSA Data Window">
 
 		<div class = "output-button-bar resize-drag">
-			<button class="btn-hide"
-			onclick="document.getElementById('GSA Data').style.display='none'">hide</button>
+			<span class="left-span">
+				<i class="btn btn-close fa fa-window-close-o"
+				onclick="document.getElementById('GSA Data').style.display='none'"></i>
 
-			<button class="btn-show"
-			onclick="document.getElementById('GSA Data').style.display='inline-block'">show</button>
-
-			<button class="btn-close"
-			onclick="document.getElementById('GSA Data Window').style.display='none'">close</button>
+				<i class="btn btn-hide fa fa-window-minimize"
+				onclick="handleWindowResizeClick('GSA Data',this)"></i>
+			</span>
+			<span class="right-span"><b>GSA Data</b></span>
 		</div>
 
 		<div class = "output" id = "GSA Data">
-		<h3><center>GSA Data</center></h3>
 
 		{% if GSA_sample %}
 			<p id="gsa_year" style="font-weight:bold;">Autocorrelation Statistics:</p>
@@ -301,14 +299,14 @@
 	<div class = "output-window resize-drag-outer" id = "NLP Visualization Window">
 
 		<div class = "output-button-bar resize-drag">
-			<button class="btn-hide"
-			onclick="document.getElementById('NLP Visualization').style.display='none'">hide</button>
+			<span class="left-span">
+				<i class="btn btn-close fa fa-window-close-o"
+				onclick="document.getElementById('NLP Visualization').style.display='none'"></i>
 
-			<button class="btn-show"
-			onclick="document.getElementById('NLP Visualization').style.display='inline-block'">show</button>
-
-			<button class="btn-close"
-			onclick="document.getElementById('NLP Visualization Window').style.display='none'">close</button>
+				<i class="btn btn-hide fa fa-window-minimize"
+				onclick="handleWindowResizeClick('NLP Visualization',this)"></i>
+			</span>
+			<span class="right-span"><b>NLP Visualization</b></span>
 		</div>
 
 		<div class = "output" id = "NLP Visualization" >
@@ -395,25 +393,25 @@
 
 	{% if graph %}
 	<div class = "output-window resize-drag-outer" id = "SNA Visualization Window">
-
 		<div class = "output-button-bar resize-drag">
-			<button class="btn-hide"
-			onclick="document.getElementById('SNA Visualization').style.display='none'">hide</button>
+			<span class="left-span">
+				<i class="btn btn-close fa fa-window-close-o"
+				onclick="document.getElementById('SNA Visualization').style.display='none'"></i>
 
-			<button class="btn-show"
-			onclick="document.getElementById('SNA Visualization').style.display='inline-block'">show</button>
-
-			<button class="btn-close"
-			onclick="document.getElementById('SNA Visualization Window').style.display='none'">close</button>
+				<i class="btn btn-hide fa fa-window-minimize"
+				onclick="handleWindowResizeClick('SNA Visualization',this)"></i>
+			</span>
+			<span class="right-span"><b>SNA Visualization</b></span>
 		</div>
 
 		<div class = "output" id = "SNA Visualization">
-		<h3><center>SNA Visualization</center></h3>
-
-
 			{% if jgdata %}
 				<!-- Apparently target="_blank" is a security hazard -->
-				<p><a href="{{ url_for('jgvis', case_num=case_num) }}">Click here for SNA visualization</a></p>
+				<p><a href="{{ url_for('jgvis', case_num=case_num) }}" style="color:white">Click here for 3D visualization</a></p>
+				{% if SNAbpPlot -%}
+					<p>2D Visualization:</p>
+					<image src="{{url_for('static', filename='temp/')}}{{ SNAbpPlot }}"></image>
+				{% endif -%}
 			{% endif %}
 
 		</div>
@@ -422,23 +420,18 @@
 	<div class = "output-window resize-drag-outer" id = "SNA Data Window">
 
 		<div class = "output-button-bar resize-drag">
-			<button class="btn-hide"
-			onclick="document.getElementById('SNA Data').style.display='none'">hide</button>
+			<span class="left-span">
+				<i class="btn btn-close fa fa-window-close-o"
+				onclick="document.getElementById('SNA Data').style.display='none'"></i>
 
-			<button class="btn-show"
-			onclick="document.getElementById('SNA Data').style.display='inline-block'">show</button>
-
-			<button class="btn-close"
-			onclick="document.getElementById('SNA Data Window').style.display='none'">close</button>
+				<i class="btn btn-hide fa fa-window-minimize"
+				onclick="handleWindowResizeClick('SNA Data',this)"></i>
+			</span>
+			<span class="right-span"><b>SNA Data</b></span>
 		</div>
 
 		<div class = "output" id = "SNA Data">
-		<h3><center>SNA Data</center></h3>
-			{% if SNAbpPlot -%}
-				<p>2D Visualization:</p>
-				<image src="{{url_for('static', filename='temp/')}}{{ SNAbpPlot }}"></image>
-			{% endif -%}
-
+			{{systemMeasures}}
 		</div>
 	</div>
 	{% endif %}
@@ -502,7 +495,8 @@
        <div class="modal-content table-block" style="background: rgba(187, 222, 251, .0); border: 0px; background-repeat: no-repeat; background-position: 50% 90%; background-size: 40%;">
 
 			<div style="margin-right: 27px;">
-				<button type="button" class="btn btn-danger btn-sm pull-right" data-dismiss="modal"><i class="fa fa-times-circle fa-2x" aria-hidden="true" style="z-index:1000;"></i>
+				<button type="button" class="btn btn-danger btn-sm pull-right" data-dismiss="modal">
+					<i class="fa fa-times-circle fa-2x" aria-hidden="true" style="z-index:1000;"></i>
 				</button>
 			</div>
 			<br>

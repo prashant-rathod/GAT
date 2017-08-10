@@ -437,7 +437,8 @@ def visualize(case_num):
         nlp_entities = nlp_entities,
         #nlp_network = nlp_network,
         nlp_sources =  nlp_sources,
-        nlp_tropes = nlp_tropes
+        nlp_tropes = nlp_tropes,
+        systemMeasures = systemMeasures,
         )
 
 @application.route('/help/<int:case_num>', methods = ['GET', 'POST'])

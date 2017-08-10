@@ -249,7 +249,7 @@
           if (key != "source" && key != "target" && key != "name") {
             if (edgeDict[key] != null) {
               console.log(key, edgeDict[key])
-              $("#propInfo").append("<span id='"+key+"'>"+key+": "+edgeDict[key][0][0]+" (shared attribute {"+edgeDict[key][0][1]+": "+edgeDict[key][0][2]+"})</span><br>")
+              $("#propInfo").append("<span id='"+key+"'>"+key+": "+edgeDict[key][0][0]+" (resulting from attribute {"+edgeDict[key][0][1]+": "+edgeDict[key][0][2]+"})</span><br>")
               empty = false
             }
           }
