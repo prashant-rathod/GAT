@@ -431,7 +431,52 @@
 		</div>
 
 		<div class = "output" id = "SNA Data">
-			{{systemMeasures}}
+			{% if systemMeasures -%}
+				<h4>System Measures</h4>
+				{% for measure in systemMeasures -%}
+					{% if measure not in ['Description'] -%}
+						<p>
+							{{measure}}: {{systemMeasures[measure]}}
+						</p>
+					{% endif -%}
+				{% endfor -%}
+			{% endif -%}
+
+			<div id="resilienceInfo">
+				{% if systemMeasures.get("Resilience") == None -%}
+					<form id="resilienceForm" enctype="multipart/form-data" method="post">
+						<input id="resilience" onclick="handleResilienceClick()" name="resilienceSubmit" type="submit" value="Calculate Resilience" href="javascript:void(0)" data-toggle="tooltip" data-placement="left" title="{{systemMeasures['Description']['Resilience']}}">
+					</form>
+				{% else -%}
+					<table id="resilienceTable">
+						<tr>
+							<th style="text-align:center" colspan="2">
+							 <i class="fa fa-info-circle white-tooltip" data-toggle="tooltip" data-placement="top" title="{{systemMeasures['Description']['Resilience']}}"></i> Resilience
+							</th>
+						</tr>
+						<tr>
+							<th>
+							 Cliques
+							</th>
+							<th>
+								Percentile
+							</th>
+						</tr>
+					{% for cluster in systemMeasures['Resilience'] -%}
+						<tr>
+							<td class="node">
+								{{ cluster }}
+							</td>
+							<td>
+								{{ systemMeasures['Resilience'][cluster][0] }}
+								<div class="colorCode" style="background-color:rgb({{systemMeasures['Resilience'][cluster][1]}}%,0%,{{systemMeasures['Resilience'][cluster][2]}}%)"></div>
+							</td>
+						</tr>
+					{% endfor -%}
+					</table>
+				{% endif -%}
+		</div>
+
 		</div>
 	</div>
 	{% endif %}

@@ -130,7 +130,7 @@ a:hover {
 }
 
 i.btn {
-  color: rgba(38,50,56,1);
+  color: white;
   cursor: pointer;
   -webkit-transition-duration: 0.4s; /* Safari */
   transition-duration: 0.4s;
@@ -193,8 +193,7 @@ label.range {
   overflow: hidden;
 }
 input {
-  position: absolute;
-  opacity: 0;
+  opacity: 1;
   z-index: -1;
 }
 label {
