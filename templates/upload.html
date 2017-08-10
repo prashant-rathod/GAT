@@ -15,6 +15,11 @@
    <link class="main-stylesheet" href="../static/css/floatsocial.css" rel="stylesheet" type="text/css" />
    <link class="main-stylesheet" href="../static/css/lucas-css.css" rel="stylesheet" type="text/css" />
 <style>
+body.modal-open .blur {
+    -webkit-filter: blur(20px);
+    -moz-filter: blur(20px);
+    filter: blur(20px);
+}
 .box_button {
   position: relative;
   display: inline-block;
@@ -131,7 +136,8 @@
 </head>
 <body class="pace-dark">
 <!-- BEGIN JUMBOTRON -->
-<section class="jumbotron last z-index-10" data-pages="parallax" style="height:100%">
+<section class="jumbotron z-index-10" data-pages="parallax" style="height:100%;width:100">
+    <section class='blur'>
     <div class="container-xs-height full-height inner" align='center'>
         <div class="col-xs-height col-middle text-center" align='center'>
         <!-- START CONTENT -->
@@ -149,7 +155,7 @@
 				<br/>
 				<!-- Search Bar -->
 				<div class="row text-centered">
-					<input type="text" name="search" id="search" placeholder="URL to scrape...">
+					<form id="smartsearch" enctype="multipart/form-data" method="post"><input type="text" name="smartsearch" id="search" placeholder="URL to scrape..."></form>
 				</div>
 				<div class="row">
 					<div class="col-md-3"></div>
@@ -173,6 +179,7 @@
 	   		</div>
 		</div>
     </div>
+  </section>
 </section>
 <!-- START FOOTER -->
     <section class="z-index-1 pull-bottom-fixed full-width" data-pages="reveal-footer">
@@ -239,7 +246,6 @@
 <div class="modal fade slide-right" id="nlp_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	<div class="modal-dialog modal-lg">
 		<div class="modal-content-wrapper">
-        	<div class="background"></div>
 			<div class="modal-content table-block" style="background: rgba(187, 222, 251, .0); border: 0px; background-repeat: no-repeat; background-position: 50% 90%; background-size: 40%;">
 
 				<div style="margin-right: 27px;">
@@ -256,7 +262,6 @@
 						<h4 class="panel-title">Sample Cases</h4>
 					</div>
 					<div class="panel-body">
-						<a href="{{url_for('sample', sample_path = 'NLP/isil', case_num=case_num)}}">Run ISIL case</a><br>
             <a href="{{url_for('sample', sample_path = 'NLP/united-states', case_num=case_num)}}">Capturing Mosul</a>
 					</div>
 				</div>
@@ -266,14 +271,16 @@
 						<h4 class="panel-title">Data Input</h4>
 					</div>
 					<div class="panel-body">
+            <form id="NLP" enctype="multipart/form-data" method="post">
 						Upload text files (.txt, .rtf):<br>
-						<p style = "font-size:10px">(Use Ctrl- or Shift-click to select multiple files)</p>
-						<input type = "file" id = "NLP_Input_corpus" name = "NLP_Input_corpus" multiple>
-						<hr>
-						Enter urls to scrape (comma separated):<br>
-						<input type = "text" id = "NLP_LDP_terms" name = "NLP_LDP_terms">
-						<hr>
-						<input type = "submit" value = "SUBMIT">
+  						<p style = "font-size:10px">(Use Ctrl- or Shift-click to select multiple files)</p>
+  						<input type = "file" id = "NLP_Input_corpus" name = "NLP_Input_corpus" multiple>
+  						<hr>
+  						Enter urls to scrape (comma separated):<br>
+  						<input type = "text" id = "NLP_LDP_terms" name = "NLP_LDP_terms">
+  						<hr>
+  						<input type = "submit" name = "submit" value = "SUBMIT" href="javascript:void(0)" >
+            </form>
 					</div>
 				</div>
 			</div>
@@ -287,7 +294,6 @@
 <div class="modal fade slide-right" id="sna_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 <div class="modal-dialog modal-lg">
     <div class="modal-content-wrapper">
-    <div class="background"></div>
        <div class="modal-content table-block" style="background: rgba(187, 222, 251, .0); border: 0px; background-repeat: no-repeat; background-position: 50% 90%; background-size: 40%;">
 
 			<div style="margin-right: 27px;">
@@ -305,7 +311,7 @@
 						<!--<a href="{{url_for('sample', sample_path = 'SNA/iran.xlsx', case_num=case_num)}}">Run Iran Political Elite case</a><br>-->
 						<!--<a href="{{url_for('sample', sample_path = 'SNA/AAH_for_SNA.xlsx', case_num=case_num)}}">Run AAH case</a><br>-->
 						<!--<a href="{{url_for('sample', sample_path = 'SNA/roleTheorySample.xlsx', case_num=case_num)}}">Run Role Theory case</a><br>-->
-                        <a href="{{url_for('sample', sample_path = 'SNA/CapturingMosulCase.xlsx', case_num=case_num)}}">Capturing Mosul</a><br>
+            <a href="{{url_for('sample', sample_path = 'SNA/CapturingMosulCase.xlsx', case_num=case_num)}}">Capturing Mosul</a><br>
 						<!--<a href="{{url_for('sample', sample_path = 'SNA/BT_CaseStudy.xlsx', case_num=case_num)}}">Run BT case</a><br>-->
 					</div>
 				</div>
@@ -314,12 +320,14 @@
 						<h4 class="panel-title">Data Input</a></h4>
 					</div>
 					<div class="panel-body">
-						<span class="inputsection">
-							<br>
-							Upload .xlsx file for SNA:<br>
-							<input type = "file" id = "SNA_Input" name = "SNA_Input" size = 20 value="a"><br>
-							<input type = "submit" value = "SUBMIT">
-						</span>
+            <form id="SNA" enctype="multipart/form-data" method="post">
+  						<span class="inputsection">
+  							<br>
+  							Upload .xlsx file for SNA:<br>
+  							<input type = "file" id = "SNA_Input" name = "SNA_Input" size = 20 value="a"><br>
+  							<input type = "submit" name = "submit" value = "SUBMIT" href="javascript:void(0)" >
+  						</span>
+            </form>
 					</div>
 				</div>
             </div>
@@ -334,7 +342,6 @@
 <div class="modal fade slide-right" id="gsa_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 <div class="modal-dialog modal-lg">
     <div class="modal-content-wrapper">
-    <div class="background"></div>
         <div class="modal-content table-block" style="background: rgba(187, 222, 251, .0); border: 0px; background-repeat: no-repeat; background-position: 50% 90%; background-size: 40%;">
 
 			<div style="margin-right: 27px;">
@@ -359,11 +366,13 @@
 						<h4 class="panel-title">Data Input</h4>
 					</div>
 					<div class="panel-body">
-						Upload .csv file for GSA:<br>
-						<input type = "file" id = "GSA_Input_CSV" name = "GSA_Input_CSV" size = 20><br>
-						Upload 3 files (.shp, .shx, .dfb) for GSA:<br>
-						<input type = "file" id = "GSA_Input_map" name = "GSA_Input_map" size = 20 multiple><br>
-						<input type = "submit" value = "SUBMIT">
+            <form id="GSA" enctype="multipart/form-data" method="post">
+  						Upload .csv file for GSA:<br>
+  						<input type = "file" id = "GSA_Input_CSV" name = "GSA_Input_CSV" size = 20><br>
+  						Upload 3 files (.shp, .shx, .dfb) for GSA:<br>
+  						<input type = "file" id = "GSA_Input_map" name = "GSA_Input_map" size = 20 multiple><br>
+  						<input type = "submit" value = "SUBMIT">
+            </form>
 					</div>
 				</div>
             </div>

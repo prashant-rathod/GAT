@@ -9,60 +9,78 @@ textarea {
     margin: 0px 20px;
 
 }
-
 body {
     height: 100%;
     margin: 0;
     background-repeat: no-repeat;
     font-family: Segoe UI;
-    background: url("../landing_background.svg") no-repeat center center fixed; 
+    background: url("../landing_background.svg") no-repeat center center fixed;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
     background-size: cover;
-
 }
 .wrapperul{
 	width:100%;
 	position: auto;
 }
 ul {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-    overflow: visible;
-    background-color: rgba(69,90,100,.8);
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: visible;
+  background-color: rgba(69,90,100,.8);
 	border-radius: 5px;
-	text-align: center;
+	text-align: left;
 	width: 60;
+  height: 75px;
 	align-self:center;
 }
 
 li b, .dropdown-img {
   height: 100%;
   padding: 20px;
-  width: auto;
 }
 
 li a, .dropbtn {
     display: inline-block;
-    color: white; 
+    color: white;
     text-align: center;
-    padding: 14px 16px;
+    padding: 0px 16px;
     text-decoration: none;
 }
 
-li a:hover, .dropdown:hover .dropbtn {
-    background-color: rgba(69,90,100,1);
+.dropdown:hover {
+    background-color: #2B68A0;
+    cursor: pointer;
 }
 
 .dropdown {
     font-family: "Segoe UI";
     display: inline-block;
-    color: white; 
+    color: white;
     text-align: center;
     padding: 14px 16px;
+    /*width: 16px;
+    height: 14px;*/
     text-decoration: none;
+    z-index: 2;
+}
+.dropdown-content {
+  color: #2B68A0;
+}
+
+div.align-right {
+  float: right;
+  padding-top: 25px;
+  padding-right: 25px;
+}
+.dropdown.align-right {
+  padding: 5px 5px
+}
+.dropdown.align-right:hover {
+  padding: 5px 5px;
+  background-color: inherit;
 }
 
 .wrapper{
@@ -84,14 +102,15 @@ li a:hover, .dropdown:hover .dropbtn {
     text-align: left;
 }
 
-.dropdown-content a:hover {
-    background-color: #f1f1f1;
-    cursor: pointer;
+.dropdown a:hover {
+    text-decoration: none;
+    color: inherit
 }
 
 .dropdown:hover .dropdown-content {
     display: block;
 }
+
 
 .output-button-bar {
     background-color: rgba(69,90,100,1);
@@ -102,14 +121,14 @@ li a:hover, .dropdown:hover .dropbtn {
 }
 
 .btn-hide {
+    background-color: #2B68A0;
     cursor: pointer;
     padding:5px 15px;
     border: none;
     border-radius: 15px;
-    background-color: rgba(39,106,139,.8);
-	margin-bottom:5px;
-	margin-top:5px;
-	margin-left:5px;
+	  margin-bottom:5px;
+	  margin-top:5px;
+	  margin-left:5px;
     text-align: center;
     display: block;
     vertical-align: top;
@@ -117,36 +136,38 @@ li a:hover, .dropdown:hover .dropbtn {
     transition-duration: 0.4s;
 }
 .btn-hide:hover {
-    background-color: rgb(38,50,56);
-    color: white;
+  background-color: rgb(38,50,56);
+  color: white;
+  cursor: pointer;
 }
 
 .btn-show {
-    cursor: pointer;
-    padding:5px 15px;
-    border: none;
+  background-color: #2B68A0;
+  cursor: pointer;
+  padding:5px 15px;
+  border: none;
 	border-radius: 15px;
-    background-color: rgba(39,106,139,.8);
 	margin-bottom:5px;
 	margin-top:5px;
-    color: white;
-    text-align: center;
-    display: block;
-    vertical-align: top;
-    -webkit-transition-duration: 0.4s; /* Safari */
-    transition-duration: 0.4s;
+  color: white;
+  text-align: center;
+  display: block;
+  vertical-align: top;
+  -webkit-transition-duration: 0.4s; /* Safari */
+  transition-duration: 0.4s;
 }
 .btn-show:hover {
     background-color: rgb(38,50,56);
     color: white;
+    cursor: pointer;
 }
 
 .btn-close {
+  background-color: #2B68A0;
     cursor: pointer;
     padding:5px 15px;
 	border: none;
     border-radius: 15px;
-    background-color: rgba(39,106,139,.8);
     margin-bottom:5px;
 	margin-top:5px;
     color: white;
@@ -159,6 +180,7 @@ li a:hover, .dropdown:hover .dropbtn {
 .btn-close:hover {
     background-color: rgba(38,50,56,1);
     color: white;
+    cursor: pointer;
 }
 
 .output-window {
@@ -274,7 +296,7 @@ input[type=radio]:checked + label::after {
     transform: rotateX(180deg);
 }
 
-th { 
+th {
     border: medium;
     text-align: left;
 }
@@ -283,4 +305,22 @@ tr {
     align-content: left;
     border: medium;
 }
-
+a img {
+  width: 100%;
+}
+.contains-image {
+  width: 8%
+}
+.contains-image:hover {
+  background-color: transparent;
+}
+body.modal-open .blur {
+    -webkit-filter: blur(20px);
+    -moz-filter: blur(20px);
+    filter: blur(20px);
+}
+body.modal-open:before {
+  -webkit-filter: blur(20px);
+  -moz-filter: blur(20px);
+  filter: blur(20px);
+}

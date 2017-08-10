@@ -3,19 +3,22 @@
 <head>
 	<title>Analysis output</title>
 	<meta charset="utf-8"/>
-    <link href="{{url_for('static', filename='css/vizStyle.css')}}" rel="stylesheet">
+		<link href="{{url_for('static', filename='css/vizStyle.css')}}" rel="stylesheet">
     <link href="../static/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
    	<link href="../static/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
    	<link class="main-stylesheet" href="../static/css/floatsocial.css" rel="stylesheet" type="text/css" />
     <link class="main-stylesheet" href="../static/css/custom.css" rel="stylesheet" type="text/css" />
-    <link class="main-stylesheet" href="../static/css/custom.css" rel="stylesheet" type="text/css" />
+    <link href="../static/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
   	<script src="http://kartograph.org/js/jquery.min.js"></script>
   	<script src="http://kartograph.org/js/raphael.min.js"></script>
   	<script src="http://kartograph.org/js/kartograph.min.js"></script>
   	<script src="https://d3js.org/d3.v4.min.js"></script>
-	<script src="http://code.interactjs.io/v1.2.9/interact.min.js"></script>
-	<script src="{{url_for('static', filename='js/jquery-1.11.1.min.js')}}"></script>
-	<script src="https://kryogenix.org/code/browser/sorttable/sorttable.js"></script>
+		<script src="http://code.interactjs.io/v1.2.9/interact.min.js"></script>
+		<script src="{{url_for('static', filename='js/jquery-1.11.1.min.js')}}"></script>
+		<script src="https://kryogenix.org/code/browser/sorttable/sorttable.js"></script>
+		<script type="text/javascript" src="../static/js/jquery-1.11.1.min.js"></script>
+		<script type="text/javascript" src="../static/js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="../static/js/custom.frontend.js"></script>
   	<script type="text/javascript">
 	  function get(id) {
 			return document.getElementById(id);
@@ -140,7 +143,6 @@
 			$('#sna_modal').modal('hide');
 			$('#gsa_modal').modal('show');
 		}
-
 		function openurl(link){
 				window.open(link);
 			}
@@ -150,39 +152,22 @@
 
 
 <body class="resize-container">
+	<section class="blur">
 	<!-- dropdown menu
 		The buttons will have to become buttons, indeed-->
    <div class="wrapperul" align="center">
 	<ul>
-		<li class="dropdown">
-			<a href="{{url_for('upload', case_num = case_num)}}">Home</a>
+		<li class="dropdown contains-image">
+			<a href="{{url_for('upload', case_num = case_num)}}"><img  src="{{url_for('static', filename='GATLogo.svg')}}" alt="hermes logo"></a>
 		</li>
-		<li class="dropdown">
-			<a href="#" class="dropbtn" style = "color:grey;">Cases</a>
-			<div class="dropdown-content">
-			</div>
+		<li class="dropdown" onclick="show1()">
+			<a href="#" class="dropbtn">NLP</a>
 		</li>
-		<li class="dropdown">
-			<a href="#" class="dropbtn" style = "color:grey;">GSA</a>
-			<div class="dropdown-content">
-			</div>
+		<li class="dropdown" onclick="show2()">
+			<a href="#" class="dropbtn">SNA</a>
 		</li>
-		<li class="dropdown">
-			<a href="#" class="dropbtn" style = "color:grey;">SNA</a>
-			<div class="dropdown-content">
-			</div>
-		</li>
-		<li class="dropdown">
-			<a href="#" class="dropbtn" style = "color:grey;">NLP</a>
-			<div class="dropdown-content">
-			</div>
-		</li>
-		<li class="dropdown">
-			<a href="#" class="dropbtn" style = "color:grey;">Stats</a>
-			<div class="dropdown-content">
-				<!--a href="#">Summary statistics for...</a>
-				<a href="#">Export ... as csv</a-->
-			</div>
+		<li class="dropdown" onclick="show3()">
+			<a href="#" class="dropbtn">GSA</a>
 		</li>
 		<li class="dropdown">
 			<a href="#" class="dropbtn">View</a>
@@ -195,13 +180,13 @@
 				<a onclick="document.getElementById('SNA Data Window').style.display='inline-block'">SNA Data</a>
 			</div>
 		</li>
-		<li class="dropdown">
-			<a href="#" class="dropbtn">Help</a>
-			<div class="dropdown-content">
-				<a href="#" onClick="openHelp(this)">GSA Output Help</a>
-				<a href="{{url_for('help', case_num = case_num)}}">Help Page</a>
-			</div>
-		</li>
+			<li class="dropdown align-right">
+				<a href="#" class="dropbtn"><i class="fa fa-question-circle fa-lg"></i></a>
+				<div class="dropdown-content">
+					<a href="#" onClick="openHelp(this)">GSA Output Help</a>
+					<a href="{{url_for('help', case_num = case_num)}}">Help Page</a>
+				</div>
+			</li>
 	</ul>
 	</div>
 	<div id = "help" style = "display: none;">
@@ -211,18 +196,36 @@
 	</div>
 <!--<div class="bodywrapper">-->
 	{% if research_question %}
-	<br>
-	<!--Research question: {{ research_question }}-->
-	<div style="text-align:center"><b>{{ research_question[0] }}</b>
-	<br>
-	Authors: {{research_question[1]}}
-	<br>
-	Published {{research_question[2]}}
-	</div><br>
-	<br>
-	<p style="line-height:30px">{{research_question[3]}}</p>
-	<br>
+	<div class = "output-window resize-drag-outer" id = "GSA Visualization Window" style = "width: 50%; heigth: 50%">
+
+		<div class = "output-button-bar resize-drag">
+			<button class="btn-hide"
+			onclick="document.getElementById('GSA Visualization').style.display='none'">hide</button>
+
+			<button class="btn-show"
+			onclick="document.getElementById('GSA Visualization').style.display='inline-block'">show</button>
+
+			<button class="btn-close"
+			onclick="document.getElementById('GSA Visualization Window').style.display='none'">close</button>
+		</div>
+
+		<div class = "output" id = "GSA Visualization">
+		<h3><center>Scraped Text</center></h3>
+			<br>
+			<!--Research question: {{ research_question }}-->
+			<div style="text-align:center"><b>{{ research_question[0] }}</b>
+			<br>
+			Authors: {{research_question[1]}}
+			<br>
+			Published {{research_question[2]}}
+			</div><br>
+			<br>
+			<p style="line-height:30px">{{research_question[3]}}</p>
+			<br>
+		</div>
+	</div>
 	{% endif %}
+
 	{% if error %}
 		Note: If you uploaded shapefiles for GSA analysis and nothing is displayed, then it is possible that the generated map or the provide CSV has characters/letters that our tool cannot understand.
 	{% endif %}
@@ -443,40 +446,14 @@
 	<br><br><br><br><br>
 
     </div>
+</section>
 
-    <script type="text/javascript" src="../static/js/jquery-1.11.1.min.js"></script>
-    <script type="text/javascript" src="../static/js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="../static/js/custom.frontend.js"></script>
 
-	<script>
-		function show1(){
-			$('#nlp_modal').modal('show');
-			$('#sna_modal').modal('hide');
-			$('#gsa_modal').modal('hide');
-		}
-
-		function show2(){
-			$('#nlp_modal').modal('hide');
-			$('#sna_modal').modal('show');
-			$('#gsa_modal').modal('hide');
-		}
-
-		function show3(){
-			$('#nlp_modal').modal('hide');
-			$('#sna_modal').modal('hide');
-			$('#gsa_modal').modal('show');
-		}
-
-		function openurl(link){
-				window.open(link);
-			}
-	</script>
-
+<!-- Begin modal -->
 <div class="modal fade slide-right" id="nlp_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	<div class="modal-dialog modal-lg">
 		<div class="modal-content-wrapper">
-        	<div class="background"></div>
-			<div class="modal-content table-block" style="background: rgba(187, 222, 251, .0); border: 0px; background-repeat: no-repeat; background-position: 50% 90%; background-size: 40%;">
+			<div class="modal-content table-block" style="background: transparent; border: 0px; background-repeat: no-repeat; background-position: 50% 90%; background-size: 40%;">
 
 				<div style="margin-right: 27px;">
 					<button type="button" class="btn btn-danger btn-sm pull-right" data-dismiss="modal"><i class="fa fa-times-circle fa-2x" aria-hidden="true" style="z-index:1000;"></i>
@@ -522,7 +499,6 @@
 <div class="modal fade slide-right" id="sna_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 <div class="modal-dialog modal-lg">
     <div class="modal-content-wrapper">
-    <div class="background"></div>
        <div class="modal-content table-block" style="background: rgba(187, 222, 251, .0); border: 0px; background-repeat: no-repeat; background-position: 50% 90%; background-size: 40%;">
 
 			<div style="margin-right: 27px;">
@@ -569,7 +545,6 @@
 <div class="modal fade slide-right" id="gsa_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 <div class="modal-dialog modal-lg">
     <div class="modal-content-wrapper">
-    <div class="background"></div>
         <div class="modal-content table-block" style="background: rgba(187, 222, 251, .0); border: 0px; background-repeat: no-repeat; background-position: 50% 90%; background-size: 40%;">
 
 			<div style="margin-right: 27px;">
@@ -610,12 +585,5 @@
 
 
 </body>
-
-
-
-
-
-
-
 
 </html>

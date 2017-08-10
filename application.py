@@ -164,6 +164,10 @@ def upload():
     # i.e. if a form has been submitted
     if request.method == 'POST':
 
+        fileDict['research_question'] = request.form.get('smartsearch')
+        if fileDict['research_question'] is not None and fileDict['research_question'] != '':
+            return redirect(url_for('visualize', case_num=case_num)) # temporary submission for SmartSearch for demo
+
         for f in request.files:
             print(str(f) + ": " + str(request.files.get(f)))
 
