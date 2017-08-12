@@ -4,7 +4,6 @@ from flask import Flask, render_template, request, redirect, url_for, jsonify
 matplotlib.use('Agg')
 import os
 import subprocess
-import nltkDraw
 import SNA as sna
 import xlrd
 import tempfile
@@ -12,12 +11,10 @@ import csv
 import json
 import networkx as nx
 from GAT_NLP import radar_runner
-import GAT_GSA
-import GAT_GSA.MapGenerator
+import gat.gsa.misc.MapGenerator
 #import GAT_GSA.GSA_flask
 from numpy import array, matrix
 import copy
-import sys
 import random
 import GAT_NLP_JamesWu.parser as nlp_james
 import scraper.url_parser as url_parser
@@ -757,7 +754,7 @@ def tempParseGSA(GSA_file_CSV, GSA_file_SHP):
             return (None, True)
 
     gsaSVG = os.path.dirname(GSA_file_SHP) + "/mymap.svg"
-    GAT_GSA.MapGenerator.generateMap(GSA_file_SHP, gsaSVG)
+    gat.gsa.misc.MapGenerator.generateMap(GSA_file_SHP, gsaSVG)
 
 
     with open(gsaSVG, 'r') as myfile:
