@@ -1,5 +1,8 @@
 import matplotlib
+import numpy as np
 from flask import Flask, render_template, request, redirect, url_for, jsonify
+
+from GAT_GSA.GSA import Weights, AutoCorrelation, SpatialDynamics, Util, Regionalization
 
 matplotlib.use('Agg')
 import os
@@ -95,19 +98,7 @@ caseDict = {}
 tempdir = 'static/temp/'
 
 # don't worry about this color shit. It's used by the SNA visualization
-colorDict = {
-    "b": "blue",
-    "g": "green",
-    "r": "red",
-    "c": "cyan",
-    "m": "magenta",
-    "y": "yellow",
-    "k": "black",
-    "w": "white",
-    "orange": "orange",
-    "purple": "purple",
-}
-colors = ["b", "g", "r", "c", "m", "y", "k", "w","orange","purple"]
+colors = ["DeepSkyBlue","Gold","ForestGreen","Ivory","DarkOrchid","Coral","DarkTurquoise","DarkCyan","Blue"]
 hexColors = {}
 for color in colors:
     rgbVal = matplotlib.colors.colorConverter.to_rgb(color)
@@ -276,9 +267,11 @@ def visualize(case_num):
 
     auto = None
     sp_dyn = None
+    svgNaming = None
     if GSA_sample != None:
-        auto = GSA_sample[0:2]
-        sp_dyn = [mat for mat in GSA_sample[2:]]
+        svgNaming = GSA_sample[0]
+        auto = GSA_sample[1:3]
+        sp_dyn = [mat for mat in GSA_sample[3:]]
         calc_ac(case_num)
 
 
@@ -292,8 +285,6 @@ def visualize(case_num):
         #graph.katz_centrality()
         graph.eigenvector_centrality()
         graph.load_centrality()
-        graph.communicability_centrality()
-        graph.communicability_centrality_exp()
 
     #if GSA_file.filename == '' and NLP_file.filename == '' and SNA_file.filename == '':
         #return("No files uploaded")
@@ -324,7 +315,11 @@ def visualize(case_num):
     jgdata, SNAbpPlot, attr, systemMeasures = SNA2Dand3D(graph, request, case_num, _2D = True)
     fileDict['SNAbpPlot'] = '/' + SNAbpPlot if SNAbpPlot != None else None
     fileDict['NLP_images'] = radar_runner.generate(NLP_dir, tropes)
-    gsaCSV, mymap = tempParseGSA(GSA_file_CSV, GSA_file_SHP)
+    gsaCSV = None
+    mymap = None
+    nameMapping = None
+    if (GSA_file_CSV is not None and GSA_file_SHP is not None and fileDict.get('GSA_meta') is not None):
+        gsaCSV, mymap, nameMapping = tempParseGSA(GSA_file_CSV, GSA_file_SHP, fileDict['GSA_meta'][0], fileDict['GSA_meta'][1])
     if GSA_file_SVG != None:
         gsaCSV, mymap = parseGSA(GSA_file_CSV, GSA_file_SVG)
 
@@ -414,11 +409,12 @@ def visualize(case_num):
         SNAbpPlot = SNAbpPlot,
         graph = copy_of_graph,
         attr = attr,
-        colorDict = colorDict,
         colors = colors,
         #nltkPlot = nltkPlot,
         gsaCSV = gsaCSV,
         mymap = mymap,
+        svgNaming = svgNaming,
+        nameMapping = nameMapping,
         jgdata = jgdata,
         tropes = tropes,
         GSA_sample = GSA_sample,
@@ -568,7 +564,7 @@ def SNA2Dand3D(graph, request, case_num, _3D = True, _2D = False, label = False)
     systemMeasures = {}
 
     if graph == None:
-        return None, None, None
+        return None, None, None, None
 
     #make both
     attr = {}
@@ -602,10 +598,11 @@ def SNA2Dand3D(graph, request, case_num, _3D = True, _2D = False, label = False)
             'block': request.form.get("nodeSet")
         }
         i = 0
-        while (request.form.get("attribute"+str(i)) != None) and (request.form.get("attribute"+str(i)) != '') :
-            split = request.form.get("attribute"+str(i)).split(":")
-            key = split[0]
-            value = split[1]
+        while (request.form.get("attribute"+str(i)) is not None) and (request.form.get("attribute"+str(i)) != '') and (request.form.get("value"+str(i)) is not None) and (request.form.get("value"+str(i)) != ''):
+            key = request.form.get("attribute"+str(i))
+            value = request.form.get("value"+str(i))
+            if request.form.get("weight"+str(i)) is not None and request.form.get("weight"+str(i)) != '':
+                value = [value,{'W':request.form.get("weight"+str(i))}]
             dictForm = {key: value}
             attrDict.update(dictForm)
             i += 1
@@ -619,12 +616,40 @@ def SNA2Dand3D(graph, request, case_num, _3D = True, _2D = False, label = False)
         print("node, attrDict, connections",node,attrDict,links)
         graph.addNode(node,attrDict,links)
 
+    # Add system measures dictionary
+    # systemMeasures["Node Connectivity"] = graph.node_connectivity() # Currently only returning zero...
+    systemMeasures["Average Clustering"] = graph.average_clustering()
+    # systemMeasures["Attribute Assortivity"] = graph.attribute_assortivity() # Which attributes...? UI?
+    if graph.is_strongly_connected():
+        systemMeasures["Connection Strength"] = "Strong"
+    elif graph.is_weakly_connected():
+        systemMeasures["Connection Strength"] = "Weak"
+
+    # Add system measures descriptions to dictionary
+    systemMeasures["Description"] = {
+        'Average Clustering': 'A high clustering coefficient indicates that actors within the network are closely connected to a statistically significant degree. It is a sophisticated measure of the density of a network.',
+        'Connection Strength': 'Knowing whether a graph is strongly or weakly connected is helpful because it demonstrates the robustness of the graph based on its redundancy. If a graph is strongly connected, there are two links between each actor in the network, one in each direction. A strongly connected graph thus would likely have more redundant communication/information flow and be more difficult to perturb than a weakly connected graph.',
+        'Resilience':'The baseline value for resilience is determined by identifying the cliques associated with the most central nodes in the network, perturbing those subgraphs, and measuring the mean shortest path average over several perturbations. The results are scaled on a normal curve across all cliques and a percentile resilience is determined for each clique. A high percentile resilience denotes resilience to perturbation. These values are visualized on a color spectrum from red to blue, where red is low relative resilience and blue is high relative resilience.',
+        'AddNode': 'Introduces a new node to the network, complete with a user-defined name, user-defined attributes and known links. Using the DRAG link prediction model, node attributes are used to form likely connections and intelligently model the effects of external change on the network. New nodes and their predicted links are colored red for easy identification.',
+        'RemoveNode':'Removes the node inputted in the box below and any links to which it belongs.',
+        'eigenvector':'Centrality measure which sums the centralities of all adjacent nodes.',
+        'betweenness':'Centrality based on the shortest path that passes through the node.'
+    }
+
     # Calculate resilience when requested
     if request.form.get("resilienceSubmit") != None:
         try:
-            systemMeasures["Resilience"] = graph.averagePathRes(iters=5)
+            systemMeasures["Resilience"] = graph.averagePathRes(iters=5) # gets a scaled resilience value for each clique identified in network
+            # Add colors for each resilience measure
+
+            for cluster in systemMeasures["Resilience"]:
+                systemMeasures["Resilience"][cluster] = int(systemMeasures["Resilience"][cluster])
+                percentile = systemMeasures["Resilience"][cluster]
+                b = int(percentile)
+                r = int(100 - percentile)
+                systemMeasures["Resilience"][cluster] = [percentile,r,b]
         except nx.exception.NetworkXError:
-            systemMeasures["Resilience"] = "Could not calculate resilience, graph is disconnected."
+            systemMeasures["Resilience"] = "Could not calculate resilience, NetworkX error."
 
 
     copy_of_graph = copy.deepcopy(graph)
@@ -651,7 +676,6 @@ def jgvis(case_num):
             SNAbpPlot = SNAbpPlot,
             attr = attr,
             graph = graph,
-            colorDict = colorDict,
             colors = colors,
             case_num = case_num,
             systemMeasures = systemMeasures
@@ -664,24 +688,15 @@ def get_node_data(case_num):
     name = request.args.get('name', '', type=str)
     if graph == None or len(graph.G) == 0:
         return jsonify(	name=name,
-                        cluster="Empty graph",
                         eigenvector=eigenvector,
                         betweenness=betweenness
                         )
-    if nx.algorithms.bipartite.is_bipartite(graph.G):
-        graph.clustering()
     graph.closeness_centrality()
     graph.betweenness_centrality()
     graph.degree_centrality()
     # graph.katz_centrality()
     graph.eigenvector_centrality()
     graph.load_centrality()
-    graph.communicability_centrality()
-    graph.communicability_centrality_exp()
-    if graph.clustering_dict != {} and graph.clustering_dict != None:
-        cluster = str(round(graph.clustering_dict.get(name),4));
-    else:
-        cluster="clustering not available"
     if graph.eigenvector_centrality_dict != {} and graph.eigenvector_centrality_dict != None:
         eigenvector = str(round(graph.eigenvector_centrality_dict.get(name),4));
     else:
@@ -692,7 +707,6 @@ def get_node_data(case_num):
         betweenness="clustering not available"
     attributes = graph.get_node_attributes(name)
     toJsonify = dict(name=name,
-                     cluster=cluster,
                      eigenvector=eigenvector,
                      betweenness=betweenness,
                      attributes=attributes)
@@ -709,7 +723,6 @@ def get_edge_data(case_num):
     link = graph.G[pair[0]][pair[1]]
     toJsonify = dict(name=name,source=pair[0],target=pair[1])
     for attr in link:
-        print(link[attr])
         toJsonify[attr] = link[attr]
     return jsonify(toJsonify)
 
@@ -740,7 +753,7 @@ def calc_ac(case_num):
 #### GSA methods ####
 #####################
 
-def tempParseGSA(GSA_file_CSV, GSA_file_SHP):
+def tempParseGSA(GSA_file_CSV, GSA_file_SHP, idVar, nameVar):
     if GSA_file_CSV == None or GSA_file_SHP == None:
         return (None, None)
 
@@ -749,7 +762,8 @@ def tempParseGSA(GSA_file_CSV, GSA_file_SHP):
         try:
             reader = csv.reader(csvfile)
             for row in reader:
-                gsaCSV.append(row)
+                tempRow = [x.replace("'", "APOSTROPHE") for x in row]
+                gsaCSV.append(tempRow)
         except:
             return (None, True)
 
@@ -765,7 +779,9 @@ def tempParseGSA(GSA_file_CSV, GSA_file_SHP):
             return (None, True)
     #print(data.replace('"', "'"))
     data = data.replace('"', "'")
-    return json.dumps(gsaCSV), json.dumps(data)
+    nameMapping = Util.getNameMapping(gsaSVG, idVar, nameVar)
+    nameMapping = {key : value.replace("'", "APOSTROPHE") for key, value in nameMapping.items()}
+    return json.dumps(str(gsaCSV).replace('"', "'")), json.dumps(data), json.dumps(str(nameMapping).replace('"', "'"))
 
 
 def parseGSA(GSA_file_CSV, GSA_file_SVG):
@@ -797,28 +813,43 @@ def sample(sample_path, case_num):
     if arr[0] == 'GSA':
         fileDict['GSA_Input_CSV'] = url_for('static', filename = "sample/GSA/" + arr[1])[1:]
         fileDict['GSA_Input_SHP'] = url_for('static', filename = "sample/GSA/" + arr[2])[1:]
-        fileDict['GSA_data'] = (0.001, 0.002, array([[ 252.,   27.,    1.,    0.,    0.],
-       [  28.,  226.,   20.,    0.,    0.],
-       [   1.,   25.,  239.,   15.,    0.],
-       [   0.,    0.,   18.,  237.,   22.],
-       [   0.,    0.,    0.,   24.,  257.]]), matrix([[ 0.9       ,  0.09642857,  0.00357143,  0.        ,  0.        ],
-        [ 0.10218978,  0.82481752,  0.0729927 ,  0.        ,  0.        ],
-        [ 0.00357143,  0.08928571,  0.85357143,  0.05357143,  0.        ],
-        [ 0.        ,  0.        ,  0.06498195,  0.85559567,  0.07942238],
-        [ 0.        ,  0.        ,  0.        ,  0.08540925,  0.91459075]]), array([[ 0.31780822,  0.26712329,  0.13561644,  0.23013699,  0.04931507],
-       [ 0.32951514,  0.25812019,  0.13180606,  0.1625608 ,  0.1179978 ],
-       [ 0.3007761 ,  0.26782838,  0.22843755,  0.16869234,  0.03426563],
-       [ 0.29380902,  0.25603358,  0.30535152,  0.03903463,  0.10577125],
-       [-0.        ,  0.09811321,  0.09433962,  0.25660377,  0.5509434 ]]), matrix([[   3.98789072,   11.01167278,   35.43877551,  100.43628118,
-          166.20696764],
-        [  28.92208853,    4.19293283,   26.38095238,   91.37845805,
-          157.14914451],
-        [  55.71301248,   28.32683784,    5.07303106,   64.99750567,
-          130.76819213],
-        [  85.41208655,   58.02591192,   29.69907407,    6.15356836,
-           65.77068646],
-        [  97.12041989,   69.73424525,   41.40740741,   11.70833333,
+        if arr[1] == "usjoin.csv":
+            fileDict['GSA_data'] = ('state-id', 0.001, 0.002, array([[ 252.,   27.,    1.,    0.,    0.],
+            [  28.,  226.,   20.,    0.,    0.],
+            [   1.,   25.,  239.,   15.,    0.],
+            [   0.,    0.,   18.,  237.,   22.],
+            [   0.,    0.,    0.,   24.,  257.]]), matrix([[ 0.9       ,  0.09642857,  0.00357143,  0.        ,  0.        ],
+            [ 0.10218978,  0.82481752,  0.0729927 ,  0.        ,  0.        ],
+            [ 0.00357143,  0.08928571,  0.85357143,  0.05357143,  0.        ],
+            [ 0.        ,  0.        ,  0.06498195,  0.85559567,  0.07942238],
+            [ 0.        ,  0.        ,  0.        ,  0.08540925,  0.91459075]]), array([[ 0.31780822,  0.26712329,  0.13561644,  0.23013699,  0.04931507],
+            [ 0.32951514,  0.25812019,  0.13180606,  0.1625608 ,  0.1179978 ],
+            [ 0.3007761 ,  0.26782838,  0.22843755,  0.16869234,  0.03426563],
+            [ 0.29380902,  0.25603358,  0.30535152,  0.03903463,  0.10577125],
+            [-0.        ,  0.09811321,  0.09433962,  0.25660377,  0.5509434 ]]), matrix([[   3.98789072,   11.01167278,   35.43877551,  100.43628118,
+             166.20696764],
+            [  28.92208853,    4.19293283,   26.38095238,   91.37845805,
+             157.14914451],
+            [  55.71301248,   28.32683784,    5.07303106,   64.99750567,
+             130.76819213],
+            [  85.41208655,   58.02591192,   29.69907407,    6.15356836,
+             65.77068646],
+            [  97.12041989,   69.73424525,   41.40740741,   11.70833333,
             6.61742518]]))
+            fileDict['GSA_meta'] = ('data-state-id', 'data-state-name', "STATE_NAME", list(range(1979, 2009)), "state-name")
+        else:
+            #TODO: take in years instead of hard coding
+            #TODO: reorganize use of gsa_meta
+            observations = Weights.extractObservations(fileDict['GSA_Input_CSV'], "ALL", ["2014.0"])
+            w = Weights.generateWeightsUsingShapefile(fileDict['GSA_Input_SHP'], idVariable="NAME_1")
+            globalAutoCorrelation = AutoCorrelation.globalAutocorrelation(observations, w)
+            localAutoCorrelation = AutoCorrelation.localAutocorrelation(observations, w)
+            observations = Weights.extractObservations(fileDict['GSA_Input_CSV'], "ALL", np.arange(2014, 2017, 0.25).tolist())
+            spatialDynamics = SpatialDynamics.markov(observations, w, method="spatial")
+            fileDict['GSA_data'] = ('id-1', localAutoCorrelation, globalAutoCorrelation,
+                                    spatialDynamics[0], spatialDynamics[1], spatialDynamics[2], spatialDynamics[3])
+            fileDict['GSA_meta'] = ('data-id-1', 'data-name-1', "NAME_1", np.arange(2014, 2017, 0.25).tolist(), "name-1")
+
         #return fileDict['GSA_file_CSV'] + " " + fileDict['GSA_file_SVG']
     if arr[0] == 'NLP':
         if arr[1] == 'iran':
@@ -965,7 +996,31 @@ GSA_sample_autocorrelation=[
 
 @application.route('/regionalization/<int:case_num>')
 def reg(case_num):
-    return render_template("regionalization-test.html", case_num = case_num)
+    fileDict = caseDict[case_num]
+    GSA_file_CSV = fileDict.get('GSA_Input_CSV')
+    GSA_file_SHP = fileDict.get('GSA_Input_SHP')
+    gsa_meta = fileDict.get('GSA_meta')
+    svgNaming = fileDict.get('GSA_data')[0]
+    with open('static/sample/GSA/mymap.svg', 'r') as myfile:
+        mymap = myfile.read()
+
+    mymap = mymap.replace('"', "'")
+
+    observations = Weights.extractObservations(GSA_file_CSV, "ALL", gsa_meta[3])
+    w = Weights.generateWeightsUsingShapefile(GSA_file_SHP, idVariable=gsa_meta[2])
+
+    regions = Regionalization.generateRegions(w=w, observations=observations)[0]
+    regions = Regionalization.getNamesFromRegions(regions)
+    nameMapping = Util.getNameMapping('static/sample/GSA/mymap.svg', gsa_meta[0], gsa_meta[1])
+    nameMapping = {key: value.replace("'", "APOSTROPHE") for key, value in nameMapping.items()}
+    numRegs = len(set(regions.values()))
+    return render_template("regionalization-test.html",
+                           case_num = case_num,
+                           mymap = json.dumps(mymap),
+                           regions = json.dumps(regions),
+                           numRegs = numRegs,
+                           svgNaming = svgNaming,
+                           nameMapping = json.dumps(str(nameMapping)))
 
 @application.route('/log/server-error')
 def server_error():

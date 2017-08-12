@@ -15,20 +15,27 @@ body {
     margin: 0;
     background-repeat: no-repeat;
     font-family: Segoe UI;
-    background: url("../landing_background.jpg") no-repeat center center fixed; 
+    background: url("../landing_background.svg") no-repeat center center fixed; 
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
     background-size: cover;
 
 }
-
+.wrapperul{
+	width:100%;
+	position: auto;
+}
 ul {
     list-style-type: none;
     margin: 0;
     padding: 0;
-    overflow: hidden;
-    background-color: #071138;
+    overflow: visible;
+    background-color: rgba(69,90,100,.8);
+	border-radius: 5px;
+	text-align: center;
+	width: 60;
+	align-self:center;
 }
 
 li b, .dropdown-img {
@@ -46,10 +53,10 @@ li a, .dropbtn {
 }
 
 li a:hover, .dropdown:hover .dropbtn {
-    background-color: #00218F;
+    background-color: rgba(69,90,100,1);
 }
 
-li.dropdown {
+.dropdown {
     font-family: "Segoe UI";
     display: inline-block;
     color: white; 
@@ -58,6 +65,9 @@ li.dropdown {
     text-decoration: none;
 }
 
+.wrapper{
+	color:rgba(69,90,100,.8);
+}
 .dropdown-content {
     display: none;
     position: absolute;
@@ -84,7 +94,7 @@ li.dropdown {
 }
 
 .output-button-bar {
-    background-color: #21205F;
+    background-color: rgba(69,90,100,1);
 }
 
 .output-button-bar button {
@@ -95,9 +105,11 @@ li.dropdown {
     cursor: pointer;
     padding:5px 15px;
     border: none;
-    background-color: #0030CF;
-    margin: 5px 5px;
-    color: white;
+    border-radius: 15px;
+    background-color: rgba(39,106,139,.8);
+	margin-bottom:5px;
+	margin-top:5px;
+	margin-left:5px;
     text-align: center;
     display: block;
     vertical-align: top;
@@ -105,7 +117,7 @@ li.dropdown {
     transition-duration: 0.4s;
 }
 .btn-hide:hover {
-    background-color: #2149ce;
+    background-color: rgb(38,50,56);
     color: white;
 }
 
@@ -113,8 +125,10 @@ li.dropdown {
     cursor: pointer;
     padding:5px 15px;
     border: none;
-    background-color: #0030CF;
-    margin: 5px 5px;
+	border-radius: 15px;
+    background-color: rgba(39,106,139,.8);
+	margin-bottom:5px;
+	margin-top:5px;
     color: white;
     text-align: center;
     display: block;
@@ -123,16 +137,18 @@ li.dropdown {
     transition-duration: 0.4s;
 }
 .btn-show:hover {
-    background-color: #2149ce;
+    background-color: rgb(38,50,56);
     color: white;
 }
 
 .btn-close {
     cursor: pointer;
     padding:5px 15px;
-    border: none;
-    background-color: #0030CF;
-    margin: 5px 5px;
+	border: none;
+    border-radius: 15px;
+    background-color: rgba(39,106,139,.8);
+    margin-bottom:5px;
+	margin-top:5px;
     color: white;
     text-align: center;
     display: block;
@@ -141,13 +157,13 @@ li.dropdown {
     transition-duration: 0.4s;
 }
 .btn-close:hover {
-    background-color: #2149ce;
+    background-color: rgba(38,50,56,1);
     color: white;
 }
 
 .output-window {
-    border: 2px solid #000;
-    background-color: #0b1b54;
+    border-radius: 10px;
+    background-color: rgba(144, 164, 174, .8);
     color: white;
     display: inline-block;
     width: 40%;
@@ -155,17 +171,18 @@ li.dropdown {
     resize: both;
     overflow: auto;
     vertical-align: top;
+	border-radius:15px;
+	display: inline-block;
 }
 
 .output {
-    background-color: #0b1b54;
+    background-color: rgba(69,90,100,.8);
 }
 
 #banner {
     width: 100%;
 }
 
-path {fill: white; stroke: white; z-index: 1;}
 path:hover {fill: black; z-index: 1;}
 div.tooltip {
     z-index: 10;

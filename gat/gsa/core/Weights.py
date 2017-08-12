@@ -97,4 +97,5 @@ def extractObservations(csvobspath, rows, cols):
             observations[col] = [observations[col][keys[x]] if x in rows else None for x in row0]
 
     csvobs.close()
+    observations = [[float(y) if y != "" else 0 for y in x] for x in observations]
     return np.array(observations)#, colsRet
