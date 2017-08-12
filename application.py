@@ -2,26 +2,26 @@ import matplotlib
 import numpy as np
 from flask import Flask, render_template, request, redirect, url_for, jsonify
 
-from GAT_GSA.GSA import Weights, AutoCorrelation, SpatialDynamics, Util, Regionalization
+from gat.gsa.core import Weights, AutoCorrelation, SpatialDynamics, Regionalization
+from gat.gsa.misc import Util
 
 matplotlib.use('Agg')
 import os
 import subprocess
-import SNA as sna
 import xlrd
 import tempfile
 import csv
 import json
 import networkx as nx
-from GAT_NLP import radar_runner
 import gat.gsa.misc.MapGenerator
 #import GAT_GSA.GSA_flask
 from numpy import array, matrix
 import copy
 import random
-import GAT_NLP_JamesWu.parser as nlp_james
-import scraper.url_parser as url_parser
-from tzasacky_NLP import nlp_runner
+import gat.nlp.james.parser as nlp_james
+import gat.scraper.url_parser as url_parser
+from gat.nlp.tye import nlp_runner
+
 # import Alok's and James' and Nikita's tools
 
 ''' Before running:
@@ -211,38 +211,6 @@ def upload():
         return redirect(url_for('visualize', case_num=case_num))
     #fileDict doesn't mean the same thing anymore
     #fileDict.clear()
-    return render_template("upload.html", case_num = case_num)
-
-# the <int:case_num> is part of the URL
-# why do we have case_num? Before, when we didn't, everyone accessing the webiste simultaneously was affecting the same internal data
-# e.g. if person 1 made an SNA visuazliaiton, then person 2 came in a second later and did their SNA visualization, then
-# person 2's data would overwrite person 1's data and person 1 would see person 2's data
-# now, each person using GAT has a (almost certainly) unique case number associated with their internal data so this doesn't happen
-# you can see, once you go past the upload page, the URL is appended with a number
-@application.route('/choose_tropes/<int:case_num>', methods = ['GET', 'POST'])
-def choose_tropes(case_num):
-    fileDict = caseDict[case_num]
-    NLP_dir = fileDict.get('NLP_Input_corpus')
-    tropes = radar_runner.tropes(NLP_dir)
-
-    if request.method == 'POST':
-        chosen_tropes = []
-        for trope in tropes:
-            if request.form.get(trope[0]) == "on":
-                chosen_tropes.append(trope)
-        fileDict['tropes'] = chosen_tropes
-        return redirect(url_for('visualize', case_num = case_num))
-
-    return render_template("tropeselect.html", tropes = tropes, case_num = case_num)
-
-@application.route('/radarvis/<int:case_num>')
-def radarvis(case_num):
-    fileDict = caseDict[case_num]
-    images = fileDict.get('NLP_images')
-    source_dir = fileDict.get('NLP_Input_corpus')
-    for i in range(len(images)):
-        images[i] = "/" + images[i]
-    return render_template("radar.html", images = images, source_dir = source_dir, case_num = case_num)
 
 @application.route('/visualize/<int:case_num>', methods = ['GET', 'POST'])
 def visualize(case_num):
@@ -469,7 +437,7 @@ def sheetSelect(case_num):
 def nodeSelect(case_num):
 
     fileDict = caseDict[case_num]
-    graph = sna.SNA( fileDict['SNA_Input'], nodeSheet = fileDict['nodeSheet'], attrSheet = fileDict['attrSheet'] )
+    graph = SNA.SNA(fileDict['SNA_Input'], nodeSheet = fileDict['nodeSheet'], attrSheet = fileDict['attrSheet'])
     fileDict['graph'] = graph
 
     if request.method == 'POST':
