@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 import networkx
 from newspaper import Article
 from nltk import sentiment
-from tzasacky_NLP import language_detector, file_io, spacy_nlp, sentiment
+from gat.nlp.tye import language_detector, file_io, spacy_nlp, sentiment
 
 from gat.nlp.tye import radar
 

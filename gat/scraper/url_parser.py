@@ -22,7 +22,7 @@ def text_writer(title = "No Title Given", authors = "No Authors Given", date = "
 	def newline():
 		f.write("\n")
 	print ("Writing Text File")
-	f = codecs.open("out/scrapedArticles/"+reformat_title(title) + ".txt", "w", encoding="utf8")
+	f = codecs.open("out/nlp/scrapedArticles/"+reformat_title(title) + ".txt", "w", encoding="utf8")
 	f.write(title + "\n")
 	newline()
 	for author in authors:

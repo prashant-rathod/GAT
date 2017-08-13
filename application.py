@@ -1,11 +1,12 @@
 import matplotlib
+matplotlib.use('Agg')
 import numpy as np
 from flask import Flask, render_template, request, redirect, url_for, jsonify
 
 from gat.gsa.core import Weights, AutoCorrelation, SpatialDynamics, Regionalization
 from gat.gsa.misc import Util
+from gat.sna import SNA
 
-matplotlib.use('Agg')
 import os
 import subprocess
 import xlrd
@@ -14,13 +15,14 @@ import csv
 import json
 import networkx as nx
 import gat.gsa.misc.MapGenerator
-#import GAT_GSA.GSA_flask
 from numpy import array, matrix
 import copy
 import random
 import gat.nlp.james.parser as nlp_james
 import gat.scraper.url_parser as url_parser
 from gat.nlp.tye import nlp_runner
+from view.log import log
+from service import io_service
 
 # import Alok's and James' and Nikita's tools
 
@@ -78,8 +80,8 @@ from gat.nlp.tye import nlp_runner
             redirect goes to the specified URL, and runs its associated python method
 
 '''
-#necessary line for flask apps
 application = Flask(__name__)
+application.register_blueprint(log, url_prefix='/log')
 
 
 
@@ -95,55 +97,14 @@ caseDict = {}
 # 			and all other temporary folders
 #
 # a temporary folder is created for each new case
-tempdir = 'static/temp/'
+tempdir = 'out/generated/'
 
-# don't worry about this color shit. It's used by the SNA visualization
 colors = ["DeepSkyBlue","Gold","ForestGreen","Ivory","DarkOrchid","Coral","DarkTurquoise","DarkCyan","Blue"]
 hexColors = {}
 for color in colors:
     rgbVal = matplotlib.colors.colorConverter.to_rgb(color)
     hexVal = matplotlib.colors.rgb2hex(rgbVal).replace("#","0x")
     hexColors[color] = hexVal
-
-# the following few store helper methods are used to store user-uploaded files
-# tempfile is a python package
-# essentially what we're doing is copying their uploaded data to a randomly named folder or filename which is how we store it on the server
-# then we use these folders and files to do our analysis
-# some of the storing has to be done in a specialized manner, which is the reason for the storeNLP and storeGSA methods
-def storefile(inFile):
-    if inFile.filename == '':
-        return
-    suffix = '.' + inFile.filename.split('.')[-1]
-    f = tempfile.NamedTemporaryFile(
-            dir=tempdir,
-            suffix=suffix,
-            delete=False)
-    inFile.save(f)
-    return f.name
-
-def storeNLP(file_list):
-    if file_list[0].filename == '':
-        return
-    source_dir = tempfile.mkdtemp(dir=tempdir) + '/'
-    for f in file_list:
-        f.save(source_dir + f.filename)
-    # this line is necessary because of how AWS creates default permissions for newly created files and folders
-    os.chmod(source_dir, 0o755)
-    return source_dir
-
-def storeGSA(file_list):
-    #saves everything but only returns the shapefile. Nice
-    if file_list[0].filename == '':
-        return
-    source_dir = tempfile.mkdtemp(dir=tempdir) + '/'
-    shapefile = None
-    for f in file_list:
-        f.save(source_dir + f.filename)
-        if f.filename.endswith(".shp"):
-            shapefile = source_dir + f.filename
-    #see previous comment
-    os.chmod(source_dir, 0o755)
-    return shapefile
 
 @application.route('/', methods = ['GET', 'POST'])
 def upload():
@@ -167,12 +128,12 @@ def upload():
         # here the use of fileDict is probably more clear
         # the strings used to index request.files come from the HTML name of the input field
         # see upload.html
-        fileDict['GSA_Input_CSV'] 		= storefile(request.files['GSA_Input_CSV'])
-        fileDict['GSA_Input_SHP'] 		= storeGSA(request.files.getlist('GSA_Input_map'))
+        fileDict['GSA_Input_CSV'] 		= io_service.storefile(request.files['GSA_Input_CSV'])
+        fileDict['GSA_Input_SHP'] 		= io_service.storeGSA(request.files.getlist('GSA_Input_map'))
         fileDict['GSA_file_list']		= request.files.getlist('GSA_Input_map')
-        fileDict['NLP_Input_corpus'] 	= storeNLP(request.files.getlist('NLP_Input_corpus'))
-        fileDict['NLP_Input_LDP']		= storefile(request.files['NLP_Input_LDP'])
-        fileDict['NLP_Input_Sentiment']	= storefile(request.files['NLP_Input_Sentiment'])
+        fileDict['NLP_Input_corpus'] 	= io_service.storeNLP(request.files.getlist('NLP_Input_corpus'))
+        fileDict['NLP_Input_LDP']		= io_service.storefile(request.files['NLP_Input_LDP'])
+        fileDict['NLP_Input_Sentiment']	= io_service.storefile(request.files['NLP_Input_Sentiment'])
 
         #terms = request.form.get('NLP_LDP_terms')
         #term_array						= terms.split(',') if (terms != '' and terms != None) else None
@@ -182,7 +143,7 @@ def upload():
         fileDict["NLP_INPUT_NER"] = request.form.get("NLP_INPUT_NER")
         fileDict["NLP_INPUT_IOB"] = request.form.get("NLP_INPUT_IOB")
 
-        fileDict['SNA_Input'] 			= storefile(request.files['SNA_Input'])
+        fileDict['SNA_Input'] 			= io_service.storefile(request.files['SNA_Input'])
         #fileDict['NLP_Type'] 			= request.form['NLP_Type']
 
         fileDict['research_question'] 	= request.form.get('research_question')
@@ -282,7 +243,6 @@ def visualize(case_num):
     #nltkPlot = nltkDraw.plot(NLP_file_LDP, NLP_LDP_terms)
     jgdata, SNAbpPlot, attr, systemMeasures = SNA2Dand3D(graph, request, case_num, _2D = True)
     fileDict['SNAbpPlot'] = '/' + SNAbpPlot if SNAbpPlot != None else None
-    fileDict['NLP_images'] = radar_runner.generate(NLP_dir, tropes)
     gsaCSV = None
     mymap = None
     nameMapping = None
@@ -656,8 +616,8 @@ def get_node_data(case_num):
     name = request.args.get('name', '', type=str)
     if graph == None or len(graph.G) == 0:
         return jsonify(	name=name,
-                        eigenvector=eigenvector,
-                        betweenness=betweenness
+                        eigenvector=None,
+                        betweenness=None
                         )
     graph.closeness_centrality()
     graph.betweenness_centrality()
@@ -735,7 +695,7 @@ def tempParseGSA(GSA_file_CSV, GSA_file_SHP, idVar, nameVar):
         except:
             return (None, True)
 
-    gsaSVG = os.path.dirname(GSA_file_SHP) + "/mymap.svg"
+    gsaSVG = "out/gsa/mymap.svg"
     gat.gsa.misc.MapGenerator.generateMap(GSA_file_SHP, gsaSVG)
 
 
@@ -874,9 +834,6 @@ def checkExtensions(case_num):
         if not sentiment_file.endswith('.txt'):
             errors.append("Error: please upload txt file for Sentiment Analysis.")
 
-    if terms != None and nlp_file == None:
-        errors.append("Error: please upload txt file for NLP Lexical Dispersion Plot.")
-
     return errors
 
 GSA_sample_autocorrelation=[
@@ -982,7 +939,7 @@ def reg(case_num):
     nameMapping = Util.getNameMapping('static/sample/GSA/mymap.svg', gsa_meta[0], gsa_meta[1])
     nameMapping = {key: value.replace("'", "APOSTROPHE") for key, value in nameMapping.items()}
     numRegs = len(set(regions.values()))
-    return render_template("regionalization-test.html",
+    return render_template("regionalization.html",
                            case_num = case_num,
                            mymap = json.dumps(mymap),
                            regions = json.dumps(regions),
@@ -990,29 +947,12 @@ def reg(case_num):
                            svgNaming = svgNaming,
                            nameMapping = json.dumps(str(nameMapping)))
 
-@application.route('/log/server-error')
-def server_error():
-    return render_template("log.html", title = "Server Error", lines = tail('/var/log/nginx/error.log', 100))
-
-@application.route('/log/server-access')
-def server_access():
-    return render_template("log.html", title = "Server Access", lines = tail('/var/log/nginx/access.log', 100))
-
-@application.route('/log/python-out')
-def python_out():
-    return render_template("log.html", title = "Python Out", lines = tail('nohup.out', 100))
-
-def tail(f, n):
-    lines = subprocess.check_output("tail -n " + str(n)  + " " + f, shell = True).splitlines()
-    return [x.decode("utf-8") for x in lines]
 
 #################
 #### Running ####
 #################
 
-
 application.secret_key = 'na3928ewafds'
-
 
 if __name__ == "__main__":
     application.debug = True
