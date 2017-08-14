@@ -1,13 +1,15 @@
+import matplotlib
+matplotlib.use('Agg')
+
 from flask import Flask
 
-
-from gat.view.log import log
-from gat.view.info import info
-from gat.view.upload import upload
-from gat.view.visualize import visualize
-from gat.view.sample import sample
-from gat.view.sna import sna
-from gat.view.gsa import gsa
+from gat.view.gsa import gsa_blueprint
+from gat.view.info import info_blueprint
+from gat.view.log import log_blueprint
+from gat.view.sample import sample_blueprint
+from gat.view.sna import sna_blueprint
+from gat.view.upload import upload_blueprint
+from gat.view.visualize import visualize_blueprint
 
 ''' Before running:
         Make sure you have flask and jinja2 installed
@@ -64,13 +66,13 @@ from gat.view.gsa import gsa
 
 '''
 application = Flask(__name__)
-application.register_blueprint(log, url_prefix='/log')
-application.register_blueprint(info)
-application.register_blueprint(upload)
-application.register_blueprint(visualize)
-application.register_blueprint(sample, url_prefix='/sample')
-application.register_blueprint(sna)
-application.register_blueprint(gsa)
+application.register_blueprint(log_blueprint, url_prefix='/log')
+application.register_blueprint(info_blueprint)
+application.register_blueprint(upload_blueprint)
+application.register_blueprint(visualize_blueprint)
+application.register_blueprint(sample_blueprint, url_prefix='/sample')
+application.register_blueprint(sna_blueprint)
+application.register_blueprint(gsa_blueprint)
 
 #################
 #### Running ####

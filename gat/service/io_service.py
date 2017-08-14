@@ -1,5 +1,7 @@
-import tempfile
 import os
+import tempfile
+
+from gat.dao import dao
 
 # the following few store helper methods are used to store user-uploaded files
 # tempfile is a python package
@@ -17,16 +19,18 @@ import os
 # a temporary folder is created for each new case
 tempdir = 'out/generated/'
 
+
 def storefile(inFile):
     if inFile.filename == '':
         return
     suffix = '.' + inFile.filename.split('.')[-1]
     f = tempfile.NamedTemporaryFile(
-            dir=tempdir,
-            suffix=suffix,
-            delete=False)
+        dir=tempdir,
+        suffix=suffix,
+        delete=False)
     inFile.save(f)
     return f.name
+
 
 def storeNLP(file_list):
     if file_list[0].filename == '':
@@ -38,8 +42,9 @@ def storeNLP(file_list):
     os.chmod(source_dir, 0o755)
     return source_dir
 
-def storeGSA(file_listgi):
-    #saves everything but only returns the shapefile. Nice
+
+def storeGSA(file_list):
+    # saves everything but only returns the shapefile. Nice
     if file_list[0].filename == '':
         return
     source_dir = tempfile.mkdtemp(dir=tempdir) + '/'
@@ -48,14 +53,14 @@ def storeGSA(file_listgi):
         f.save(source_dir + f.filename)
         if f.filename.endswith(".shp"):
             shapefile = source_dir + f.filename
-    #see previous comment
+    # see previous comment
     os.chmod(source_dir, 0o755)
     return shapefile
 
-def checkExtensions(case_num):
 
+def checkExtensions(case_num):
     errors = []
-    fileDict = caseDict[case_num]
+    fileDict = dao.getFileDict(case_num)
     gsa_csv_file = fileDict['GSA_Input_CSV']
     if gsa_csv_file != None:
         if not gsa_csv_file.endswith('.csv'):
@@ -75,12 +80,12 @@ def checkExtensions(case_num):
 
     sna_file = fileDict['SNA_Input']
     if sna_file != None:
-        if not sna_file.endswith(('.xls','.xlsx')):
+        if not sna_file.endswith(('.xls', '.xlsx')):
             errors.append("Error: please upload xls OR xlsx file for SNA.")
 
     nlp_file = fileDict['NLP_Input_LDP']
-    #terms = fileDict.get('NLP_LDP_terms')
-    #if nlp_file != None:
+    # terms = fileDict.get('NLP_LDP_terms')
+    # if nlp_file != None:
     #    if not nlp_file.endswith('.txt'):
     #        errors.append("Error: please upload txt file for NLP Lexical Dispersion Plot.")
 

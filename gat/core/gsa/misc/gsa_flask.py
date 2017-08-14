@@ -4,9 +4,9 @@ import json
 import pysal
 from GAT_GSA.GSA import Weights, Regionalization, SpatialDynamics
 from flask import Flask, render_template
-
-from gat.gsa.core import autocorrelation
 from gat.gsa.misc import MapGenerator
+
+from gat.core.gsa.core import autocorrelation
 
 app = Flask(__name__)
 

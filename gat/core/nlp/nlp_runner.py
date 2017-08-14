@@ -14,9 +14,10 @@ import matplotlib.pyplot as plt
 import networkx
 from newspaper import Article
 from nltk import sentiment
-from gat.nlp.tye import language_detector, file_io, spacy_nlp, sentiment
 
-from gat.nlp.tye import radar
+from gat.core.nlp import language_detector, file_io, spacy_nlp
+from gat.core.nlp import radar
+from gat.core.nlp import sentiment
 
 
 ############ Low Level Functions #############
@@ -34,6 +35,8 @@ def getArticles(urls):
     #Input: URLS of news articles
     #Output: Article objects --> use article.text for parsing etc. with SpaCy, others are useful metadata
     articles = []
+    if isinstance(urls, str):
+        urls = [urls]
     for url in urls:
         article = Article(url)
         article.download()
@@ -79,9 +82,7 @@ def parseTexts(texts, models):
 def readLexicon():
     #No input because it only works for this one lexicon
     #f = open('static/lexicon.txt', 'r')
-    import os
-    print(os.getcwd())
-    f = open('tzasacky_NLP/lexicon.txt')
+    f = open('static/resources/nlp/lexicon.txt')
     raw = f.read().split('\n')
     lexicon = {}
     for n in range(0, len(raw), 10):
@@ -224,7 +225,7 @@ def docSummary(docs):
     # Plot histogram. Bin number might need tweaking.
     plt.hist(lengths, edgecolor= 'black', color= '#3ad43f', bins= 10)
     # Save as PNG. bbox_inches="tight" removes all extra whitespace on edges of plot
-    f = tempfile.NamedTemporaryFile(dir='static/temp', suffix='.png', delete=False)
+    f = tempfile.NamedTemporaryFile(dir='out/nlp', suffix='.png', delete=False)
     # save the figure to the temporary file
     plt.savefig(f, bbox_inches='tight')
     f.close()  # close the file
@@ -299,7 +300,7 @@ def emotionalValences(docs, lexicon):
     # Now we have, entities, scores, labels, and optimums. We can create the radar graphs
     for ent, scores in emotionScores[:6]:
         # Save the file in the temp folder
-        f = tempfile.NamedTemporaryFile(dir='static/temp', suffix='.png', delete=False)
+        f = tempfile.NamedTemporaryFile(dir='out/nlp', suffix='.png', delete=False)
         radar.graph(trope=ent, values=scores, labels=emotionLabels, optimum=optimum, file_name=f)
 
         # get the file's name (the template will need that)
