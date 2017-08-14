@@ -133,6 +133,7 @@ body.modal-open .blur {
 	margin-left: 30px;
 }
 
+
     </style>
 </head>
 <body class="pace-dark">
@@ -261,6 +262,7 @@ body.modal-open .blur {
 				window.open(link);
 			}
 
+
 </script>
 
 <div class="modal fade slide-right" id="nlp_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
@@ -366,17 +368,20 @@ body.modal-open .blur {
     <!-- /.modal-dialog -->
 </div>
 
-
-<div class="modal fade slide-right" id="gsa_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+<div class="modal fade slide-right" id="gsa_modal" tabindex="-1" role="dialog"
+     aria-labelledby="myModalLabel"
      aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content-wrapper">
+            <div class="background"></div>
             <div class="modal-content table-block"
                  style="background: rgba(187, 222, 251, .0); border: 0px; background-repeat: no-repeat; background-position: 50% 90%; background-size: 40%;">
 
                 <div style="margin-right: 27px;">
-                    <button type="button" class="btn btn-danger btn-sm pull-right" data-dismiss="modal"><i
-                            class="fa fa-times-circle fa-2x" aria-hidden="true" style="z-index:1000;"></i></button>
+                    <button type="button" class="btn btn-danger btn-sm pull-right"
+                            data-dismiss="modal"><i
+                            class="fa fa-times-circle fa-2x" aria-hidden="true"
+                            style="z-index:1000;"></i></button>
                 </div>
                 <br>
                 <div class="modal-body v-align-left text-left">
@@ -386,10 +391,10 @@ body.modal-open .blur {
                             <h4 class="panel-title">Sample Cases</h4>
                         </div>
                         <div class="panel-body">
-                            <!-- <a href="{{url_for('sample', sample_path = 'GSA/usjoin.csv/us48.shp', case_num=case_num)}}">Run United States Income case</a><br> -->
-                            <a href="{{url_for('sample', sample_path = 'GSA/IRQcasualties.csv/IRQ_adm1.shp', case_num=case_num)}}">Run
+                            <!-- <a href="{{url_for('sample_blueprint.gsa_sample', sample_path = 'usa', case_num=case_num)}}">Run United States Income case</a><br> -->
+                            <a href="{{url_for('sample_blueprint.gsa_sample', sample_path = 'iraq', case_num=case_num)}}">Run
                                 Iraq Casualties case</a><br>
-                            <a href="{{url_for('static', filename = 'sample/GSA/template.csv', case_num=case_num)}}"
+                            <a href="{{url_for('static', filename = 'sample/gsa/template.csv', case_num=case_num)}}"
                                download>Download Template</a>
                         </div>
                     </div>
@@ -399,74 +404,30 @@ body.modal-open .blur {
                             <h4 class="panel-title">Data Input</h4>
                         </div>
                         <div class="panel-body">
-                            <form id="GSA" enctype="multipart/form-data" method="post">
-                                Upload .csv file for GSA:<br>
-                                <input type="file" id="GSA_Input_CSV" name="GSA_Input_CSV" size=20><br>
-                                Upload 3 files (.shp, .shx, .dfb) for GSA:<br>
-                                <input type="file" id="GSA_Input_map" name="GSA_Input_map" size=20 multiple><br>
-                                <input type="submit" value="SUBMIT">
-                            </form>
+                            Upload .csv file for GSA:<br>
+                            <input type="file" id="GSA_Input_CSV" name="GSA_Input_CSV" size=20><br>
+                            Upload 3 files (.shp, .shx, .dfb) for GSA:<br>
+                            <input type="file" id="GSA_Input_map" name="GSA_Input_map" size=20
+                                   multiple><br>
+                            <input type="submit" value="SUBMIT">
                         </div>
                     </div>
-                    <div class="modal fade slide-right" id="gsa_modal" tabindex="-1" role="dialog"
-                         aria-labelledby="myModalLabel"
-                         aria-hidden="true">
-                        <div class="modal-dialog modal-lg">
-                            <div class="modal-content-wrapper">
-                                <div class="background"></div>
-                                <div class="modal-content table-block"
-                                     style="background: rgba(187, 222, 251, .0); border: 0px; background-repeat: no-repeat; background-position: 50% 90%; background-size: 40%;">
-
-                                    <div style="margin-right: 27px;">
-                                        <button type="button" class="btn btn-danger btn-sm pull-right"
-                                                data-dismiss="modal"><i
-                                                class="fa fa-times-circle fa-2x" aria-hidden="true"
-                                                style="z-index:1000;"></i></button>
-                                    </div>
-                                    <br>
-                                    <div class="modal-body v-align-left text-left">
-                                        <h3 style='color:white'>Geospatial Analysis</h3>
-                                        <div class="panel panel-default">
-                                            <div class="panel-heading">
-                                                <h4 class="panel-title">Sample Cases</h4>
-                                            </div>
-                                            <div class="panel-body">
-                                                <!-- <a href="{{url_for('sample_blueprint.gsa_sample', sample_path = 'usa', case_num=case_num)}}">Run United States Income case</a><br> -->
-                                                <a href="{{url_for('sample_blueprint.gsa_sample', sample_path = 'iraq', case_num=case_num)}}">Run
-                                                    Iraq Casualties case</a><br>
-                                                <a href="{{url_for('static', filename = 'sample/gsa/template.csv', case_num=case_num)}}"
-                                                   download>Download Template</a>
-                                            </div>
-                                        </div>
-
-                                        <div class="panel panel-default">
-                                            <div class="panel-heading">
-                                                <h4 class="panel-title">Data Input</h4>
-                                            </div>
-                                            <div class="panel-body">
-                                                Upload .csv file for GSA:<br>
-                                                <input type="file" id="GSA_Input_CSV" name="GSA_Input_CSV" size=20><br>
-                                                Upload 3 files (.shp, .shx, .dfb) for GSA:<br>
-                                                <input type="file" id="GSA_Input_map" name="GSA_Input_map" size=20
-                                                       multiple><br>
-                                                <input type="submit" value="SUBMIT">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- /.modal-content -->
-                        </div>
-                        <!-- /.modal-dialog -->
-                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
 
 
-                    <script>
+<script>
 $(document).ready(function(){
     $('[data-toggle="tooltip"]').tooltip();
 	$('[data-toggle="tooltip2"]').tooltip();
 });
 
-                    </script>
+
+</script>
 
 </html>
