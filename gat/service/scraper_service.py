@@ -1,4 +1,4 @@
-from gat.scraper import url_parser
+from gat.core.scraper import url_parser
 
 
 def scrape(url):
