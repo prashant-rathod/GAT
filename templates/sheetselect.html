@@ -166,7 +166,7 @@ input {
    <div class="wrapperul" align="center">
 	<ul>
 		<li class="dropdown contains-image">
-			<a href="{{url_for('upload', case_num = case_num)}}"><img  src="{{url_for('static', filename='GATLogo.svg')}}" alt="hermes logo"></a>
+			<a href="{{url_for('upload_blueprint.upload', case_num = case_num)}}"><img  src="{{url_for('static', filename='GATLogo.svg')}}" alt="hermes logo"></a>
 		</li>
 		<li class="dropdown" onclick="show1()">
 			<a href="#" class="dropbtn">NLP</a>
@@ -181,7 +181,7 @@ input {
 				<a href="#" class="dropbtn"><i class="fa fa-question-circle fa-lg"></i></a>
 				<div class="dropdown-content">
 					<a href="#" onClick="openHelp(this)">GSA Output Help</a>
-					<a href="{{url_for('help', case_num = case_num)}}">Help Page</a>
+					<a href="{{url_for('info_blueprint.help', case_num = case_num)}}">Help Page</a>
 				</div>
 			</li>
 	</ul>

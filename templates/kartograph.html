@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <script src="http://kartograph.org/js/jquery.min.js"></script>
+    <script src="http://kartograph.org/js/raphael.min.js"></script>
+    <script src="http://kartograph.org/js/kartograph.min.js"></script>
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <script src="http://kartograph.org/js/chroma.min.js"></script>
+    <script src="http://kartograph.org/js/jquery.min.js"></script>
+    <script type="text/javascript" src="http://kartograph.org/showcase/panzoom/raphael.pan-zoom.min.js"></script>
+    <link href="{{url_for('static', filename='css/general.css')}}" rel="stylesheet">
+    <style>
+        path {fill: lightgray; stroke: white; z-index: 1;}
+        path:hover {fill: gray; z-index: 1;}
+        div.tooltip {
+            z-index: 10;
+            position: absolute;
+            text-align: center;
+            width: 150px;
+            height: 75px;
+            padding: 2px;
+            font: 20px sans-serif;
+            background: lightsteelblue;
+            border: 0px;
+            border-radius: 8px;
+            pointer-events: none;
+        }
+        label {
+            font: 40px sans-serif;
+        }
+        /*form {
+            position: absolute;
+            bottom: 0px;
+            z-index: 10;
+        }*/
+
+        input[type="range"]::-moz-range-track {
+            padding: 0 10px;
+            background: repeating-linear-gradient(to right,
+                #ccc,
+                #ccc 10%,
+                #000 10%,
+                #000 11%,
+                #ccc 11%,
+                #ccc 20%);
+        }
+
+
+
+    </style>
+</head>
+
+<style>
+* {
+ font-size: 100%;
+ font-family: Segoe UI;
+}
+
+</style>
+<body>
+<div id="mydiv" style="position:relative; top: 500px; width:40%; ; z-index: 10;">
+    <div>
+        <input type="range" id="myRange" max="100" min="0" style="width:100%;opacity: 1" list="testList">
+        <span style="position:absolute; color:white; border:1px solid blue; min-width:40px;">
+            <span id="myValue"></span>
+            </span>
+    </div>
+
+    <datalist id="testList">
+        <option>0</option>
+        <option>10</option>
+        <option>20</option>
+        <option>30</option>
+        <option>40</option>
+        <option>50</option>
+        <option>60</option>
+        <option>70</option>
+        <option>80</option>
+        <option>90</option>
+        <option>100</option>
+    </datalist>
+</div>
+
+<script type="text/javascript">
+        $(document).ready(function() {
+            var csvData = {};
+            var tempGsa = {{gsaCSV|safe}};
+            tempGsa = tempGsa.replace(/'/g, '"');
+            tempGsa = tempGsa.replace(/APOSTROPHE/g, "'");
+            csvData.csv = JSON.parse(tempGsa);
+            csvData.header = csvData.csv[0];
+            tempNameMapping = {{nameMapping|safe}};
+            tempNameMapping = tempNameMapping.replace(/'/g, '"');
+            tempNameMapping = tempNameMapping.replace(/APOSTROPHE/g, "'");
+            csvData.nameMapping = JSON.parse(tempNameMapping);
+
+            var startYearIndex = 1;
+            for (var i = 1; i < csvData.header.length; i++){
+                if (!isNaN(parseFloat(csvData.header[i]))){
+                    startYearIndex = i;
+                    break;
+                }
+            }
+            var tempYears = csvData.header;
+            for (var i = 0; i < tempYears.length; i++){
+                if (isNaN(parseFloat(tempYears[i])))
+                    tempYears.splice(i, 1);
+                else
+                    tempYears[i] = parseFloat(tempYears[i]);
+            }
+            csvData.years = tempYears;
+            csvData.startYear = parseFloat(csvData.header[startYearIndex]);
+            csvData.endYear = parseFloat(csvData.header[csvData.header.length - 1]);
+            csvData.centers = {};
+
+            var myRange = document.querySelector('#myRange');
+            var myValue = document.querySelector('#myValue');
+            var off = myRange.offsetWidth / (parseInt(myRange.max) - parseInt(myRange.min));
+            var px =  ((myRange.valueAsNumber - parseInt(myRange.min)) * off) - (myValue.offsetParent.offsetWidth / 2);
+
+            myValue.parentElement.style.left = px + 'px';
+            myValue.parentElement.style.top = myRange.offsetHeight + 'px';
+
+            map = kartograph.map('#map');
+            var mymap = {{mymap|safe}};
+            map.setMap(mymap);
+                map.addLayer('mylayer');
+                        csvData.paths = map.getLayer('mylayer').paths;
+                        var paths = csvData.paths;
+                        var centers = {};
+                        var naming = "{{svgNaming|safe}}";
+                        for (var i = 0; i < paths.length; i++){
+                            var bbox = paths[i].vpath._bbox;
+                            var center = [(bbox[1] + bbox[3])/2, (bbox[0] + bbox[2])/2];
+                            centers[csvData.nameMapping[paths[i].data[naming]]] = {location: center, id: csvData.nameMapping[paths[i].data[naming]]};
+                        }
+                        csvData.centers = centers;
+
+                        var year = (csvData.endYear - csvData.startYear) / 2;
+                        var index = 2 + Math.round(year * (csvData.endYear - csvData.startYear) / 100);
+                        for (var i=1; i < csvData.csv.length; i++) {
+                            var fields = csvData.csv[i];
+                            //var name = fields[0].slice(1, -1);
+                            var name = fields[0];
+                            csvData.centers[name].income = parseFloat(fields[index]);
+                        }
+                        year = year + csvData.startYear;
+                        //document.getElementById("yearLabel").innerHTML = "Year: " + Math.round(year);
+                        myValue.innerHTML = year;
+
+                        var array = Object.keys(csvData.centers).map(function (key) { return csvData.centers[key]; });
+                        var scale = kartograph.scale.sqrt(array, 'income').range([5, 20]);
+                        var svgContainer = d3.select("body").select("svg");/*append("svg").attr("width", map.getLayer('mylayer').paper.width).attr("height", map.getLayer('mylayer').paper.height);*/
+                        var div = d3.select("body").append("div")
+                            .attr("class", "tooltip")
+                            .style("opacity", 0);
+
+                        for (var i = 0; i < array.length; i++){
+                            var top = array[i].location[0] + "px";
+                            var left = array[i].location[1] + "px";
+
+                            if (!isNaN(array[i].income) && !isNaN(scale(array[i].income))){
+                                svgContainer.append("circle").attr("state", array[i].id).attr("cx", array[i].location[1]).attr("cy", array[i].location[0]).attr("r", scale(array[i].income)).style("fill", "purple").style("fill-opacity", .5)
+                                .on("mouseover", function(){div.transition().duration(200).style("opacity", .9);
+                                    div .html("<p>" + d3.select(this).attr("state") + ":<br>" + csvData.centers[d3.select(this).attr("state")].income + "</p>").style("top", (d3.event.pageY - 50) + "px").style("left", (d3.event.pageX ) + "px");})
+                                .on("mousemove", function(){div .html("<p>" + d3.select(this).attr("state") + ":<br>" + csvData.centers[d3.select(this).attr("state")].income + "</p>").style("top", (d3.event.pageY - 50) + "px").style("left", (d3.event.pageX ) + "px");})
+                                .on("mouseout", function(){div.transition().duration(500).style("opacity", 0);});
+                            }
+                        }
+                        initPanZoom();
+
+            //});
+
+
+
+            myRange.oninput = function(){
+                var ppx = ((myRange.valueAsNumber - parseInt(myRange.min)) * off) - (myValue.offsetWidth / 2);
+
+                var number = document.getElementById("myRange").value;
+
+                var header = csvData.header;
+                var startYear = csvData.startYear;
+                var endYear = csvData.endYear;
+                var index = number * (endYear - startYear) / 100;
+                var curYear = index + startYear;
+                myValue.parentElement.style.left = ppx + 'px';
+
+
+                curYear = csvData.years.reduce(function(prev, curr) {
+                    return (Math.abs(curr - curYear) < Math.abs(prev - curYear) ? curr : prev);
+                });
+                myValue.innerHTML = curYear;
+                index = csvData.header.indexOf(curYear);
+
+                for (var i=1; i < csvData.csv.length - 1; i++) {
+                    var fields = csvData.csv[i];
+                    //var name = fields[0].slice(1, - 1);
+                    var name = fields[0];
+                    csvData.centers[name].income = parseFloat(fields[index]);
+                }
+
+                var array = Object.keys(csvData.centers).map(function (key) { return csvData.centers[key]; });
+                var scale = kartograph.scale.sqrt(array, 'income').range([5, 20]);
+                d3.select("body").select("svg").selectAll("circle").attr("r", function(){ return scale(csvData.centers[d3.select(this).attr("state")].income);});
+                /*$(function() {
+              $.getJSON('/_get_autocorrelation/{{case_num}}', {
+                year: curYear,
+              }, function(data) {
+                //currently hard coded, must be fixed soon
+                $("#gsa_year").text("Displaying Autocorrelation Statistics for year " + String(data.year));
+                $("#local_autocorrelation").text("Local Autocorrelation: " + String(data.loc));
+                $("#global_autocorrelation").text("Global Autocorrelation: " + String(data.glob));
+              });
+            });*/
+            };
+            function initPanZoom() {
+                var panZoom = map.paper.panzoom();
+                panZoom.enable()
+
+                setInterval(function() {
+                    $('h1').html(panZoom.currZoom +' x:'+panZoom.currPos.x.toFixed(0)+' y:'+panZoom.currPos.y.toFixed(0));
+                }, 50);
+                //cursor
+                var css = '<style type="text/css">.grabbing { cursor: url(data:image/x-icon;base64,AAACAAEAICACAAcABQAwAQAAFgAAACgAAAAgAAAAQAAAAAEAAQAAAAAAAAEAAAAAAAAAAAAAAgAAAAAAAAAAAAAA////AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD8AAAA/AAAAfwAAAP+AAAH/gAAB/8AAAH/AAAB/wAAA/0AAANsAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA//////////////////////////////////////////////////////////////////////////////////////gH///4B///8Af//+AD///AA///wAH//+AB///wAf//4AH//+AD///yT/////////////////////////////8=), pointer !important; } .map-controls div { cursor:pointer; font-size: 20px; color: #777; font-weight:bold; font-family: Helvetica; line-height: 28px; text-align:center;border: 1px solid #bbb; } .map-controls div:hover { border: 1px solid #999; color: #000; }</style>';
+                $('body').append(css);
+
+                //pan zoom controls up and down
+                var ctrls = $('<div />'), up = $('<div>+</div>'), down = $('<div>−</div>');
+                ctrls
+                    .addClass('map-controls')
+                    .css({ position: 'relative', top: 20, left: 20, 'z-index': 1000 })
+                    .append(up).append(down);
+                up.css({ 'border-radius': '14px 14px 0 0', width: 28, height: 28, position: 'absolute',
+                    top: 0, left: 0, background: '#fff' });
+                down.css({ 'border-radius': '0 0 14px 14px', width: 28, height: 28, position: 'absolute',
+                    top: 29, left: 0, background: '#fff' });
+
+                $('#map').parent().append(ctrls);
+
+                up.click(function (e) {
+                    panZoom.zoomIn(1);
+                    e.preventDefault();
+                });
+                down.click(function (e) {
+                    panZoom.zoomOut(1);
+                    e.preventDefault();
+                });
+            }
+        });
+
+</script>
+<div id="map"></div>
+</body>
+</html>

@@ -9,4 +9,5 @@
 *.pem
 nltk_downloads/*
 static/temp/*
-genMap
+.DS_Store
+out/*

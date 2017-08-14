@@ -1,26 +1,26 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Analysis output</title>
-	<meta charset="utf-8"/>
-		<link href="../static/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
-		<link class="main-stylesheet" href="../static/css/custom.css" rel="stylesheet" type="text/css" />
-		<link href="{{url_for('static', filename='css/vizStyle.css')}}" rel="stylesheet">
-   	<link href="../static/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
-   	<link class="main-stylesheet" href="../static/css/floatsocial.css" rel="stylesheet" type="text/css" />
-    <link href="../static/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
-  	<script src="http://kartograph.org/js/jquery.min.js"></script>
-  	<script src="http://kartograph.org/js/raphael.min.js"></script>
-  	<script src="http://kartograph.org/js/kartograph.min.js"></script>
-  	<script src="https://d3js.org/d3.v4.min.js"></script>
-		<script src="http://code.interactjs.io/v1.2.9/interact.min.js"></script>
-		<script src="{{url_for('static', filename='js/jquery-1.11.1.min.js')}}"></script>
-		<script src="https://kryogenix.org/code/browser/sorttable/sorttable.js"></script>
-		<script type="text/javascript" src="../static/js/jquery-1.11.1.min.js"></script>
-		<script type="text/javascript" src="../static/js/bootstrap.min.js"></script>
-		<script type="text/javascript" src="../static/js/custom.frontend.js"></script>
-		<script type="text/javascript" src="../static/js/vizScript.js"></script>
-  	<script type="text/javascript">
+    <title>Analysis output</title>
+    <meta charset="utf-8"/>
+    <link href="../static/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+    <link class="main-stylesheet" href="../static/css/custom.css" rel="stylesheet" type="text/css"/>
+    <link href="{{url_for('static', filename='css/vizStyle.css')}}" rel="stylesheet">
+    <link href="../static/css/font-awesome.min.css" rel="stylesheet" type="text/css"/>
+    <link class="main-stylesheet" href="../static/css/floatsocial.css" rel="stylesheet" type="text/css"/>
+    <link href="../static/css/font-awesome.min.css" rel="stylesheet" type="text/css"/>
+    <script src="http://kartograph.org/js/jquery.min.js"></script>
+    <script src="http://kartograph.org/js/raphael.min.js"></script>
+    <script src="http://kartograph.org/js/kartograph.min.js"></script>
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <script src="http://code.interactjs.io/v1.2.9/interact.min.js"></script>
+    <script src="{{url_for('static', filename='js/jquery-1.11.1.min.js')}}"></script>
+    <script src="https://kryogenix.org/code/browser/sorttable/sorttable.js"></script>
+    <script type="text/javascript" src="../static/js/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="../static/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../static/js/custom.frontend.js"></script>
+    <script type="text/javascript" src="../static/js/vizScript.js"></script>
+    <script type="text/javascript">
 	  function get(id) {
 			return document.getElementById(id);
 		}
@@ -104,8 +104,9 @@
 	    target.setAttribute('data-y', y);
 	  });
 
-  </script>
-	<style>
+
+    </script>
+    <style>
 		body {
 			height:100vh;
 		}
@@ -115,7 +116,8 @@
 		center {
 			color: white;
 		}
-	</style>
+
+    </style>
 
 </head>
 
@@ -124,6 +126,7 @@
  font-size: 100%;
  font-family: Segoe UI;
 }
+
 </style>
 
 <script>
@@ -147,482 +150,364 @@
 		function openurl(link){
 				window.open(link);
 			}
+
 </script>
 
 
-
-
 <body class="resize-container">
-	<section class="blur">
-	<!-- dropdown menu
-		The buttons will have to become buttons, indeed-->
-   <div class="wrapperul" align="center">
-	<ul>
-		<li class="dropdown contains-image">
-			<a href="{{url_for('upload', case_num = case_num)}}"><img  src="{{url_for('static', filename='GATLogo.svg')}}" alt="hermes logo"></a>
-		</li>
-		<li class="dropdown" onclick="show1()">
-			<a href="#" class="dropbtn">NLP</a>
-		</li>
-		<li class="dropdown" onclick="show2()">
-			<a href="#" class="dropbtn">SNA</a>
-		</li>
-		<li class="dropdown" onclick="show3()">
-			<a href="#" class="dropbtn">GSA</a>
-		</li>
-		<li class="dropdown">
-			<a href="#" class="dropbtn">View</a>
-			<div class="dropdown-content">
-				<a onclick="document.getElementById('GSA Visualization Window').style.display='inline-block'">GSA Visualization</a>
-				<a onclick="document.getElementById('GSA Data Window').style.display='inline-block'">GSA Data</a>
-				<a onclick="document.getElementById('NLP Visualization Window').style.display='inline-block'">NLP Visualization</a>
-				<a onclick="document.getElementById('NLP Data Window').style.display='inline-block'">NLP Data</a>
-				<a onclick="document.getElementById('SNA Visualization Window').style.display='inline-block'">SNA Visualization</a>
-				<a onclick="document.getElementById('SNA Data Window').style.display='inline-block'">SNA Data</a>
-			</div>
-		</li>
-			<li class="dropdown align-right">
-				<a href="#" class="dropbtn"><i class="fa fa-question-circle fa-lg"></i></a>
-				<div class="dropdown-content">
-					<a href="#" onClick="openHelp(this)">GSA Output Help</a>
-					<a href="{{url_for('help', case_num = case_num)}}">Help Page</a>
-				</div>
-			</li>
-	</ul>
-	</div>
-	<div id = "help" style = "display: none;">
-		<button onClick = "closeHelp(this)">Close Help</button>
-		<p><b>Autocorrelation: </b>measures how randomly data is distributed over a space. Global AutoCorrelation is more sensitive to global trends, and smaller clumps of similar data do not affect this analysis method on a large scale. Local AutoCorrelation is more sensitive locally and gives a smaller-scale autocorrelation measure.</p>
-		<p><b>Spatial Dynamics: </b>analyzes the evolution of spatial data over time. Here, regions on the map are broken up into several categories, depending on the value of the observation at that location. Using Markov methods, the probability that a region transitions to a different category is generated. Additionally, mean transition times (time for a region to go from category a to category b) are given. In order, the return values are as follows: <br>1. A matrix which counts how many a region from one category to another. Most entries in this matrix are along the diagonal, as regions tend to stay in the same category, and only transition to similar categories. <br>2. The transition probability matrix. <br>3. The steady-state distribution matrix, which indicates the probability of a region ending up in category b, given that it started in category a. <br>4. The mean transition time matrix.</p>
-	</div>
-<!--<div class="bodywrapper">-->
-	{% if research_question %}
-	<div class = "output-window resize-drag-outer" id = "Scraped Text Window" style = "width: 50%; heigth: 50%">
+<section class="blur">
+    <!-- dropdown menu
+        The buttons will have to become buttons, indeed-->
+    <div class="wrapperul" align="center">
+        <ul>
+            <li class="dropdown contains-image">
+                <a href="{{url_for('upload_blueprint.upload', case_num = case_num)}}"><img
+                        src="{{url_for('static', filename='GATLogo.svg')}}" alt="hermes logo"></a>
+            </li>
+            <li class="dropdown" onclick="show1()">
+                <a href="#" class="dropbtn">NLP</a>
+            </li>
+            <li class="dropdown" onclick="show2()">
+                <a href="#" class="dropbtn">SNA</a>
+            </li>
+            <li class="dropdown" onclick="show3()">
+                <a href="#" class="dropbtn">GSA</a>
+            </li>
+            <li class="dropdown">
+                <a href="#" class="dropbtn">View</a>
+                <div class="dropdown-content">
+                    <a onclick="document.getElementById('GSA Visualization Window').style.display='inline-block'">GSA
+                        Visualization</a>
+                    <a onclick="document.getElementById('GSA Data Window').style.display='inline-block'">GSA Data</a>
+                    <a onclick="document.getElementById('NLP Visualization Window').style.display='inline-block'">NLP
+                        Visualization</a>
+                    <a onclick="document.getElementById('NLP Data Window').style.display='inline-block'">NLP Data</a>
+                    <a onclick="document.getElementById('SNA Visualization Window').style.display='inline-block'">SNA
+                        Visualization</a>
+                    <a onclick="document.getElementById('SNA Data Window').style.display='inline-block'">SNA Data</a>
+                </div>
+            </li>
+            <li class="dropdown">
+                <a href="#" class="dropbtn">Help</a>
+                <div class="dropdown-content">
+                    <a href="#" onClick="openHelp(this)">GSA Output Help</a>
+                    <a href="{{url_for('info_blueprint.help', case_num = case_num)}}">Help Page</a>
+                </div>
+            </li>
+        </ul>
+    </div>
+    <div id="help" style="display: none;">
+        <button onClick="closeHelp(this)">Close Help</button>
+        <p><b>Autocorrelation: </b>measures how randomly data is distributed over a space. Global AutoCorrelation is
+            more sensitive to global trends, and smaller clumps of similar data do not affect this analysis method on a
+            large scale. Local AutoCorrelation is more sensitive locally and gives a smaller-scale autocorrelation
+            measure.</p>
+        <p><b>Spatial Dynamics: </b>analyzes the evolution of spatial data over time. Here, regions on the map are
+            broken up into several categories, depending on the value of the observation at that location. Using Markov
+            methods, the probability that a region transitions to a different category is generated. Additionally, mean
+            transition times (time for a region to go from category a to category b) are given. In order, the return
+            values are as follows: <br>1. A matrix which counts how many a region from one category to another. Most
+            entries in this matrix are along the diagonal, as regions tend to stay in the same category, and only
+            transition to similar categories. <br>2. The transition probability matrix. <br>3. The steady-state
+            distribution matrix, which indicates the probability of a region ending up in category b, given that it
+            started in category a. <br>4. The mean transition time matrix.</p>
+    </div>
+    <!--<div class="bodywrapper">-->
+    {% if research_question %}
+    <div class="output-window resize-drag-outer" id="Scraped Text Window" style="width: 50%; heigth: 50%">
 
-		<div class = "output-button-bar resize-drag">
+        <div class="output-button-bar resize-drag">
 			<span class="left-span">
 				<i class="btn btn-close fa fa-window-close-o"
-				onclick="document.getElementById('Scraped Text').style.display='none'"></i>
+                   onclick="document.getElementById('Scraped Text').style.display='none'"></i>
 
 				<i class="btn btn-hide fa fa-window-minimize"
-				onclick="handleWindowResizeClick('Scraped Text',this)"></i>
+                   onclick="handleWindowResizeClick('Scraped Text',this)"></i>
 			</span>
-			<span class="right-span"><b>Scraped Text</b></span>
-		</div>
+            <span class="right-span"><b>Scraped Text</b></span>
+        </div>
 
-		<div class = "output" id = "Scraped Text">
-			<br>
-			<!--Research question: {{ research_question }}-->
-			<div style="text-align:center"><b>{{ research_question[0] }}</b>
-			<br>
-			Authors: {{research_question[1]}}
-			<br>
-			Published {{research_question[2]}}
-			</div><br>
-			<br>
-			<p style="line-height:30px">{{research_question[3]}}</p>
-			<br>
-		</div>
-	</div>
-	{% endif %}
+        <div class="output" id="Scraped Text">
+            <br>
+            <!--Research question: {{ research_question }}-->
+            <div style="text-align:center"><b>{{ research_question[0] }}</b>
+                <br>
+                Authors: {{research_question[1]}}
+                <br>
+                Published {{research_question[2]}}
+            </div>
+            <br>
+            <br>
+            <p style="line-height:30px">{{research_question[3]}}</p>
+            <br>
+        </div>
+    </div>
+    {% endif %}
 
-	{% if error %}
-		Note: If you uploaded shapefiles for GSA analysis and nothing is displayed, then it is possible that the generated map or the provide CSV has characters/letters that our tool cannot understand.
-	{% endif %}
+    {% if error %}
+    Note: If you uploaded shapefiles for GSA analysis and nothing is displayed, then it is possible that the generated
+    map or the provide CSV has characters/letters that our tool cannot understand.
+    {% endif %}
 
-	{% if gsaCSV %}
-	<div class = "output-window resize-drag-outer" id = "GSA Visualization Window" style = "width: 50%; heigth: 50%">
+    {% if gsaCSV %}
+    <div class="output-window resize-drag-outer" id="GSA Visualization Window" style="width: 50%; heigth: 50%">
 
-		<div class = "output-button-bar resize-drag">
+        <div class="output-button-bar resize-drag">
 			<span class="left-span">
 				<i class="btn btn-close fa fa-window-close-o"
-				onclick="document.getElementById('GSA Visualization').style.display='none'"></i>
+                   onclick="document.getElementById('GSA Visualization').style.display='none'"></i>
 
 				<i class="btn btn-hide fa fa-window-minimize"
-				onclick="handleWindowResizeClick('GSA Visualization',this)"></i>
+                   onclick="handleWindowResizeClick('GSA Visualization',this)"></i>
 			</span>
-			<span class="right-span"><b>GSA Visualization</b></span>
-		</div>
+            <span class="right-span"><b>GSA Visualization</b></span>
+        </div>
 
-		<div class = "output" id = "GSA Visualization">
+        <div class="output" id="GSA Visualization">
 
-		{% if GSA_sample %}
-			<a href="{{url_for('reg', case_num = case_num)}}">Click here for regionalization visualization</a>
-		{% endif %}
+            {% if GSA_sample %}
+            <a href="{{url_for('gsa_blueprint.reg', case_num = case_num)}}">Click here for regionalization
+                visualization</a>
+            {% endif %}
 
-		{% if gsaCSV %}
-			{% include "kartograph-test.html" %}
-		{% endif %}
+            {% if gsaCSV %}
+            {% include "kartograph.html" %}
+            {% endif %}
 
-		</div>
-	</div>
+        </div>
+    </div>
 
-	<div class = "output-window resize-drag-outer" id = "GSA Data Window">
+    <div class="output-window resize-drag-outer" id="GSA Data Window">
 
-		<div class = "output-button-bar resize-drag">
+        <div class="output-button-bar resize-drag">
 			<span class="left-span">
 				<i class="btn btn-close fa fa-window-close-o"
-				onclick="document.getElementById('GSA Data').style.display='none'"></i>
+                   onclick="document.getElementById('GSA Data').style.display='none'"></i>
 
 				<i class="btn btn-hide fa fa-window-minimize"
-				onclick="handleWindowResizeClick('GSA Data',this)"></i>
+                   onclick="handleWindowResizeClick('GSA Data',this)"></i>
 			</span>
-			<span class="right-span"><b>GSA Data</b></span>
-		</div>
+            <span class="right-span"><b>GSA Data</b></span>
+        </div>
 
-		<div class = "output" id = "GSA Data">
+        <div class="output" id="GSA Data">
 
-		{% if GSA_sample %}
-			<p id="gsa_year" style="font-weight:bold;">Autocorrelation Statistics:</p>
-			<p id = "local_autocorrelation">Local Autocorrelation: {{ auto[0] }}</p>
-			<p id = "global_autocorrelation">Global Autocorrelation: {{ auto[1] }}</p><br>
+            {% if GSA_sample %}
+            <p id="gsa_year" style="font-weight:bold;">Autocorrelation Statistics:</p>
+            <p id="local_autocorrelation">Local Autocorrelation: {{ auto[0] }}</p>
+            <p id="global_autocorrelation">Global Autocorrelation: {{ auto[1] }}</p><br>
 
-			<p><b>Spatial Dynamics Statistics</b></p>
-			<p>Transition Counts:<br> {% for row in sp_dyn[0] %}{{row}}<br>{% endfor %}</p>
-			<p>Transition Probabilities:<br> {% for row in sp_dyn[1] %}{{row}}<br>{% endfor %}</p>
-			{% if sp_dyn[2] != None %}
-			<p>Steady State Distributions:<br> {% for row in sp_dyn[2] %}{{row}}<br>{% endfor %}</p>
-			{% endif %}
-			<p>Mean Passage Time:<br> {% for row in sp_dyn[3] %}{{row}}<br>{% endfor %}</p>
+            <p><b>Spatial Dynamics Statistics</b></p>
+            <p>Transition Counts:<br> {% for row in sp_dyn[0] %}{{row}}<br>{% endfor %}</p>
+            <p>Transition Probabilities:<br> {% for row in sp_dyn[1] %}{{row}}<br>{% endfor %}</p>
+            {% if sp_dyn[2] != None %}
+            <p>Steady State Distributions:<br> {% for row in sp_dyn[2] %}{{row}}<br>{% endfor %}</p>
+            {% endif %}
+            <p>Mean Passage Time:<br> {% for row in sp_dyn[3] %}{{row}}<br>{% endfor %}</p>
 
-		{% endif %}
+            {% endif %}
 
-		</div>
-<!--	</div> -->
+        </div>
+        <!--	</div> -->
 
 
-	<br>
-	<br>
-	{% endif %}
+        <br>
+        <br>
+        {% endif %}
 
         {% if nlp_summary %}
-	<div class = "output-window resize-drag-outer" id = "NLP Visualization Window">
+        <div class="output-window resize-drag-outer" id="NLP Visualization Window">
 
-		<div class = "output-button-bar resize-drag">
+            <div class="output-button-bar resize-drag">
 			<span class="left-span">
 				<i class="btn btn-close fa fa-window-close-o"
-				onclick="document.getElementById('NLP Visualization').style.display='none'"></i>
+                   onclick="document.getElementById('NLP Visualization').style.display='none'"></i>
 
 				<i class="btn btn-hide fa fa-window-minimize"
-				onclick="handleWindowResizeClick('NLP Visualization',this)"></i>
+                   onclick="handleWindowResizeClick('NLP Visualization',this)"></i>
 			</span>
-			<span class="right-span"><b>NLP Visualization</b></span>
-		</div>
+                <span class="right-span"><b>NLP Visualization</b></span>
+            </div>
 
-		<div class = "output" id = "NLP Visualization" >
-<div class="wrapper" style="height: 100%;width: 100%;">
-                               <h1><center>Natural Language Processing</center></h1>
-                                       <div class="tab">
-                                               <input id="tab-sum" type="checkbox" name="tabs">
-                                               <label for="tab-sum">Corpus Statistics</label>
-                                               <div class="tab-content">
-                                                       <p>Number of documents analyzed: {{nlp_summary[0]}}<br>
-                                                          Total document word count: {{nlp_summary[2]}}<br>
-                                                               <center>Document length distribution
-                                                               <image src="{{url_for('static', filename='temp/')}}{{ nlp_summary[1] }}" width="90%" height="50%" ></image>
-                                                               </center>
-                                                       </p>
-                                               </div>
-                                       </div>
-                               {% if False %}
-                                       <div class="tab">
-                                               <input id="tab-one" type="checkbox" name="tabs">
-                                               <label for="tab-one">Entity Sentiment</label>
-                                               <div class="tab-content">
-                                                       <table class="sortable" border="2px">
-                                                               <tr>
-                                                                       <th>Name</th>
-                                                                       <th>Uses</th>
-                                                                       <th>Positive</th>
-                                                                       <th>Neutral</th>
-                                                                       <th>Negative</th>
-                                                                       <th><strong>Composite</strong></th>
-                                                               </tr>
-                                                               {% for entity in nlp_entities %}
-                                                               <tr>
-                                                                       <td>{{entity[0]}}</td>
-                                                                       <td>{{entity[5]}}</td>
-                                                                       <td>{{entity[3]}}</td>
-                                                                       <td>{{entity[2]}}</td>
-                                                                       <td>{{entity[1]}}</td>
-                                                                       <td>{{entity[4]}}</td>
-                                                               </tr>
-                                                               {% endfor -%}
-                                                       </table>
-                                                       <br/>
-                                               </div>
-                                       </div>
-                               {% endif %}
-                               {% if nlp_tropes %}
-                                       <div class="tab">
-                                               <input id="tab-two" type="checkbox" name="tabs">
-                                               <label for="tab-two">Entity Emotions</label>
-                                               <div class="tab-content">
-                                                       {% for trope in nlp_tropes %}
-                                                       <img src="{{url_for('static', filename='temp/')}}{{trope}}" height="40%" width="40%"></image>
-                                                       {% endfor -%}
-                                               </div>
-                                       </div>
-                               {% endif %}
-                               {% if nlp_actors %}
-                                       <div class="tab">
-                                               <input id="tab-three" type="checkbox" name="tabs">
-                                               <label for="tab-three">Actor Analysis</label>
-                                               <div class="tab-content">
-                                                       <p>Person to other category table</p>
-                                               </div>
-                                       </div>
-                               {% endif %}
-                               {% if nlp_network %}
-                                       <div class="tab">
-                                               <input id="tab-three" type="checkbox" name="tabs">
-                                               <label for="tab-three">Entity Network</label>
-                                               <div class="tab-content">
-                                                       <p>Jgraph 2D picture with link to SNA</p>
-                                               </div>
-                                       </div>
-                               {% endif %}
-                       </div>
+            <div class="output" id="NLP Visualization">
+                <div class="wrapper" style="height: 100%;width: 100%;">
+                    <h1>
+                        <center>Natural Language Processing</center>
+                    </h1>
+                    <div class="tab">
+                        <input id="tab-sum" type="checkbox" name="tabs">
+                        <label for="tab-sum">Corpus Statistics</label>
+                        <div class="tab-content">
+                            <p>Number of documents analyzed: {{nlp_summary[0]}}<br>
+                                Total document word count: {{nlp_summary[2]}}<br>
+                            <center>Document length distribution
+                                <image src="out/nlp/{{ nlp_summary[1] }}" width="90%" height="50%"></image>
+                            </center>
+                            </p>
+                        </div>
+                    </div>
+                    {% if False %}
+                    <div class="tab">
+                        <input id="tab-one" type="checkbox" name="tabs">
+                        <label for="tab-one">Entity Sentiment</label>
+                        <div class="tab-content">
+                            <table class="sortable" border="2px">
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Uses</th>
+                                    <th>Positive</th>
+                                    <th>Neutral</th>
+                                    <th>Negative</th>
+                                    <th><strong>Composite</strong></th>
+                                </tr>
+                                {% for entity in nlp_entities %}
+                                <tr>
+                                    <td>{{entity[0]}}</td>
+                                    <td>{{entity[5]}}</td>
+                                    <td>{{entity[3]}}</td>
+                                    <td>{{entity[2]}}</td>
+                                    <td>{{entity[1]}}</td>
+                                    <td>{{entity[4]}}</td>
+                                </tr>
+                                {% endfor -%}
+                            </table>
+                            <br/>
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% if nlp_tropes %}
+                    <div class="tab">
+                        <input id="tab-two" type="checkbox" name="tabs">
+                        <label for="tab-two">Entity Emotions</label>
+                        <div class="tab-content">
+                            {% for trope in nlp_tropes %}
+                            <img src="out/nlp/{{trope}}" height="40%" width="40%"></image>
+                            {% endfor -%}
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% if nlp_actors %}
+                    <div class="tab">
+                        <input id="tab-three" type="checkbox" name="tabs">
+                        <label for="tab-three">Actor Analysis</label>
+                        <div class="tab-content">
+                            <p>Person to other category table</p>
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% if nlp_network %}
+                    <div class="tab">
+                        <input id="tab-three" type="checkbox" name="tabs">
+                        <label for="tab-three">Entity Network</label>
+                        <div class="tab-content">
+                            <p>Jgraph 2D picture with link to SNA</p>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
 
-		</div>
-	</div>
-	{% endif %}
-
-	<br>
-	<br>
-
-	{% if graph %}
-	<div class = "output-window resize-drag-outer" id = "SNA Visualization Window">
-		<div class = "output-button-bar resize-drag">
-			<span class="left-span">
-				<i class="btn btn-close fa fa-window-close-o"
-				onclick="document.getElementById('SNA Visualization').style.display='none'"></i>
-
-				<i class="btn btn-hide fa fa-window-minimize"
-				onclick="handleWindowResizeClick('SNA Visualization',this)"></i>
-			</span>
-			<span class="right-span"><b>SNA Visualization</b></span>
-		</div>
-
-		<div class = "output" id = "SNA Visualization">
-			{% if jgdata %}
-				<!-- Apparently target="_blank" is a security hazard -->
-				<p><a href="{{ url_for('jgvis', case_num=case_num) }}" style="color:white">Click here for 3D visualization</a></p>
-				{% if SNAbpPlot -%}
-					<p>2D Visualization:</p>
-					<image src="{{url_for('static', filename='temp/')}}{{ SNAbpPlot }}"></image>
-				{% endif -%}
-			{% endif %}
-
-		</div>
-	</div>
-
-	<div class = "output-window resize-drag-outer" id = "SNA Data Window">
-
-		<div class = "output-button-bar resize-drag">
-			<span class="left-span">
-				<i class="btn btn-close fa fa-window-close-o"
-				onclick="document.getElementById('SNA Data').style.display='none'"></i>
-
-				<i class="btn btn-hide fa fa-window-minimize"
-				onclick="handleWindowResizeClick('SNA Data',this)"></i>
-			</span>
-			<span class="right-span"><b>SNA Data</b></span>
-		</div>
-
-		<div class = "output" id = "SNA Data">
-			{% if systemMeasures -%}
-				<h4>System Measures</h4>
-				{% for measure in systemMeasures -%}
-					{% if measure not in ['Description','Resilience'] -%}
-						<p>
-							{{measure}}: {{systemMeasures[measure]}}
-						</p>
-					{% endif -%}
-				{% endfor -%}
-			{% endif -%}
-
-			<div id="resilienceInfo">
-				{% if systemMeasures.get("Resilience") == None -%}
-					<form id="resilienceForm" enctype="multipart/form-data" method="post">
-						<input id="resilience" onclick="handleResilienceClick()" name="resilienceSubmit" type="submit" value="Calculate Resilience" href="javascript:void(0)" data-toggle="tooltip" data-placement="left" title="{{systemMeasures['Description']['Resilience']}}">
-					</form>
-				{% else -%}
-					<table id="resilienceTable">
-						<tr>
-							<th style="text-align:center" colspan="2">
-							 Resilience
-							</th>
-						</tr>
-						<tr>
-							<th>
-							 Cliques
-							</th>
-							<th>
-								Percentile
-							</th>
-						</tr>
-					{% for cluster in systemMeasures['Resilience'] -%}
-						<tr>
-							<td class="node">
-								{{ cluster }}
-							</td>
-							<td>
-								{{ systemMeasures['Resilience'][cluster][0] }}
-								<div class="colorCode" style="background-color:rgb({{systemMeasures['Resilience'][cluster][1]}}%,0%,{{systemMeasures['Resilience'][cluster][2]}}%)"></div>
-							</td>
-						</tr>
-					{% endfor -%}
-					</table>
-				{% endif -%}
-		</div>
-
-		</div>
-	</div>
-	{% endif %}
-
-	<br><br><br><br><br>
-
-    </div>
-</section>
-
-
-<!-- Begin modal -->
-<div class="modal fade slide-right" id="nlp_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-	<div class="modal-dialog modal-lg">
-		<div class="modal-content-wrapper">
-			<div class="modal-content table-block" style="background: transparent; border: 0px; background-repeat: no-repeat; background-position: 50% 90%; background-size: 40%;">
-
-				<div style="margin-right: 27px;">
-					<button type="button" class="btn btn-danger btn-sm pull-right" data-dismiss="modal"><i class="fa fa-times-circle fa-2x" aria-hidden="true" style="z-index:1000;"></i>
-					</button>
-				</div>
-				<br>
-				<div class="modal-body v-align-left text-left">
-
-				<h3 style='color:white'>Natural Language Processing</h3>
-
-				<div class="panel panel-default">
-					<div class="panel-heading">
-						<h4 class="panel-title">Sample Cases</h4>
-					</div>
-					<div class="panel-body">
-						<a href="{{url_for('sample', sample_path = 'NLP/isil', case_num=case_num)}}">Run ISIL case</a><br>
-                                                <a href="{{url_for('sample', sample_path = 'NLP/united-states', case_num=case_num)}}">USA Mosul Articles</a>
-					</div>
-				</div>
-
-				<div class="panel panel-default">
-					<div class="panel-heading">
-						<h4 class="panel-title">Data Input</h4>
-					</div>
-					<div class="panel-body">
-						Upload text files (.txt, .rtf):<br>
-						<p style = "font-size:10px">(Use Ctrl- or Shift-click to select multiple files)</p>
-						<input type = "file" id = "NLP_Input_corpus" name = "NLP_Input_corpus" multiple>
-						Enter urls to scrape (comma separated):<br>
-						<input type = "text" id = "NLP_LDP_terms" name = "NLP_LDP_terms">
-						<hr>
-						<input type = "submit" value = "SUBMIT">
-					</div>
-				</div>
-			</div>
-		</div>
-		<!-- /.modal-content -->
-	</div>
-<!-- /.modal-dialog -->
-</div>
-</div> <!-- Don't delete this div even though they appear to serve no purpose -->
-
-<div class="modal fade slide-right" id="sna_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-<div class="modal-dialog modal-lg">
-    <div class="modal-content-wrapper">
-       <div class="modal-content table-block" style="background: rgba(187, 222, 251, .0); border: 0px; background-repeat: no-repeat; background-position: 50% 90%; background-size: 40%;">
-
-			<div style="margin-right: 27px;">
-				<button type="button" class="btn btn-danger btn-sm pull-right" data-dismiss="modal">
-					<i class="fa fa-times-circle fa-2x" aria-hidden="true" style="z-index:1000;"></i>
-				</button>
-			</div>
-			<br>
-            <div class="modal-body v-align-left text-left">
-			<h3 style='color:white'>Social Network Analysis</h3>
-				<div class="panel panel-default">
-					<div class="panel-heading">
-						<h4 class="panel-title">Sample Cases</a></h4>
-					</div>
-					<div class="panel-body">
-						<a href="{{url_for('sample', sample_path = 'SNA/iran.xlsx', case_num=case_num)}}">Run Iran Political Elite case</a><br>
-						<a href="{{url_for('sample', sample_path = 'SNA/AAH_for_SNA.xlsx', case_num=case_num)}}">Run AAH case</a><br>
-						<a href="{{url_for('sample', sample_path = 'SNA/roleTheorySample.xlsx', case_num=case_num)}}">Run Role Theory case</a><br>
-                                                <a href="{{url_for('sample', sample_path = 'SNA/CaseStudy_Turkey.xlsx', case_num=case_num)}}">Run Turkey case</a><br>
-                                                <a href="{{url_for('sample', sample_path = 'SNA/BT_CaseStudy.xlsx', case_num=case_num)}}">Run BT case</a><br>
-					</div>
-				</div>
-				<div class="panel panel-default">
-					<div class="panel-heading">
-						<h4 class="panel-title">Data Input</a></h4>
-					</div>
-					<div class="panel-body">
-						<span class="inputsection">
-							<br>
-							Upload .xlsx file for SNA:<br>
-							<input type = "file" id = "SNA_Input" name = "SNA_Input" size = 20 value="a"><br>
-							<input type = "submit" value = "SUBMIT">
-						</span>
-					</div>
-				</div>
             </div>
         </div>
-    </div>
-    <!-- /.modal-content -->
-</div>
-<!-- /.modal-dialog -->
-</div>
+        {% endif %}
 
+        <br>
+        <br>
 
-<div class="modal fade slide-right" id="gsa_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-<div class="modal-dialog modal-lg">
-    <div class="modal-content-wrapper">
-        <div class="modal-content table-block" style="background: rgba(187, 222, 251, .0); border: 0px; background-repeat: no-repeat; background-position: 50% 90%; background-size: 40%;">
+        {% if graph %}
+        <div class="output-window resize-drag-outer" id="SNA Visualization Window">
+            <div class="output-button-bar resize-drag">
+			<span class="left-span">
+				<i class="btn btn-close fa fa-window-close-o"
+                   onclick="document.getElementById('SNA Visualization').style.display='none'"></i>
 
-			<div style="margin-right: 27px;">
-				<button type="button" class="btn btn-danger btn-sm pull-right" data-dismiss="modal"><i class="fa fa-times-circle fa-2x" aria-hidden="true" style="z-index:1000;"></i></button>
-			</div>
-			<br>
-            <div class="modal-body v-align-left text-left">
-				<h3 style='color:white'>Geospatial Analysis</h3>
-				<div class="panel panel-default">
-					<div class="panel-heading">
-						<h4 class="panel-title">Sample Cases</h4>
-					</div>
-					<div class="panel-body">
-						<a href="{{url_for('sample', sample_path = 'GSA/usjoin.csv/us48.shp', case_num=case_num)}}">Run United States Income case</a><br>
-						<a href="{{url_for('static', filename = 'sample/GSA/template.csv', case_num=case_num)}}" download>Download Template</a>
-					</div>
-				</div>
+				<i class="btn btn-hide fa fa-window-minimize"
+                   onclick="handleWindowResizeClick('SNA Visualization',this)"></i>
+			</span>
+                <span class="right-span"><b>SNA Visualization</b></span>
+            </div>
 
-				<div class="panel panel-default">
-					<div class="panel-heading">
-						<h4 class="panel-title">Data Input</h4>
-					</div>
-					<div class="panel-body">
-						Upload .csv file for GSA:<br>
-						<input type = "file" id = "GSA_Input_CSV" name = "GSA_Input_CSV" size = 20><br>
-						Upload 3 files (.shp, .shx, .dfb) for GSA:<br>
-						<input type = "file" id = "GSA_Input_map" name = "GSA_Input_map" size = 20 multiple><br>
-						<input type = "submit" value = "SUBMIT">
-					</div>
-				</div>
+            <div class="output" id="SNA Visualization">
+                {% if jgdata %}
+                <p><a href="{{ url_for('sna_blueprint.jgvis', case_num=case_num) }}" style="color:white">Click here for
+                    3D visualization</a></p>
+                {% if SNAbpPlot -%}
+                <p>2D Visualization:</p>
+                <image src="out/sna/{{ SNAbpPlot }}"></image>
+                {% endif -%}
+                {% endif %}
+
             </div>
         </div>
+
+        <div class="output-window resize-drag-outer" id="SNA Data Window">
+
+            <div class="output-button-bar resize-drag">
+			<span class="left-span">
+				<i class="btn btn-close fa fa-window-close-o"
+                   onclick="document.getElementById('SNA Data').style.display='none'"></i>
+
+				<i class="btn btn-hide fa fa-window-minimize"
+                   onclick="handleWindowResizeClick('SNA Data',this)"></i>
+			</span>
+                <span class="right-span"><b>SNA Data</b></span>
+            </div>
+
+            <div class="output" id="SNA Data">
+                {% if systemMeasures -%}
+                <h4>System Measures</h4>
+                {% for measure in systemMeasures -%}
+                {% if measure not in ['Description','Resilience'] -%}
+                <p>
+                    {{measure}}: {{systemMeasures[measure]}}
+                </p>
+                {% endif -%}
+                {% endfor -%}
+                {% endif -%}
+
+                <div id="resilienceInfo">
+                    {% if systemMeasures.get("Resilience") == None -%}
+                    <form id="resilienceForm" enctype="multipart/form-data" method="post">
+                        <input id="resilience" onclick="handleResilienceClick()" name="resilienceSubmit" type="submit"
+                               value="Calculate Resilience" href="javascript:void(0)" data-toggle="tooltip"
+                               data-placement="left" title="{{systemMeasures['Description']['Resilience']}}">
+                    </form>
+                    {% else -%}
+                    <table id="resilienceTable">
+                        <tr>
+                            <th style="text-align:center" colspan="2">
+                                Resilience
+                            </th>
+                        </tr>
+                        <tr>
+                            <th>
+                                Cliques
+                            </th>
+                            <th>
+                                Percentile
+                            </th>
+                        </tr>
+                        {% for cluster in systemMeasures['Resilience'] -%}
+                        <tr>
+                            <td class="node">
+                                {{ cluster }}
+                            </td>
+                            <td>
+                                {{ systemMeasures['Resilience'][cluster][0] }}
+                                <div class="colorCode"
+                                     style="background-color:rgb({{systemMeasures['Resilience'][cluster][1]}}%,0%,{{systemMeasures['Resilience'][cluster][2]}}%)"></div>
+                            </td>
+                        </tr>
+                        {% endfor -%}
+                    </table>
+                    {% endif -%}
+                </div>
+
+            </div>
+        </div>
+        {% endif %}
+
+        <br><br><br><br><br>
+
     </div>
-    <!-- /.modal-content -->
-</div>
-<!-- /.modal-dialog -->
-</div>
-
-
 </body>
-
 </html>
