@@ -160,7 +160,7 @@ body.modal-open .blur {
                     <br/>
                     <!-- Search Bar -->
                     <div class="row text-centered">
-                        <form id="smartsearch" enctype="multipart/form-data" method="post"><input type="text"
+                        <form id="smartsearch" enctype="multipart/form-data" method="post" action="{{url_for('upload_blueprint.upload', case_num=case_num)}}"><input type="text"
                                                                                                   name="smartsearch"
                                                                                                   id="search"
                                                                                                   placeholder="URL to scrape...">
@@ -355,8 +355,10 @@ body.modal-open .blur {
 						<span class="inputsection">
 							<br>
 							Upload .xlsx file for SNA:<br>
-							<input type="file" id="SNA_Input" name="SNA_Input" size=20 value="a"><br>
-							<input type="submit" value="SUBMIT">
+                            <form enctype="multipart/form-data" method="post" action="{{url_for('upload_blueprint.upload', case_num=case_num)}}" name="sna_file" id="sna_file">
+							    <input type="file" id="SNA_Input" name="SNA_Input" size=20 value="a"><br>
+							    <input type="submit" value="SUBMIT">
+                            </form>
 						</span>
                         </div>
                     </div>

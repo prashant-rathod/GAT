@@ -83,5 +83,6 @@ def visualize():
                            nlp_summary=nlp_summary,
                            nlp_entities=nlp_entities,
                            nlp_sources=nlp_sources,
-                           nlp_tropes=nlp_tropes
+                           nlp_tropes=nlp_tropes,
+                           systemMeasures=systemMeasures
                            )

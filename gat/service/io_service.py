@@ -21,7 +21,7 @@ tempdir = 'out/generated/'
 
 
 def storefile(inFile):
-    if inFile.filename == '':
+    if inFile is None or inFile.filename == '':
         return
     suffix = '.' + inFile.filename.split('.')[-1]
     f = tempfile.NamedTemporaryFile(
@@ -33,7 +33,7 @@ def storefile(inFile):
 
 
 def storeNLP(file_list):
-    if file_list[0].filename == '':
+    if len(file_list) == 0 or file_list[0].filename == '':
         return
     source_dir = tempfile.mkdtemp(dir=tempdir) + '/'
     for f in file_list:
@@ -45,7 +45,7 @@ def storeNLP(file_list):
 
 def storeGSA(file_list):
     # saves everything but only returns the shapefile. Nice
-    if file_list[0].filename == '':
+    if len(file_list) == 0 or file_list[0].filename == '':
         return
     source_dir = tempfile.mkdtemp(dir=tempdir) + '/'
     shapefile = None
@@ -68,7 +68,7 @@ def checkExtensions(case_num):
 
     gsa_file_list = fileDict['GSA_file_list']
     exts = ['.shp', '.shx', '.dbf']
-    if gsa_file_list[0].filename != '':
+    if gsa_file_list is not None and len(gsa_file_list) > 0 and gsa_file_list[0].filename != '':
         for ext in exts:
             ext_in = False
             for f in gsa_file_list:

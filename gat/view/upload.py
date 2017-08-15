@@ -18,20 +18,24 @@ def upload():
 
     fileDict = dao.getFileDict(case_num)
 
+    fileDict['research_question'] = request.form.get('smartsearch')
+    if fileDict['research_question'] is not None and fileDict['research_question'].strip() != '':
+        return redirect(url_for('visualize_blueprint.visualize', case_num=case_num))  # temporary submission for SmartSearch for demo
+
     # here the use of fileDict is probably more clear
     # the strings used to index request.files come from the HTML name of the input field
     # see upload.html
-    fileDict['GSA_Input_CSV'] = io_service.storefile(request.files['GSA_Input_CSV'])
+    fileDict['GSA_Input_CSV'] = io_service.storefile(request.files.get('GSA_Input_CSV'))
     fileDict['GSA_Input_SHP'] = io_service.storeGSA(request.files.getlist('GSA_Input_map'))
     fileDict['GSA_file_list'] = request.files.getlist('GSA_Input_map')
     fileDict['NLP_Input_corpus'] = io_service.storeNLP(request.files.getlist('NLP_Input_corpus'))
-    fileDict['NLP_Input_LDP'] = io_service.storefile(request.files['NLP_Input_LDP'])
-    fileDict['NLP_Input_Sentiment'] = io_service.storefile(request.files['NLP_Input_Sentiment'])
+    fileDict['NLP_Input_LDP'] = io_service.storefile(request.files.get('NLP_Input_LDP'))
+    fileDict['NLP_Input_Sentiment'] = io_service.storefile(request.files.get('NLP_Input_Sentiment'))
 
     fileDict["NLP_INPUT_NER"] = request.form.get("NLP_INPUT_NER")
     fileDict["NLP_INPUT_IOB"] = request.form.get("NLP_INPUT_IOB")
 
-    fileDict['SNA_Input'] = io_service.storefile(request.files['SNA_Input'])
+    fileDict['SNA_Input'] = io_service.storefile(request.files.get('SNA_Input'))
 
     fileDict['research_question'] = request.form.get('research_question')
 
@@ -59,4 +63,5 @@ def upload():
 def landing_page():
     case_num = 100000 + random.randint(0, 100000)
     dao.createFileDict(case_num)
+    print("CREATED CASE NUM: " + str(case_num))
     return render_template("upload.html", case_num=case_num)
