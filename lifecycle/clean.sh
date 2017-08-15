@@ -17,10 +17,10 @@ echo "REMOVING static/temp"
 find ../static/temp/ -type f -not -name 'pylog.txt' | xargs rm -f
 
 echo "REMOVING generated files"
-find ../out/generated/* -type f -not -name 'track_me' -delete
-find ../out/nlp/* -type f -not -name 'track_me' -delete
-find ../out/nlp/scrapedArticles/* -type f -not -name 'track_me' -delete
-find ../out/gsa/* -type f -not -name 'track_me' -delete
-find ../out/sna/* -type f -not -name 'track_me' -delete
+find ../out/generated/ -type f -not -name 'track_me' -delete
+find ../out/nlp/ -type f -not -name 'track_me' -delete
+find ../out/nlp/scrapedArticles/ -type f -not -name 'track_me' -delete
+find ../out/gsa/ -type f -not -name 'track_me' -delete
+find ../out/sna/ -type f -not -name 'track_me' -delete
 
 echo "CLEAN SUCCESSFUL"
