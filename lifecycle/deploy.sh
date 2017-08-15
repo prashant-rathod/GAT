@@ -10,20 +10,18 @@ echo "CLENING LOCAL PROJECT"
 echo "CLEANING PAST VERSIONS ON REMOTE SERVER"
 
 CLEAN_SCRIPT="
-sudo rm -rf ~/Projects/GAT/*;
+~/Projects/GAT/lifecycle/clean.sh;
 "
 
 ssh -i "${PEM_NAME}" "${INSTANCE_URL}" "${CLEAN_SCRIPT}"
 
 echo "COPYING FILES"
-
-scp -ri "${PEM_NAME}" ../* "${INSTANCE_URL}":~/Projects/GAT/
+rsync -avz --exclude-from='exclude' -e "ssh -i ${PEM_NAME}" ../ "${INSTANCE_URL}":~/Projects/GAT/
 
 echo "FINISHING INSTALLATION"
 
 DEPLOY_SCRIPT="
 cd ~/Projects/GAT/;
-rm -rf lifecycle;
 sudo add-apt-repository ppa:ubuntugis/ppa;
 sudo apt-get update;
 sudo apt-get upgrade;
