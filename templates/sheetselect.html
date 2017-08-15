@@ -1,25 +1,21 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Sheet Select</title>
-	<meta charset="utf-8"/>
-		<link href="{{url_for('static', filename='css/vizStyle.css')}}" rel="stylesheet">
-    <link href="../static/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
-   	<link href="../static/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
-   	<link class="main-stylesheet" href="../static/css/floatsocial.css" rel="stylesheet" type="text/css" />
-    <link class="main-stylesheet" href="../static/css/custom.css" rel="stylesheet" type="text/css" />
-    <link href="../static/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
-  	<script src="http://kartograph.org/js/jquery.min.js"></script>
-  	<script src="http://kartograph.org/js/raphael.min.js"></script>
-  	<script src="http://kartograph.org/js/kartograph.min.js"></script>
-  	<script src="https://d3js.org/d3.v4.min.js"></script>
-		<script src="http://code.interactjs.io/v1.2.9/interact.min.js"></script>
-		<script src="{{url_for('static', filename='js/jquery-1.11.1.min.js')}}"></script>
-		<script src="https://kryogenix.org/code/browser/sorttable/sorttable.js"></script>
-		<script type="text/javascript" src="../static/js/jquery-1.11.1.min.js"></script>
-		<script type="text/javascript" src="../static/js/bootstrap.min.js"></script>
-		<script type="text/javascript" src="../static/js/custom.frontend.js"></script>
-  	<script type="text/javascript">
+    <title>Sheet Select</title>
+    <meta charset="utf-8"/>
+    <link href="{{url_for('static', filename='css/vizStyle.css')}}" rel="stylesheet">
+    <link href="../static/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+    <link href="../static/css/font-awesome.min.css" rel="stylesheet" type="text/css"/>
+    <link class="main-stylesheet" href="../static/css/floatsocial.css" rel="stylesheet" type="text/css"/>
+    <link class="main-stylesheet" href="../static/css/custom.css" rel="stylesheet" type="text/css"/>
+    <link href="../static/css/font-awesome.min.css" rel="stylesheet" type="text/css"/>
+    <script src="{{url_for('static', filename='js/interact.min.js')}}"></script>
+    <script src="{{url_for('static', filename='js/jquery-1.11.1.min.js')}}"></script>
+    <script src="{{url_for('static', filename='js/sorttable.js')}}"></script>
+    <script type="text/javascript" src="../static/js/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="../static/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../static/js/custom.frontend.js"></script>
+    <script type="text/javascript">
 	  function get(id) {
 			return document.getElementById(id);
 		}
@@ -103,8 +99,9 @@
 	    target.setAttribute('data-y', y);
 	  });
 
-  </script>
-	<style>
+
+    </script>
+    <style>
 		body {
 			height:100vh;
 		}
@@ -114,7 +111,8 @@
 		center {
 			color: white;
 		}
-	</style>
+
+    </style>
 
 </head>
 
@@ -133,6 +131,7 @@ input {
 	opacity: 1;
 	position: initial;
 }
+
 </style>
 
 <script>
@@ -156,76 +155,75 @@ input {
 		function openurl(link){
 				window.open(link);
 			}
+
 </script>
 
 
 <body class="resize-container">
-	<section class="blur">
-	<!-- dropdown menu
-		The buttons will have to become buttons, indeed-->
-   <div class="wrapperul" align="center">
-	<ul>
-		<li class="dropdown contains-image">
-			<a href="{{url_for('upload_blueprint.upload', case_num = case_num)}}"><img  src="{{url_for('static', filename='GATLogo.svg')}}" alt="hermes logo"></a>
-		</li>
-		<li class="dropdown" onclick="show1()">
-			<a href="#" class="dropbtn">NLP</a>
-		</li>
-		<li class="dropdown" onclick="show2()">
-			<a href="#" class="dropbtn">SNA</a>
-		</li>
-		<li class="dropdown" onclick="show3()">
-			<a href="#" class="dropbtn">GSA</a>
-		</li>
-			<li class="dropdown align-right">
-				<a href="#" class="dropbtn"><i class="fa fa-question-circle fa-lg"></i></a>
-				<div class="dropdown-content">
-					<a href="#" onClick="openHelp(this)">GSA Output Help</a>
-					<a href="{{url_for('info_blueprint.help', case_num = case_num)}}">Help Page</a>
-				</div>
-			</li>
-	</ul>
-	</div>
-<body>
+<section class="blur">
+    <!-- dropdown menu
+        The buttons will have to become buttons, indeed-->
+    <div class="wrapperul" align="center">
+        <ul>
+            <li class="dropdown contains-image">
+                <a href="{{url_for('upload_blueprint.upload', case_num = case_num)}}"><img
+                        src="{{url_for('static', filename='GATLogo.svg')}}" alt="hermes logo"></a>
+            </li>
+            <li class="dropdown" onclick="show1()">
+                <a href="#" class="dropbtn">NLP</a>
+            </li>
+            <li class="dropdown" onclick="show2()">
+                <a href="#" class="dropbtn">SNA</a>
+            </li>
+            <li class="dropdown" onclick="show3()">
+                <a href="#" class="dropbtn">GSA</a>
+            </li>
+            <li class="dropdown align-right">
+                <a href="#" class="dropbtn"><i class="fa fa-question-circle fa-lg"></i></a>
+                <div class="dropdown-content">
+                    <a href="#" onClick="openHelp(this)">GSA Output Help</a>
+                    <a href="{{url_for('info_blueprint.help', case_num = case_num)}}">Help Page</a>
+                </div>
+            </li>
+        </ul>
+    </div>
+    <body>
 
-<div class="indented">
-<h3>Please select node and attribute data sheets:</h3>
+    <div class="indented">
+        <h3>Please select node and attribute data sheets:</h3>
 
-<form enctype = "multipart/form-data" method = "post">
+        <form enctype="multipart/form-data" method="post">
 
-    <p>Node Sheet: </p>
-	<select name="nodeSheet">
+            <p>Node Sheet: </p>
+            <select name="nodeSheet">
 
-	{% for sheet in sheets %}
+                {% for sheet in sheets %}
 
-		<option value="{{ sheet }}" {% if 'Node' in sheet -%} selected = "selected" {% endif -%} >{{ sheet }}</option>
+                <option value="{{ sheet }}" {% if
+                'Node' in sheet -%} selected = "selected" {% endif -%} >{{ sheet }}</option>
 
-	{% endfor %}
+                {% endfor %}
 
-	</select><br>
+            </select><br>
 
-    <p>Attribute Sheet: </p>
-	<select name="attrSheet">
+            <p>Attribute Sheet: </p>
+            <select name="attrSheet">
 
-	{% for sheet in sheets %}
+                {% for sheet in sheets %}
 
-		<option value="{{ sheet }}" {% if 'Attr' in sheet -%} selected = "selected" {% endif -%} >{{ sheet }}</option>
+                <option value="{{ sheet }}" {% if
+                'Attr' in sheet -%} selected = "selected" {% endif -%} >{{ sheet }}</option>
 
-	{% endfor %}
+                {% endfor %}
 
-	</select><br><bR>
+            </select><br><bR>
 
-	<input type = "submit" value = "CONTINUE">
+            <input type="submit" value="CONTINUE">
 
-</form>
-</div>
+        </form>
+    </div>
 
-</body>
-
-
-
-
-
+    </body>
 
 
 </html>

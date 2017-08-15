@@ -9,13 +9,13 @@
     <link href="{{url_for('static', filename='css/vizStyle.css')}}" rel="stylesheet">
     <link href="../static/css/font-awesome.min.css" rel="stylesheet" type="text/css"/>
     <link href="../static/css/font-awesome.min.css" rel="stylesheet" type="text/css"/>
-    <script src="http://kartograph.org/js/jquery.min.js"></script>
-    <script src="http://kartograph.org/js/raphael.min.js"></script>
+    <script src="{{url_for('static', filename='js/raphael.min.js')}}"></script>
+    <!--<script src="{{url_for('static', filename='js/kartograph.min.js')}}"></script>-->
     <script src="http://kartograph.org/js/kartograph.min.js"></script>
-    <script src="https://d3js.org/d3.v4.min.js"></script>
-    <script src="http://code.interactjs.io/v1.2.9/interact.min.js"></script>
+    <script src="{{url_for('static', filename='js/d3.v4.min.js')}}"></script>
+    <script src="{{url_for('static', filename='js/interact.min.js')}}"></script>
     <script src="{{url_for('static', filename='js/jquery-1.11.1.min.js')}}"></script>
-    <script src="https://kryogenix.org/code/browser/sorttable/sorttable.js"></script>
+    <script src="{{url_for('static', filename='js/sorttable.js')}}"></script>
     <script type="text/javascript" src="../static/js/jquery-1.11.1.min.js"></script>
     <script type="text/javascript" src="../static/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="../static/js/custom.frontend.js"></script>
@@ -105,6 +105,7 @@
 	  });
 
 
+
     </script>
     <style>
 		body {
@@ -117,6 +118,7 @@
 			color: white;
 		}
 
+
     </style>
 
 </head>
@@ -126,6 +128,7 @@
  font-size: 100%;
  font-family: Segoe UI;
 }
+
 
 </style>
 
@@ -150,6 +153,7 @@
 		function openurl(link){
 				window.open(link);
 			}
+
 
 </script>
 
@@ -432,7 +436,7 @@
                     3D visualization</a></p>
                 {% if SNAbpPlot -%}
                 <p>2D Visualization:</p>
-                <image src="out/sna/{{ SNAbpPlot }}"></image>
+                <image src="{{url_for('out_blueprint.custom_static', filename='sna/' + SNAbpPlot )}}"></image>
                 {% endif -%}
                 {% endif %}
 
