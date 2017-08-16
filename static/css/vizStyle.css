@@ -310,3 +310,6 @@ a img {
 h4 {
   color: white;
 }
+.resilienceGradient {
+  background: linear-gradient(to right, rgb(100%,0,0) 0%, rgb(0,0,100%) 100%);
+}

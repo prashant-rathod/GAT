@@ -434,7 +434,7 @@
                 {% if systemMeasures -%}
                 <h4>System Measures</h4>
                 {% for measure in systemMeasures -%}
-                {% if measure not in ['Description','Resilience'] -%}
+                {% if measure not in ['Description','Baseline','Robustness'] -%}
                 <p>
                     {{measure}}: {{systemMeasures[measure]}}
                 </p>
@@ -443,7 +443,7 @@
                 {% endif -%}
 
                 <div id="resilienceInfo">
-                    {% if systemMeasures.get("Resilience") == None -%}
+                    {% if systemMeasures.get("Baseline") == None -%}
                     <form id="resilienceForm" enctype="multipart/form-data" method="post">
                         <input id="resilience" onclick="handleResilienceClick()" name="resilienceSubmit" type="submit"
                                value="Calculate Resilience" href="javascript:void(0)" data-toggle="tooltip"
@@ -458,24 +458,36 @@
                         </tr>
                         <tr>
                             <th>
-                                Cliques
+                              Cliques
                             </th>
                             <th>
-                                Percentile
+                              Baseline
                             </th>
+														<th>
+															Robustness
+														</th>
                         </tr>
-                        {% for cluster in systemMeasures['Resilience'] -%}
+                        {% for cluster in systemMeasures['Baseline'] -%}
                         <tr>
                             <td class="node">
                                 {{ cluster }}
                             </td>
                             <td>
-                                {{ systemMeasures['Resilience'][cluster][0] }}
+                                {{ systemMeasures['Baseline'][cluster][0] }}
                                 <div class="colorCode"
-                                     style="background-color:rgb({{systemMeasures['Resilience'][cluster][1]}}%,0%,{{systemMeasures['Resilience'][cluster][2]}}%)"></div>
+                                     style="background-color:rgb({{systemMeasures['Baseline'][cluster][1]}}%,0%,{{systemMeasures['Baseline'][cluster][2]}}%)"></div>
+                            </td>
+														<td>
+                                {{ systemMeasures['Robustness'][cluster][0] }}
+                                <div class="colorCode"
+                                     style="background-color:rgb({{systemMeasures['Robustness'][cluster][1]}}%,0%,{{systemMeasures['Robustness'][cluster][2]}}%)"></div>
                             </td>
                         </tr>
                         {% endfor -%}
+												<tr>
+													<td colspan="1000" class="resilienceGradient">
+													</td>
+												</tr>
                     </table>
                     {% endif -%}
                 </div>
