@@ -132,32 +132,6 @@
 
 </style>
 
-<script>
-		function show1(){
-			$('#nlp_modal').modal('show');
-			$('#sna_modal').modal('hide');
-			$('#gsa_modal').modal('hide');
-		}
-
-		function show2(){
-			$('#nlp_modal').modal('hide');
-			$('#sna_modal').modal('show');
-			$('#gsa_modal').modal('hide');
-		}
-
-		function show3(){
-			$('#nlp_modal').modal('hide');
-			$('#sna_modal').modal('hide');
-			$('#gsa_modal').modal('show');
-		}
-		function openurl(link){
-				window.open(link);
-			}
-
-
-</script>
-
-
 <body class="resize-container">
 <section class="blur">
     <!-- dropdown menu
@@ -513,5 +487,8 @@
         <br><br><br><br><br>
 
     </div>
+</section>
+
+    {% include 'modal.html' -%}
 </body>
 </html>
