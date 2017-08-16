@@ -1,3 +1,8 @@
+import networkx as nx
+import random
+import numpy as np
+import scipy as sp
+
 def averagePathRes(cliques_found, ta=20, iters=5):
     scaledResilienceDict = {}
     toScale = []
