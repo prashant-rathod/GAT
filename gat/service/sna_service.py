@@ -129,8 +129,8 @@ def SNA2Dand3D(graph, request, case_num, _3D=True, _2D=False, label=False):
     # Calculate resilience when requested
     if request.form.get("resilienceSubmit") != None:
         try:
-            systemMeasures["Resilience"] = graph.averagePathRes(
-                iters=5)  # gets a scaled resilience value for each clique identified in network
+            systemMeasures["Robustness"] = graph.laplacianRes(iters=5)
+            systemMeasures["Resilience"] = graph.averagePathRes(iters=5)  # gets a scaled resilience value for each clique identified in network
             # Add colors for each resilience measure
 
             for cluster in systemMeasures["Resilience"]:

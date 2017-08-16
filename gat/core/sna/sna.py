@@ -264,19 +264,15 @@ class SNA():
             for ancillary in G.neighbors(centralNode):
                 self.find_subgraph(G, ancillary, subGraph, depth - 1)
 
-    def find_cliques(self):
-        G = self.G.copy().to_undirected()  # currently need undirected graph to find cliques with centrality method
+    def find_cliques(self,filter="BEL"):
+        G = self.G.to_undirected()  # currently need undirected graph to find cliques with centrality method
         cliques = []
         # Find central nodes
         centralities = [self.eigenvector_centrality_dict.get(node) for node in G.nodes()]
         scaled = list(sp.stats.zscore(centralities))
         for i in range(len(scaled)):
             scaled[i] = (G.nodes()[i], scaled[i])
-        selected = [key for key, val in scaled if
-                    "BEL" in key]  # used z-score for top 20th percentile, temporary change to only show beliefs
-
-        # TODO change back line above to "if val > 1.3" instead of "if 'BEL' in key"
-
+        selected = [key for key, val in scaled if filter in key]  # used z-score for top 20th percentile, temporary change to only show beliefs
         for centralNode in selected:
             sub_G = nx.DiGraph()
             self.find_subgraph(G, centralNode, sub_G, 3)
@@ -288,13 +284,11 @@ class SNA():
         scaledResilienceDict = {}
         toScale = []
         cliques, selected = self.find_cliques()
-
         # Find resilience of subgraphs
         for clique in cliques:
             initShortestPath = nx.average_shortest_path_length(clique)
             t0 = 0
             finShortestPathList = []
-
             # function to estimate integral
             def integral(x0, x1, rectangles):
                 width = (float(x1) - float(x0)) / rectangles
@@ -304,7 +298,6 @@ class SNA():
                     area = height * width
                     sum1 += area
                 return sum1
-
             # creating perturbation by removing random 10% of nodes and averaging result of x iterations
             for k in range(0, iters):  # x can be changed here
                 G = clique.copy()
@@ -313,7 +306,6 @@ class SNA():
                 sample = int(nNumber * 0.1)  # percent of nodes removed can be changed here
                 rSample = random.sample(nList, sample)
                 G.remove_nodes_from(rSample)
-
                 # finding shortest path of largest subgraph in G after perturbation:
                 # (average shortest path cannot be calculated if a graph has unconnected nodes)
                 l = []
@@ -323,20 +315,61 @@ class SNA():
                         finShortestPathList.append(nx.average_shortest_path_length(g, weight='Salience'))
             # find mean of average shortest path from each iteration:
             finShortestPath = np.mean(finShortestPathList)
-
             # solve for resilience using integral function:
             qw_shortestPath = float(finShortestPath) / float(initShortestPath)
             t1 = t0 + ta
             resilience = integral(t0, t1, 5) / t1
-
             # add to list: resilience measure for each clique
             toScale.append(resilience)
-
         # scale resilience measures on a normal scale
         for i in range(len(cliques)):
             # scaledResilienceDict[cliques[i].nodes()[0]] = sp.stats.percentileofscore(toScale,toScale[i])
             scaledResilienceDict[selected[i]] = sp.stats.percentileofscore(toScale, toScale[i])
         return scaledResilienceDict
+
+    # Resilience function based on Laplacian Spectrum of G:
+    def laplacianRes(self, ta=20, iters=5):
+        index_0 = np.mean(nx.laplacian_spectrum(self.G.to_undirected()))
+        t0 = 0
+        index_1List = []
+        # function to estimate integral
+        def integral(x0, x1, rectangles):
+            width = (float(x1) - float(x0)) / rectangles
+            sum1 = 0
+            for i in range(rectangles):
+                height = qw_shortestPath * (float(x0) + i * width)
+                area = height * width
+                sum1 += area
+            return sum1
+        # creating perturbation by removing random 10% of nodes and averaging result of x iterations
+        for k in range(0, iters):  # x can be changed here
+            G = self.G.to_undirected()
+            nList = nx.nodes(G)
+            nNumber = nx.number_of_nodes(G)
+            sample = int(nNumber * 0.1)  # percent of nodes removed can be changed here:
+            rSample = random.sample(nList, sample)
+            G.remove_nodes_from(rSample)
+            index_1List.append(np.mean(nx.laplacian_spectrum(G)))
+        # find mean of Laplacian spectra from each iteration:
+        index_1 = np.mean(index_1List)
+        # solve for resilience using integral function:
+        qw_shortestPath = float(index_1) / float(index_0)
+        qw_shortestScale = 1
+        # function to create baseline resilience to scale measure from 0:1:
+        def integralScale(x0, x1, rectangles):
+            width = (float(x1) - float(x0)) / rectangles
+            sum1 = 0
+            for i in range(rectangles):
+                height = qw_shortestScale * (float(x0) + i * width)
+                area = height * width
+                sum1 += area
+            return sum1
+        # Calculating Laplacian Resilience:
+        t1 = t0 + ta
+        resilience = integral(t0, t1, 50) / t1
+        baseResilience = integralScale(t0, t1, 50) / t1
+        scaledResilience = resilience / baseResilience
+        return scaledResilience
 
     # Find clustering coefficient for each nodes
     def clustering(self):
