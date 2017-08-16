@@ -107,8 +107,39 @@ def SNA2Dand3D(graph, request, case_num, _3D=True, _2D=False, label=False):
         graph.addNode(node, attrDict, links)
 
     # Add system measures dictionary
-    # systemMeasures["Node Connectivity"] = graph.node_connectivity() # Currently only returning zero...
-    systemMeasures["Average Clustering"] = graph.average_clustering()
+    try:
+        systemMeasures["Node Connectivity"] = graph.node_connectivity() # Currently only returning zero...
+    except:
+        "No node connectivity"
+    try:
+        systemMeasures["Average Clustering"] = graph.average_clustering()
+    except:
+        "No average clustering"
+    try:
+        systemMeasures["Average Degree Connectivity"] = graph.average_degree_connectivity()
+    except:
+        "No average degree connectivity"
+    try:
+        systemMeasures["Degree Assortativity"] = graph.degree_assortativity()
+    except:
+        "No degree assortativity"
+    try:
+        systemMeasures["Center"] = graph.center()
+    except:
+        "No center"
+    try:
+        systemMeasures["Diameter"] = graph.diameter()
+    except:
+        "No periphery"
+    try:
+        systemMeasures["Periphery"] = graph.periphery()
+    except:
+        "No periphery"
+    try:
+        systemMeasures["Triadic Census"] = graph.triadic_census()
+    except:
+        "No triadic census"
+
     # systemMeasures["Attribute Assortivity"] = graph.attribute_assortivity() # Which attributes...? UI?
     if graph.is_strongly_connected():
         systemMeasures["Connection Strength"] = "Strong"

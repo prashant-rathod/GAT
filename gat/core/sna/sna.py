@@ -280,6 +280,49 @@ class SNA():
         robustnessRes = resilience.laplacianRes(cliques_found, iters=5) if robustness else None
         return baselineRes, robustnessRes
 
+    ##########################
+    ## System-wide measures ##
+    ##########################
+
+    def center(self):
+        return nx.center(self.G)
+    def diameter(self):
+        return nx.diameter(self.G)
+    def periphery(self):
+        return nx.periphery(self.G)
+    def eigenvector(self):
+        return nx.eigenvector_centrality(self.G)
+    def triadic_census(self):
+        return nx.triadic_census(self.G)
+    def average_degree_connectivity(self):
+        return nx.average_degree_connectivity(self.G)
+    def degree_assortativity_coefficient(self):
+        return nx.degree_assortativity_coefficient(self.G)
+
+    # node connectivity:
+    def node_connectivity(self):
+        return nx.node_connectivity(self.G)
+
+    # average clustering coefficient:
+    def average_clustering(self):
+        return nx.average_clustering(self.G.to_undirected())
+
+    # attribute assortivity coefficient:
+    def attribute_assortivity(self, attr):
+        return nx.attribute_assortativity_coefficient(self.G, attr)
+
+    # is strongly connected:
+    def is_strongly_connected(self):
+        return nx.is_strongly_connected(self.G)
+
+    # is weakly connected:
+    def is_weakly_connected(self):
+        return nx.is_weakly_connected(self.G)
+
+    #############################
+    ## Node-dependent measures ##
+    #############################
+
     # Find clustering coefficient for each nodes
     def clustering(self):
         self.clustering_dict = bi.clustering(self.G)
@@ -439,27 +482,6 @@ class SNA():
                 if key in lst:
                     sub_dict[key] = value
             return sub_dict
-
-    # additional network-wide measures
-    # node connectivity:
-    def node_connectivity(self):
-        return nx.node_connectivity(self.G)
-
-    # average clustering coefficient:
-    def average_clustering(self):
-        return nx.average_clustering(self.G.to_undirected())
-
-    # attribute assortivity coefficient:
-    def attribute_assortivity(self, attr):
-        return nx.attribute_assortativity_coefficient(self.G, attr)
-
-    # is strongly connected:
-    def is_strongly_connected(self):
-        return nx.is_strongly_connected(self.G)
-
-    # is weakly connected:
-    def is_weakly_connected(self):
-        return nx.is_weakly_connected(self.G)
 
     # draw 2D graph
     # attr is a dictionary that has color and size as its value.
