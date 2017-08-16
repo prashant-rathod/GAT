@@ -48,6 +48,9 @@ sudo pip3 install gunicorn;
 sudo python3 -m spacy download en
 
 sudo service nginx restart;
+
+chmod +x lifecycle/restart.sh;
+lifecycle/restart.sh
 "
 
 ssh -i "${PEM_NAME}" "${INSTANCE_URL}" "${DEPLOY_SCRIPT}"

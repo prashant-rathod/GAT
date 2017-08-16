@@ -45,17 +45,11 @@ Deploy a new version to an existing instance:
 6. Do step 7 above. (only need to be done once per computer)
 7. $ ./clean.sh 
 8. $ ./deploy.sh #(answer y to all questions asked by apt-get, will take awhile the first time)
-9. $ ./ssh.sh
-10. Once on remote machine, $ cd /Projects/GAT
-11. start new gunicorn process in background with nohup
-12. nohup gunicorn application:application -b localhost:8000 &
 13. Should be able to view application at the url specified on aws console.
 
 Troubleshooting:
 Having multiple gunicorn processes running at once will lead to 500 errors from front end. How to fix if server errors are happening:
-1. $ ./ssh.sh
-2. Once on remote machine:
-3. $ pgrep -f gunicorn | xargs kill -9; nohup gunicorn application:application -b localhost:8000 &
+1. $ ssh -i aws-ec2-gat1.pem ubuntu@ec2-52-37-61-214.us-west-2.compute.amazonaws.com "cd ~/Projects/GAT; lifecycle/restart.sh"
 
 If errors persist and the problem was not multiple processes, ssh into the machine, and check out ~/nohup.out, /var/log/nginx/access.log and /var/log/nginx/error.log. The python console prints to nohup.out, while other errors and warnings print to error.log, and all requests are recorded in access.log. These have been made available on the app through the /log/python-out /log/server-error /log/server-access paths.
 
