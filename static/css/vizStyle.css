@@ -271,16 +271,6 @@ a img {
 .contains-image:hover {
   background-color: transparent;
 }
-body.modal-open .blur {
-    -webkit-filter: blur(20px);
-    -moz-filter: blur(20px);
-    filter: blur(20px);
-}
-body.modal-open:before {
-  -webkit-filter: blur(20px);
-  -moz-filter: blur(20px);
-  filter: blur(20px);
-}
 
 #resilienceTable {
   width: 50%;
