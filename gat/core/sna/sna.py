@@ -274,9 +274,9 @@ class SNA():
 
     def calculateResilience(self,baseline=True,robustness=True):
         cliques_found = self.find_cliques()
-        baselineRes = resilience.averagePathRes(cliques_found, iters=5) if baseline else None
+        simpleRes, baseline = resilience.averagePathRes(cliques_found, iters=5) if baseline is not None else None
         robustnessRes = resilience.laplacianRes(cliques_found, iters=5) if robustness else None
-        return baselineRes, robustnessRes
+        return baseline,simpleRes,robustnessRes
 
     ##########################
     ## System-wide measures ##

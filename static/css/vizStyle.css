@@ -273,7 +273,8 @@ a img {
 }
 
 #resilienceTable {
-  width: 50%;
+  width: auto;
+
 }
 #resilienceTable .colorCode {
   width: 10px;
@@ -282,6 +283,7 @@ a img {
 }
 #resilienceTable td,th {
   text-align: center;
+  padding: 5px;
 }
 #resilienceTable .node {
   overflow: hidden;

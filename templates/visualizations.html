@@ -434,7 +434,7 @@
                 {% if systemMeasures -%}
                 <h4>System Measures</h4>
                 {% for measure in systemMeasures -%}
-                {% if measure not in ['Description','Baseline','Robustness'] -%}
+                {% if measure not in ['Description','Resilience','Robustness','Baseline'] -%}
                 <p>
                     {{measure}}: {{systemMeasures[measure]}}
                 </p>
@@ -452,8 +452,8 @@
                     {% else -%}
                     <table id="resilienceTable">
                         <tr>
-                            <th style="text-align:center" colspan="3">
-                                Resilience
+                            <th style="text-align:center" colspan="4">
+                                Resilience Measures
                             </th>
 														<td rowspan="1000" class="resilienceGradient">
 														</td>
@@ -469,6 +469,9 @@
                               Baseline
                             </th>
 														<th>
+                              Resilience
+                            </th>
+														<th>
 															Robustness
 														</th>
                         </tr>
@@ -481,6 +484,11 @@
                                 {{ systemMeasures['Baseline'][cluster][0] }}
                                 <div class="colorCode"
                                      style="background-color:rgb({{systemMeasures['Baseline'][cluster][1]}}%,0%,{{systemMeasures['Baseline'][cluster][2]}}%)"></div>
+                            </td>
+														<td>
+                                {{ systemMeasures['Resilience'][cluster][0] }}
+                                <div class="colorCode"
+                                     style="background-color:rgb({{systemMeasures['Resilience'][cluster][1]}}%,0%,{{systemMeasures['Resilience'][cluster][2]}}%)"></div>
                             </td>
 														<td>
                                 {{ systemMeasures['Robustness'][cluster][0] }}

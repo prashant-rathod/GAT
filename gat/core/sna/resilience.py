@@ -5,11 +5,14 @@ import scipy as sp
 
 def averagePathRes(cliques_found, ta=20, iters=5):
     scaledResilienceDict = {}
+    scaledBaseline = {}
     toScale = []
+    baselinesToScale = []
     cliques, selected = cliques_found
     # Find resilience of subgraphs
     for clique in cliques:
         initShortestPath = nx.average_shortest_path_length(clique)
+        baselinesToScale.append(initShortestPath)
         t0 = 0
         finShortestPathList = []
 
@@ -50,7 +53,9 @@ def averagePathRes(cliques_found, ta=20, iters=5):
     for i in range(len(cliques)):
         # scaledResilienceDict[cliques[i].nodes()[0]] = sp.stats.percentileofscore(toScale,toScale[i])
         scaledResilienceDict[selected[i]] = sp.stats.percentileofscore(toScale, toScale[i])
-    return scaledResilienceDict
+        scaledBaseline[selected[i]] = sp.stats.percentileofscore(baselinesToScale, baselinesToScale[i])
+
+    return scaledResilienceDict, scaledBaseline
 
 
 # Resilience function based on Laplacian Spectrum of G:
