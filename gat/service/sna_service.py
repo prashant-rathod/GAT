@@ -112,10 +112,10 @@ def SNA2Dand3D(graph, request, case_num, _3D=True, _2D=False, label=False):
         systemMeasures["Average Clustering"] = graph.average_clustering()
     except:
         "No average clustering"
-    try:
-        systemMeasures["Average Degree Connectivity"] = graph.average_degree_connectivity()
-    except:
-        "No average degree connectivity"
+    # try:
+    #     systemMeasures["Average Degree Connectivity"] = graph.average_degree_connectivity()
+    # except:
+    #     "No average degree connectivity"
     try:
         systemMeasures["Degree Assortativity"] = graph.degree_assortativity()
     except:
@@ -132,10 +132,10 @@ def SNA2Dand3D(graph, request, case_num, _3D=True, _2D=False, label=False):
         systemMeasures["Periphery"] = graph.periphery()
     except:
         "No periphery"
-    try:
-        systemMeasures["Triadic Census"] = graph.triadic_census()
-    except:
-        "No triadic census"
+    # try:
+    #     systemMeasures["Triadic Census"] = graph.triadic_census()
+    # except:
+    #     "No triadic census"
 
     # systemMeasures["Attribute Assortivity"] = graph.attribute_assortivity() # Which attributes...? UI?
     if graph.is_strongly_connected():
