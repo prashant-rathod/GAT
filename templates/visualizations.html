@@ -17,7 +17,7 @@
     <script src="{{url_for('static', filename='js/jquery-1.11.1.min.js')}}"></script>
     <script src="{{url_for('static', filename='js/sorttable.js')}}"></script>
     <script type="text/javascript" src="../static/js/jquery-1.11.1.min.js"></script>
-    <script type="text/javascript" src="../static/js/bootstrap.min.js"></script>
+    <script src="{{url_for('static', filename='js/bootstrap.min.js')}}"></script>
     <script type="text/javascript" src="../static/js/custom.frontend.js"></script>
     <script type="text/javascript" src="../static/js/vizScript.js"></script>
 		<script src="https://d3js.org/d3.v4.min.js"></script>
@@ -104,9 +104,6 @@
 	    target.setAttribute('data-x', x);
 	    target.setAttribute('data-y', y);
 	  });
-
-
-
     </script>
     <style>
 		body {
@@ -437,6 +434,7 @@
                 {% for measure in systemMeasures -%}
                 {% if measure not in ['Description','Resilience','Robustness','Baseline'] -%}
                 <p>
+										<i class="fa fa-info-circle" data-toggle="tooltip" data-placement="left" title="{{systemMeasures['Description'][measure]}}"></i>
                     {{measure}}: {{systemMeasures[measure]}}
                 </p>
                 {% endif -%}
@@ -506,6 +504,7 @@
 													</td>
 												</tr>
                     </table> -->
+										<i class="fa fa-info-circle" data-toggle="tooltip" data-placement="left" title="{{systemMeasures['Description']['Resilience']}}"></i>Resilience:
                     <svg width="0px">
 											<defs>
 								        <linearGradient id="gradient">
@@ -528,6 +527,9 @@
         <br><br><br><br><br>
 
     </div>
+		<script type="text/javascript">
+			$('[data-toggle="tooltip"]').tooltip();
+		</script>
 </section>
 
     {% include 'modal.html' -%}

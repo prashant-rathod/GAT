@@ -298,32 +298,61 @@
                 <input id="resilience" name="resilienceSubmit" type="submit" value="Calculate Resilience" href="javascript:void(0)" data-toggle="tooltip" data-placement="left" title="{{systemMeasures['Description']['Resilience']}}">
               </form>
             {% else -%}
-              <table id="resilienceTable">
+            <table id="resilienceTable">
                 <tr>
-                  <th style="text-align:center" colspan="2">
-                   <i class="fa fa-info-circle white-tooltip" data-toggle="tooltip" data-placement="top" title="{{systemMeasures['Description']['Resilience']}}"></i> Resilience
-                  </th>
+                    <th style="text-align:center" colspan="4">
+                        Resilience Measures
+                    </th>
+                    <td rowspan="1000" class="resilienceGradient">
+                    </td>
+                    <td>
+                      High
+                    </td>
                 </tr>
                 <tr>
-                  <th>
-                   Cliques
-                  </th>
-                  <th>
-                    Percentile
-                  </th>
+                    <th>
+                      Cliques
+                    </th>
+                    <th>
+                      Baseline
+                    </th>
+                    <th>
+                      Resilience
+                    </th>
+                    <th>
+                      Robustness
+                    </th>
                 </tr>
-              {% for cluster in systemMeasures['Resilience'] -%}
+                {% for cluster in systemMeasures['Baseline'] -%}
                 <tr>
-                  <td class="node">
-                    {{ cluster }}
+                    <td class="node">
+                        {{ cluster }}
+                    </td>
+                    <td>
+                        {{ systemMeasures['Baseline'][cluster][0] }}
+                        <div class="colorCode"
+                             style="background-color:rgb({{systemMeasures['Baseline'][cluster][1]}}%,0%,{{systemMeasures['Baseline'][cluster][2]}}%)"></div>
+                    </td>
+                    <td>
+                        {{ systemMeasures['Resilience'][cluster][0] }}
+                        <div class="colorCode"
+                             style="background-color:rgb({{systemMeasures['Resilience'][cluster][1]}}%,0%,{{systemMeasures['Resilience'][cluster][2]}}%)"></div>
+                    </td>
+                    <td>
+                        {{ systemMeasures['Robustness'][cluster][0] }}
+                        <div class="colorCode"
+                             style="background-color:rgb({{systemMeasures['Robustness'][cluster][1]}}%,0%,{{systemMeasures['Robustness'][cluster][2]}}%)"></div>
+                    </td>
+                </tr>
+                {% endfor -%}
+                <tr>
+                  <td colspan="4">
                   </td>
                   <td>
-                    {{ systemMeasures['Resilience'][cluster][0] }}
-                    <div class="colorCode" style="background-color:rgb({{systemMeasures['Resilience'][cluster][1]}}%,0%,{{systemMeasures['Resilience'][cluster][2]}}%)"></div>
+                    Low
                   </td>
                 </tr>
-              {% endfor -%}
-              </table>
+            </table>
             {% endif -%}
           </div>
           <div class="top-border"><b>Node-Dependent Measures</b></div>
