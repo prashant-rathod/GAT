@@ -89,7 +89,7 @@
       jgraph.onClick(function (node) {
         if (attributeFlag == false) {
           if (node.name !== "" && node.geometry.type === "SphereGeometry") {
-            $.getJSON('/_get_node_data/{{case_num}}', {
+            $.getJSON("{{ url_for('sna_blueprint.get_node_data', case_num=case_num) }}", {
               name: node.name
             }, function(data) {
               update(data);
@@ -107,7 +107,7 @@
         else {
           if (node.name !== "" && node.geometry.type === "SphereGeometry") {
             console.log("triggered..")
-            $.getJSON('/_get_node_data/{{case_num}}', {
+            $.getJSON("{{ url_for('sna_blueprint.get_node_data', case_num=case_num) }}", {
               name: node.name
             }, function(data) {
               handleAddLinkClick(node.name)
@@ -122,7 +122,7 @@
         if (attributeFlag == false) {
           console.log("edge.name",edge.name)
           if (edge.name != "" && edge.geometry.type === "CylinderGeometry") {
-            $.getJSON('/_get_edge_data/{{case_num}}', {
+            $.getJSON("{{ url_for('sna_blueprint.get_edge_data', case_num=case_num) }}", {
               name: edge.name
             }, function(data) {
               updateEdge(data);
@@ -136,18 +136,18 @@
        }
      });
 
-      //Takes the user input (node that user wants to add) and adds it to SNA.
-      $(function(){
-        $('#addNode').bind('click', function(){
-          $.getJSON('/_add_node/{{case_num}}', {
-            node: $('input[name=a]').val(),
-            attributes: {},
-            connections: []
-          }, function(data) {
-            $('#message').text(data.result) //doesn't exist??
-          });
-        });
-      });
+      // //Takes the user input (node that user wants to add) and adds it to SNA.
+      // $(function(){
+      //   $('#addNode').bind('click', function(){
+      //     $.getJSON('/_add_node/{{case_num}}', {
+      //       node: $('input[name=a]').val(),
+      //       attributes: {},
+      //       connections: []
+      //     }, function(data) {
+      //       $('#message').text(data.result) //doesn't exist??
+      //     });
+      //   });
+      // });
 
       $(function(){
         $('a#undo').bind('click', function(){

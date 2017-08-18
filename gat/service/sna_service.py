@@ -72,12 +72,10 @@ def SNA2Dand3D(graph, request, case_num, _3D=True, _2D=False, label=False):
             colorInput.append(hexColors[c])
 
     if request.form.get("removeNodeSubmit") != None:
-        print("Removing node...")
         graph.removeNode(request.form.get("a"))
 
     # Get new node info, if available
     if request.form.get("addNodeSubmit") != None:
-        print("Requesting new node data...")
 
         node = request.form.get("nodeName")
 
@@ -103,7 +101,6 @@ def SNA2Dand3D(graph, request, case_num, _3D=True, _2D=False, label=False):
             links.append(request.form.get("link" + str(j)))
             j += 1
 
-        print("node, attrDict, connections", node, attrDict, links)
         graph.addNode(node, attrDict, links)
 
     # Add system measures dictionary

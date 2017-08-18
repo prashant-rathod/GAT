@@ -186,7 +186,7 @@ class SNA():
 
         ## Smart prediction prototype
         for target in self.nodes:
-            emoProps, roleProps, inflProps = propensities.propCalc((node, target))
+            emoProps, roleProps, inflProps = propensities.propCalc(self,(node, target))
             if len(emoProps) > 0:
                 w = []
                 for prop in emoProps:
