@@ -2,23 +2,8 @@
 <html>
 <head>
     <title>Analysis output</title>
-    <meta charset="utf-8"/>
-    <link href="../static/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
-    <link class="main-stylesheet" href="../static/css/custom.css" rel="stylesheet" type="text/css"/>
-    <link class="main-stylesheet" href="../static/css/floatsocial.css" rel="stylesheet" type="text/css"/>
+		{% include "header.html" -%}
     <link href="{{url_for('static', filename='css/vizStyle.css')}}" rel="stylesheet">
-    <link href="../static/css/font-awesome.min.css" rel="stylesheet" type="text/css"/>
-    <link href="../static/css/font-awesome.min.css" rel="stylesheet" type="text/css"/>
-    <script src="{{url_for('static', filename='js/raphael.min.js')}}"></script>
-    <!--<script src="{{url_for('static', filename='js/kartograph.min.js')}}"></script>-->
-    <script src="http://kartograph.org/js/kartograph.min.js"></script>
-    <script src="{{url_for('static', filename='js/d3.v4.min.js')}}"></script>
-    <script src="{{url_for('static', filename='js/interact.min.js')}}"></script>
-    <script src="{{url_for('static', filename='js/jquery-1.11.1.min.js')}}"></script>
-    <script src="{{url_for('static', filename='js/sorttable.js')}}"></script>
-    <script type="text/javascript" src="../static/js/jquery-1.11.1.min.js"></script>
-    <script type="text/javascript" src="../static/js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="../static/js/custom.frontend.js"></script>
     <script type="text/javascript" src="../static/js/vizScript.js"></script>
     <script type="text/javascript">
 	  function get(id) {
@@ -103,9 +88,6 @@
 	    target.setAttribute('data-x', x);
 	    target.setAttribute('data-y', y);
 	  });
-
-
-
     </script>
     <style>
 		body {
@@ -131,32 +113,6 @@
 
 
 </style>
-
-<script>
-		function show1(){
-			$('#nlp_modal').modal('show');
-			$('#sna_modal').modal('hide');
-			$('#gsa_modal').modal('hide');
-		}
-
-		function show2(){
-			$('#nlp_modal').modal('hide');
-			$('#sna_modal').modal('show');
-			$('#gsa_modal').modal('hide');
-		}
-
-		function show3(){
-			$('#nlp_modal').modal('hide');
-			$('#sna_modal').modal('hide');
-			$('#gsa_modal').modal('show');
-		}
-		function openurl(link){
-				window.open(link);
-			}
-
-
-</script>
-
 
 <body class="resize-container">
 <section class="blur">
@@ -223,7 +179,7 @@
         <div class="output-button-bar resize-drag">
 			<span class="left-span">
 				<i class="btn btn-close fa fa-window-close-o"
-                   onclick="document.getElementById('Scraped Text').style.display='none'"></i>
+                   onclick="document.getElementById('Scraped Text Window').style.display='none'"></i>
 
 				<i class="btn btn-hide fa fa-window-minimize"
                    onclick="handleWindowResizeClick('Scraped Text',this)"></i>
@@ -259,7 +215,7 @@
         <div class="output-button-bar resize-drag">
 			<span class="left-span">
 				<i class="btn btn-close fa fa-window-close-o"
-                   onclick="document.getElementById('GSA Visualization').style.display='none'"></i>
+                   onclick="document.getElementById('GSA Visualization Window').style.display='none'"></i>
 
 				<i class="btn btn-hide fa fa-window-minimize"
                    onclick="handleWindowResizeClick('GSA Visualization',this)"></i>
@@ -286,7 +242,7 @@
         <div class="output-button-bar resize-drag">
 			<span class="left-span">
 				<i class="btn btn-close fa fa-window-close-o"
-                   onclick="document.getElementById('GSA Data').style.display='none'"></i>
+                   onclick="document.getElementById('GSA Data Window').style.display='none'"></i>
 
 				<i class="btn btn-hide fa fa-window-minimize"
                    onclick="handleWindowResizeClick('GSA Data',this)"></i>
@@ -325,7 +281,7 @@
             <div class="output-button-bar resize-drag">
 			<span class="left-span">
 				<i class="btn btn-close fa fa-window-close-o"
-                   onclick="document.getElementById('NLP Visualization').style.display='none'"></i>
+                   onclick="document.getElementById('NLP Visualization Window').style.display='none'"></i>
 
 				<i class="btn btn-hide fa fa-window-minimize"
                    onclick="handleWindowResizeClick('NLP Visualization',this)"></i>
@@ -422,7 +378,7 @@
             <div class="output-button-bar resize-drag">
 			<span class="left-span">
 				<i class="btn btn-close fa fa-window-close-o"
-                   onclick="document.getElementById('SNA Visualization').style.display='none'"></i>
+                   onclick="document.getElementById('SNA Visualization Window').style.display='none'"></i>
 
 				<i class="btn btn-hide fa fa-window-minimize"
                    onclick="handleWindowResizeClick('SNA Visualization',this)"></i>
@@ -432,7 +388,7 @@
 
             <div class="output" id="SNA Visualization">
                 {% if jgdata %}
-                <p><a href="{{ url_for('sna_blueprint.jgvis', case_num=case_num) }}" style="color:white">Click here for
+                <p><a href="{{ url_for('sna_blueprint.jgvis', case_num=case_num) }}" style="color:lightblue">Click here for
                     3D visualization</a></p>
                 {% if SNAbpPlot -%}
                 <p>2D Visualization:</p>
@@ -448,7 +404,7 @@
             <div class="output-button-bar resize-drag">
 			<span class="left-span">
 				<i class="btn btn-close fa fa-window-close-o"
-                   onclick="document.getElementById('SNA Data').style.display='none'"></i>
+                   onclick="document.getElementById('SNA Data Window').style.display='none'"></i>
 
 				<i class="btn btn-hide fa fa-window-minimize"
                    onclick="handleWindowResizeClick('SNA Data',this)"></i>
@@ -460,8 +416,9 @@
                 {% if systemMeasures -%}
                 <h4>System Measures</h4>
                 {% for measure in systemMeasures -%}
-                {% if measure not in ['Description','Resilience'] -%}
+                {% if measure not in ['Description','Resilience','Robustness','Baseline'] -%}
                 <p>
+										<i class="fa fa-info-circle" data-toggle="tooltip" data-placement="left" title="{{systemMeasures['Description'][measure]}}"></i>
                     {{measure}}: {{systemMeasures[measure]}}
                 </p>
                 {% endif -%}
@@ -469,40 +426,29 @@
                 {% endif -%}
 
                 <div id="resilienceInfo">
-                    {% if systemMeasures.get("Resilience") == None -%}
+                    {% if systemMeasures.get("Baseline") == None -%}
                     <form id="resilienceForm" enctype="multipart/form-data" method="post">
                         <input id="resilience" onclick="handleResilienceClick()" name="resilienceSubmit" type="submit"
                                value="Calculate Resilience" href="javascript:void(0)" data-toggle="tooltip"
                                data-placement="left" title="{{systemMeasures['Description']['Resilience']}}">
                     </form>
                     {% else -%}
-                    <table id="resilienceTable">
-                        <tr>
-                            <th style="text-align:center" colspan="2">
-                                Resilience
-                            </th>
-                        </tr>
-                        <tr>
-                            <th>
-                                Cliques
-                            </th>
-                            <th>
-                                Percentile
-                            </th>
-                        </tr>
-                        {% for cluster in systemMeasures['Resilience'] -%}
-                        <tr>
-                            <td class="node">
-                                {{ cluster }}
-                            </td>
-                            <td>
-                                {{ systemMeasures['Resilience'][cluster][0] }}
-                                <div class="colorCode"
-                                     style="background-color:rgb({{systemMeasures['Resilience'][cluster][1]}}%,0%,{{systemMeasures['Resilience'][cluster][2]}}%)"></div>
-                            </td>
-                        </tr>
-                        {% endfor -%}
-                    </table>
+										<p>
+											<i class="fa fa-info-circle" data-toggle="tooltip" data-placement="left" title="{{systemMeasures['Description']['Resilience']}}"></i>
+											<span>Resilience:</span>
+										</p>
+                    <svg width="0px">
+											<defs>
+								        <linearGradient id="gradient">
+								          <stop offset="5%" stop-color="red" />
+								          <stop offset="95%" stop-color="blue" />
+								        </linearGradient>
+								      </defs>
+                    </svg>
+										<script type="text/javascript" src="../static/js/resilience.js"></script>
+										<script type="text/javascript">
+											drawSVG({{systemMeasures|tojson}})
+										</script>
                     {% endif -%}
                 </div>
 
@@ -513,5 +459,10 @@
         <br><br><br><br><br>
 
     </div>
+		<script type="text/javascript">
+			// $('[data-toggle="tooltip"]').tooltip(); needs styling
+		</script>
+</section>
+    {% include 'modal.html' -%}
 </body>
 </html>

@@ -271,19 +271,10 @@ a img {
 .contains-image:hover {
   background-color: transparent;
 }
-body.modal-open .blur {
-    -webkit-filter: blur(20px);
-    -moz-filter: blur(20px);
-    filter: blur(20px);
-}
-body.modal-open:before {
-  -webkit-filter: blur(20px);
-  -moz-filter: blur(20px);
-  filter: blur(20px);
-}
 
 #resilienceTable {
-  width: 50%;
+  width: auto;
+
 }
 #resilienceTable .colorCode {
   width: 10px;
@@ -292,31 +283,21 @@ body.modal-open:before {
 }
 #resilienceTable td,th {
   text-align: center;
+  padding: 5px;
 }
 #resilienceTable .node {
   overflow: hidden;
   text-align: left;
 }
-.tooltip {
-  position: fixed;
-}
-.tooltip-inner {
-  background-color: white !important;
-  /*!important is not necessary if you place custom.css at the end of your css calls. For the purpose of this demo, it seems to be required in SO snippet*/
-  color: #000b37;
-}
-.tooltip.top .tooltip-arrow {
-  border-top-color: white;
-}
-.tooltip.right .tooltip-arrow {
-  border-right-color: white;
-}
-.tooltip.bottom .tooltip-arrow {
-  border-bottom-color: white;
-}
-.tooltip.left .tooltip-arrow {
-  border-left-color: white;
-}
 h4 {
   color: white;
+}
+.resilienceGradient {
+  background: transparent; /* For browsers that do not support gradients */
+  background: -webkit-linear-gradient(blue, red); /* For Safari 5.1 to 6.0 */
+  background: -o-linear-gradient(blue, red); /* For Opera 11.1 to 12.0 */
+  background: -moz-linear-gradient(blue, red); /* For Firefox 3.6 to 15 */
+  background: linear-gradient(blue, red); /* Standard syntax */
+  width: 10px;
+  margin: 5px;
 }
