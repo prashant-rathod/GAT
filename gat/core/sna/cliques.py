@@ -1,5 +1,3 @@
-#import igraph as ig
-#import louvain
 import networkx as nx
 from gat.core.sna import resilience
 
@@ -10,6 +8,11 @@ def find_subgraph(G, centralNode, subGraph, depth):
     if depth > 0:
         for ancillary in G.neighbors(centralNode):
             find_subgraph(G, ancillary, subGraph, depth - 1)
+
+### Under development:
+
+#import igraph as ig
+#import louvain
 
 # def louvain_method(graph):
 #     G = graph.G.to_undirected()
