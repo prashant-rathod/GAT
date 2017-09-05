@@ -2,13 +2,14 @@ import tempfile
 import matplotlib.pyplot as plt
 import networkx as nx
 import numpy as np
-import scipy as sp
 import xlrd
 from networkx.algorithms import bipartite as bi
 from networkx.algorithms import centrality
+import scipy as sp
 
 from gat.core.sna import propensities
 from gat.core.sna import resilience
+from gat.core.sna import cliques
 
 
 class SNA():
@@ -248,29 +249,22 @@ class SNA():
         self.node_connectivity()
         self.average_clustering()
 
-    # Make subgraphs from those nodes
-    def find_subgraph(self, G, centralNode, subGraph, depth):
-        nodeList = [(centralNode, target) for target in G.neighbors(centralNode)]
-        subGraph.add_edges_from(nodeList)
-        if depth > 0:
-            for ancillary in G.neighbors(centralNode):
-                self.find_subgraph(G, ancillary, subGraph, depth - 1)
-
-    def find_cliques(self,filter="BEL"):
+    def find_cliques(self, filter="BEL"):
         G = self.G.to_undirected()  # currently need undirected graph to find cliques with centrality method
-        cliques = []
+        cliquesList = []
         # Find central nodes
         centralities = [self.eigenvector_centrality_dict.get(node) for node in G.nodes()]
         scaled = list(sp.stats.zscore(centralities))
         for i in range(len(scaled)):
             scaled[i] = (G.nodes()[i], scaled[i])
-        selected = [key for key, val in scaled if filter in key]  # used z-score for top 20th percentile, temporary change to only show beliefs
+        selected = [key for key, val in scaled if
+                    filter in key]  # used z-score for top 20th percentile, temporary change to only show beliefs
         for centralNode in selected:
             sub_G = nx.DiGraph()
-            self.find_subgraph(G, centralNode, sub_G, 3)
+            cliques.find_subgraph(G, centralNode, sub_G, 3)
             if len(list(sub_G.nodes())) > 5:
-                cliques.append(sub_G.to_undirected())
-        return cliques, selected
+                cliquesList.append(sub_G.to_undirected())
+        return cliquesList, selected
 
     def calculateResilience(self,baseline=True,robustness=True):
         cliques_found = self.find_cliques()
