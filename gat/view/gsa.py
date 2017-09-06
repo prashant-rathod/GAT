@@ -2,12 +2,21 @@ import json
 
 from flask import Blueprint, render_template, request, jsonify
 from gat.core.gsa.misc import util
+import xlrd
 
 from gat.core.gsa.core import weights, regionalization
 from gat.dao import dao
 
 gsa_blueprint = Blueprint('gsa_blueprint', __name__)
 
+@gsa_blueprint.route('/gsasheet', methods=['GET', 'POST'])
+def gsa_select():
+    case_num = request.args.get('case_num', None)
+    fileDict = dao.getFileDict(case_num)
+    inputFile = fileDict['GSA_Input']
+
+    # if workbook only has one sheet, the user shouldn't have to specify it
+    return render_template("gsaselect.html", case_num=case_num)
 
 @gsa_blueprint.route('/regionalization')
 def reg():
