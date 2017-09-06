@@ -4,7 +4,7 @@
     <title>Analysis output</title>
 		{% include "header.html" -%}
     <link href="{{url_for('static', filename='css/vizStyle.css')}}" rel="stylesheet">
-    <script type="text/javascript" src="../static/js/vizScript.js"></script>
+    <script type="text/javascript" src="{{url_for('static', filename='js/vizScript.js')}}"></script>
     <script type="text/javascript">
 	  function get(id) {
 			return document.getElementById(id);
