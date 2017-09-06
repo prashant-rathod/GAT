@@ -5,6 +5,7 @@ Author: Ryan Steed, 21 Jun 2017
 */
 //---------------------
 
+// Toggles for tab display in info window
 attributesToggle = function() {
   document.getElementById('measureInfo').style.display='none';
   document.getElementById('attributes').style.display='inline-block';
@@ -36,6 +37,7 @@ propToggle = function() {
   event.currentTarget.className += " active";
 }
 
+// window minimization and maximization functions
 minimizeTabs = function() {
   $('#nodeInfo').css('display','none');
   $('.tab').css('display','none');
@@ -45,6 +47,7 @@ maximizeTabs = function() {
   $('.tab').css('display','inline-block');
 }
 
+// For editing attributes (WIP)
 handleEditButton = function() {
   toggleEditWindow();
   $("#editAttributeInfo").empty();
@@ -56,20 +59,20 @@ handleEditButton = function() {
   }
   $("#editAttributeInfo").append('<input id="editSubmitButton" type="submit" name="editSubmitButton" value="Submit" onclick="handleEditSubmit(currentNodeDict)" />')
 };
-
 toggleEditWindow = function() {
   $("#attributeInfo").toggleClass("closed")
   $("#editAttributeInfo").toggleClass("closed")
 }
 
+// Add node window CSS transition support
 showAddNodeWindow = function() {
   $("#toolbar").toggleClass("closed")
   $("#addNodeWindow").toggleClass("closed")
   attributeFlag = !attributeFlag;
 }
 
+// UI interactions for addNode form data
 // 29 Jun 2017 Ryan Steed
-// Need to consolidate - repeated code here
 counter = 0
 handleAddAttributeClick = function() {
   $("#addAttrButton"+counter).toggleClass("fa-plus-circle")
@@ -94,6 +97,8 @@ removeLink = function(id) {
   console.log("removing..")
   $('#link'+id).closest('div').remove();
 };
+
+// Placeholder message during resilience calculation
 handleResilienceClick = function() {
     console.log("Handling click...")
     $("#resilienceInfo").append("<div>Resilience is being calculated. This is a heavy process and may require 1-2 minutes for completion.</div>")

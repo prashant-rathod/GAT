@@ -316,23 +316,6 @@
         });
       });
 
-      // for editing attributes - WIP
-      handleEditSubmit = function(nodeDict) {
-        console.log("submitted")
-        for (var feature in nodeDict['attributes']) {
-          inputtedValue = $('input[name="'+feature+'"]').val()
-          if (inputtedValue != nodeDict['attributes'][feature]) {
-            $.getJSON('/_change_attribute/{{case_num}}', {
-              node: $('input[name=a]').val(),
-              value: inputtedValue,
-              attribute: feature,
-            }, function(data) {
-              return
-            });
-          };
-        };
-      }
-
       //update info displays with node data
       update = function(nodeDict) {
         console.log("NodeDict:",nodeDict)
