@@ -1,8 +1,10 @@
 import json
+import numpy as np
 
-from flask import Blueprint, render_template, request, jsonify
+from flask import Blueprint, render_template, request, redirect, url_for, jsonify
 from gat.core.gsa.misc import util
 import xlrd
+from gat.service import gsa_service
 
 from gat.core.gsa.core import weights, regionalization
 from gat.dao import dao
@@ -13,7 +15,43 @@ gsa_blueprint = Blueprint('gsa_blueprint', __name__)
 def gsa_select():
     case_num = request.args.get('case_num', None)
     fileDict = dao.getFileDict(case_num)
-    inputFile = fileDict['GSA_Input']
+    #csv = "usjoin.csv" if sample_path == "usa" else "IRQcasualties.csv"
+    #shp = "us48.shp" if sample_path == "usa" else "IRQ_adm1.shp"
+
+    csv = "IRQcasualties.csv"
+    shp = "IRQ_adm1.shp"
+
+    fileDict['GSA_Input_CSV'] = url_for('static', filename="sample/gsa/" + csv)[1:]
+    fileDict['GSA_Input_SHP'] = url_for('static', filename="sample/gsa/" + shp)[1:]
+
+    '''
+    if sample_path == "usa":
+        localAutoCorrelation, globalAutoCorrelation, spatialDynamics = gsa_service.runGSA(case_num, "ALL", [2008],
+                                                                                          "ALL",
+                                                                                          list(range(1979, 2009)),
+                                                                                          "STATE_NAME")
+        fileDict['GSA_data'] = ('id-1', localAutoCorrelation, globalAutoCorrelation,
+                                spatialDynamics[0], spatialDynamics[1], spatialDynamics[2], spatialDynamics[3])
+        fileDict['GSA_meta'] = (
+            'data-state-id', 'data-state-name', "STATE_NAME", list(range(1979, 2009)), "state-name")
+    else:
+    '''
+    # TODO: take in years and file names instead of hard coding
+    # TODO: reorganize use of gsa_meta
+
+    localAutoCorrelation, globalAutoCorrelation, spatialDynamics = gsa_service.runGSA(case_num, "ALL", ["2014.0"],
+                                                                                      "ALL",
+                                                                                      np.arange(2014, 2017,
+                                                                                                0.25).tolist(),
+                                                                                      "NAME_1")
+    fileDict['GSA_data'] = ('id-1', localAutoCorrelation, globalAutoCorrelation,
+                            spatialDynamics[0], spatialDynamics[1], spatialDynamics[2], spatialDynamics[3])
+    fileDict['GSA_meta'] = (
+        'data-id-1', 'data-name-1', "NAME_1", np.arange(2014, 2017, 0.25).tolist(), "name-1")
+
+
+    if request.method == 'POST':
+        return redirect(url_for('visualize_blueprint.visualize', case_num=case_num))
 
     # if workbook only has one sheet, the user shouldn't have to specify it
     return render_template("gsaselect.html", case_num=case_num)

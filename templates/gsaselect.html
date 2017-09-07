@@ -184,28 +184,26 @@ input {
         <form enctype="multipart/form-data" method="post">
 
             <p>Autocorrelation Rows</p>
-            <select name="nodeSheet">
+            <input type="text" name="dyn-row" value="dyn-row">
+            <br>
 
-                {% for sheet in sheets %}
+            <p>Autocorrelation Columns: </p>
+            <input type="text" name="auto-col" value="auto-col">
+            <br>
 
-                <option value="{{ sheet }}" {% if
-                'Node' in sheet -%} selected = "selected" {% endif -%} >{{ sheet }}</option>
+            <p>System Dynamics Rows</p>
+            <input type="text" name="auto-row" value="auto-row">
+            <br>
 
-                {% endfor %}
+            <p>System Dynamics Columns</p>
+            <input type="text" name="dyn-col" value="dyn-col">
+            <br>
 
-            </select><br>
+            <p>Id</p>
+            <input type="text" name="id" value="id">
+            <br>
 
-            <p>Attribute Sheet: </p>
-            <select name="attrSheet">
-
-                {% for sheet in sheets %}
-
-                <option value="{{ sheet }}" {% if
-                'Attr' in sheet -%} selected = "selected" {% endif -%} >{{ sheet }}</option>
-
-                {% endfor %}
-
-            </select><br><bR>
+            <br>
 
             <input type="submit" value="CONTINUE">
 
