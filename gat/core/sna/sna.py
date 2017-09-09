@@ -5,7 +5,6 @@ import numpy as np
 import xlrd
 from networkx.algorithms import bipartite as bi
 from networkx.algorithms import centrality
-import scipy as sp
 
 from gat.core.sna import propensities
 from gat.core.sna import resilience
@@ -119,6 +118,8 @@ class SNA():
                             attrID = cell['header']
                         self.changeAttribute(nodeID, attrList, attrID)
 
+    # Input: the node set that will serve as the source of all links
+    # Output: updated list of edges connecting nodes in the same row
     def createEdgeList(self, sourceSet):
         list = self.list
         edgeList = []
@@ -148,14 +149,24 @@ class SNA():
     def calculatePropensities(self, emo=True, role=True):
 
         for edge in self.edges:  # for every edge, calculate propensities and append as an attribute
+            attributeDict = {}
+
             emoPropList = propensities.propCalc(self, edge)[0] if emo else None
-            self.G[edge[0]][edge[1]]['Emotion'] = emoPropList if len(emoPropList) > 0 else None
+            if len(emoPropList) > 0:
+                attributeDict['Emotion'] = emoPropList
+                attributeDict['emoWeight'] = propensities.aggregateProps(emoPropList)
 
             rolePropList = propensities.propCalc(self, edge)[1] if role else None
-            self.G[edge[0]][edge[1]]['Role'] = rolePropList if len(rolePropList) > 1 else None
+            if len(rolePropList) > 1:
+                attributeDict['Role'] = rolePropList
+                attributeDict['roleWeight'] = propensities.aggregateProps(rolePropList)
 
             inflPropList = propensities.propCalc(self, edge)[2] if role else None
-            self.G[edge[0]][edge[1]]['Influence'] = inflPropList if len(inflPropList) > 1 else None
+            if len(inflPropList) > 1:
+                attributeDict['Influence'] = inflPropList
+                attributeDict['inflWeight'] = propensities.aggregateProps(inflPropList)
+
+            self.G[edge[0]][edge[1]] = attributeDict
 
         self.edges = nx.edges(self.G)
 
@@ -249,25 +260,10 @@ class SNA():
         self.node_connectivity()
         self.average_clustering()
 
-    def find_cliques(self, filter="BEL"):
-        G = self.G.to_undirected()  # currently need undirected graph to find cliques with centrality method
-        cliquesList = []
-        # Find central nodes
-        centralities = [self.eigenvector_centrality_dict.get(node) for node in G.nodes()]
-        scaled = list(sp.stats.zscore(centralities))
-        for i in range(len(scaled)):
-            scaled[i] = (G.nodes()[i], scaled[i])
-        selected = [key for key, val in scaled if
-                    filter in key]  # used z-score for top 20th percentile, temporary change to only show beliefs
-        for centralNode in selected:
-            sub_G = nx.DiGraph()
-            cliques.find_subgraph(G, centralNode, sub_G, 3)
-            if len(list(sub_G.nodes())) > 5:
-                cliquesList.append(sub_G.to_undirected())
-        return cliquesList, selected
-
     def calculateResilience(self,baseline=True,robustness=True):
-        cliques_found = self.find_cliques()
+        undirected = self.G.to_undirected()
+        #cliques_found = cliques.find_cliques(G = undirected, centralities = self.eigenvector_centrality_dict)
+        cliques_found = cliques.louvain(G = undirected, centralities = self.eigenvector_centrality_dict)
         simpleRes, baseline = resilience.averagePathRes(cliques_found, iters=5) if baseline is not None else None
         robustnessRes = resilience.laplacianRes(cliques_found, iters=5) if robustness else None
         return baseline,simpleRes,robustnessRes
