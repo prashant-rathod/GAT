@@ -5,63 +5,230 @@
     <link href="{{url_for('static', filename='css/bootstrap.min.css')}}" rel="stylesheet">
     <link href="{{url_for('static', filename='css/main.css')}}" rel="stylesheet">
     <link href="{{url_for('static', filename='css/general.css')}}" rel="stylesheet">
+    <link href="{{url_for('static', filename='css/jgraph-custom.css')}}" rel="stylesheet">
     <script src="{{url_for('static', filename='js/jquery-1.11.1.min.js')}}"></script>
     <script src="{{url_for('static', filename='js/bootstrap.min.js')}}"></script>
     <script src="{{url_for('static', filename='js/jgraph_test1.min.js')}}"></script>
-    <script src="{{url_for('static', filename='js/jgraphManual.js')}}"></script>
-    <link rel="stylesheet" href="{{url_for('static', filename='css/jgraphManual.css')}}">
+    <script src="{{url_for('static', filename='js/jgraph-custom.js')}}"></script>
     <title>Jgraph</title>
   </head>
 
-  <style>
-
-  body {
-    background: background: url("../landing_background.svg") no-repeat center center fixed; /* For browsers that do not support gradients */
-    background: background: url("../landing_background.svg") no-repeat center center fixed; /* For Safari 5.1 to 6.0 */
-    background: background: url("../landing_background.svg") no-repeat center center fixed; /* For Opera 11.1 to 12.0 */
-    background: background: url("../landing_background.svg") no-repeat center center fixed; /* For Firefox 3.6 to 15 */
-    background: background: url("../landing_background.svg") no-repeat center center fixed; /* Standard syntax */
-    height: 100%;
-    margin: 0;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-  }
-  * {
-   font-size: 100%;
-   font-family: Segoe UI;
-  }
-  </style>
-
   <body>
-
-    <div><button class="back-btn" style = "position:fixed;top:0;left:0;color:white;"><a href="{{url_for('visualize_blueprint.visualize', case_num=case_num)}}">BACK</a></button><div>
-
+    <!-- containers for graph and node labels -->
     <div class="graph"></div>
     <div class="label"></div>
-
+    <!-- OVER-CANVAS ELEMENTS -->
+    <div>
+      <button class="back-btn" style = "position:fixed;top:0;left:0;color:white;">
+        <a href="{{url_for('visualize_blueprint.visualize', case_num=case_num)}}">BACK</a>
+      </button>
+    <div>
+    <!-- data output window, bottom-right corner -->
+    <div class = "output-window" id="infoWindows" style = "position: fixed; bottom: 0; right: 0; border-style: solid">
+      <!-- container for minimize/maximize buttons, selected node name -->
+      <div class = "output-button-bar" id = "weirdOne">
+        <i style="margin-left:4px" class="fa fa-window-maximize"
+      onclick="maximizeTabs()"></i>
+        <i style="margin-left:4px" class="fa fa-window-minimize"
+      onclick="minimizeTabs()"></i>
+        <span id="name"></span>
+        <span class="tab" style="float:right">
+          <button class="tablinks active" onclick="measuresToggle();">Measures</button>
+          <button id="attributesButton" class="tablinks" onclick="attributesToggle();">Attributes</button>
+          <button class="tablinks" onclick="propToggle();">Propensities</button>
+        </span>
+      </div>
+      <!-- info boxes for measures, attributes and propensities dynamically populated with Flask and js -->
+      <div id = "nodeInfo" style="border:none">
+        <div id="attributes" style="display:none" class='tabcontent'>
+          <div id="attributeInfo" class="slider2" style="border:none">
+            <div class="filler chooseRequest" position="center">Select a node to display attributes.</div>
+          </div>
+          <div class="slider2 closed" id="editAttributeInfo"></div>
+        </div>
+        <div id="measureInfo" class="tabcontent" style="border:none;">
+          <div><b>System-wide Measures</b></div>
+          {% for measure in systemMeasures -%}
+            <div>
+              <!--
+                handle "normal" system-wide measures -
+                systemMeasures contains measures where key is name of measure, value is measure value
+                also contains dictionary of measure descriptions (systemMeasures["Description"]) used for tooltips
+              -->
+              {% if measure != "Resilience" and measure != "Description" -%}
+              <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="left" title="{{systemMeasures['Description'][measure]}}"></i>
+              {{ measure }}: {{ systemMeasures[measure] }}
+              {% endif -%}
+            </div>
+          {% endfor -%}
+          <!-- handle resilience -->
+          <div id="resilienceInfo">
+            {% if systemMeasures.get("Resilience") == None -%}
+              <form id="resilienceForm" enctype="multipart/form-data" method="post">
+                <input id="resilience" name="resilienceSubmit" type="submit" value="Calculate Resilience" href="javascript:void(0)" data-toggle="tooltip" data-placement="left" title="{{systemMeasures['Description']['Resilience']}}">
+              </form>
+            {% else -%}
+            <table id="resilienceTable">
+                <tr>
+                    <th style="text-align:center" colspan="4">Resilience Measures</th>
+                    <td rowspan="1000" class="resilienceGradient"></td>
+                    <td>High</td>
+                </tr>
+                <tr>
+                    <th>Cliques</th>
+                    <th>Baseline</th>
+                    <th>Resilience</th>
+                    <th>Robustness</th>
+                </tr>
+                {% for cluster in systemMeasures['Baseline'] -%}
+                <tr>
+                    <td class="node">{{ cluster }}</td>
+                    <td>
+                        {{ systemMeasures['Baseline'][cluster][0] }}
+                        <div class="colorCode"
+                             style="background-color:rgb({{systemMeasures['Baseline'][cluster][1]}}%,0%,{{systemMeasures['Baseline'][cluster][2]}}%)"></div>
+                    </td>
+                    <td>
+                        {{ systemMeasures['Resilience'][cluster][0] }}
+                        <div class="colorCode"
+                             style="background-color:rgb({{systemMeasures['Resilience'][cluster][1]}}%,0%,{{systemMeasures['Resilience'][cluster][2]}}%)"></div>
+                    </td>
+                    <td>
+                        {{ systemMeasures['Robustness'][cluster][0] }}
+                        <div class="colorCode"
+                             style="background-color:rgb({{systemMeasures['Robustness'][cluster][1]}}%,0%,{{systemMeasures['Robustness'][cluster][2]}}%)"></div>
+                    </td>
+                </tr>
+                {% endfor -%}
+                <tr>
+                  <td colspan="4"></td>
+                  <td>Low</td>
+                </tr>
+            </table>
+            {% endif -%}
+          </div>
+          <!-- node-dependent measures updated dynamically with js -->
+          <div class="top-border"><b>Node-Dependent Measures</b></div>
+          <div id="nodeMeasureInfo">
+            <div class="filler">Select a node to display node-dependent measures.</div>
+          </div>
+        </div>
+        <div id="propInfo" class="tabcontent" style="display:none;border:none">
+          <div class="filler chooseRequest" position="center">Select an edge to view propensities.</div>
+        </div>
+      </div>
+    </div>
+    <!-- "Action" box for adding/removing nodes, upper right corner-->
+    <div class = "output-window" id = "nodeWindow" style = "position:fixed;top:0;right:0;border:solid;">
+      <div id = "toolbar" class='slider'>
+        <input data-toggle="tooltip" data-placement="left" title="{{systemMeasures['Description']['AddNode']}}" id="add" type="submit" value="Add Node" onclick="showAddNodeWindow()"/>
+        <form id="removeNodeForm" enctype="multipart/form-data" method="post">
+          <input data-toggle="tooltip" data-placement="left" title="{{systemMeasures['Description']['RemoveNode']}}"id="remove" name="removeNodeSubmit" type="submit" value="Remove Node" href="javascript:void(0)" >
+          <input type="text" placeholder="Node Name" name=a id="delete">
+        </form>
+      </div>
+      <!-- form element for adding a new node -->
+      <div id="addNodeWindow" class='slider closed'>
+        <form id="addNodeForm" enctype="multipart/form-data" method="post">
+          <div><input name="nodeName" type="text" id="addNodeFormName" placeholder="Enter Node Name"></input></div>
+          <br />
+          <table id="addNodeTable">
+            <tr>
+              <td>Node Type:</td>
+              <td>
+                <select name="nodeSet">
+                 {% for set in graph.nodeSet %}
+                   <option value="{{set}}">
+                     {{set}}
+                   </option>
+                 {% endfor %}
+               </select>
+              </td>
+            </tr>
+            <tr>
+              <td>Add Attribute:</td>
+              <td id="addAttrTarget">
+                <div>
+                  <i id="addAttrButton0" class='fa fa-plus-circle' onclick="handleAddAttributeClick()"></i>
+                  <input type="text" id="attribute0" class="attrInput" name="attribute0" placeholder="Attribute"/>
+                  <input type="text" id="value0" class="valInput" name="value0" placeholder="Value"/>
+                  <input type="text" id="weight0" class="wInput" name="weight0" placeholder="Weight"/>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <th colspan="2">Click Nodes to Link</th>
+            </tr>
+            <tr>
+              <td colspan="2" id='addLinkTarget'></td>
+            </tr>
+            <tr>
+              <td class="centered" colspan="2">
+                <input id="addNodeSubmit" type = "submit" value = "ADD" name = "addNodeSubmit">
+              </td>
+            </tr>
+        </form>
+        </table>
+        <div class="centeredIcon" onclick="showAddNodeWindow()">
+          <i class='fa fa-arrow-circle-down'></i>
+        </div>
+      </div>
+      <!-- window minimization/maximization buttons -->
+      <div class = "output-button-bar">
+        <i style="margin-left:4px" class="fa fa-window-maximize fa-flip-vertical"
+        onclick="document.getElementById('toolbar').style.display='inline-block'"></i>
+        <i style="margin-left:4px" class="fa fa-window-minimize fa-flip-vertical"
+        onclick="document.getElementById('toolbar').style.display='none'"></i>
+      </div>
+    </div>
+    <!-- Options window for color changing -->
+    <div class = "output-window" id = "SNAOptionsWindow" style = "position:fixed;bottom:0;left:0;border:solid;">
+      <!-- window minimization/maximization buttons -->
+      <div class = "output-button-bar" style="text-align:right">
+        <i  class="fa fa-window-minimize"
+        onclick="document.getElementById('SNAOptions').style.display='none'"></i>
+        <i  class="fa fa-window-maximize"
+        onclick="document.getElementById('SNAOptions').style.display='inline-block'"></i>
+      </div>
+      <div class = "output" id = "SNAOptions">
+        <h3><center>SNA Options</center></h3>
+        <!-- color options form -->
+        <form enctype = "multipart/form-data" method = "post">
+          <b>Colors</b><br>
+          {% for set in graph.nodeSet %}
+            {{set}}:
+            <select name = "{{set}}Color">
+              {% for c in colors %}
+                <option value = "{{c}}" {% if c == attr[set][0] %}selected = "on" {% endif %}>{{c}}</option>
+              {% endfor %}
+            </select>
+            <br>
+          {% endfor %}
+          <input style="margin-right:auto;margin-left:auto;margin-top:5px;margin-bottom:5px" type = "submit" value = "SUBMIT" name = "options">
+        </form>
+      </div>
+    </div>
+    <!-- script for on-document-load functions -->
     <script type="text/javascript">
       jgraph.create('.graph', {directed: true, edgeSize: .05, arrowSize:.5, defaultEdgeColor:0x808080});
       try {
         jgraph.draw({{jgdata|safe}});
       }
       catch (err) {
-       console.log(err)
+       console.log(err) // prevent page break on drawing error
       };
 
+      // generate node name label anchored to user mouse
       var onEnter, onExit, $d, hovered, currentNodeDict;
-
       $d = $('.label');
       $d.hide();
       hovered = jgraph.makeMaterial(0xb7ecff);
-
       onEnter = function (object) {
         if (object.geometry.type === "SphereGeometry") {
           $d.html('<p><b>' + object.name + '</b></p>');
         } else {
           if (object.name !== ""){
             $d.html('<p><b>' + object.name + '</b></p>');
-          } else {
-            /*$d.html('<p><b>' + "Does_not_exist" + '</b></p>');*/
           }
         }
           console.log(object);
@@ -69,22 +236,18 @@
           object.defaultMaterial = object.material;
           object.material = hovered;
       };
-
       onExit = function (object) {
           $d.empty();
           $d.hide();
           object.material = object.defaultMaterial;
       };
-
       jgraph.onHover(onEnter, onExit);
-
       $(document).mousemove(function (event) {
           $d.css({ left: event.pageX + 10, top: event.pageY + 10 });
       });
 
-      var attributeFlag = false;
-      //When node/edge is clicked, display information of the bottom right corner
-      //Need to ask Tony specific file to make edges have properties
+      // return data for clicked node
+      var attributeFlag = false; // if add node window is open, regular functionality disabled with attributeFlag
       jgraph.onClick(function (node) {
         if (attributeFlag == false) {
           if (node.name !== "" && node.geometry.type === "SphereGeometry") {
@@ -96,13 +259,14 @@
               currentNodeDict = data;
           });
           } else {
-            $("#name").text(node.name);     // Need Tony to have xlsv file.
+            $("#name").text(node.name);
             $("#cluster").text("Null");
             $("#eigenvalue_centrality").text("Null");
             $("#betweenness_centrality").text("Null");
             $("#delete").val('');
           };
         }
+        // handle linked node selections for addNode function
         else {
           if (node.name !== "" && node.geometry.type === "SphereGeometry") {
             console.log("triggered..")
@@ -110,13 +274,12 @@
               name: node.name
             }, function(data) {
               handleAddLinkClick(node.name)
-          });
-          } else {
-            return
-          };
+            });
+          }
         }
       });
 
+      // return edge data on edge click, including propensities
       jgraph.onClick(function (edge) {
         if (attributeFlag == false) {
           console.log("edge.name",edge.name)
@@ -133,20 +296,7 @@
           console.log("Can't choose an edge right now")
         };
        }
-     });
-
-      // //Takes the user input (node that user wants to add) and adds it to SNA.
-      // $(function(){
-      //   $('#addNode').bind('click', function(){
-      //     $.getJSON('/_add_node/{{case_num}}', {
-      //       node: $('input[name=a]').val(),
-      //       attributes: {},
-      //       connections: []
-      //     }, function(data) {
-      //       $('#message').text(data.result) //doesn't exist??
-      //     });
-      //   });
-      // });
+      });
 
       $(function(){
         $('a#undo').bind('click', function(){
@@ -165,21 +315,8 @@
             jgraph.reset()
         });
       });
-      handleEditSubmit = function(nodeDict) {
-        console.log("submitted")
-        for (var feature in nodeDict['attributes']) {
-          inputtedValue = $('input[name="'+feature+'"]').val()
-          if (inputtedValue != nodeDict['attributes'][feature]) {
-            $.getJSON('/_change_attribute/{{case_num}}', {
-              node: $('input[name=a]').val(),
-              value: inputtedValue,
-              attribute: feature,
-            }, function(data) {
-              return
-            });
-          };
-        };
-      }
+
+      //update info displays with node data
       update = function(nodeDict) {
         console.log("NodeDict:",nodeDict)
         $("#delete").val(nodeDict['name']);
@@ -190,8 +327,6 @@
         $("#propInfo").append("<span>Select an edge to view propensities.</span>")
         $("#attributeInfo").append("<i id='editButton' class='rightIcon fa fa-edit' onclick='handleEditButton()'></i>")
         $("#name").text(nodeDict['name'])
-        // Need Tony to have xlsv file.
-        // append to $("#attributeInfo")
         for (var key in nodeDict) {
           if (nodeDict.hasOwnProperty(key)) {
             if (key != "attributes" && key != "name") {
@@ -200,6 +335,7 @@
             }
           }
         }
+        // add tooltips to qualifying attributes
         if ($("#eigenvector").length) {
           $('#eigenvector').prepend('<i class="fa fa-info-circle white-tooltip" data-toggle="tooltip" data-placement="left" title="{{systemMeasures["Description"]["eigenvector"]}}"></i> ')
         }
@@ -207,6 +343,7 @@
           $('#betweenness').prepend('<i class="fa fa-info-circle white-tooltip" data-toggle="tooltip" data-placement="left" title="{{systemMeasures["Description"]["betweenness"]}}"></i> ')
         }
         $('[data-toggle="tooltip"]').tooltip();
+        // append all attributes with key and value
         for (var feature in nodeDict['attributes']) {
           if (feature == "block") {
             $("#attributeInfo").append("<span id='class'>Class: </span>")
@@ -231,6 +368,8 @@
           }
         }
       }
+
+      //update info displays with edge data
       updateEdge = function(edgeDict) {
         console.log("EdgeDict:",edgeDict)
         $("#delete").val(edgeDict['name']);
@@ -260,221 +399,5 @@
       }
       $('[data-toggle="tooltip"]').tooltip();
     </script>
-
-    <div class = "output-window" id="infoWindows" style = "position: fixed; bottom: 0; right: 0; border-style: solid">
-      <div class = "output-button-bar" id = "weirdOne">
-        <i style="margin-left:4px" class="fa fa-window-maximize"
-      onclick="maximizeTabs()"></i>
-        <i style="margin-left:4px" class="fa fa-window-minimize"
-      onclick="minimizeTabs()"></i>
-        <span id="name"></span>
-        <span class="tab" style="float:right">
-          <button class="tablinks active" onclick="measuresToggle();">Measures</button>
-          <button id="attributesButton" class="tablinks" onclick="attributesToggle();">Attributes</button>
-          <button class="tablinks" onclick="propToggle();">Propensities</button>
-        </span>
-      </div>
-      <div id = "nodeInfo" style="border:none">
-        <div id="attributes" style="display:none" class='tabcontent'>
-          <div id="attributeInfo" class="slider2" style="border:none">
-            <div class="filler chooseRequest" position="center">Select a node to display attributes.</div>
-          </div>
-          <div class="slider2 closed" id="editAttributeInfo"></div>
-        </div>
-        <div id="measureInfo" class="tabcontent" style="border:none;">
-          <div><b>System-wide Measures</b></div>
-          {% for measure in systemMeasures -%}
-            <div>
-              {% if measure != "Resilience" and measure != "Description" -%}
-              <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="left" title="{{systemMeasures['Description'][measure]}}"></i>
-              {{ measure }}: {{ systemMeasures[measure] }}
-              {% endif -%}
-            </div>
-          {% endfor -%}
-          <div id="resilienceInfo">
-            {% if systemMeasures.get("Resilience") == None -%}
-              <form id="resilienceForm" enctype="multipart/form-data" method="post">
-                <input id="resilience" name="resilienceSubmit" type="submit" value="Calculate Resilience" href="javascript:void(0)" data-toggle="tooltip" data-placement="left" title="{{systemMeasures['Description']['Resilience']}}">
-              </form>
-            {% else -%}
-            <table id="resilienceTable">
-                <tr>
-                    <th style="text-align:center" colspan="4">
-                        Resilience Measures
-                    </th>
-                    <td rowspan="1000" class="resilienceGradient">
-                    </td>
-                    <td>
-                      High
-                    </td>
-                </tr>
-                <tr>
-                    <th>
-                      Cliques
-                    </th>
-                    <th>
-                      Baseline
-                    </th>
-                    <th>
-                      Resilience
-                    </th>
-                    <th>
-                      Robustness
-                    </th>
-                </tr>
-                {% for cluster in systemMeasures['Baseline'] -%}
-                <tr>
-                    <td class="node">
-                        {{ cluster }}
-                    </td>
-                    <td>
-                        {{ systemMeasures['Baseline'][cluster][0] }}
-                        <div class="colorCode"
-                             style="background-color:rgb({{systemMeasures['Baseline'][cluster][1]}}%,0%,{{systemMeasures['Baseline'][cluster][2]}}%)"></div>
-                    </td>
-                    <td>
-                        {{ systemMeasures['Resilience'][cluster][0] }}
-                        <div class="colorCode"
-                             style="background-color:rgb({{systemMeasures['Resilience'][cluster][1]}}%,0%,{{systemMeasures['Resilience'][cluster][2]}}%)"></div>
-                    </td>
-                    <td>
-                        {{ systemMeasures['Robustness'][cluster][0] }}
-                        <div class="colorCode"
-                             style="background-color:rgb({{systemMeasures['Robustness'][cluster][1]}}%,0%,{{systemMeasures['Robustness'][cluster][2]}}%)"></div>
-                    </td>
-                </tr>
-                {% endfor -%}
-                <tr>
-                  <td colspan="4">
-                  </td>
-                  <td>
-                    Low
-                  </td>
-                </tr>
-            </table>
-            {% endif -%}
-          </div>
-          <div class="top-border"><b>Node-Dependent Measures</b></div>
-          <div id="nodeMeasureInfo">
-            <div class="filler">Select a node to display node-dependent measures.</div>
-          </div>
-        </div>
-        <div id="propInfo" class="tabcontent" style="display:none;border:none">
-          <div class="filler chooseRequest" position="center">Select an edge to view propensities.</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Toolbar for removing nodes, undoing or redoing user's action-->
-    <div class = "output-window" id = "nodeWindow" style = "position:fixed;top:0;right:0;border:solid;">
-
-      <div id = "toolbar" class='slider'>
-        <input data-toggle="tooltip" data-placement="left" title="{{systemMeasures['Description']['AddNode']}}" id="add" type="submit" value="Add Node" onclick="showAddNodeWindow()"/>
-        <form id="removeNodeForm" enctype="multipart/form-data" method="post">
-          <input data-toggle="tooltip" data-placement="left" title="{{systemMeasures['Description']['RemoveNode']}}"id="remove" name="removeNodeSubmit" type="submit" value="Remove Node" href="javascript:void(0)" >
-          <input type="text" placeholder="Node Name" name=a id="delete">
-        </form>
-      <!--a href="javascript:void(0);" id="undo">undo</a>
-      <a href="javascript:void(0);" id="redo">redo</a>
-      <a href="javascript:void(0);" id="redo">reset</a-->
-      </div>
-      <div id="addNodeWindow" class='slider closed'>
-        <form id="addNodeForm" enctype="multipart/form-data" method="post">
-          <div><input name="nodeName" type="text" id="addNodeFormName" placeholder="Enter Node Name"></input></div>
-          <br />
-          <table id="addNodeTable">
-            <tr>
-              <td>
-                Node Type:
-              </td>
-              <td>
-                <select name="nodeSet">
-                 {% for set in graph.nodeSet %}
-                   <option value="{{set}}">
-                     {{set}}
-                   </option>
-                 {% endfor %}
-               </select>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                Add Attribute:
-              </td>
-              <td id="addAttrTarget">
-                <div>
-                  <i id="addAttrButton0" class='fa fa-plus-circle' onclick="handleAddAttributeClick()"></i>
-                  <input type="text" id="attribute0" class="attrInput" name="attribute0" placeholder="Attribute"/>
-                  <input type="text" id="value0" class="valInput" name="value0" placeholder="Value"/>
-                  <input type="text" id="weight0" class="wInput" name="weight0" placeholder="Weight"/>
-                </div>
-              </td>
-            </tr>
-            <tr>
-              <th colspan="2">
-                Click Nodes to Link
-              </th>
-            </tr>
-            <tr>
-              <td colspan="2" id='addLinkTarget'></td>
-            </tr>
-            <tr>
-              <td class="centered" colspan="2">
-                <input id="addNodeSubmit" type = "submit" value = "ADD" name = "addNodeSubmit">
-              </td>
-            </tr>
-        </form>
-        </table>
-        <div class="centeredIcon" onclick="showAddNodeWindow()">
-          <i class='fa fa-arrow-circle-down'></i>
-        </div>
-      </div>
-    <div class = "output-button-bar">
-      <i style="margin-left:4px" class="fa fa-window-maximize fa-flip-vertical"
-      onclick="document.getElementById('toolbar').style.display='inline-block'"></i>
-
-      <i style="margin-left:4px" class="fa fa-window-minimize fa-flip-vertical"
-      onclick="document.getElementById('toolbar').style.display='none'"></i>
-    </div>
-    </div>
-
-    <div class = "output-window" id = "SNAOptionsWindow" style = "position:fixed;bottom:0;left:0;border:solid;">
-
-    <div class = "output-button-bar" style="text-align:right">
-      <i  class="fa fa-window-minimize"
-      onclick="document.getElementById('SNAOptions').style.display='none'"></i>
-
-      <i  class="fa fa-window-maximize"
-      onclick="document.getElementById('SNAOptions').style.display='inline-block'"></i>
-    </div>
-
-    <div class = "output" id = "SNAOptions">
-    <h3><center>SNA Options</center></h3>
-
-      <form enctype = "multipart/form-data" method = "post">
-        <b>Colors</b><br>
-        {% for set in graph.nodeSet %}
-
-          {{set}}:
-          <select name = "{{set}}Color">
-            {% for c in colors %}
-
-              <option value = "{{c}}" {% if c == attr[set][0] %}selected = "on" {% endif %}>{{c}}</option>
-
-            {% endfor %}
-
-          </select>
-          <br>
-
-        {% endfor %}
-
-        <input style="margin-right:auto;margin-left:auto;margin-top:5px;margin-bottom:5px" type = "submit" value = "SUBMIT" name = "options">
-
-      </form>
-
-    </div>
-  </div>
-
-
   </body>
 </html>
