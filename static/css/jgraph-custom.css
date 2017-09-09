@@ -198,6 +198,8 @@ table {
   overflow: hidden;
   text-align: left;
 }
+
+/* tooltip stylings, all necessary (ugh) */
 .tooltip {
   position: fixed;
 }
