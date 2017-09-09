@@ -39,11 +39,21 @@ def gsa_select():
     # TODO: take in years and file names instead of hard coding
     # TODO: reorganize use of gsa_meta
 
-    localAutoCorrelation, globalAutoCorrelation, spatialDynamics = gsa_service.runGSA(case_num, "ALL", ["2014.0"],
-                                                                                      "ALL",
-                                                                                      np.arange(2014, 2017,
-                                                                                                0.25).tolist(),
-                                                                                      "NAME_1")
+    class Input:
+        def __init__(self, autoRow, autoCol, dynRow, dynCol, id):
+            self.autoRow = autoRow
+            self.autoCol = autoCol
+            self.dynRow = dynRow
+            self.dynCol = dynCol
+            self.id = id
+
+    info = Input("ALL", ["2014.0"], "ALL", np.arange(2014, 2017, 0.25).tolist(), "NAME_1")
+
+
+    localAutoCorrelation, globalAutoCorrelation, spatialDynamics = gsa_service.runGSA(case_num, info.autoRow, info.autoCol,
+                                                                                      info.dynRow,
+                                                                                      info.dynCol,
+                                                                                      info.id)
     fileDict['GSA_data'] = ('id-1', localAutoCorrelation, globalAutoCorrelation,
                             spatialDynamics[0], spatialDynamics[1], spatialDynamics[2], spatialDynamics[3])
     fileDict['GSA_meta'] = (
@@ -54,7 +64,7 @@ def gsa_select():
         return redirect(url_for('visualize_blueprint.visualize', case_num=case_num))
 
     # if workbook only has one sheet, the user shouldn't have to specify it
-    return render_template("gsaselect.html", case_num=case_num)
+    return render_template("gsaselect.html", info=info, case_num=case_num)
 
 @gsa_blueprint.route('/regionalization')
 def reg():

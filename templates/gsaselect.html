@@ -183,24 +183,25 @@ input {
 
         <form enctype="multipart/form-data" method="post">
 
+
             <p>Autocorrelation Rows</p>
-            <input type="text" name="dyn-row" value="dyn-row">
+            <input type="text" name="dyn-row" value={{ info.autoRow }}>
             <br>
 
             <p>Autocorrelation Columns: </p>
-            <input type="text" name="auto-col" value="auto-col">
+            <input type="text" name="auto-col" value={{ info.autoCol }}>
             <br>
 
             <p>System Dynamics Rows</p>
-            <input type="text" name="auto-row" value="auto-row">
+            <input type="text" name="auto-row" value={{ info.dynRow }}>
             <br>
 
             <p>System Dynamics Columns</p>
-            <input type="text" name="dyn-col" value="dyn-col">
+            <input type="text" name="dyn-col" value={{ info.dynCol }}>
             <br>
 
             <p>Id</p>
-            <input type="text" name="id" value="id">
+            <input type="text" name="id" value={{ info.id }}>
             <br>
 
             <br>
