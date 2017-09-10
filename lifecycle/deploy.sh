@@ -10,7 +10,8 @@ echo "CLENING LOCAL PROJECT"
 echo "CLEANING PAST VERSIONS ON REMOTE SERVER"
 
 CLEAN_SCRIPT="
-~/Projects/GAT/lifecycle/clean.sh;
+cd ~/Projects/GAT/lifecycle;
+./clean.sh;
 "
 
 ssh -i "${PEM_NAME}" "${INSTANCE_URL}" "${CLEAN_SCRIPT}"

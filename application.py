@@ -12,6 +12,7 @@ from gat.view.sna import sna_blueprint
 from gat.view.upload import upload_blueprint
 from gat.view.visualize import visualize_blueprint
 from gat.view.out import out_blueprint
+from gat.view.security import security_blueprint
 
 ''' Before running:
         Make sure you have flask and jinja2 installed
@@ -76,6 +77,7 @@ application.register_blueprint(sample_blueprint, url_prefix='/sample')
 application.register_blueprint(sna_blueprint)
 application.register_blueprint(gsa_blueprint)
 application.register_blueprint(out_blueprint)
+application.register_blueprint(security_blueprint)
 
 #################
 #### Running ####

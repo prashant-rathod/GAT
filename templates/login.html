@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+</head>
+<body>
+<form action="{{url_for('security_blueprint.login_post')}}" method = post>
+    Don't have an account yet? Register <a href="{{url_for('security_blueprint.register_get')}}">here.</a><br>
+    {% if error %}
+    The information you have entered does not match our records. Please try again.<br>
+    {% endif %}
+    <label><b>Email</b></label>
+    <input type="text" placeholder="Enter Email" name="email" id="email" required>
+
+    <label><b>Password</b></label>
+    <input type="password" placeholder="Enter Password" name="password" id="password" required>
+
+    <button type="submit">Login</button>
+    <!--<input type="checkbox" checked="checked"> Remember me-->
+
+    <a href="{{url_for('security_blueprint.forgot_password')}}">Forgot password?</a>
+</form>
+</body>
+</html>

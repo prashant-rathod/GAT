@@ -57,3 +57,5 @@ You can check the status of nginx server by the following command $ sudo service
 
 You can restart nginx by the following command $ sudo service nginx restart #(note, also kill all gunicorn processes and start a new one (see above) when you do this).
 
+If you are having trouble with ssh, make sure you own the pem file. Otherwise use sudo with ssh or run sudo chown <username> aws-ec2-gat1.pem
+
