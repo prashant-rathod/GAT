@@ -1,3 +1,5 @@
+import numpy as np
+
 def propCalc(graph, edge):
     emoProps = []
     roleProps = []
@@ -140,3 +142,9 @@ def propCalc(graph, edge):
                             roleProps.append(("Belligerent", attr, src_val[0], trg_val[0], src_w, trg_w, index_w) if attr == "Belief" else None)
     if len(roleProps) > 0: print(roleProps)
     return emoProps, roleProps, inflProps
+
+# INPUT: list of propensities where last index is propensity weight
+# OUTPUT: average propensity weight as float
+def aggregateProps(propList):
+    data = [prop[-1] for prop in propList]
+    return np.average(data)
