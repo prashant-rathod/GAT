@@ -1,26 +1,34 @@
 import smtplib
-
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
+from gat.util import config
+
+
 # AWS Config
-#iam smtp username ses-smtp-user.20170905-202640
-EMAIL_HOST = 'email-smtp.us-west-2.amazonaws.com'
-EMAIL_HOST_USER = 'AKIAIFHXO2MCMQTLREGA'
-EMAIL_HOST_PASSWORD = 'AroMyRD79cJXfbV8jXaf8EfgRCe1vzDEnWcF37uLB0Di'
-EMAIL_PORT = 587
+# iam smtp username ses-smtp-user.20170905-202640
 
-msg = MIMEMultipart('alternative')
-msg['Subject'] = "test foo"
-msg['From'] = "kuzema7@gmail.com"
-msg['To'] = "nikita.zemlevskiy@duke.edu"
+def send_confirmation(address, path):
+    info = readInfo("smtp")
+
+    msg = MIMEMultipart('alternative')
+    msg['Subject'] = "Confirm Your GAT Email"
+    msg['From'] = "kuzema7@gmail.com"
+    msg['To'] = "nikita.zemlevskiy@duke.edu"
+    # msg['From'] = "noreply@gat.org"
+    # msg['To'] = address
+    url = readInfo("site")['url']
+    mime_text = MIMEText(
+        'You have just created your account for GAT! Please confirm your email by clicking on the following link or pasting it into your browser: ' + url + path)
+    msg.attach(mime_text)
+
+    s = smtplib.SMTP(info['email_host'], info['email_port'])
+    s.starttls()
+    s.login(info['email_host_user'], info['email_host_password'])
+    s.sendmail("kuzema7@gmail.com", "nikita.zemlevskiy@duke.edu", msg.as_string())
+    # s.sendmail("noreply@gat.org", address, msg.as_string())
+    s.quit()
 
 
-mime_text = MIMEText('TEST TEXT')
-msg.attach(mime_text)
-
-s = smtplib.SMTP(EMAIL_HOST, EMAIL_PORT)
-s.starttls()
-s.login(EMAIL_HOST_USER, EMAIL_HOST_PASSWORD)
-s.sendmail("kuzema7@gmail.com", "nikita.zemlevskiy@duke.edu", msg.as_string())
-s.quit()
+def readInfo(section):
+    return config.config("/home/nikita/Projects/GAT/static/resources/security/database_config.ini", section)

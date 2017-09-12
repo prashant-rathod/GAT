@@ -2,11 +2,17 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    {% if confirm %}
+    <meta http-equiv="refresh" content="5;url={{url_for('upload_blueprint.landing_page')}}" />
+    {% endif %}
+
     <title>Title</title>
 </head>
 <body>
 {% if confirm %}
-Thank you for confirming your email! Your account it now set up.
+Thank you for confirming your email! Your account it now set up. You will be redirected to the home page. Click <a href="{{url_for('upload_blueprint.landing_page')}}">here</a> if you don't get redirected automatically.
+{% elif error %}
+An error has occurred. Please try again.
 {% else %}
 We have just sent you an email. Please confirm your email by clicking the link in the email to finish setting up your account.
 {% endif %}

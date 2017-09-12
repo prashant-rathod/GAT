@@ -9,7 +9,7 @@ def execute(command, dql):
     try:
         cur.execute(command)
     except:
-        connection.connect()
+        connection = connect()
         cur = connection.cursor()
         cur.execute(command)
     ret = None
