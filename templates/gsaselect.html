@@ -1,10 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Analysis output</title>
-		{% include "header.html" -%}
+    <title>SNA Select</title>
+    {% include "header.html" -%}
     <link href="{{url_for('static', filename='css/vizStyle.css')}}" rel="stylesheet">
-    <script type="text/javascript" src="{{url_for('static', filename='js/vizScript.js')}}"></script>
     <script type="text/javascript">
 	  function get(id) {
 			return document.getElementById(id);
@@ -88,6 +87,8 @@
 	    target.setAttribute('data-x', x);
 	    target.setAttribute('data-y', y);
 	  });
+
+
     </script>
     <style>
 		body {
@@ -99,12 +100,53 @@
 		center {
 			color: white;
 		}
-		* {
-		 font-size: 100%;
-		 font-family: Segoe UI;
-		}
+
     </style>
+
 </head>
+
+<style>
+* {
+ font-size: 100%;
+ font-family: Segoe UI;
+}
+h3, p {
+	color: white;
+}
+.indented {
+	margin: 5% 10%
+}
+input {
+	opacity: 1;
+	position: initial;
+}
+
+</style>
+
+<script>
+		function show1(){
+			$('#nlp_modal').modal('show');
+			$('#sna_modal').modal('hide');
+			$('#gsa_modal').modal('hide');
+		}
+
+		function show2(){
+			$('#nlp_modal').modal('hide');
+			$('#sna_modal').modal('show');
+			$('#gsa_modal').modal('hide');
+		}
+
+		function show3(){
+			$('#nlp_modal').modal('hide');
+			$('#sna_modal').modal('hide');
+			$('#gsa_modal').modal('show');
+		}
+		function openurl(link){
+				window.open(link);
+			}
+
+</script>
+
 
 <body class="resize-container">
 <section class="blur">
@@ -125,22 +167,8 @@
             <li class="dropdown" onclick="show3()">
                 <a href="#" class="dropbtn">GSA</a>
             </li>
-            <li class="dropdown">
-                <a href="#" class="dropbtn">View</a>
-                <div class="dropdown-content">
-                    <a onclick="document.getElementById('GSA Visualization Window').style.display='inline-block'">GSA
-                        Visualization</a>
-                    <a onclick="document.getElementById('GSA Data Window').style.display='inline-block'">GSA Data</a>
-                    <a onclick="document.getElementById('NLP Visualization Window').style.display='inline-block'">NLP
-                        Visualization</a>
-                    <a onclick="document.getElementById('NLP Data Window').style.display='inline-block'">NLP Data</a>
-                    <a onclick="document.getElementById('SNA Visualization Window').style.display='inline-block'">SNA
-                        Visualization</a>
-                    <a onclick="document.getElementById('SNA Data Window').style.display='inline-block'">SNA Data</a>
-                </div>
-            </li>
-            <li class="dropdown">
-                <a href="#" class="dropbtn">Help</a>
+            <li class="dropdown align-right">
+                <a href="#" class="dropbtn"><i class="fa fa-question-circle fa-lg"></i></a>
                 <div class="dropdown-content">
                     <a href="#" onClick="openHelp(this)">GSA Output Help</a>
                     <a href="{{url_for('info_blueprint.help', case_num = case_num)}}">Help Page</a>
@@ -148,31 +176,44 @@
             </li>
         </ul>
     </div>
-    <div id="help" style="display: none;">
-        <button onClick="closeHelp(this)">Close Help</button>
-        <p><b>Autocorrelation: </b>measures how randomly data is distributed over a space. Global AutoCorrelation is
-            more sensitive to global trends, and smaller clumps of similar data do not affect this analysis method on a
-            large scale. Local AutoCorrelation is more sensitive locally and gives a smaller-scale autocorrelation
-            measure.</p>
-        <p><b>Spatial Dynamics: </b>analyzes the evolution of spatial data over time. Here, regions on the map are
-            broken up into several categories, depending on the value of the observation at that location. Using Markov
-            methods, the probability that a region transitions to a different category is generated. Additionally, mean
-            transition times (time for a region to go from category a to category b) are given. In order, the return
-            values are as follows: <br>1. A matrix which counts how many a region from one category to another. Most
-            entries in this matrix are along the diagonal, as regions tend to stay in the same category, and only
-            transition to similar categories. <br>2. The transition probability matrix. <br>3. The steady-state
-            distribution matrix, which indicates the probability of a region ending up in category b, given that it
-            started in category a. <br>4. The mean transition time matrix.</p>
-		</div>
-			<br><br>
-			<!-- Dashboard elements -->
-			{% include "dashboard/scrapedText.html"-%}
-			{% include "dashboard/gsa.html"-%}
-			{% include "dashboard/nlp.html"-%}
-			{% include "dashboard/sna.html"-%}
-    </div>
+    <body>
 
-</section>
-    {% include 'modal.html' -%}
-</body>
+    <div class="indented">
+        <h3>Please select node and attribute data sheets:</h3>
+
+        <form enctype="multipart/form-data" method="post">
+
+
+            <p>Autocorrelation Rows</p>
+            <input type="text" name="dyn-row" value={{ info.autoRow }}>
+            <br>
+
+            <p>Autocorrelation Columns: </p>
+            <input type="text" name="auto-col" value={{ info.autoCol }}>
+            <br>
+
+            <p>System Dynamics Rows</p>
+            <input type="text" name="auto-row" value={{ info.dynRow }}>
+            <br>
+
+            <p>System Dynamics Columns</p>
+            <input type="text" name="dyn-col" value={{ info.dynCol }}>
+            <br>
+
+            <p>Id</p>
+            <input type="text" name="id" value={{ info.id }}>
+            <br>
+
+            <br>
+
+            <input type="submit" value="CONTINUE">
+
+        </form>
+    </div>
+  </section>
+  {% include 'modal.html' -%}
+
+    </body>
+
+
 </html>
