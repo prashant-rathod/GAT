@@ -1,4 +1,5 @@
 from gat.dao import database
+import os
 
 
 def login(email, password):
@@ -29,4 +30,10 @@ def confirm(code):
     database.execute("UPDATE T_ACCOUNT SET CONFIRMED = TRUE WHERE CONFIRMATION_STRING = '{0}';".format(code), False)
     return True
 
+def createDirectory(uidpk):
+    if not os.path.exists('data/' + uidpk):
+        os.makedirs('data/' + uidpk)
 
+
+def getData(email):
+    return database.execute("SELECT * FROM T_ACCOUNT WHERE EMAIL = '{0}';".format(email), True)
