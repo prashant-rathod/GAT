@@ -5,7 +5,7 @@ from community import best_partition
 from collections import defaultdict
 
 #INPUT: undirected network object, list of node centralities, filter key for clique selection control
-#OUTPUT: list of cliques and a label for each
+#OUTPUT: list of cliques as network objects and a label for each
 #NOTE: will be deprecated soon, not ready for deletion yet, just in case
 def find_cliques(G, centralities, filter="BEL"):
     cliquesList = []
