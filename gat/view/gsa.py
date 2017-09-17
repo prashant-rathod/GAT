@@ -52,7 +52,6 @@ def gsa_select():
             self.id = id
 
     info = Input("ALL", ["2014.0"], "ALL", np.arange(2014, 2017, 0.25).tolist(), "NAME_1")
-    print(info.dynCol)
 
     if request.method == 'GET':
         return render_template("gsaselect.html", info=info, case_num=case_num)
@@ -74,8 +73,6 @@ def gsa_select():
         fileDict['GSA_meta'] = ('data-id-1', 'data-name-1', "NAME_1", np.arange(2014, 2017, 0.25).tolist(), "name-1")
 
         return redirect(url_for('visualize_blueprint.visualize', case_num=case_num))
-
-    # if workbook only has one sheet, the user shouldn't have to specify it
 
 
 @gsa_blueprint.route('/regionalization')
