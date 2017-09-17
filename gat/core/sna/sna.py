@@ -9,7 +9,6 @@ from networkx.algorithms import centrality
 from gat.core.sna import propensities
 from gat.core.sna import resilience
 from gat.core.sna import cliques
-from gat.core.sna import ergm
 
 
 class SNA():

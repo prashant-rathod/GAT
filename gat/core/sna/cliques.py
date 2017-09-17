@@ -4,9 +4,7 @@ import scipy as sp
 from community import best_partition
 from collections import defaultdict
 
-#INPUT: undirected network object, list of node centralities, filter key for clique selection control
-#OUTPUT: list of cliques as network objects and a label for each
-#NOTE: will be deprecated soon, not ready for deletion yet, just in case
+
 def find_cliques(G, centralities, filter="BEL"):
     cliquesList = []
     # Find central nodes
@@ -23,8 +21,6 @@ def find_cliques(G, centralities, filter="BEL"):
     return cliquesList, selected
 
 # Make subgraphs from central nodes
-#INPUT: graph object, central node in graph, and max depth to search
-#OUTPUT: subgraph around central node to max depth
 def find_subgraph(G, centralNode, subGraph, depth):
     nodeList = [(centralNode, target) for target in G.neighbors(centralNode)]
     subGraph.add_edges_from(nodeList)
@@ -32,8 +28,6 @@ def find_subgraph(G, centralNode, subGraph, depth):
         for ancillary in G.neighbors(centralNode):
             find_subgraph(G, ancillary, subGraph, depth - 1)
 
-#INPUT: graph object, weight to be used, list of centralitites if available
-#OUTPUT: subgraphs for each community based on weighted louvain algorithm, clique labels by central node
 def louvain(G, weightKey='emoWeight', centralities=None):
     # use partition argument to start the algorithm with a particular partition, i.e. the find_cliques method?
     partition = best_partition(G, weight=weightKey)
