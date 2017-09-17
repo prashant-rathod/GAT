@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>SNA Select</title>
+    <title>GSA Select</title>
     {% include "header.html" -%}
     <link href="{{url_for('static', filename='css/vizStyle.css')}}" rel="stylesheet">
     <script type="text/javascript">
@@ -143,7 +143,7 @@ input {
 		}
 		function openurl(link){
 				window.open(link);
-			}
+        }
 
 </script>
 
@@ -179,21 +179,21 @@ input {
     <body>
 
     <div class="indented">
-        <h3>Please select node and attribute data sheets:</h3>
+        <h3>Please input map and attribute data:</h3>
 
         <form enctype="multipart/form-data" method="post">
 
 
             <p>Autocorrelation Rows</p>
-            <input type="text" name="dyn-row" value={{ info.autoRow }}>
+            <input type="text" name="auto-row" value={{ info.autoRow }}>
             <br>
 
-            <p>Autocorrelation Columns: </p>
+            <p>Autocorrelation Columns</p>
             <input type="text" name="auto-col" value={{ info.autoCol }}>
             <br>
 
             <p>System Dynamics Rows</p>
-            <input type="text" name="auto-row" value={{ info.dynRow }}>
+            <input type="text" name="dyn-row" value={{ info.dynRow }}>
             <br>
 
             <p>System Dynamics Columns</p>
@@ -201,7 +201,7 @@ input {
             <br>
 
             <p>Id</p>
-            <input type="text" name="id" value={{ info.id }}>
+            <input type="text" name="gsa-id" value={{ info.id }}>
             <br>
 
             <br>
