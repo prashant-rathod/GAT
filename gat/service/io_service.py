@@ -1,5 +1,6 @@
 import os
 import tempfile
+import pickle
 
 from gat.dao import dao
 
@@ -17,6 +18,8 @@ from gat.dao import dao
 # 			and all other temporary folders
 #
 # a temporary folder is created for each new case
+from gat.service import security_service
+
 tempdir = 'out/generated/'
 
 
@@ -95,3 +98,28 @@ def checkExtensions(case_num):
             errors.append("Error: please upload txt file for Sentiment Analysis.")
 
     return errors
+
+
+def storeFiles(case_num, email=None, files = None):
+    tempDir ='out/generated/' if email is None else 'data/' + str(security_service.getData(email)[0]) + '/'
+    #TODO: save files
+
+    fileDict = dao.getFileDict(case_num)
+
+    fileDict['GSA_Input_CSV'] = storefile(files.get('GSA_Input_CSV'))
+    fileDict['GSA_Input_SHP'] = storeGSA(files.getlist('GSA_Input_map'))
+    fileDict['NLP_Input_corpus'] = storeNLP(files.getlist('NLP_Input_corpus'))
+    fileDict['NLP_Input_LDP'] = storefile(files.get('NLP_Input_LDP'))
+    fileDict['NLP_Input_Sentiment'] = storefile(files.get('NLP_Input_Sentiment'))
+
+
+    fileDict['SNA_Input'] = storefile(files.get('SNA_Input'))
+    fileDict['GSA_Input'] = storefile(files.get('GSA_Input'))
+    if email is not None:
+
+        with open(tempDir + 'fileDict.pickle', 'wb+') as file:
+            pickle.dump(fileDict, file, protocol=pickle.HIGHEST_PROTOCOL)
+
+def loadDict(uidpk):
+    with open('data/' + str(uidpk) + 'fileDict.pickle', 'rb') as file:
+        dao.setFileDict(pickle.load(file), case_num)

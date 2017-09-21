@@ -10,7 +10,7 @@ visualize_blueprint = Blueprint('visualize_blueprint', __name__)
 
 @visualize_blueprint.route('/visualize', methods=['GET', 'POST'])
 def visualize():
-    case_num = request.args.get('case_num', None)
+    case_num = request.cookies.get('case_num', None)
     fileDict = dao.getFileDict(case_num)
 
     GSA_file_CSV = fileDict.get('GSA_Input_CSV')
@@ -61,6 +61,7 @@ def visualize():
 
     nlp_sentiment = nlp_service.sentiment(NLP_file_sentiment)
     research_question = scraper_service.scrape(research_question)
+    #TODO save state in here - pickle these variables.
 
     return render_template('visualizations.html',
                            research_question=research_question,

@@ -1,6 +1,7 @@
 import random
 
 from flask import Blueprint, render_template, request, redirect, url_for
+from flask import make_response
 
 from gat.dao import dao
 from gat.service import io_service
@@ -10,21 +11,17 @@ upload_blueprint = Blueprint('upload_blueprint', __name__)
 
 @upload_blueprint.route('/', methods=['POST'])
 def upload():
-    # each new "session" has a random case number associated with it
-    # obviously, there is a small chance that case numbers will collide.
-    # In that case, the person who used it second would overwrite the other persons data.
-    # So this is not how it should be in its final version. But it's fine for now.
-    case_num = request.args.get('case_num', None)
+    case_num = request.cookies.get('case_num', None)
 
     fileDict = dao.getFileDict(case_num)
 
     fileDict['research_question'] = request.form.get('smartsearch')
     if fileDict['research_question'] is not None and fileDict['research_question'].strip() != '':
-        return redirect(url_for('visualize_blueprint.visualize', case_num=case_num))  # temporary submission for SmartSearch for demo
+        return redirect(url_for('visualize_blueprint.visualize', case_num=case_num))
 
-    # here the use of fileDict is probably more clear
-    # the strings used to index request.files come from the HTML name of the input field
-    # see upload.html
+    email = request.cookies.get('email')
+    io_service.storeFiles(case_num, email, request.files)
+
     fileDict['GSA_Input_CSV'] = io_service.storefile(request.files.get('GSA_Input_CSV'))
     fileDict['GSA_Input_SHP'] = io_service.storeGSA(request.files.getlist('GSA_Input_map'))
     fileDict['GSA_file_list'] = request.files.getlist('GSA_Input_map')
@@ -70,5 +67,6 @@ def upload():
 def landing_page():
     case_num = 100000 + random.randint(0, 100000)
     dao.createFileDict(case_num)
-    print("CREATED CASE NUM: " + str(case_num))
-    return render_template("upload.html", case_num=case_num)
+    response = make_response(render_template("upload.html"))
+    response.set_cookie('case_num', str(case_num), expires_days=1)
+    return response

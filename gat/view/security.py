@@ -2,6 +2,8 @@ import random
 import string
 
 from flask import Blueprint, render_template, request, redirect, url_for, make_response
+
+from gat.service import io_service
 from gat.service import security_service
 from gat.util import send_email
 from gat.dao import dao
@@ -16,10 +18,10 @@ def login_get():
 @security_blueprint.route('/login', methods=['POST'])
 def login_post():
     if 'email' in request.cookies:
-        return render_template('visualizations.html')
+        return redirect(url_for('visualize_blueprint.visualize'))
     success = security_service.login(request.form.get("email"), request.form.get("password"))
     if success:
-        response = make_response(render_template('visualizations.html'))
+        response = make_response(redirect(url_for('visualize_blueprint.visualize')))
         response.set_cookie('email', request.form.get("email"), max_age = 1)
         #TODO load user data into visualizations.html
         return response
@@ -27,7 +29,9 @@ def login_post():
 
 @security_blueprint.route('/logout')
 def logout():
-    return redirect(url_for("upload_blueprint.landing_page"))
+    response = make_response(redirect(url_for("upload_blueprint.landing_page")))
+    response.set_cookie('email', '', expires_days=0)
+    return response
 
 
 @security_blueprint.route('/register', methods=['GET'])
@@ -58,12 +62,12 @@ def confirm_email():
 
 @security_blueprint.route('/save')
 def save_data():
-    case_num = request.args.get('case_num')
+    case_num = request.cookies.get('case_num', None)
     email = request.cookies.get('email')
     if email is not None:
         uidpk = security_service.getData(email)
         security_service.createDirectory(uidpk)
-        dao.storeFiles(uidpk, case_num)
+        io_service.storeFiles(uidpk, case_num)
     pass
 
 '''@security_blueprint.route('/forgot_password')

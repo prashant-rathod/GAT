@@ -12,7 +12,5 @@ def updateFileDict(case_num, key, value):
 def createFileDict(case_num):
     caseDict[int(case_num)] = {}
 
-
-def storeFiles(uidpk, case_num):
-
-    return None
+def setFileDict(fileDict, case_num):
+    caseDict[case_num] = fileDict

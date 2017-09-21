@@ -12,7 +12,7 @@ sna_blueprint = Blueprint('sna_blueprint', __name__)
 
 @sna_blueprint.route('/sheet', methods=['GET', 'POST'])
 def sheetSelect():
-    case_num = request.args.get('case_num', None)
+    case_num = request.cookies.get('case_num', None)
     fileDict = dao.getFileDict(case_num)
     inputFile = fileDict['SNA_Input']
     workbook = xlrd.open_workbook(inputFile, on_demand=True)
@@ -35,7 +35,7 @@ def sheetSelect():
 
 @sna_blueprint.route('/nodeinfo', methods=['GET', 'POST'])
 def nodeSelect():
-    case_num = request.args.get('case_num', None)
+    case_num = request.cookies.get('case_num', None)
     fileDict = dao.getFileDict(case_num)
     graph = SNA(fileDict['SNA_Input'], nodeSheet=fileDict['nodeSheet'], attrSheet=fileDict['attrSheet'])
     fileDict['graph'] = graph
@@ -77,7 +77,7 @@ def nodeSelect():
 def edgeSelect():
     # deprecated by Ryan Steed 20 Jul 2017, replaced by check box in nodeselect.html
     warnings.warn("deprecated", DeprecationWarning, stacklevel=2)
-    case_num = request.args.get('case_num', None)
+    case_num = request.cookies.get('case_num', None)
     fileDict = dao.getFileDict(case_num)
     graph = fileDict['graph']
     combos = fileDict['nodeColNames']
@@ -100,7 +100,7 @@ def edgeSelect():
 
 @sna_blueprint.route('/snaviz', methods=['GET', 'POST'])
 def jgvis():
-    case_num = request.args.get('case_num', None)
+    case_num = request.cookies.get('case_num', None)
     fileDict = dao.getFileDict(case_num)
     graph = fileDict.get('copy_of_graph')
     jgdata, SNAbpPlot, attr, systemMeasures = sna_service.SNA2Dand3D(graph, request, case_num, _2D=False)
@@ -119,7 +119,7 @@ def jgvis():
 
 @sna_blueprint.route("/_get_node_data")
 def get_node_data():
-    case_num = request.args.get('case_num', None)
+    case_num = request.cookies.get('case_num', None)
     fileDict = dao.getFileDict(case_num)
     graph = fileDict.get('copy_of_graph')
     name = request.args.get('name', '', type=str)
@@ -135,11 +135,11 @@ def get_node_data():
     graph.eigenvector_centrality()
     graph.load_centrality()
     if graph.eigenvector_centrality_dict != {} and graph.eigenvector_centrality_dict != None:
-        eigenvector = str(round(graph.eigenvector_centrality_dict.get(name), 4));
+        eigenvector = str(round(graph.eigenvector_centrality_dict.get(name), 4))
     else:
         eigenvector = "clustering not available"
     if graph.betweenness_centrality_dict != {} and graph.betweenness_centrality_dict != None:
-        betweenness = str(round(graph.betweenness_centrality_dict.get(name), 4));
+        betweenness = str(round(graph.betweenness_centrality_dict.get(name), 4))
     else:
         betweenness = "clustering not available"
     attributes = graph.get_node_attributes(name)
@@ -152,7 +152,7 @@ def get_node_data():
 
 @sna_blueprint.route("/_get_edge_data")
 def get_edge_data():
-    case_num = request.args.get('case_num', None)
+    case_num = request.cookies.get('case_num', None)
     fileDict = dao.getFileDict(case_num)
     graph = fileDict.get('copy_of_graph')
     name = request.args.get('name', '', type=str)

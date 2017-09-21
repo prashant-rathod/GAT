@@ -13,7 +13,7 @@ gsa_blueprint = Blueprint('gsa_blueprint', __name__)
 
 @gsa_blueprint.route('/gsasheet', methods=['GET', 'POST'])
 def gsa_select():
-    case_num = request.args.get('case_num', None)
+    case_num = request.cookies.get('case_num', None)
     fileDict = dao.getFileDict(case_num)
     #csv = "usjoin.csv" if sample_path == "usa" else "IRQcasualties.csv"
     #shp = "us48.shp" if sample_path == "usa" else "IRQ_adm1.shp"
@@ -68,7 +68,7 @@ def gsa_select():
 
 @gsa_blueprint.route('/regionalization')
 def reg():
-    case_num = request.args.get('case_num', None)
+    case_num = request.cookies.get('case_num', None)
     fileDict = dao.getFileDict(case_num)
     GSA_file_CSV = fileDict.get('GSA_Input_CSV')
     GSA_file_SHP = fileDict.get('GSA_Input_SHP')
@@ -98,7 +98,7 @@ def reg():
 
 @gsa_blueprint.route("/_get_autocorrelation")
 def get_autocorrelation(case_num):
-    case_num = request.args.get('case_num', None)
+    case_num = request.cookies.get('case_num', None)
     fileDict = dao.getFileDict(case_num)
     GSA_file_CSV = fileDict.get('GSA_Input_CSV')
     GSA_file_SHP = fileDict.get('GSA_Input_SHP')
