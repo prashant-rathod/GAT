@@ -170,7 +170,30 @@ class SNA():
 
         self.edges = nx.edges(self.G)
 
-    # copy the origin social network graph created with user input data.
+    def drag_predict(self,node):
+
+        ## Smart prediction prototype
+        for target in self.nodes:
+            emoProps, roleProps, inflProps = propensities.propCalc(self, (node, target))
+            if len(emoProps) > 0:
+                w = []
+                for prop in emoProps:
+                    w.append(prop[4] * prop[5])  # add the product of the attribute weights to a list for each prop
+                w_avg = np.average(w)  # find average propensity product weight
+                prob = np.random.binomial(1, w_avg * 1 / 2)
+                # use w_avg as the probability for a bernoulli distribution
+                if prob:
+                    self.G.add_edge(node, target)
+                    self.G[node][target]['Emotion'] = emoProps
+                    self.G[node][target]['Role'] = roleProps if len(roleProps) > 0 else None
+                    self.G[node][target]['Influence'] = inflProps if len(inflProps) > 0 else None
+                    self.G[node][target]['Predicted'] = True
+
+        ## ERGM running
+        ergm.walk(G=self.G,iters=5000)
+
+
+    # copy the original social network graph created with user input data.
     # this will be later used to reset the modified graph to inital state
     def copyGraph(self):
         self.temp = self.G
@@ -196,22 +219,7 @@ class SNA():
             self.changeAttribute(node, [attrDict[k]], k)
         self.changeAttribute(node, True, 'newNode')
 
-        ## Smart prediction prototype
-        for target in self.nodes:
-            emoProps, roleProps, inflProps = propensities.propCalc(self,(node, target))
-            if len(emoProps) > 0:
-                w = []
-                for prop in emoProps:
-                    w.append(prop[4] * prop[5])  # add the product of the attribute weights to a list for each prop
-                w_avg = np.average(w)  # find average propensity product weight
-                prob = np.random.binomial(1, w_avg * 1 / 2)
-                # use w_avg as the probability for a bernoulli distribution
-                if prob:
-                    self.G.add_edge(node, target)
-                    self.G[node][target]['Emotion'] = emoProps
-                    self.G[node][target]['Role'] = roleProps if len(roleProps) > 0 else None
-                    self.G[node][target]['Influence'] = inflProps if len(inflProps) > 0 else None
-                    self.G[node][target]['Predicted'] = True
+        self.drag_predict(node)
 
         self.nodes = nx.nodes(self.G)  # update node list
         self.edges = nx.edges(self.G)  # update edge list
