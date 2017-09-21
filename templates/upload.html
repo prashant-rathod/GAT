@@ -145,7 +145,7 @@
                     <br/>
                     <!-- Search Bar -->
                     <div class="row text-centered">
-                        <form id="smartsearch" enctype="multipart/form-data" method="post" action="{{url_for('upload_blueprint.upload', case_num=case_num)}}"><input type="text"
+                        <form id="smartsearch" enctype="multipart/form-data" method="post" action="{{url_for('upload_blueprint.upload')}}"><input type="text"
                                                                                                   name="smartsearch"
                                                                                                   id="search"
                                                                                                   placeholder="URL to scrape...">
@@ -193,10 +193,10 @@
             <div class="col-sm-4 text-center">
                 <p class="fs-14">
                <span>
-                   <a href="{{url_for('info_blueprint.contact', case_num = case_num)}}"
+                   <a href="{{url_for('info_blueprint.contact')}}"
                       target="_self">Contact Us</a><br>
                    <a href="http://css-lucas.com" target="_blank">LUCAS Website</a><br>
-                   <a href="{{url_for('info_blueprint.help', case_num = case_num)}}" target="_self">Help Page</a>
+                   <a href="{{url_for('info_blueprint.help')}}" target="_self">Help Page</a>
                </span>
                 </p>
             </div>

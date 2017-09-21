@@ -119,7 +119,7 @@ def jgvis():
 
 @sna_blueprint.route("/_get_node_data")
 def get_node_data():
-    case_num = request.cookies.get('case_num', None)
+    case_num = request.args.get('case_num', None)
     fileDict = dao.getFileDict(case_num)
     graph = fileDict.get('copy_of_graph')
     name = request.args.get('name', '', type=str)
@@ -152,7 +152,7 @@ def get_node_data():
 
 @sna_blueprint.route("/_get_edge_data")
 def get_edge_data():
-    case_num = request.cookies.get('case_num', None)
+    case_num = request.args.get('case_num', None)
     fileDict = dao.getFileDict(case_num)
     graph = fileDict.get('copy_of_graph')
     name = request.args.get('name', '', type=str)

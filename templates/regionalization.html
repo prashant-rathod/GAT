@@ -32,7 +32,7 @@ function get(id) {
 
     <ul>
         <li class="dropdown">
-            <a href="{{ url_for('visualize_blueprint.visualize', case_num = case_num) }}">Back</a>
+            <a href="{{ url_for('visualize_blueprint.visualize') }}">Back</a>
         <li class="dropdown">
             <a href="#" class="dropbtn" style = "color:grey">View</a>
             <div class="dropdown-content">
@@ -42,7 +42,7 @@ function get(id) {
             <a href="#" class="dropbtn">Help</a>
             <div class="dropdown-content">
                 <a href="#" onClick="openHelp(this)">GSA Regionalization Help</a>
-                <a href="{{url_for('info_blueprint.help', case_num = case_num)}}" >Help Page</a>
+                <a href="{{url_for('info_blueprint.help')}}" >Help Page</a>
             </div>
         </li>
     </ul>

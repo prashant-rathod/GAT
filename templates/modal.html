@@ -54,7 +54,7 @@ body.modal-open .blur {
                             <h4 class="panel-title">Sample Cases</h4>
                         </div>
                         <div class="panel-body">
-                            <a href="{{url_for('sample_blueprint.nlp_sample', sample_path = 'isil', case_num=case_num)}}">Capturing
+                            <a href="{{url_for('sample_blueprint.nlp_sample', sample_path = 'isil'}}">Capturing
                                 Mosul</a>
                         </div>
                     </div>
@@ -102,15 +102,15 @@ body.modal-open .blur {
                             <h4 class="panel-title">Sample Cases</a></h4>
                         </div>
                         <div class="panel-body">
-                            <!--<a href="{{url_for('sample_blueprint.sna_sample', sample_path = 'iran.xlsx', case_num=case_num)}}">Run Iran Political Elite case</a><br>-->
-                            <!--<a href="{{url_for('sample_blueprint.sna_sample', sample_path = 'AAH_for_SNA.xlsx', case_num=case_num)}}">Run AAH case</a><br>-->
-                            <!--<a href="{{url_for('sample_blueprint.sna_sample', sample_path = 'roleTheorySample.xlsx', case_num=case_num)}}">Run Role Theory case</a><br>-->
-                            <a href="{{url_for('sample_blueprint.sna_sample', sample_path = 'CapturingMosulCase.xlsx', case_num=case_num)}}">Capturing
+                            <!--<a href="{{url_for('sample_blueprint.sna_sample', sample_path = 'iran.xlsx')}}">Run Iran Political Elite case</a><br>-->
+                            <!--<a href="{{url_for('sample_blueprint.sna_sample', sample_path = 'AAH_for_SNA.xlsx')}}">Run AAH case</a><br>-->
+                            <!--<a href="{{url_for('sample_blueprint.sna_sample', sample_path = 'roleTheorySample.xlsx')}}">Run Role Theory case</a><br>-->
+                            <a href="{{url_for('sample_blueprint.sna_sample', sample_path = 'CapturingMosulCase.xlsx')}}">Capturing
                                 Mosul</a><br>
-                            <a href="{{url_for('sample_blueprint.sna_sample', sample_path = 'ElephantSpreadsheet.xlsx', case_num=case_num)}}">Elephants</a><br>
-							<a href="{{url_for('static', filename = 'sample/sna/template.xlsx', case_num=case_num)}}"
+                            <a href="{{url_for('sample_blueprint.sna_sample', sample_path = 'ElephantSpreadsheet.xlsx')}}">Elephants</a><br>
+							<a href="{{url_for('static', filename = 'sample/sna/template.xlsx')}}"
                                download>Download Template</a>
-                            <!--<a href="{{url_for('sample_blueprint.sna_sample', sample_path = 'BT_CaseStudy.xlsx', case_num=case_num)}}">Run BT case</a><br>-->
+                            <!--<a href="{{url_for('sample_blueprint.sna_sample', sample_path = 'BT_CaseStudy.xlsx')}}">Run BT case</a><br>-->
                         </div>
                     </div>
                     <div class="panel panel-default">
@@ -121,7 +121,7 @@ body.modal-open .blur {
 						<span class="inputsection">
 							<br>
 							Upload .xlsx file for SNA:<br>
-                            <form enctype="multipart/form-data" method="post" action="{{url_for('upload_blueprint.upload', case_num=case_num)}}" name="sna_file" id="sna_file">
+                            <form enctype="multipart/form-data" method="post" action="{{url_for('upload_blueprint.upload')}}" name="sna_file" id="sna_file">
 							    <input type="file" id="SNA_Input" name="SNA_Input" size=20 value="a"><br>
 							    <input type="submit" value="SUBMIT">
                             </form>
@@ -158,10 +158,10 @@ body.modal-open .blur {
                             <h4 class="panel-title">Sample Cases</h4>
                         </div>
                         <div class="panel-body">
-                            <!-- <a href="{{url_for('sample_blueprint.gsa_sample', sample_path = 'usa', case_num=case_num)}}">Run United States Income case</a><br> -->
-                            <a href="{{url_for('sample_blueprint.gsa_sample', sample_path = 'iraq', case_num=case_num)}}">
+                            <!-- <a href="{{url_for('sample_blueprint.gsa_sample', sample_path = 'usa')}}">Run United States Income case</a><br> -->
+                            <a href="{{url_for('sample_blueprint.gsa_sample', sample_path = 'iraq')}}">
                                 Capturing Mosul</a><br>
-                            <a href="{{url_for('static', filename = 'sample/gsa/template.csv', case_num=case_num)}}"
+                            <a href="{{url_for('static', filename = 'sample/gsa/template.csv')}}"
                                download>Download Template</a>
                         </div>
                     </div>
