@@ -170,15 +170,29 @@ body.modal-open .blur {
                         <div class="panel-heading">
                             <h4 class="panel-title">Data Input</h4>
                         </div>
+
                         <div class="panel-body">
-                            Upload .csv file for GSA:<br>
-                            <input type="file" id="GSA_Input_CSV" name="GSA_Input_CSV" size=20><br>
-                            Upload 3 files (.shp, .shx, .dfb) for GSA:<br>
-                            <input type="file" id="GSA_Input_map" name="GSA_Input_map" size=20
-                                   multiple><br>
-                            <input type="submit" value="SUBMIT">
+						<span class="inputsection">
+
+                            <form enctype="multipart/form-data" method="post" action="{{url_for('upload_blueprint.upload', case_num=case_num)}}" name="sna_file" id="sna_file">
+
+                                Upload .csv file for GSA:<br>
+
+                                <input type="file" id="GSA_Input_CSV" name="GSA_Input_CSV" size=20><br>
+
+                                Upload 3 files (.shp, .shx, .dfb) for GSA:<br>
+
+							    <input type="file" id="GSA_Input_map" name="GSA_Input_map" size=20
+                                       multiple><br>
+
+                                <input type="submit" value="SUBMIT">
+
+                            </form>
+
+						</span>
                         </div>
                     </div>
+
                 </div>
             </div>
         </div>

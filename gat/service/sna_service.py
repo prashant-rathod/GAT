@@ -13,18 +13,6 @@ for color in colors:
     hexColors[color] = hexVal
 
 
-def allCombos(n, case_num):  # deprecated
-    fileDict = dao.getFileDict(case_num)
-    graph = fileDict['graph']
-    h = graph.header
-    combos = []
-    for i in range(len(n)):
-        for j in range(i + 1, len(n)):
-            combos.append((n[i], n[j], fileDict[h[n[i]] + "Name"] + " x " + fileDict[h[n[j]] + "Name"]))
-
-    return combos
-
-
 def SNA2Dplot(graph, request, label=False):
     attr = {}
     if graph == None:

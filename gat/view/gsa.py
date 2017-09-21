@@ -1,5 +1,6 @@
 import json
 import numpy as np
+import ast
 
 from flask import Blueprint, render_template, request, redirect, url_for, jsonify
 from gat.core.gsa.misc import util
@@ -21,8 +22,9 @@ def gsa_select():
     csv = "IRQcasualties.csv"
     shp = "IRQ_adm1.shp"
 
-    fileDict['GSA_Input_CSV'] = url_for('static', filename="sample/gsa/" + csv)[1:]
-    fileDict['GSA_Input_SHP'] = url_for('static', filename="sample/gsa/" + shp)[1:]
+    if 'GSA_Input_CSV' not in fileDict:
+        fileDict['GSA_Input_CSV'] = url_for('static', filename="sample/gsa/" + csv)[1:]
+        fileDict['GSA_Input_SHP'] = url_for('static', filename="sample/gsa/" + shp)[1:]
 
     '''
     if sample_path == "usa":
@@ -36,6 +38,7 @@ def gsa_select():
             'data-state-id', 'data-state-name', "STATE_NAME", list(range(1979, 2009)), "state-name")
     else:
     '''
+
     # TODO: take in years and file names instead of hard coding
     # TODO: reorganize use of gsa_meta
 
@@ -49,22 +52,27 @@ def gsa_select():
 
     info = Input("ALL", ["2014.0"], "ALL", np.arange(2014, 2017, 0.25).tolist(), "NAME_1")
 
-
-    localAutoCorrelation, globalAutoCorrelation, spatialDynamics = gsa_service.runGSA(case_num, info.autoRow, info.autoCol,
-                                                                                      info.dynRow,
-                                                                                      info.dynCol,
-                                                                                      info.id)
-    fileDict['GSA_data'] = ('id-1', localAutoCorrelation, globalAutoCorrelation,
-                            spatialDynamics[0], spatialDynamics[1], spatialDynamics[2], spatialDynamics[3])
-    fileDict['GSA_meta'] = (
-        'data-id-1', 'data-name-1', "NAME_1", np.arange(2014, 2017, 0.25).tolist(), "name-1")
-
+    if request.method == 'GET':
+        return render_template("gsaselect.html", info=info, case_num=case_num)
 
     if request.method == 'POST':
+
+        info.autoRow = request.form.get('auto-row')
+        info.autoCol = ast.literal_eval(request.form.get('auto-col'))
+        info.dynRow = request.form.get('dyn-row')
+        #info.dynCol = ast.literal_eval(request.form.get('dyn-col'))
+        info.id = request.form.get('gsa-id')
+
+        localAutoCorrelation, globalAutoCorrelation, spatialDynamics = gsa_service.runGSA(case_num, info.autoRow,
+                                                                                          info.autoCol, info.dynRow,
+                                                                                          info.dynCol, info.id)
+
+        fileDict['GSA_data'] = ('id-1', localAutoCorrelation, globalAutoCorrelation,
+                                spatialDynamics[0], spatialDynamics[1], spatialDynamics[2], spatialDynamics[3])
+        fileDict['GSA_meta'] = ('data-id-1', 'data-name-1', "NAME_1", np.arange(2014, 2017, 0.25).tolist(), "name-1")
+
         return redirect(url_for('visualize_blueprint.visualize', case_num=case_num))
 
-    # if workbook only has one sheet, the user shouldn't have to specify it
-    return render_template("gsaselect.html", info=info, case_num=case_num)
 
 @gsa_blueprint.route('/regionalization')
 def reg():
