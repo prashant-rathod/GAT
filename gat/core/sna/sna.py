@@ -1,15 +1,14 @@
-import random
 import tempfile
-
 import matplotlib.pyplot as plt
 import networkx as nx
 import numpy as np
-import scipy as sp
 import xlrd
 from networkx.algorithms import bipartite as bi
 from networkx.algorithms import centrality
 
 from gat.core.sna import propensities
+from gat.core.sna import resilience
+from gat.core.sna import cliques
 
 
 class SNA():
@@ -90,8 +89,6 @@ class SNA():
     # Input: header list and list of attributes with header label from attribute sheet
     # Output: updated list of nodes with attributes
     def loadAttributes(self):
-        # print("header",self.attrHeader)
-        # print("list",self.attrList)
         for row in self.attrList:
             nodeID = row[0]['val']
             for cell in row[1:]:
@@ -107,7 +104,6 @@ class SNA():
                                 prevCell = row[row.index(prevCell) - 1]
                             key[cell['header']] = cell['val']
                             for value in node[prevCell['header']]:
-                                # print("AttrList 108:",attrList)
                                 if prevCell['val'] in value:
                                     listFlag = True if type(value) is list else False
                                     attrList.append([value[0], key] if listFlag else [value, key])
@@ -122,6 +118,8 @@ class SNA():
                             attrID = cell['header']
                         self.changeAttribute(nodeID, attrList, attrID)
 
+    # Input: the node set that will serve as the source of all links
+    # Output: updated list of edges connecting nodes in the same row
     def createEdgeList(self, sourceSet):
         list = self.list
         edgeList = []
@@ -136,11 +134,9 @@ class SNA():
                         edgeList.append((source, node['val']))  # create a new link
         self.G.add_edges_from(edgeList)
         self.edges = edgeList
-        # print("edges",self.G.edges())
 
     def addEdges(self, pair):  # deprecated, needs fixing - doesn't handle new dict structure
         data = self.list
-        # print(self.nodes)
         newEdgeList = []
         for row in data:
             first = row[pair[0]]['val']
@@ -153,18 +149,51 @@ class SNA():
     def calculatePropensities(self, emo=True, role=True):
 
         for edge in self.edges:  # for every edge, calculate propensities and append as an attribute
+            attributeDict = {}
+
             emoPropList = propensities.propCalc(self, edge)[0] if emo else None
-            self.G[edge[0]][edge[1]]['Emotion'] = emoPropList if len(emoPropList) > 0 else None
+            if len(emoPropList) > 0:
+                attributeDict['Emotion'] = emoPropList
+                attributeDict['emoWeight'] = propensities.aggregateProps(emoPropList)
 
             rolePropList = propensities.propCalc(self, edge)[1] if role else None
-            self.G[edge[0]][edge[1]]['Role'] = rolePropList if len(rolePropList) > 1 else None
+            if len(rolePropList) > 1:
+                attributeDict['Role'] = rolePropList
+                attributeDict['roleWeight'] = propensities.aggregateProps(rolePropList)
 
             inflPropList = propensities.propCalc(self, edge)[2] if role else None
-            self.G[edge[0]][edge[1]]['Influence'] = inflPropList if len(inflPropList) > 1 else None
+            if len(inflPropList) > 1:
+                attributeDict['Influence'] = inflPropList
+                attributeDict['inflWeight'] = propensities.aggregateProps(inflPropList)
+
+            self.G[edge[0]][edge[1]] = attributeDict
 
         self.edges = nx.edges(self.G)
 
-    # copy the origin social network graph created with user input data.
+    def drag_predict(self,node):
+
+        ## Smart prediction prototype
+        for target in self.nodes:
+            emoProps, roleProps, inflProps = propensities.propCalc(self, (node, target))
+            if len(emoProps) > 0:
+                w = []
+                for prop in emoProps:
+                    w.append(prop[4] * prop[5])  # add the product of the attribute weights to a list for each prop
+                w_avg = np.average(w)  # find average propensity product weight
+                prob = np.random.binomial(1, w_avg * 1 / 2)
+                # use w_avg as the probability for a bernoulli distribution
+                if prob:
+                    self.G.add_edge(node, target)
+                    self.G[node][target]['Emotion'] = emoProps
+                    self.G[node][target]['Role'] = roleProps if len(roleProps) > 0 else None
+                    self.G[node][target]['Influence'] = inflProps if len(inflProps) > 0 else None
+                    self.G[node][target]['Predicted'] = True
+
+        ## ERGM running
+        ergm.walk(G=self.G,iters=5000)
+
+
+    # copy the original social network graph created with user input data.
     # this will be later used to reset the modified graph to inital state
     def copyGraph(self):
         self.temp = self.G
@@ -185,28 +214,12 @@ class SNA():
     def addNode(self, node, attrDict={}, connections=[]):
         self.G.add_node(node, attrDict)
         for i in connections:
-            # print("connecting to:",i)
             self.G.add_edge(node, i)
         for k in attrDict:  # add attributes based on user input
             self.changeAttribute(node, [attrDict[k]], k)
         self.changeAttribute(node, True, 'newNode')
 
-        ## Smart prediction prototype
-        for target in self.nodes:
-            emoProps, roleProps, inflProps = propensities.propCalc((node, target))
-            if len(emoProps) > 0:
-                w = []
-                for prop in emoProps:
-                    w.append(prop[4] * prop[5])  # add the product of the attribute weights to a list for each prop
-                w_avg = np.average(w)  # find average propensity product weight
-                prob = np.random.binomial(1, w_avg * 1 / 2)
-                # use w_avg as the probability for a bernoulli distribution
-                if prob:
-                    self.G.add_edge(node, target)
-                    self.G[node][target]['Emotion'] = emoProps
-                    self.G[node][target]['Role'] = roleProps if len(roleProps) > 0 else None
-                    self.G[node][target]['Influence'] = inflProps if len(inflProps) > 0 else None
-                    self.G[node][target]['Predicted'] = True
+        self.drag_predict(node)
 
         self.nodes = nx.nodes(self.G)  # update node list
         self.edges = nx.edges(self.G)  # update edge list
@@ -219,7 +232,6 @@ class SNA():
     def changeAttribute(self, node, value, attribute="bipartite"):
         if self.G.has_node(node):
             self.G.node[node][attribute] = value
-            # print("New attribute for "+node+": "+str(self.G.node[node][attribute]))
         self.nodes = nx.nodes(self.G)
 
     # Change node name
@@ -256,87 +268,56 @@ class SNA():
         self.node_connectivity()
         self.average_clustering()
 
-    # Make subgraphs from those nodes
-    def find_subgraph(self, G, centralNode, subGraph, depth):
-        nodeList = [(centralNode, target) for target in G.neighbors(centralNode)]
-        subGraph.add_edges_from(nodeList)
-        if depth > 0:
-            for ancillary in G.neighbors(centralNode):
-                self.find_subgraph(G, ancillary, subGraph, depth - 1)
+    def calculateResilience(self,baseline=True,robustness=True):
+        undirected = self.G.to_undirected()
+        #cliques_found = cliques.find_cliques(G = undirected, centralities = self.eigenvector_centrality_dict)
+        cliques_found = cliques.louvain(G = undirected, centralities = self.eigenvector_centrality_dict)
+        simpleRes, baseline = resilience.averagePathRes(cliques_found, iters=5) if baseline is not None else None
+        robustnessRes = resilience.laplacianRes(cliques_found, iters=5) if robustness else None
+        return baseline,simpleRes,robustnessRes
 
-    def find_cliques(self):
-        G = self.G.copy().to_undirected()  # currently need undirected graph to find cliques with centrality method
-        cliques = []
-        # Find central nodes
-        centralities = [self.eigenvector_centrality_dict.get(node) for node in G.nodes()]
-        scaled = list(sp.stats.zscore(centralities))
-        for i in range(len(scaled)):
-            scaled[i] = (G.nodes()[i], scaled[i])
-        selected = [key for key, val in scaled if
-                    "BEL" in key]  # used z-score for top 20th percentile, temporary change to only show beliefs
+    ##########################
+    ## System-wide measures ##
+    ##########################
 
-        # TODO change back line above to "if val > 1.3" instead of "if 'BEL' in key"
+    def center(self):
+        return nx.center(self.G)
+    def diameter(self):
+        return nx.diameter(self.G)
+    def periphery(self):
+        return nx.periphery(self.G)
+    def eigenvector(self):
+        return nx.eigenvector_centrality(self.G)
+    def triadic_census(self):
+        return nx.triadic_census(self.G)
+    def average_degree_connectivity(self):
+        return nx.average_degree_connectivity(self.G)
+    def degree_assortativity_coefficient(self):
+        return nx.degree_assortativity_coefficient(self.G)
 
-        for centralNode in selected:
-            sub_G = nx.DiGraph()
-            self.find_subgraph(G, centralNode, sub_G, 3)
-            if len(list(sub_G.nodes())) > 5:
-                cliques.append(sub_G.to_undirected())
-        return cliques, selected
+    # node connectivity:
+    def node_connectivity(self):
+        return nx.node_connectivity(self.G)
 
-    def averagePathRes(self, ta=20, iters=5):
-        scaledResilienceDict = {}
-        toScale = []
-        cliques, selected = self.find_cliques()
+    # average clustering coefficient:
+    def average_clustering(self):
+        return nx.average_clustering(self.G.to_undirected())
 
-        # Find resilience of subgraphs
-        for clique in cliques:
-            initShortestPath = nx.average_shortest_path_length(clique)
-            t0 = 0
-            finShortestPathList = []
+    # attribute assortivity coefficient:
+    def attribute_assortivity(self, attr):
+        return nx.attribute_assortativity_coefficient(self.G, attr)
 
-            # function to estimate integral
-            def integral(x0, x1, rectangles):
-                width = (float(x1) - float(x0)) / rectangles
-                sum1 = 0
-                for i in range(rectangles):
-                    height = qw_shortestPath * (float(x0) + i * width)
-                    area = height * width
-                    sum1 += area
-                return sum1
+    # is strongly connected:
+    def is_strongly_connected(self):
+        return nx.is_strongly_connected(self.G)
 
-            # creating perturbation by removing random 10% of nodes and averaging result of x iterations
-            for k in range(0, iters):  # x can be changed here
-                G = clique.copy()
-                nList = G.nodes()
-                nNumber = G.number_of_nodes()
-                sample = int(nNumber * 0.1)  # percent of nodes removed can be changed here
-                rSample = random.sample(nList, sample)
-                G.remove_nodes_from(rSample)
+    # is weakly connected:
+    def is_weakly_connected(self):
+        return nx.is_weakly_connected(self.G)
 
-                # finding shortest path of largest subgraph in G after perturbation:
-                # (average shortest path cannot be calculated if a graph has unconnected nodes)
-                l = []
-                for g in nx.connected_component_subgraphs(G):
-                    l.append(len(g.edges()))
-                    if len(g.edges()) == max(l) and len(g.edges()) != 0:
-                        finShortestPathList.append(nx.average_shortest_path_length(g, weight='Salience'))
-            # find mean of average shortest path from each iteration:
-            finShortestPath = np.mean(finShortestPathList)
-
-            # solve for resilience using integral function:
-            qw_shortestPath = float(finShortestPath) / float(initShortestPath)
-            t1 = t0 + ta
-            resilience = integral(t0, t1, 5) / t1
-
-            # add to list: resilience measure for each clique
-            toScale.append(resilience)
-
-        # scale resilience measures on a normal scale
-        for i in range(len(cliques)):
-            # scaledResilienceDict[cliques[i].nodes()[0]] = sp.stats.percentileofscore(toScale,toScale[i])
-            scaledResilienceDict[selected[i]] = sp.stats.percentileofscore(toScale, toScale[i])
-        return scaledResilienceDict
+    #############################
+    ## Node-dependent measures ##
+    #############################
 
     # Find clustering coefficient for each nodes
     def clustering(self):
@@ -498,27 +479,6 @@ class SNA():
                     sub_dict[key] = value
             return sub_dict
 
-    # additional network-wide measures
-    # node connectivity:
-    def node_connectivity(self):
-        return nx.node_connectivity(self.G)
-
-    # average clustering coefficient:
-    def average_clustering(self):
-        return nx.average_clustering(self.G.to_undirected())
-
-    # attribute assortivity coefficient:
-    def attribute_assortivity(self, attr):
-        return nx.attribute_assortativity_coefficient(self.G, attr)
-
-    # is strongly connected:
-    def is_strongly_connected(self):
-        return nx.is_strongly_connected(self.G)
-
-    # is weakly connected:
-    def is_weakly_connected(self):
-        return nx.is_weakly_connected(self.G)
-
     # draw 2D graph
     # attr is a dictionary that has color and size as its value.
     def graph_2D(self, attr, label=False):
@@ -556,18 +516,13 @@ class SNA():
 
     # note: this is for Vinay's UI
     def plot_2D(self, attr, label=False):
-        # print("attr", attr)
         plt.clf()
         block = nx.get_node_attributes(self.G, 'block')
-        # print("block",block)
         pos = nx.spring_layout(self.G)
         labels = {}
         for node in block:
             labels[node] = node
-            # print("node",node)
         for node in set(self.nodeSet):
-            # print("Node",node)
-            # print("attr[node]",attr[node])
             nx.draw_networkx_nodes(self.G, pos,
                                    with_labels=False,
                                    nodelist=[key for key, val in block.items() if val == node],

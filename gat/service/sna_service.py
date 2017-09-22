@@ -13,18 +13,6 @@ for color in colors:
     hexColors[color] = hexVal
 
 
-def allCombos(n, case_num):  # deprecated
-    fileDict = dao.getFileDict(case_num)
-    graph = fileDict['graph']
-    h = graph.header
-    combos = []
-    for i in range(len(n)):
-        for j in range(i + 1, len(n)):
-            combos.append((n[i], n[j], fileDict[h[n[i]] + "Name"] + " x " + fileDict[h[n[j]] + "Name"]))
-
-    return combos
-
-
 def SNA2Dplot(graph, request, label=False):
     attr = {}
     if graph == None:
@@ -72,12 +60,10 @@ def SNA2Dand3D(graph, request, case_num, _3D=True, _2D=False, label=False):
             colorInput.append(hexColors[c])
 
     if request.form.get("removeNodeSubmit") != None:
-        print("Removing node...")
         graph.removeNode(request.form.get("a"))
 
     # Get new node info, if available
     if request.form.get("addNodeSubmit") != None:
-        print("Requesting new node data...")
 
         node = request.form.get("nodeName")
 
@@ -103,12 +89,42 @@ def SNA2Dand3D(graph, request, case_num, _3D=True, _2D=False, label=False):
             links.append(request.form.get("link" + str(j)))
             j += 1
 
-        print("node, attrDict, connections", node, attrDict, links)
         graph.addNode(node, attrDict, links)
 
     # Add system measures dictionary
-    # systemMeasures["Node Connectivity"] = graph.node_connectivity() # Currently only returning zero...
-    systemMeasures["Average Clustering"] = graph.average_clustering()
+    try:
+        systemMeasures["Node Connectivity"] = graph.node_connectivity() # Currently only returning zero...
+    except:
+        "No node connectivity"
+    try:
+        systemMeasures["Average Clustering"] = graph.average_clustering()
+    except:
+        "No average clustering"
+    # try:
+    #     systemMeasures["Average Degree Connectivity"] = graph.average_degree_connectivity()
+    # except:
+    #     "No average degree connectivity"
+    try:
+        systemMeasures["Degree Assortativity"] = graph.degree_assortativity()
+    except:
+        "No degree assortativity"
+    try:
+        systemMeasures["Center"] = graph.center()
+    except:
+        "No center"
+    try:
+        systemMeasures["Diameter"] = graph.diameter()
+    except:
+        "No periphery"
+    try:
+        systemMeasures["Periphery"] = graph.periphery()
+    except:
+        "No periphery"
+    # try:
+    #     systemMeasures["Triadic Census"] = graph.triadic_census()
+    # except:
+    #     "No triadic census"
+
     # systemMeasures["Attribute Assortivity"] = graph.attribute_assortivity() # Which attributes...? UI?
     if graph.is_strongly_connected():
         systemMeasures["Connection Strength"] = "Strong"
@@ -129,16 +145,18 @@ def SNA2Dand3D(graph, request, case_num, _3D=True, _2D=False, label=False):
     # Calculate resilience when requested
     if request.form.get("resilienceSubmit") != None:
         try:
-            systemMeasures["Resilience"] = graph.averagePathRes(
-                iters=5)  # gets a scaled resilience value for each clique identified in network
+            systemMeasures["Baseline"], systemMeasures["Resilience"], systemMeasures["Robustness"] = graph.calculateResilience()  # gets a scaled resilience value for each clique identified in network
             # Add colors for each resilience measure
-
-            for cluster in systemMeasures["Resilience"]:
-                systemMeasures["Resilience"][cluster] = int(systemMeasures["Resilience"][cluster])
-                percentile = systemMeasures["Resilience"][cluster]
-                b = int(percentile)
-                r = int(100 - percentile)
-                systemMeasures["Resilience"][cluster] = [percentile, r, b]
+            def addColors(systemMeasure):
+                for cluster in systemMeasure:
+                    systemMeasure[cluster] = int(systemMeasure[cluster])
+                    percentile = systemMeasure[cluster]
+                    b = int(percentile)
+                    r = int(100 - percentile)
+                    systemMeasure[cluster] = [percentile, r, b]
+            addColors(systemMeasures["Baseline"])
+            addColors(systemMeasures["Resilience"])
+            addColors(systemMeasures["Robustness"])
         except nx.exception.NetworkXError:
             systemMeasures["Resilience"] = "Could not calculate resilience, NetworkX error."
 

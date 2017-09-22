@@ -104,8 +104,6 @@ def jgvis():
     fileDict = dao.getFileDict(case_num)
     graph = fileDict.get('copy_of_graph')
     jgdata, SNAbpPlot, attr, systemMeasures = sna_service.SNA2Dand3D(graph, request, case_num, _2D=False)
-    if request.method == 'POST':
-        jgdata, SNAbpPlot, attr, systemMeasures = sna_service.SNA2Dand3D(graph, request, case_num, _2D=True)
     return render_template("Jgraph.html",
                            jgdata=jgdata,
                            SNAbpPlot=SNAbpPlot,
