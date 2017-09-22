@@ -5,6 +5,7 @@ Author: Ryan Steed
 10 July 2017
 '''
 
+from scipy.stats import logistic
 from scipy.misc import comb
 from itertools import product
 import numpy as np
@@ -13,17 +14,24 @@ import networkx as nx
 import matplotlib.pyplot as plt
 import os
 
-def walk(G,iters):
+def probability(G):
+    params = calc_params(G)
+    estimates = coef_estimate(matrix=nx.to_numpy_matrix(G),params=params,iters=3000)
+    estimated_coefs, estimated_term_list = create_coefs(params=params,priors=estimates)
+    return coefs_to_prob(term_list=estimated_term_list)
 
-    adjMat = nx.to_numpy_matrix(G)
-    params = {
+def calc_params(G):
+    return {
         "density": edge_count(G),
         "block_match": node_match(G, "block"),
         # 'deltaistar2': istarDelta(adjMat, 2),
         # 'deltaistar3': istarDelta(adjMat, 3),
         # 'deltaostar2': ostarDelta(adjMat, 2),
     }
-    coefs, term_list = create_coefs(params)
+
+def coef_estimate(matrix,params,iters):
+    # using specified set of priors, create coefficients
+    coefs, term_list = create_coefs(params=params, priors={coef: pymc.Normal(coef, 0, 0.001) for coef in params})
 
     @pymc.deterministic
     def probs(term_list=term_list):
@@ -33,25 +41,34 @@ def walk(G,iters):
         probs[np.triu_indices_from(probs)] = 0
         return probs
 
-    #Fitting
-    matrix = nx.to_numpy_matrix(G)
+    # Fitting
     matrix[np.triu_indices_from(matrix)] = 0
-    outcome = pymc.Bernoulli("outcome", probs, value=matrix, observed=True)
+    attempts = 0
+    while attempts < 5:
+        try:
+            outcome = pymc.Bernoulli("outcome", probs, value=matrix, observed=True)
+            break
+        except:
+            print("Encountered zero probability error number",attempts,", trying again...")
+            attempts += 1
+
     sim_outcome = pymc.Bernoulli("sim_outcome", probs)
     args = [outcome, sim_outcome, probs]
-            # density_coef, density_term,
-            # block_coef, block_term]
+    # density_coef, density_term,
+    # block_coef, block_term]
     for coef, info in coefs.items():
         # Add both coefficient and term for each coefficient
         for item in info:
             args.append(item)
     model = pymc.Model(args)
     mcmc = pymc.MCMC(model)
-    mcmc.sample(iters, 1000, 50) # approx. 30 seconds
+    mcmc.sample(iters, 1000, 50)  # approx. 30 seconds
 
-    diagnostics(coefs=coefs,mcmc=mcmc)
+    traces = diagnostics(coefs=coefs, mcmc=mcmc)
 
     goodness_of_fit(mcmc=mcmc)
+
+    return {coef: np.mean(trace) for coef, trace in traces.items()}
 
 ## Service functions ##
 def draw_init(G):
@@ -67,12 +84,12 @@ def draw_init(G):
     _ = ax.axis('off')
     save_ergm_file(fig, "originalGraph.png")  # print to file
 
-def create_coefs(params):
+def create_coefs(params, priors):
     coefDict = {}
     term_list = []
     args = []
     for coef,param in params.items():
-        coefVal = pymc.Normal(coef, 0, 0.001)
+        coefVal = priors.get(coef)
         term = coefVal * param
         # value is tuple which contains both coefficient and parameter term
         coefDict[coef] = (coefVal,term)
@@ -91,6 +108,7 @@ def diagnostics(coefs, mcmc):
         ax.set_title(coef)
         i+=1
     save_ergm_file(fig, 'diagnostics')
+    return trace
 
 def goodness_of_fit(mcmc):
     # Goodness of fit viz
@@ -160,9 +178,7 @@ def ostarDelta(am,k):
             res[i,j] = comb(nin,k-1,exact=True)
     return(res)
 
-
-
-
-
-
-
+def coefs_to_prob(term_list):
+    probs = 1 / (1 + np.exp(-1 * sum(term_list)))  # The logistic function
+    probs[np.diag_indices_from(probs)] = 0
+    return probs

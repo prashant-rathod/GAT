@@ -43,9 +43,9 @@ def propCalc(graph, edge):
                         # src_amt = float(src_val[1]["AMT"]) if attr == "Resource" and "AMT" in src_val[1] else None
                         # trg_amt = float(trg_val[1]["AMT"]) if attr == "Resource" and "AMT" in trg_val[1] else None
 
+                    index_w = src_w * trg_w if src_w is not None and trg_w is not None else None
                     # Cooperative propensities
                     if src_val[0] == trg_val[0]:
-                        index_w = src_w * trg_w if src_w is not None and trg_w is not None else None
                         if index_w is not None:
                             # Checking to see if each combo's attribute weight index fall within specified ranges:
                             if index_w > 0.36:
