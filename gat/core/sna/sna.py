@@ -9,6 +9,7 @@ from networkx.algorithms import centrality
 from gat.core.sna import propensities
 from gat.core.sna import resilience
 from gat.core.sna import cliques
+from gat.core.sna import ergm
 
 
 class SNA():
@@ -190,8 +191,7 @@ class SNA():
                     self.G[node][target]['Predicted'] = True
 
         ## ERGM running
-        ergm.walk(G=self.G,iters=5000)
-
+        ergm.walk(G=self.G,iters=2500)
 
     # copy the original social network graph created with user input data.
     # this will be later used to reset the modified graph to inital state
