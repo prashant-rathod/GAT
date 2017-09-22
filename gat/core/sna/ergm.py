@@ -43,13 +43,16 @@ def coef_estimate(matrix,params,iters):
 
     # Fitting
     matrix[np.triu_indices_from(matrix)] = 0
+    max_attempts = 10
     attempts = 0
-    while attempts < 5:
+    while attempts < max_attempts:
         try:
             outcome = pymc.Bernoulli("outcome", probs, value=matrix, observed=True)
             break
         except:
             print("Encountered zero probability error number",attempts,", trying again...")
+            if attempts >= max_attempts:
+                raise
             attempts += 1
 
     sim_outcome = pymc.Bernoulli("sim_outcome", probs)

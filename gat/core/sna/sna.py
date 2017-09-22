@@ -199,7 +199,7 @@ class SNA():
             if i != j:
                 node = self.G.nodes()[i]
                 target = self.G.nodes()[j]
-                prob = ergm_prob_mat[i, j] * 0.5
+                prob = ergm_prob_mat[i, j] * 0.1
 
                 # check props
                 if self.G[node].get(target) is not None:
