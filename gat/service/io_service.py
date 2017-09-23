@@ -102,7 +102,6 @@ def checkExtensions(case_num):
 
 def storeFiles(case_num, email=None, files = None):
     tempDir ='out/generated/' if email is None else 'data/' + str(security_service.getData(email)[0]) + '/'
-    #TODO: save files
 
     fileDict = dao.getFileDict(case_num)
 
@@ -116,10 +115,11 @@ def storeFiles(case_num, email=None, files = None):
     fileDict['SNA_Input'] = storefile(files.get('SNA_Input'))
     fileDict['GSA_Input'] = storefile(files.get('GSA_Input'))
     if email is not None:
-
         with open(tempDir + 'fileDict.pickle', 'wb+') as file:
             pickle.dump(fileDict, file, protocol=pickle.HIGHEST_PROTOCOL)
 
-def loadDict(uidpk):
-    with open('data/' + str(uidpk) + 'fileDict.pickle', 'rb') as file:
-        dao.setFileDict(pickle.load(file), case_num)
+def loadDict(email, case_num):
+    if email is not None:
+        uidpk = security_service.getData(email)[0]
+        with open('data/' + str(uidpk) + 'fileDict.pickle', 'rb') as file:
+            dao.setFileDict(pickle.load(file), case_num)

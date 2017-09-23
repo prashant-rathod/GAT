@@ -8,7 +8,7 @@ def login(email, password):
             email, password), True)
     if result is not None and len(result) == 1:
         return True
-    return True
+    return False
 
 
 def register(email, password, confirmation_code):
@@ -37,3 +37,10 @@ def createDirectory(uidpk):
 
 def getData(email):
     return database.execute("SELECT * FROM T_ACCOUNT WHERE EMAIL = '{0}';".format(email), True)
+
+def getEmail(session_id):
+    result = None
+    if session_id is not None:
+        result = database.execute("SELECT * FROM T_SESSION WHERE SESSION_ID = {0};".format(session_id), True)
+    return result[0][2] if result is not None else None
+

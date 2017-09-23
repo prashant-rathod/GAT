@@ -17,20 +17,30 @@ def login_get():
 
 @security_blueprint.route('/login', methods=['POST'])
 def login_post():
-    if 'email' in request.cookies:
-        return redirect(url_for('visualize_blueprint.visualize'))
+    if 'session_id' in request.cookies:
+        if security_service.getEmail(request.cookies.get('session_id')) is not None:
+            return redirect(url_for('visualize_blueprint.visualize'))
     success = security_service.login(request.form.get("email"), request.form.get("password"))
     if success:
         response = make_response(redirect(url_for('visualize_blueprint.visualize')))
-        response.set_cookie('email', request.form.get("email"), max_age = 1)
-        #TODO load user data into visualizations.html
+        session_id = 100000 + random.randint(0, 100000)
+        response.set_cookie('session_id', str(session_id), max_age = 1)
+        case_num = request.cookies.get('case_num', None)
+        if case_num is None:
+            case_num = 100000 + random.randint(0, 100000)
+            response.set_cookie('case_num', str(case_num), max_age = 1)
+        io_service.loadDict(request.form.get('email'), case_num)
+
         return response
     return render_template('login.html', error = True)
 
 @security_blueprint.route('/logout')
 def logout():
+    case_num = request.cookies.get('case_num')
+    email = security_service.getEmail(request.cookies.get('session_id'))
+    io_service.storeFiles(case_num, email)
     response = make_response(redirect(url_for("upload_blueprint.landing_page")))
-    response.set_cookie('email', '', expires_days=0)
+    response.set_cookie('session_id', '', expires_days=0)
     return response
 
 
@@ -52,7 +62,6 @@ def register_post():
 
 @security_blueprint.route('/confirm')
 def confirm_email():
-    #TODO verify code from url against database
     code = request.args.get('code', None)
     success = security_service.confirm(code)
     if success:
@@ -63,7 +72,7 @@ def confirm_email():
 @security_blueprint.route('/save')
 def save_data():
     case_num = request.cookies.get('case_num', None)
-    email = request.cookies.get('email')
+    email = security_service.getEmail(request.cookies.get('session_id'))
     if email is not None:
         uidpk = security_service.getData(email)
         security_service.createDirectory(uidpk)
