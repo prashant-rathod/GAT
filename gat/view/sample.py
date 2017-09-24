@@ -6,7 +6,7 @@ from gat.service import gsa_service
 
 sample_blueprint = Blueprint('sample_blueprint', __name__)
 
-
+'''
 @sample_blueprint.route('/gsa/<path:sample_path>')
 def gsa_sample(sample_path):
     case_num = request.args.get('case_num', None)
@@ -39,6 +39,12 @@ def gsa_sample(sample_path):
             'data-id-1', 'data-name-1', "NAME_1", np.arange(2014, 2017, 0.25).tolist(), "name-1")
     return redirect(url_for('visualize_blueprint.visualize', case_num=case_num))
 
+'''
+
+@sample_blueprint.route('/gsa/<path:sample_path>')
+def gsa_sample(sample_path):
+    case_num = request.args.get('case_num', None)
+    return redirect(url_for('gsa_blueprint.gsa_select', case_num=case_num))
 
 @sample_blueprint.route('/nlp/<path:sample_path>')
 def nlp_sample(sample_path):
