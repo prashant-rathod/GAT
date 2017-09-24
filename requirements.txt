@@ -37,3 +37,4 @@ Werkzeug==0.12.2
 xlrd==1.0.0
 newspaper3k
 community
+pymc
