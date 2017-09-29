@@ -283,12 +283,19 @@ select,input {
                     <!--<td class="centered"><input  type = "checkbox" onclick="toggleSrcSet(this)"></td>-->
                     <td colspan="2"></td>
                 </tr>
-                {% for node in nodes %}
+                <tr>
+                    <td>{{nodes[0]}}</td>
+                    <td class="centered"><label><input checked type="checkbox" onclick="return false;" /></label></td>
+                    <td>
+                        Source Nodeset
+                    </td>
+                    <td><input type="text" name="" value="{{ nodes[0] }}"></td>
+                </tr>0
+                {% for node in nodes[1:] %}
                 <tr>
                     <td>{{node}}</td>
                     <td class="centered"><label><input checked class="nodeset" type="checkbox"
                                                        name="{{ node + 'IsNode' }}"></label></td>
-                    <!--<td class="centered"><label><input class="srcset" type = "checkbox" name = "{{ node + 'IsSource' }}"></label></td>-->
                     <td>
                         <select name="{{ node + 'Class' }}">
                             <option value="Agent" {% if

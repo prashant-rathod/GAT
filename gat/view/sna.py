@@ -44,9 +44,9 @@ def nodeSelect():
 
         nodeColNames = []
         # Commented code is for multiple source columns
-        # sourceColNames = []
         i = 0
-        for header in graph.header:
+        nodeColNames.append(graph.header[0])  # add source column
+        for header in graph.header[1:]: # exclude first column, automatically included as source set
             fileDict[header + "IsNode"] = True if request.form.get(header + "IsNode") == "on" else False
             # fileDict[header + "IsSource"] = True if request.form.get(header + "IsSource") == "on" else False
             # fileDict[header + "Class"] = request.form[header + "Class"]
@@ -57,7 +57,6 @@ def nodeSelect():
             #     sourceColNames.append(fileDict[header + "Name"])
             i += 1
         fileDict['nodeColNames'] = nodeColNames
-        # fileDict['sourceColNames'] = sourceColNames
         graph.createNodeList(nodeColNames)
         graph.createEdgeList(nodeColNames[0])
         if fileDict['attrSheet'] != None:
