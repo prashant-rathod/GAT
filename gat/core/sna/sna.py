@@ -6,6 +6,7 @@ import xlrd
 from networkx.algorithms import bipartite as bi
 from networkx.algorithms import centrality
 from itertools import product
+from collections import defaultdict
 
 from gat.core.sna import propensities
 from gat.core.sna import resilience
@@ -77,7 +78,7 @@ class SNA():
 
     # create set of nodes for multipartite graph
     # name = names of the node. This is defined by the header. ex: Abbasi-Davani.F: Name  or Abbasi-Davani.F: Faction leader
-    # nodeSet = names that define a set of node. For example, we can define Person, Faction Leader, and Party Leader as "Agent"
+    # nodeSet = names that define a set of node. For example, we can define Person, Faction Leader, and Party Leader as ".['agent']"
     # note: len(name) = len(nodeSet), else code fails
     def createNodeList(self, nodeSet):
         for row in self.list:
@@ -87,6 +88,73 @@ class SNA():
                     self.G.add_node(node['val'], block=node['header'])
         self.nodeSet = nodeSet
         self.nodes = nx.nodes(self.G)
+
+    def loadOntology(self, source, classAssignments):
+        # Function for creating decimal range if we want the propensity results to be
+        # a range rather than a single value:
+        # def attributerange(start, stop, step):
+        #     i = start
+        #     while i < stop:
+        #         yield i
+        #         i += step
+
+        # Creating an edge list and setting its length for the conditional iterations:
+        b = self.attrList
+        y = len(b)
+
+        # Creating master edge list, and empty lists to fill from each ontology class
+        classLists = defaultdict(list)  # creates a dictionary with default list values, no need to initialize - nifty!
+        edgeList = []
+
+        # iterating through ontology classes to add them to the network as nodes connected by weighted
+        # edge attributes to other ontological entities
+        for x in range(0, y):
+            for q in range(0, len(b[x])):
+                nodeHeader = b[x][q]['header']
+                nodeClass = classAssignments.get(nodeHeader)
+                if nodeHeader == source and b[x][q]['val'] is not None:
+                    classLists['actor'].append(b[x][q]['val'])
+                if nodeClass == 'Belief' and b[x][q]['val'] is not None:
+                    classLists['belief'].append(b[x][q]['val'])
+                if nodeClass == 'Symbols' and b[x][q]['val'] is not None:
+                    classLists['symbol'].append(b[x][q]['val'])
+                if nodeClass == 'Resource' and b[x][q]['val'] is not None:
+                    classLists['resource'].append(b[x][q]['val'])
+                if nodeClass == 'Agent' and b[x][q]['val'] is not None:
+                    classLists['agent'].append(b[x][q]['val'])
+                if nodeClass == 'Organization' and b[x][q]['val'] is not None:
+                    classLists['org'].append(b[x][q]['val'])
+                if nodeClass == 'Event' and b[x][q]['val'] is not None:
+                    classLists['event'].append(b[x][q]['val'])
+                if nodeClass == 'Audience' and b[x][q]['val'] is not None:
+                    classLists['aud'].append(b[x][q]['val'])
+
+        # removing duplicates from each list
+        # (this does not remove the effect that numerous connections to one node have on the network)
+        classLists = {key: set(val) for key, val in classLists.items()}  # dict comprehension method
+
+        # adding ontological class to each node as node attribute
+        color_map = []
+        stringDict = {
+            'actor': 'Actor',
+            'belief': 'Belief',
+            'symbol': 'Symbol',
+            'resource': 'Resource',
+            'agent': 'Agent',
+            'org': 'Organization',
+            'aud': 'Audience',
+            'event': 'Event',
+            'role': 'Role',
+            'know': 'Knowledge',
+            'taskModel': 'Task Model',
+            'location': 'Location',
+            'title': 'Title',
+            'position': 'position',
+        }
+        for x in nx.nodes(self.G):
+            for key, entityList in classLists.items():
+                if x in entityList:
+                    self.G.node[x]['ontClass'] = stringDict[key]
 
     # Input: header list and list of attributes with header label from attribute sheet
     # Output: updated list of nodes with attributes
@@ -108,11 +176,11 @@ class SNA():
                             for value in node[prevCell['header']]:
                                 if prevCell['val'] in value:
                                     listFlag = True if type(value) is list else False
-                                    attrList.append([value[0], key] if listFlag else [value, key])
+                                    attrList.append([value[0], key] if listFlag else [value, key]) # weighted attributes take the form [value, weight]
                                 else:
                                     attrList.append(value)
                             attrID = prevCell['header']
-                            # add the attribute as an attr-of-attr
+
                         else:  # if the attribute is not a subattribute
                             if cell['header'] in self.G.node[nodeID]:
                                 attrList = (node[cell['header']])
@@ -133,7 +201,16 @@ class SNA():
             for source in sourceNodes:
                 for node in row:
                     if node['val'] != source and node['header'] in self.nodeSet:
-                        edgeList.append((source, node['val']))  # create a new link
+                        sourceDict = self.G.node[source]
+                        edge = (source, node['val'])
+                        edgeList.append(edge)
+                        # add a weighted link if attribute appears in graph
+                        for attrs in [val for key,val in sourceDict.items()]:
+                            for attr in attrs:
+                                if attr[0] == node['val']:
+                                    avg_w = np.average([float(val) for key, val in attr[1].items()])
+                                    self.G.add_edge(source, attr[0], weight=avg_w)
+
         self.G.add_edges_from(edgeList)
         self.edges = edgeList
 
@@ -509,7 +586,7 @@ class SNA():
     def graph_2D(self, attr, label=False):
         block = nx.get_node_attributes(self.G, 'block')
         Nodes = nx.nodes(self.G)
-        pos = nx.spring_layout(self.G)
+        pos = nx.fruchterman_reingold_layout(self.G)
         labels = {}
         for node in block:
             labels[node] = node
@@ -543,7 +620,7 @@ class SNA():
     def plot_2D(self, attr, label=False):
         plt.clf()
         block = nx.get_node_attributes(self.G, 'block')
-        pos = nx.spring_layout(self.G)
+        pos = nx.fruchterman_reingold_layout(self.G)
         labels = {}
         for node in block:
             labels[node] = node
@@ -585,16 +662,31 @@ class SNA():
             if self.G[edge[0]][edge[1]].get('Emotion') is not None:
                 # links with propensities can be given hex code colors for arrow, edge; can also change arrow size
                 edges.append(
-                    {'source': edge[0], 'target': edge[1], 'name': edge[0] + "," + edge[1], 'arrowColor': '0xE74C3C',
+                    {'source': edge[0],
+                     'target': edge[1],
+                     'name': edge[0] + "," + edge[1],
+                     'arrowColor': '0xE74C3C',
                      'arrowSize': 2})
             if self.G[edge[0]][edge[1]].get('Predicted') is not None:
                 edges.append(
-                    {'source': edge[0], 'target': edge[1], 'name': edge[0] + "," + edge[1], 'color': '0xE74C3C',
+                    {'source': edge[0],
+                     'target': edge[1],
+                     'name': edge[0] + "," + edge[1],
+                     'color': '0xE74C3C',
                      'arrowColor': '0xE74C3C',
+                     'arrowSize': 2})
+            if self.G[edge[0]][edge[1]].get('W') is not None:
+                edges.append(
+                    {'source': edge[0],
+                     'target': edge[1],
+                     'name': edge[0] + "," + edge[1],
+                     'arrowColor': '0x32CD32',
                      'arrowSize': 2})
             else:
                 edges.append(
-                    {'source': edge[0], 'target': edge[1], 'name': edge[0] + "," + edge[1]})
+                    {'source': edge[0],
+                     'target': edge[1],
+                     'name': edge[0] + "," + edge[1]}) #TODO clean up repeated code above
         for node, feature in block.items():
             temp = {}
             if self.G.node[node].get('newNode') is True:

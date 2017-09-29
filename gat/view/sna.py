@@ -43,25 +43,25 @@ def nodeSelect():
     if request.method == 'POST':
 
         nodeColNames = []
-        # Commented code is for multiple source columns
-        i = 0
+        classAssignments = {}
+
         nodeColNames.append(graph.header[0])  # add source column
         for header in graph.header[1:]: # exclude first column, automatically included as source set
             fileDict[header + "IsNode"] = True if request.form.get(header + "IsNode") == "on" else False
-            # fileDict[header + "IsSource"] = True if request.form.get(header + "IsSource") == "on" else False
-            # fileDict[header + "Class"] = request.form[header + "Class"]
+            classAssignments[header] = request.form[header + "Class"]
             fileDict[header + "Name"] = request.form[header + "Name"]
             if fileDict[header + "IsNode"] == True:
                 nodeColNames.append(fileDict[header + "Name"])
-            # if fileDict[header + "IsSource"] == True:
-            #     sourceColNames.append(fileDict[header + "Name"])
-            i += 1
         fileDict['nodeColNames'] = nodeColNames
+
         graph.createNodeList(nodeColNames)
-        graph.createEdgeList(nodeColNames[0])
         if fileDict['attrSheet'] != None:
             graph.loadAttributes()
+        graph.createEdgeList(nodeColNames[0])
+        graph.loadOntology(source=nodeColNames[0],classAssignments=classAssignments)
+        if fileDict['attrSheet'] != None:
             graph.calculatePropensities(emo=True)
+
         # Only the first column is a source
         graph.closeness_centrality()
         graph.degree_centrality()
@@ -70,31 +70,6 @@ def nodeSelect():
 
     return render_template("nodeselect.html",
                            nodes=graph.header, case_num=case_num)
-
-
-@sna_blueprint.route('/edgeinfo', methods=['GET', 'POST'])
-def edgeSelect():
-    # deprecated by Ryan Steed 20 Jul 2017, replaced by check box in nodeselect.html
-    warnings.warn("deprecated", DeprecationWarning, stacklevel=2)
-    case_num = request.args.get('case_num', None)
-    fileDict = dao.getFileDict(case_num)
-    graph = fileDict['graph']
-    combos = fileDict['nodeColNames']
-    fileDict['combos'] = combos
-
-    if request.method == 'POST':
-        for combo in combos:
-            if request.form.get(combo) == "on":
-                graph.createEdgeList(combo)
-
-        graph.closeness_centrality()
-        graph.degree_centrality()
-        graph.betweenness_centrality()
-
-        return redirect(url_for('visualize_blueprint.visualize', case_num=case_num))
-
-    return render_template("edgeselect.html",
-                           combos=combos, case_num=case_num)
 
 
 @sna_blueprint.route('/snaviz', methods=['GET', 'POST'])
