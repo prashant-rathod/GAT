@@ -61,7 +61,6 @@ def visualize():
 
     nlp_sentiment = nlp_service.sentiment(NLP_file_sentiment)
     research_question = scraper_service.scrape(research_question)
-    #TODO save state in here - pickle these variables.
 
     return render_template('visualizations.html',
                            research_question=research_question,

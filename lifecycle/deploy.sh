@@ -50,6 +50,11 @@ sudo python3 -m spacy download en
 
 sudo service nginx restart;
 
+sudo update-rc.d postgresql enable;
+sudo service postgresql start;
+sudo chmod 755 lifecycle/refresh_sessions.sh;
+mv lifecycle/refresh_sessions.sh /etc/cron.hourly/;
+
 chmod +x lifecycle/restart.sh;
 lifecycle/restart.sh
 "

@@ -9,6 +9,7 @@ SCRIPT='
 sudo apt-get update;
 sudo apt-get upgrade;
 sudo apt-get install nginx;
+apt-get install postgresql postgresql-contrib;
 
 sudo sed -i "1s/.*/user ubuntu;/" /etc/nginx/nginx.conf;
 sudo sed -i "/# server_names_hash_bucket_size 64;/a server_names_hash_bucket_size 128;" /etc/nginx/nginx/conf;
