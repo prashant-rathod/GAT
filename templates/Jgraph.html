@@ -2,6 +2,7 @@
 <html lang="en">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link href="{{url_for('static', filename='css/font-awesome.min.css')}}" rel="stylesheet" type="text/css"/>
     <link href="{{url_for('static', filename='css/bootstrap.min.css')}}" rel="stylesheet">
     <link href="{{url_for('static', filename='css/main.css')}}" rel="stylesheet">
     <link href="{{url_for('static', filename='css/general.css')}}" rel="stylesheet">
@@ -65,7 +66,7 @@
           <div id="resilienceInfo">
             {% if systemMeasures.get("Resilience") == None -%}
               <form id="resilienceForm" enctype="multipart/form-data" method="post">
-                <input id="resilience" name="resilienceSubmit" type="submit" value="Calculate Resilience" href="javascript:void(0)" data-toggle="tooltip" data-placement="left" title="{{systemMeasures['Description']['Resilience']}}">
+                <input id="resilience" name="resilienceSubmit" type="submit" value="Calculate Resilience" onclick="handleResilienceClick();" href="javascript:void(0)" data-toggle="tooltip" data-placement="left" title="{{systemMeasures['Description']['Resilience']}}">
               </form>
             {% else -%}
             <table id="resilienceTable">
@@ -164,7 +165,7 @@
             </tr>
             <tr>
               <td class="centered" colspan="2">
-                <input id="addNodeSubmit" type = "submit" value = "ADD" name = "addNodeSubmit">
+                <input id="addNodeSubmit" type = "submit" value = "ADD" name = "addNodeSubmit" onclick="handleAddClick();">
               </td>
             </tr>
         </form>
