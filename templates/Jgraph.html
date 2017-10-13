@@ -70,6 +70,11 @@
               </form>
             {% else -%}
             <table id="cliqueTable">
+              <tr><th style="text-align:center" colspan="2">Influence Communities</th></tr>
+              <tr>
+                <th>Central Node</th>
+                <th>Community</th>
+              </tr>
                 {% for clique in systemMeasures['Cliques'] -%}
                 <tr>
                     <th>{{ clique[0] }}</th>

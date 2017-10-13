@@ -693,5 +693,4 @@ class SNA():
             nodes_property[node] = temp
         data['edges'] = edges
         data['nodes'] = nodes_property
-        print(data)
         return data
