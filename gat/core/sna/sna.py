@@ -90,13 +90,6 @@ class SNA():
         self.nodes = nx.nodes(self.G)
 
     def loadOntology(self, source, classAssignments):
-        # Function for creating decimal range if we want the propensity results to be
-        # a range rather than a single value:
-        # def attributerange(start, stop, step):
-        #     i = start
-        #     while i < stop:
-        #         yield i
-        #         i += step
 
         # Creating an edge list and setting its length for the conditional iterations:
         b = self.attrList
@@ -204,7 +197,7 @@ class SNA():
                         sourceDict = self.G.node[source]
                         edge = (source, node['val'])
                         edgeList.append(edge)
-                        # add a weighted link if attribute appears in graph
+                        # for ontological elements: add a weighted link if attribute appears in graph
                         for attrs in [val for key,val in sourceDict.items()]:
                             for attr in attrs:
                                 if attr[0] == node['val']:
@@ -370,10 +363,12 @@ class SNA():
         self.node_connectivity()
         self.average_clustering()
 
-    def calculateResilience(self,baseline=True,robustness=True):
+    def communityDetection(self):
         undirected = self.G.to_undirected()
-        #cliques_found = cliques.find_cliques(G = undirected, centralities = self.eigenvector_centrality_dict)
-        cliques_found = cliques.louvain(G = undirected, centralities = self.eigenvector_centrality_dict)
+        return cliques.louvain(G = undirected, centralities = self.eigenvector_centrality_dict)
+
+    def calculateResilience(self,baseline=True,robustness=True):
+        cliques_found = self.communityDetection()
         simpleRes, baseline = resilience.averagePathRes(cliques_found, iters=5) if baseline is not None else None
         robustnessRes = resilience.laplacianRes(cliques_found, iters=5) if robustness else None
         return baseline,simpleRes,robustnessRes
