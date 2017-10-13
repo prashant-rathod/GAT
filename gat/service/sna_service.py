@@ -135,11 +135,12 @@ def SNA2Dand3D(graph, request, case_num, _3D=True, _2D=False, label=False):
     systemMeasures["Description"] = {
         'Average Clustering': 'A high clustering coefficient indicates that actors within the network are closely connected to a statistically significant degree. It is a sophisticated measure of the density of a network.',
         'Connection Strength': 'Knowing whether a graph is strongly or weakly connected is helpful because it demonstrates the robustness of the graph based on its redundancy. If a graph is strongly connected, there are two links between each actor in the network, one in each direction. A strongly connected graph thus would likely have more redundant communication/information flow and be more difficult to perturb than a weakly connected graph.',
-        'Resilience': 'The baseline value for resilience is determined by identifying the cliques associated with the most central nodes in the network, perturbing those subgraphs, and measuring the mean shortest path average over several perturbations. The results are scaled on a normal curve across all cliques and a percentile resilience is determined for each clique. A high percentile resilience denotes resilience to perturbation. These values are visualized on a color spectrum from red to blue, where red is low relative resilience and blue is high relative resilience.',
+        'Resilience': 'The baseline value for resilience is determined by perturbing each community in the network and measuring the mean shortest path average over several perturbations. The results are scaled on a normal curve across all cliques and a percentile resilience is determined for each clique. A high percentile resilience denotes resilience to perturbation. These values are visualized on a color spectrum from red to blue, where red is low relative resilience and blue is high relative resilience.',
         'AddNode': 'Introduces a new node to the network, complete with a user-defined name, user-defined attributes and known links. Using the DRAG link prediction model, node attributes are used to form likely connections and intelligently model the effects of external change on the network. New nodes and their predicted links are colored red for easy identification.',
         'RemoveNode': 'Removes the node inputted in the box below and any links to which it belongs.',
         'eigenvector': 'Centrality measure which sums the centralities of all adjacent nodes.',
-        'betweenness': 'Centrality based on the shortest path that passes through the node.'
+        'betweenness': 'Centrality based on the shortest path that passes through the node.',
+        'Cliques':'Influence communities are detected in two-step Louvain modularity optimization. First, the core myth-symbol complexes are identified and named. Second, very proximate actors are grouped with the myth-symbol complex to form a full influence network.',
     }
 
     # Calculate resilience when requested
