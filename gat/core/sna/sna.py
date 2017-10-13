@@ -688,7 +688,10 @@ class SNA():
                 temp['color'] = '0x8B0000'
             else:
                 temp['color'] = color[name.index(feature)]
+            if self.G.node[node].get('Name') is not None:
+                temp['name'] = self.G.node[node].get('Name')
             nodes_property[node] = temp
         data['edges'] = edges
         data['nodes'] = nodes_property
+        print(data)
         return data

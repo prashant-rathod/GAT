@@ -143,10 +143,14 @@ def SNA2Dand3D(graph, request, case_num, _3D=True, _2D=False, label=False):
         'Cliques':'Influence communities are detected in two-step Louvain modularity optimization. First, the core myth-symbol complexes are identified and named. Second, very proximate actors are grouped with the myth-symbol complex to form a full influence network.',
     }
 
+    # Find cliques when requested
+    if request.form.get("cliqueSubmit") != None:
+        cliques, names = graph.communityDetection()
+        systemMeasures["Cliques"] = [(name, clique.nodes()) for name, clique in zip(names,cliques)]
+
     # Calculate resilience when requested
     if request.form.get("resilienceSubmit") != None:
         try:
-            systemMeasures["Cliques"] = [nx.nodes(subgraph) for subgraph in graph.communityDetection()]
             systemMeasures["Baseline"], systemMeasures["Resilience"], systemMeasures["Robustness"] = graph.calculateResilience()  # gets a scaled resilience value for each clique identified in network
             # Add colors for each resilience measure
             def addColors(systemMeasure):
