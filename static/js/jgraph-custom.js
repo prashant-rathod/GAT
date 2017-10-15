@@ -59,6 +59,7 @@ handleEditButton = function() {
   }
   $("#editAttributeInfo").append('<input id="editSubmitButton" type="submit" name="editSubmitButton" value="Submit" onclick="handleEditSubmit(currentNodeDict)" />')
 };
+
 toggleEditWindow = function() {
   $("#attributeInfo").toggleClass("closed")
   $("#editAttributeInfo").toggleClass("closed")
@@ -100,8 +101,15 @@ removeLink = function(id) {
 
 // Placeholder message during resilience calculation
 handleResilienceClick = function() {
-    console.log("Handling click...")
-    $("#resilienceInfo").append("<div>Resilience is being calculated. This is a heavy process and may require 1-2 minutes for completion.</div>")
+    $("#resilience").attr("value","Calculating Resilience...")
+                    .attr("data-original-title","Resilience is being calculated. This is a heavy process and may require 1-2 minutes for completion.")
+}
+
+// Placeholder message during ERGM run
+handleAddClick = function() {
+    showAddNodeWindow();
+    $("#add").attr("value","Adding Nodes...")
+             .attr("data-original-title","Currently conducting DRAG analysis (1-2 min).")
 }
 
 // Code for tooltips
