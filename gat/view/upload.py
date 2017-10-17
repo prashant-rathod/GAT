@@ -1,6 +1,6 @@
 import random
-import validators
 
+import validators
 from flask import Blueprint, render_template, request, redirect, url_for
 
 from gat.dao import dao
@@ -26,7 +26,7 @@ def upload():
                                     case_num=case_num))  # temporary submission for SmartSearch for demo
         else:
             return redirect(url_for('smart_search_blueprint.sheetSelect',
-                                    case_num=case_num))  #if its not a url take it to smartSearch input
+                                    case_num=case_num))  # if its not a url take it to smartSearch input
 
     # here the use of fileDict is probably more clear
     # the strings used to index request.files come from the HTML name of the input field
@@ -56,11 +56,8 @@ def upload():
     if fileDict['SNA_Input']:
         return redirect(url_for('sna_blueprint.sheetSelect', case_num=case_num))
 
-    if fileDict['SNA_Input']:
-        return redirect(url_for('sna_blueprint.gsa_select', case_num=case_num))
-
-    if fileDict['GSA_Input']:
-        return redirect(url_for('sna_blueprint.gsa_elect', case_num=case_num))
+    if fileDict['GSA_Input_CSV']:
+        return redirect(url_for('gsa_blueprint.gsa_select', case_num=case_num))
 
     # if a user does both SNA and NLP, as it stands, the NLP intermediary data will never be gotten to. This is a problem.
     if fileDict['NLP_Input_corpus']:
