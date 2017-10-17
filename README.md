@@ -1,0 +1,7 @@
+The United States Department of Defense has awarded the Laboratory for Unconventional Conflict Analysis and Simulation (LUCAS) a $1.6 million Minerva Initiative grant to conduct fundamental research on the resiliency of strategic actors by examining how these actors derive and deploy resources to develop and project power in a complex strategic landscape. This research will inform a modeling and simulation platform that forecasts strategic interactions.  It will provide a scalable decision-support tool for strategists, commanders, researchers, and educators. It will build on the lab’s ongoing research, integrating concepts from international relations, ecology, cognitive neuroscience, and complexity theory.
+
+The principal investigator will be the lab’s director, Dr. Tony Rivera, who is a Visiting Assistant Professor at the Social Science Research Institute (SSRI) with a secondary appointment in Political Science.  The project team includes instructors, graduate students, and undergraduates from multiple departments, including Political Science, the Sanford School of Public Policy, and the Nicholas School of the Environment.
+Through these innovative methodologies and interdisciplinary work, the lab aims to advance the field of strategic modeling and simulation, help bridge the divide between practitioners and scholars of national security, and contribute to national defense.
+
+For more info visit: http://css-lucas.com/
+

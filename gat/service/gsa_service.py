@@ -1,0 +1,66 @@
+import csv
+import json
+
+from gat.core.gsa.misc import util, map_generator
+
+from gat.core.gsa.core import spatial_dynamics, autocorrelation, weights
+from gat.dao import dao
+
+
+# TODO utilize temp dir
+
+def tempParseGSA(GSA_file_CSV, GSA_file_SHP, idVar, nameVar):
+    if GSA_file_CSV == None or GSA_file_SHP == None:
+        return (None, None)
+
+    gsaCSV = []
+    with open(GSA_file_CSV) as csvfile:
+        try:
+            reader = csv.reader(csvfile)
+            for row in reader:
+                tempRow = [x.replace("'", "APOSTROPHE") for x in row]
+                gsaCSV.append(tempRow)
+        except:
+            return (None, True)
+
+    gsaSVG = "out/gsa/mymap.svg"
+    map_generator.generateMap(GSA_file_SHP, gsaSVG)
+
+    with open(gsaSVG, 'r') as myfile:
+        data = None
+        try:
+            data = myfile.read()
+        except:
+            return (None, True)
+    data = data.replace('"', "'")
+    nameMapping = util.getNameMapping(gsaSVG, idVar, nameVar)
+    nameMapping = {key: value.replace("'", "APOSTROPHE") for key, value in nameMapping.items()}
+    return json.dumps(str(gsaCSV).replace('"', "'")), json.dumps(data), json.dumps(str(nameMapping).replace('"', "'"))
+
+
+def parseGSA(GSA_file_CSV, GSA_file_SVG):
+    if GSA_file_CSV == None or GSA_file_SVG == None:
+        print("csv or svg is none")
+        return (None, None)
+
+    gsaCSV = []
+    with open(GSA_file_CSV) as csvfile:
+        reader = csv.reader(csvfile)
+        for row in reader:
+            gsaCSV.append(row)
+
+    with open(GSA_file_SVG, 'r') as myfile:
+        data = myfile.read()
+    data = data.replace('"', "'")
+    return json.dumps(gsaCSV), json.dumps(data)
+
+
+def runGSA(case_num, autocorrelationRows, autocorrelationCols, sdRows, sdCols, idVariable):
+    fileDict = dao.getFileDict(case_num)
+    observations = weights.extractObservations(fileDict['GSA_Input_CSV'], autocorrelationRows, autocorrelationCols)
+    w = weights.generateWeightsUsingShapefile(fileDict['GSA_Input_SHP'], idVariable=idVariable)
+    globalAutoCorrelation = autocorrelation.globalAutocorrelation(observations, w)
+    localAutoCorrelation = autocorrelation.localAutocorrelation(observations, w)
+    observations = weights.extractObservations(fileDict['GSA_Input_CSV'], sdRows, sdCols)
+    spatialDynamics = spatial_dynamics.markov(observations, w, method="spatial")
+    return localAutoCorrelation, globalAutoCorrelation, spatialDynamics
