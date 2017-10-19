@@ -4,16 +4,7 @@
     <title>Smart Search Select</title>
     {% include "header.html" -%}
     <link href="{{url_for('static', filename='css/vizStyle.css')}}" rel="stylesheet">
-    <script src="../static/js/jquery-1.11.1.min.js">
-		$('.checkboxed').click(function(){
-			var isChecked = $(this).prop("checked");
-			$(this)
-				.parent('div')
-				.children(".checkboxed:checked")
-				.prop("checked",false);
-			$(this).prop("checked", isChecked);	
-		});
-	</script>
+    <script src="../static/js/jquery-1.11.1.min.js"></script>
     <script type="text/javascript">
 	  function get(id) {
 			return document.getElementById(id);
@@ -286,23 +277,23 @@ select,input {
                 </tr>
                 <tr> 
                 	<td><i>{{sentences[0]}}</i></td>
-                    <td class="centered"><input class="checkboxed" type="checkbox"></td>
+                    <td class="centered"><input name="cameo" type="radio"></td>
 				</tr>
                 <tr>
                 	<td><i>{{sentences[1]}}</i></td>
-                    <td class="centered"><input class="checkboxed" type="checkbox"></td>
+                    <td class="centered"><input name="cameo" type="radio"></td>
                 </tr>
                 <tr>
                 	<td><i>{{sentences[2]}}</i></td>
-                    <td class="centered"><input class="checkboxed" type="checkbox"></td> 
+                    <td class="centered"><input name="cameo" type="radio"></td> 
 				</tr>
                 <tr>
                 	<td><i>{{sentences[3]}}</i></td>
-                    <td class="centered"><input class="checkboxed" type="checkbox"></td>
+                    <td class="centered"><input name="cameo" type="radio"></td>
                 </tr>
                 <tr> 
                 	<td><i>{{sentences[4]}}</i></td>
-                    <td class="centered"><input type="checkbox" class="checkboxed"></td>
+                    <td class="centered"><input name= "cameo" type="radio"></td>
 				</tr>
                 
             </table>
