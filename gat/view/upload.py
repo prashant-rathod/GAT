@@ -1,5 +1,6 @@
 import random
 
+import validators
 from flask import Blueprint, render_template, request, redirect, url_for
 
 from gat.dao import dao
@@ -20,7 +21,12 @@ def upload():
 
     fileDict['research_question'] = request.form.get('smartsearch')
     if fileDict['research_question'] is not None and fileDict['research_question'].strip() != '':
-        return redirect(url_for('visualize_blueprint.visualize', case_num=case_num))  # temporary submission for SmartSearch for demo
+        if validators.url(fileDict['research_question'].strip()):
+            return redirect(url_for('visualize_blueprint.visualize',
+                                    case_num=case_num))  # temporary submission for SmartSearch for demo
+        else:
+            return redirect(url_for('smart_search_blueprint.sheetSelect',
+                                    case_num=case_num))  # if its not a url take it to smartSearch input
 
     # here the use of fileDict is probably more clear
     # the strings used to index request.files come from the HTML name of the input field
@@ -28,7 +34,6 @@ def upload():
     fileDict['GSA_Input_CSV'] = io_service.storefile(request.files.get('GSA_Input_CSV'))
     fileDict['GSA_Input_SHP'] = io_service.storeGSA(request.files.getlist('GSA_Input_map'))
     fileDict['GSA_file_list'] = request.files.getlist('GSA_Input_map')
-
     fileDict['NLP_Input_corpus'] = io_service.storeNLP(request.files.getlist('NLP_Input_corpus'))
     fileDict['NLP_Input_LDP'] = io_service.storefile(request.files.get('NLP_Input_LDP'))
     fileDict['NLP_Input_Sentiment'] = io_service.storefile(request.files.get('NLP_Input_Sentiment'))
@@ -37,6 +42,7 @@ def upload():
     fileDict["NLP_INPUT_IOB"] = request.form.get("NLP_INPUT_IOB")
 
     fileDict['SNA_Input'] = io_service.storefile(request.files.get('SNA_Input'))
+    fileDict['GSA_Input'] = io_service.storefile(request.files.get('SGA_Input'))
 
     fileDict['research_question'] = request.form.get('research_question')
 
