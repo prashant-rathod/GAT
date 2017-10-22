@@ -1,7 +1,7 @@
 with open("NLTK_function") as f:
     content = f.readlines()
 content = [x.strip('\n') for x in content]
-# print(content)
+# output.write(content)
 module_name = "nltk_lexicon"
 is_class = False
 is_def = False
@@ -35,21 +35,21 @@ for line in content:
         elif words[0] == "def":
             is_class = False
             is_def = True
-            if is_first:  # if this is the first function, don't print out a return
+            if is_first:  # if this is the first function, don't output.write out a return
                 is_first = False
             else:
-                print(
+                output.write(
                     "\treturn " + module_name + "." + remove_equals(" ".join(function_name.split(" ")[1:])[:-1]) + "\n")
                 function_name = "def "
             function_name += " ".join(words[1:])
-            print(function_name + "\n")
+            output.write(function_name + "\n")
 
     elif words[0:4] == ["", "", "", ""]:  # if line is indented - usually part of a function or class
         if words[4:7] == ["\"\"\""] or words[4:7] == ["\'\'\'"]:  # checks if its a docstring
             if is_doc_string:
                 doc_string += "\t\"\"\"\n"
                 if is_def:
-                    print(doc_string)
+                    output.write(doc_string)
                     doc_string = "\t\"\"\"\n"
 
                 is_doc_string = False
@@ -60,5 +60,5 @@ for line in content:
         else:  # if it isn't a docstring
             continue
 
-print("\treturn " + module_name + "." + " ".join(function_name.split(" ")[1:])[:-1] + "\n")
+output.write("\treturn " + module_name + "." + " ".join(function_name.split(" ")[1:])[:-1] + "\n")
 output.close()
