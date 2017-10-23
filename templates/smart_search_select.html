@@ -89,7 +89,6 @@
 	    target.setAttribute('data-y', y);
 	  });
 
-
     </script>
     <style>
 		body {
@@ -269,7 +268,7 @@ select,input {
     </div>
 
     <div class="indented">
-        <form enctype="multipart/form-data" method="post" style="display:inline;">
+        <form id= "cameoFORM" enctype="multipart/form-data" method="post" style="display:inline;">
             <table>
                 <tr>
                     <th>CAMEO Code Sentence</th>
@@ -295,10 +294,18 @@ select,input {
                 	<td><i>{{sentences[4]}}</i></td>
                     <td class="centered"><input name= "cameo" type="radio"></td>
 				</tr>
-                
-            </table>
-            <br/>
-            <input type="submit" value="CONTINUE" style="box-sizing:border-box;"/>
+          </table>
+          <br>
+          <select name = "cameos" id="cameos">
+                {% for code in cameoCodes %}
+        			<option>{{ code }}</option>
+			    {% endfor %}
+          </select>
+          <br>
+          <br>
+          <textarea form="cameoFORM" rows="4" cols="50"></textarea>
+          <br>
+          <input type="submit" value="CONTINUE" style="box-sizing:border-box;"/>
         </form>
     </div>
   </section>

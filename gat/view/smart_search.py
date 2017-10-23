@@ -15,8 +15,12 @@ def sheetSelect():
         researchQuestion = fileDict.get('research_question', None).strip()
         sentences = top5CAMEO(researchQuestion)
         # read sentences.txt, read in sentences, and pass the results on to  that
-
-        return render_template('smart_search_select.html', sentences=sentences)
+        cameoCodes = []
+        with open("static/resources/smartsearch/cameocodes.txt", 'r') as file:
+            for line in file:
+                cameoCodes.append(line)
+    
+        return render_template('smart_search_select.html', sentences=sentences, cameoCodes=cameoCodes)
 
     # fill in this follow example from sna_blueprint.sheet_select
     return redirect(url_for('visualize_blueprint.visualize'))
