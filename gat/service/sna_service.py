@@ -153,6 +153,8 @@ def SNA2Dand3D(graph, request, case_num, _3D=True, _2D=False, label=False):
             for node in clique.nodes():
                 nodes.append(graph.G.node[node].get('Name')[0] if graph.G.node[node].get('Name') is not None else node)
             systemMeasures["Cliques"].append((central,nodes))
+            ## TODO: create json file for subgraphs produced, as below:
+            # subgraph_json.append(graph.create_json(graph.nodeSet, colorInput, graph=clique))
 
     # Calculate resilience when requested
     if request.form.get("resilienceSubmit") != None:

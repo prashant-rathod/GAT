@@ -648,13 +648,15 @@ class SNA():
     # name ex: {name, institution}, {faction leaders, institution}, etc...
     # color: {"0xgggggg", "0xaaaaaa"} etc. (Takes a hexadecimal "String").
     # returns a json dictionary
-    def create_json(self, name, color):
+    def create_json(self, name, color, graph=None):
         data = {}
         edges = []
         nodes_property = {}
-        block = nx.get_node_attributes(self.G, 'block')
+        if graph is None:
+            graph = self.G
+        block = nx.get_node_attributes(graph, 'block')
         for edge in self.edges:
-            if self.G[edge[0]][edge[1]].get('Emotion') is not None:
+            if graph[edge[0]][edge[1]].get('Emotion') is not None:
                 # links with propensities can be given hex code colors for arrow, edge; can also change arrow size
                 edges.append(
                     {'source': edge[0],
@@ -662,7 +664,7 @@ class SNA():
                      'name': edge[0] + "," + edge[1],
                      'arrowColor': '0xE74C3C',
                      'arrowSize': 2})
-            if self.G[edge[0]][edge[1]].get('Predicted') is not None:
+            if graph[edge[0]][edge[1]].get('Predicted') is not None:
                 edges.append(
                     {'source': edge[0],
                      'target': edge[1],
@@ -670,7 +672,7 @@ class SNA():
                      'color': '0xE74C3C',
                      'arrowColor': '0xE74C3C',
                      'arrowSize': 2})
-            if self.G[edge[0]][edge[1]].get('W') is not None:
+            if graph[edge[0]][edge[1]].get('W') is not None:
                 edges.append(
                     {'source': edge[0],
                      'target': edge[1],
@@ -684,12 +686,12 @@ class SNA():
                      'name': edge[0] + "," + edge[1]}) #TODO clean up repeated code above
         for node, feature in block.items():
             temp = {}
-            if self.G.node[node].get('newNode') is True:
+            if graph.node[node].get('newNode') is True:
                 temp['color'] = '0x8B0000'
             else:
                 temp['color'] = color[name.index(feature)]
-            if self.G.node[node].get('Name') is not None:
-                temp['name'] = self.G.node[node].get('Name')
+            if graph.node[node].get('Name') is not None:
+                temp['name'] = graph.node[node].get('Name')
             nodes_property[node] = temp
         data['edges'] = edges
         data['nodes'] = nodes_property

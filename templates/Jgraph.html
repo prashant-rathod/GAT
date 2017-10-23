@@ -165,6 +165,11 @@
                      {{set}}
                    </option>
                  {% endfor %}
+                 {% if "Event" not in graph.nodeSet -%}
+                  <option value="Event">
+                     Event
+                   </option>
+                {% endif -%}
                </select>
               </td>
             </tr>
