@@ -7,6 +7,8 @@ from networkx.algorithms import bipartite as bi
 from networkx.algorithms import centrality
 from itertools import product
 from collections import defaultdict
+import pandas as pd
+import datetime
 
 from gat.core.sna import propensities
 from gat.core.sna import resilience
@@ -269,7 +271,7 @@ class SNA():
             if i != j:
                 node = self.G.nodes()[i]
                 target = self.G.nodes()[j]
-                prob = ergm_prob_mat[i, j] * 0.1
+                prob = ergm_prob_mat[i, j] * 0.05
 
                 # check props
                 if self.G[node].get(target) is not None:
@@ -286,6 +288,37 @@ class SNA():
                 if presence:
                     self.G.add_edge(node, target)
                     self.G[node][target]['Predicted'] = True
+
+    # input: spreadsheet of bomb attacks
+    # output: updated dict of sentiment changes for each of attack events
+    def event_update(self, event_sheet, max_iter):
+        df = pd.read_excel(event_sheet)
+        bombData = df.to_dict(orient='index')
+        for x in range(0, len(bombData)):
+            bombData[x]['Date'] = datetime.datetime.strptime(str(bombData[x]['Date']), '%Y%m%d')
+
+        # using datetime to create iterations of flexible length
+        dateList = [bombData[x]['Date'] for x in bombData]
+        dateIter = (max(dateList) - min(dateList)) / 10
+        nodeLists = []
+        updateList = []
+
+        for i in range(max_iter):
+            nodeLists.append(
+                [(bombData[x]['Source'], bombData[x]['Target']) for x in bombData if
+                          min(dateList) + dateIter * i <= bombData[x]['Date'] < min(dateList) + dateIter * i]
+            )
+
+            # adding attacks to test graph by datetime period and iterating through to change sentiments
+            iterEdgeList = []
+            self.G.add_nodes_from(nodeLists[i])
+            for node in nodeLists[i]:
+                for others in self.G.nodes():
+                    if self.G.has_edge(node[0], others):
+                        sent = self.G.get_edge_data(node, others)
+                        iterEdgeList.append((node, others, (sent[node, others] * .1) + sent[node, others]))
+            self.G.add_weighted_edges_from(iterEdgeList, 'W')
+            updateList.append( self.G.edges(data=True) )
 
 
     # copy the original social network graph created with user input data.

@@ -72,6 +72,13 @@ showAddNodeWindow = function() {
   attributeFlag = !attributeFlag;
 }
 
+// Add node window CSS transition support
+showAddEventWindow = function() {
+  $("#toolbar").toggleClass("closed")
+  $("#addEventWindow").toggleClass("closed")
+  attributeFlag = !attributeFlag;
+}
+
 // UI interactions for addNode form data
 // 29 Jun 2017 Ryan Steed
 counter = 0

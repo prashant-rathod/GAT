@@ -145,10 +145,20 @@
     <div class = "output-window" id = "nodeWindow" style = "position:fixed;top:0;right:0;border:solid;">
       <div id = "toolbar" class='slider'>
         <input data-toggle="tooltip" data-placement="left" title="{{systemMeasures['Description']['AddNode']}}" id="add" type="submit" value="Add Node" onclick="showAddNodeWindow()"/>
+        <input data-toggle="tooltip" data-placement="left" title="{{systemMeasures['Description']['EventAddition']}}" id="event" type="submit" value="Add Events" onclick="showAddEventWindow()"/>
         <form id="removeNodeForm" enctype="multipart/form-data" method="post">
           <input data-toggle="tooltip" data-placement="left" title="{{systemMeasures['Description']['RemoveNode']}}"id="remove" name="removeNodeSubmit" type="submit" value="Remove Node" href="javascript:void(0)" >
           <input type="text" placeholder="Node Name" name=a id="delete">
         </form>
+      </div>
+      <div id="addEventWindow" class='slider closed'>
+        <form id="eventForm" enctype="multipart/form-data" method="post">
+          Iterations to simulate: <input type="text" value="10" name="iters">
+          <input id="eventSubmitButton" name="eventSubmit" type="submit" value="Add" href="javascript:void(0)" >
+        </form>
+        <div class="centeredIcon" onclick="showAddEventWindow()">
+          <i class='fa fa-arrow-circle-down'></i>
+        </div>
       </div>
       <!-- form element for adding a new node -->
       <div id="addNodeWindow" class='slider closed'>
