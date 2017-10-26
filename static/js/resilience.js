@@ -37,7 +37,9 @@ function drawSVG(systemMeasures) {
              .attr("style","font-size:12px")
              .attr("class",cluster+" content")
              .attr("id",cluster+"_"+measure)
-         $("#"+cluster+"_"+measure)
+         var id = "#"+cluster.replace("'","")+"_"+measure;
+         console.log(id);
+         $(id)
             .mouseover(function() {
                var clusterClass = this.classList[0]
                d3.selectAll("text").transition().duration(1000).attr("opacity",function() {
