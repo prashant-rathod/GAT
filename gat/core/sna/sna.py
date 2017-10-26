@@ -37,7 +37,7 @@ class SNA():
         self.communicability_centrality_dict = {}
         self.communicability_centrality_exp_dict = {}
         self.node_attributes_dict = {}
-        self.classList = ['Agent','Organization','Audience','Role','Event','Belief','Symbol','Knowledge','Task']
+        self.classList = ['Agent','Organization','Audience','Role','Event','Belief','Symbol','Knowledge','Task','Actor']
         self.attrSheet = attrSheet
 
     # Read xlsx file and save the header and all the cells, each a dict with value and header label
@@ -692,7 +692,6 @@ class SNA():
         nodes_property = {}
         if graph is None:
             graph = self.G
-        classList = nx.get_node_attributes(graph, 'ontClass')
         for edge in self.G.edges_iter():
             if graph[edge[0]][edge[1]].get('Emotion') is not None:
                 # links with propensities can be given hex code colors for arrow, edge; can also change arrow size
@@ -722,15 +721,16 @@ class SNA():
                     {'source': edge[0],
                      'target': edge[1],
                      'name': edge[0] + "," + edge[1]}) #TODO clean up repeated code above
-        for node, feature in classList.items():
+        for node in self.G.nodes_iter():
             temp = {}
+            ontClass = self.G.node[node].get('ontClass')
             if graph.node[node].get('newNode') is True:
                 temp['color'] = '0x8B0000'
             else:
-                if feature not in classes:
-                    temp['color'] = '0x8B0000'
+                if ontClass is None:
+                    temp['color'] = '0xD3D3D3'
                 else:
-                    temp['color'] = color[classes.index(feature)]
+                    temp['color'] = color[classes.index(ontClass)]
             if graph.node[node].get('Name') is not None:
                 temp['name'] = graph.node[node].get('Name')[0]
             nodes_property[node] = temp

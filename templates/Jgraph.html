@@ -228,7 +228,7 @@
         <!-- color options form -->
         <form enctype = "multipart/form-data" method = "post">
           <b>Colors</b><br>
-          {% for set in graph.ontClasses %}
+          {% for set in graph.classList %}
             {{set}}:
             <select name = "{{set}}Color">
               {% for c in colors %}
