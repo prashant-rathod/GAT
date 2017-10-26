@@ -153,7 +153,7 @@
       </div>
       <div id="addEventWindow" class='slider closed'>
         <form id="eventForm" enctype="multipart/form-data" method="post">
-          Iterations to simulate: <input type="text" value="10" name="iters">
+          Iterations to simulate: <input type="text" value="1" name="iters">
           <input id="eventSubmitButton" name="eventSubmit" type="submit" value="Add" href="javascript:void(0)" >
         </form>
         <div class="centeredIcon" onclick="showAddEventWindow()">
@@ -169,17 +169,12 @@
             <tr>
               <td>Node Type:</td>
               <td>
-                <select name="nodeSet">
-                 {% for set in graph.nodeSet %}
+                <select name="classList">
+                 {% for set in graph.classList %}
                    <option value="{{set}}">
                      {{set}}
                    </option>
                  {% endfor %}
-                 {% if "Event" not in graph.nodeSet -%}
-                  <option value="Event">
-                     Event
-                   </option>
-                {% endif -%}
                </select>
               </td>
             </tr>
@@ -233,7 +228,7 @@
         <!-- color options form -->
         <form enctype = "multipart/form-data" method = "post">
           <b>Colors</b><br>
-          {% for set in graph.nodeSet %}
+          {% for set in graph.ontClasses %}
             {{set}}:
             <select name = "{{set}}Color">
               {% for c in colors %}
@@ -250,6 +245,7 @@
     <script type="text/javascript">
       jgraph.create('.graph', {directed: true, edgeSize: .05, arrowSize:.5, defaultEdgeColor:0x808080});
       try {
+        console.log({{jgdata|safe}});
         jgraph.draw({{jgdata|safe}});
       }
       catch (err) {

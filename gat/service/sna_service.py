@@ -19,13 +19,13 @@ def SNA2Dplot(graph, request, label=False):
         return None
     if request.form.get("options") == None:
         i = 0
-        for nodeSet in graph.nodeSet:
+        for nodeSet in graph.classList:
             attr[nodeSet] = [colors[i], 50]
             i += 1
             if i > len(colors) + 1:
                 i = 0
     else:
-        for nodeSet in graph.nodeSet:
+        for nodeSet in graph.classList:
             c = request.form.get(nodeSet + "Color")
             attr[nodeSet] = [c, 50]
 
@@ -47,14 +47,14 @@ def SNA2Dand3D(graph, request, case_num, _3D=True, _2D=False, label=False):
 
     if request.form.get("options") == None:
         i = 0
-        for nodeSet in graph.nodeSet:
+        for nodeSet in graph.classList:
             attr[nodeSet] = [colors[i], 50]
             colorInput.append(hexColors[colors[i]])
             i += 1
             if i == 8:
                 i = 0
     else:
-        for nodeSet in graph.nodeSet:
+        for nodeSet in graph.classList:
             attr[nodeSet] = [request.form.get(nodeSet + "Color"), 50]
             c = request.form.get(nodeSet + "Color")
             colorInput.append(hexColors[c])
@@ -68,7 +68,8 @@ def SNA2Dand3D(graph, request, case_num, _3D=True, _2D=False, label=False):
         node = request.form.get("nodeName")
 
         attrDict = {
-            'block': request.form.get("nodeSet")
+            'block': request.form.get("classList"),
+            'class': request.form.get("classList")
         }
         i = 0
         while (request.form.get("attribute" + str(i)) is not None) and (
@@ -184,7 +185,7 @@ def SNA2Dand3D(graph, request, case_num, _3D=True, _2D=False, label=False):
     copy_of_graph = copy.deepcopy(graph)
     fileDict['copy_of_graph'] = copy_of_graph
     # return based on inputs
-    ret3D = graph.create_json(graph.nodeSet, colorInput) if _3D else None
+    ret3D = graph.create_json(graph.classList, colorInput) if _3D else None
     label = True if not label and len(graph.nodes) < 20 else False
     ret2D = graph.plot_2D(attr, label) if _2D else None
     fileDict['jgdata'] = ret3D

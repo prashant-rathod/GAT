@@ -40,7 +40,7 @@ def louvain(G, weightKey='emoWeight', centralities=None):
             partitions[partitionKey].append(node)
             partitionLists = [nodes for partition, nodes in partitions.items()]
         for nodes in partitionLists:
-            core_nodes = [node for node in nodes if G.node[node]["block"] in ["Belief","Symbol","Event","Role"]]
+            core_nodes = [node for node in nodes if G.node[node].get("class") in ["Belief","Symbol","Event","Role"]]
             partitionCentralities = {node: centralities[node] for node in core_nodes}
             if len(core_nodes) > 1: #if core complex exists...
                 centralNodes.append( max(partitionCentralities, key=partitionCentralities.get) ) #choose label from core complex

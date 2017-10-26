@@ -37,7 +37,7 @@ class SNA():
         self.communicability_centrality_dict = {}
         self.communicability_centrality_exp_dict = {}
         self.node_attributes_dict = {}
-        self.nodeSet = []
+        self.classList = ['Agent','Organization','Audience','Role','Event','Belief','Symbol','Knowledge','Task']
         self.attrSheet = attrSheet
 
     # Read xlsx file and save the header and all the cells, each a dict with value and header label
@@ -129,7 +129,6 @@ class SNA():
         classLists = {key: set(val) for key, val in classLists.items()}  # dict comprehension method
 
         # adding ontological class to each node as node attribute
-        color_map = []
         stringDict = {
             'actor': 'Actor',
             'belief': 'Belief',
@@ -231,12 +230,12 @@ class SNA():
                 attributeDict['emoWeight'] = propensities.aggregateProps(emoPropList)
 
             rolePropList = propensities.propCalc(self, edge)[1] if role else None
-            if len(rolePropList) > 1:
+            if len(rolePropList) > 0:
                 attributeDict['Role'] = rolePropList
                 attributeDict['roleWeight'] = propensities.aggregateProps(rolePropList)
 
             inflPropList = propensities.propCalc(self, edge)[2] if role else None
-            if len(inflPropList) > 1:
+            if len(inflPropList) > 0:
                 attributeDict['Influence'] = inflPropList
                 attributeDict['inflWeight'] = propensities.aggregateProps(inflPropList)
 
@@ -296,37 +295,36 @@ class SNA():
         bombData = df.to_dict(orient='index')
         for x in range(0, len(bombData)):
             bombData[x]['Date'] = datetime.datetime.strptime(str(bombData[x]['Date']), '%Y%m%d')
-        print(bombData)
         # using datetime to create iterations of flexible length
         dateList = [bombData[x]['Date'] for x in bombData]
         dateIter = (max(dateList) - min(dateList)) / 10
-        nodeLists = []
-        updateList = []
 
         for i in range(max_iter):
-            nodeLists.append(
-                [(bombData[x]['Source'], bombData[x]['Target']) for x in bombData if
+            nodeList = [(bombData[x]['Source'], bombData[x]['Target'], bombData[x]['CODE']) for x in bombData if
                           min(dateList) + dateIter * i <= bombData[x]['Date'] < min(dateList) + dateIter * (i+1)]
-            )
-            print("Node list:", nodeLists[i])
             # adding attacks to test graph by datetime period and iterating through to change sentiments
             iterEdgeList = []
-            self.G.add_nodes_from(nodeLists[i])
-            for node in nodeLists[i]:
-                #iterEdgeList.append() add an edge node
-                for others in self.G.nodes():
+            for node in nodeList:
+                for others in self.G.nodes_iter():
                     # rejection of source
                     if self.G.has_edge(node[0], others):
                         sent = self.G.get_edge_data(node, others)
-                        iterEdgeList.append((node[0], others, (sent[node, others] * .1) + sent[node, others]))
+                        if sent is not None:
+                            iterEdgeList.append((node[0], others, (sent[node, others] * .1) + sent[node, others]))
                     # sympathy for target
                     if self.G.has_edge(node[1], others):
                         sent = self.G.get_edge_data(node, others)
                         iterEdgeList.append((node[0], others, (sent[node, others] * 1.1) + sent[node, others]))
-            print("Edge list:",iterEdgeList)
+                # add an event node
+                event = str(node[2])+': '+node[0]+' to '+node[1]
+                self.G.add_node(event, {'class':'Event', 'block':'event',
+                                        'Description': 'Conduct suicide, car, or other non-military bombing'})
+                self.G.add_edge(node[0], event)
+                self.G.add_edge(event, node[1])
             self.G.add_weighted_edges_from(iterEdgeList, 'W')
-            updateList.append( self.G.edges(data=True) )
 
+        self.nodes = nx.nodes(self.G)  # update node list
+        self.edges = nx.edges(self.G)  # update edge list
 
     # copy the original social network graph created with user input data.
     # this will be later used to reset the modified graph to inital state
@@ -654,15 +652,15 @@ class SNA():
     # note: this is for Vinay's UI
     def plot_2D(self, attr, label=False):
         plt.clf()
-        block = nx.get_node_attributes(self.G, 'block')
+        ontClass = nx.get_node_attributes(self.G, 'ontClass')
         pos = nx.fruchterman_reingold_layout(self.G)
         labels = {}
-        for node in block:
+        for node in ontClass:
             labels[node] = node
-        for node in set(self.nodeSet):
+        for node in set(self.classList):
             nx.draw_networkx_nodes(self.G, pos,
                                    with_labels=False,
-                                   nodelist=[key for key, val in block.items() if val == node],
+                                   nodelist=[key for key, val in ontClass.items() if val == node],
                                    node_color=attr[node][0],
                                    node_size=attr[node][1],
                                    alpha=0.8)
@@ -688,14 +686,14 @@ class SNA():
     # name ex: {name, institution}, {faction leaders, institution}, etc...
     # color: {"0xgggggg", "0xaaaaaa"} etc. (Takes a hexadecimal "String").
     # returns a json dictionary
-    def create_json(self, name, color, graph=None):
+    def create_json(self, classes, color, graph=None):
         data = {}
         edges = []
         nodes_property = {}
         if graph is None:
             graph = self.G
-        block = nx.get_node_attributes(graph, 'block')
-        for edge in self.edges:
+        classList = nx.get_node_attributes(graph, 'ontClass')
+        for edge in self.G.edges_iter():
             if graph[edge[0]][edge[1]].get('Emotion') is not None:
                 # links with propensities can be given hex code colors for arrow, edge; can also change arrow size
                 edges.append(
@@ -724,14 +722,17 @@ class SNA():
                     {'source': edge[0],
                      'target': edge[1],
                      'name': edge[0] + "," + edge[1]}) #TODO clean up repeated code above
-        for node, feature in block.items():
+        for node, feature in classList.items():
             temp = {}
             if graph.node[node].get('newNode') is True:
                 temp['color'] = '0x8B0000'
             else:
-                temp['color'] = color[name.index(feature)]
+                if feature not in classes:
+                    temp['color'] = '0x8B0000'
+                else:
+                    temp['color'] = color[classes.index(feature)]
             if graph.node[node].get('Name') is not None:
-                temp['name'] = graph.node[node].get('Name')
+                temp['name'] = graph.node[node].get('Name')[0]
             nodes_property[node] = temp
         data['edges'] = edges
         data['nodes'] = nodes_property

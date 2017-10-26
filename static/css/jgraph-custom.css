@@ -139,7 +139,11 @@ i:hover {
     font-size: 11px;
 }
 #addNodeWindow form, #addEventWindow form {
-    padding:5px
+    padding:5px;
+}
+#eventSubmitButton {
+    margin-left: auto;
+    margin-right: auto;
 }
 #addNodeWindow div, #addEventWindow div {
     text-align:center;
