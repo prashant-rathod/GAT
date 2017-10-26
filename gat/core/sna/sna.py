@@ -317,7 +317,7 @@ class SNA():
                         iterEdgeList.append((node[0], others, (sent[node, others] * 1.1) + sent[node, others]))
                 # add an event node
                 event = 'Event '+str(node[2])+': '+node[0]+' to '+node[1]
-                self.G.add_node(event, {'ontClass':'Event', 'Name':event, 'block':'Event',
+                self.G.add_node(event, {'ontClass':'Event', 'Name':['Event '+str(node[2])+': '+node[0]+' to '+node[1]], 'block':'Event',
                                         'Description': 'Conduct suicide, car, or other non-military bombing'})
                 self.G.add_edge(node[0], event)
                 self.G.add_edge(event, node[1])
@@ -403,6 +403,7 @@ class SNA():
 
     def communityDetection(self):
         undirected = self.G.to_undirected()
+        self.eigenvector_centrality()
         return cliques.louvain(G = undirected, centralities = self.eigenvector_centrality_dict)
 
     def calculateResilience(self,baseline=True,robustness=True):

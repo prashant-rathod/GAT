@@ -121,7 +121,6 @@ handleAddClick = function() {
 
 // Placeholder message during influence detection
 handleCliqueClick = function() {
-    showAddNodeWindow();
     $("#cliques").attr("value","Detecting Communities...")
              .attr("data-original-title","Currently conducting community detection (30-90s).")
 }
