@@ -95,7 +95,7 @@ i:hover {
 #toolbar {
     margin-bottom: 10px
 }
-#add {
+#add, #event {
     margin:10px;
     margin-right:auto;
     margin-left:auto;
@@ -135,13 +135,13 @@ i:hover {
     padding-bottom:10px;
     color:white;
 }
-#addNodeWindow {
+#addNodeWindow, #addEventWindow {
     font-size: 11px;
 }
-#addNodeWindow form {
+#addNodeWindow form, #addEventWindow form {
     padding:5px
 }
-#addNodeWindow div {
+#addNodeWindow div, #addEventWindow div {
     text-align:center;
 }
 #addNodeFormName {

@@ -296,7 +296,7 @@ class SNA():
         bombData = df.to_dict(orient='index')
         for x in range(0, len(bombData)):
             bombData[x]['Date'] = datetime.datetime.strptime(str(bombData[x]['Date']), '%Y%m%d')
-
+        print(bombData)
         # using datetime to create iterations of flexible length
         dateList = [bombData[x]['Date'] for x in bombData]
         dateIter = (max(dateList) - min(dateList)) / 10
@@ -306,17 +306,24 @@ class SNA():
         for i in range(max_iter):
             nodeLists.append(
                 [(bombData[x]['Source'], bombData[x]['Target']) for x in bombData if
-                          min(dateList) + dateIter * i <= bombData[x]['Date'] < min(dateList) + dateIter * i]
+                          min(dateList) + dateIter * i <= bombData[x]['Date'] < min(dateList) + dateIter * (i+1)]
             )
-
+            print("Node list:", nodeLists[i])
             # adding attacks to test graph by datetime period and iterating through to change sentiments
             iterEdgeList = []
             self.G.add_nodes_from(nodeLists[i])
             for node in nodeLists[i]:
+                #iterEdgeList.append() add an edge node
                 for others in self.G.nodes():
+                    # rejection of source
                     if self.G.has_edge(node[0], others):
                         sent = self.G.get_edge_data(node, others)
-                        iterEdgeList.append((node, others, (sent[node, others] * .1) + sent[node, others]))
+                        iterEdgeList.append((node[0], others, (sent[node, others] * .1) + sent[node, others]))
+                    # sympathy for target
+                    if self.G.has_edge(node[1], others):
+                        sent = self.G.get_edge_data(node, others)
+                        iterEdgeList.append((node[0], others, (sent[node, others] * 1.1) + sent[node, others]))
+            print("Edge list:",iterEdgeList)
             self.G.add_weighted_edges_from(iterEdgeList, 'W')
             updateList.append( self.G.edges(data=True) )
 
