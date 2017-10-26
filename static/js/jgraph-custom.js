@@ -119,6 +119,13 @@ handleAddClick = function() {
              .attr("data-original-title","Currently conducting DRAG analysis (1-2 min).")
 }
 
+// Placeholder message during influence detection
+handleCliqueClick = function() {
+    showAddNodeWindow();
+    $("#cliques").attr("value","Detecting Communities...")
+             .attr("data-original-title","Currently conducting community detection (30-90s).")
+}
+
 // Code for tooltips
 $(document).ready(function(){
     $('[data-toggle="tooltip"]').tooltip();

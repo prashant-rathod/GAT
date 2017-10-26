@@ -65,8 +65,8 @@
           <!-- handle community detection -->
           <div id="commDetection">
             {% if systemMeasures.get("Cliques") == None -%}
-              <form id="resilienceForm" enctype="multipart/form-data" method="post">
-                <input id="resilience" name="cliqueSubmit" type="submit" value="Find Influence Communities" onclick="handleCliqueClick();" href="javascript:void(0)" data-toggle="tooltip" data-placement="left" title="{{systemMeasures['Description']['Cliques']}}">
+              <form id="cliqueForm" enctype="multipart/form-data" method="post">
+                <input id="cliques" name="cliqueSubmit" type="submit" value="Find Influence Communities" onclick="handleCliqueClick();" href="javascript:void(0)" data-toggle="tooltip" data-placement="left" title="{{systemMeasures['Description']['Cliques']}}">
               </form>
             {% else -%}
             <table id="cliqueTable">
