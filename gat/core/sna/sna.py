@@ -316,8 +316,8 @@ class SNA():
                         sent = self.G.get_edge_data(node, others)
                         iterEdgeList.append((node[0], others, (sent[node, others] * 1.1) + sent[node, others]))
                 # add an event node
-                event = str(node[2])+': '+node[0]+' to '+node[1]
-                self.G.add_node(event, {'class':'Event', 'block':'event',
+                event = 'Event '+str(node[2])+': '+node[0]+' to '+node[1]
+                self.G.add_node(event, {'ontClass':'Event', 'Name':event, 'block':'Event',
                                         'Description': 'Conduct suicide, car, or other non-military bombing'})
                 self.G.add_edge(node[0], event)
                 self.G.add_edge(event, node[1])
