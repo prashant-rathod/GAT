@@ -19,13 +19,13 @@ def SNA2Dplot(graph, request, label=False):
         return None
     if request.form.get("options") == None:
         i = 0
-        for nodeSet in graph.nodeSet:
+        for nodeSet in graph.classList:
             attr[nodeSet] = [colors[i], 50]
             i += 1
             if i > len(colors) + 1:
                 i = 0
     else:
-        for nodeSet in graph.nodeSet:
+        for nodeSet in graph.classList:
             c = request.form.get(nodeSet + "Color")
             attr[nodeSet] = [c, 50]
 
@@ -47,14 +47,14 @@ def SNA2Dand3D(graph, request, case_num, _3D=True, _2D=False, label=False):
 
     if request.form.get("options") == None:
         i = 0
-        for nodeSet in graph.nodeSet:
+        for nodeSet in graph.classList:
             attr[nodeSet] = [colors[i], 50]
             colorInput.append(hexColors[colors[i]])
             i += 1
             if i == 8:
                 i = 0
     else:
-        for nodeSet in graph.nodeSet:
+        for nodeSet in graph.classList:
             attr[nodeSet] = [request.form.get(nodeSet + "Color"), 50]
             c = request.form.get(nodeSet + "Color")
             colorInput.append(hexColors[c])
@@ -68,7 +68,8 @@ def SNA2Dand3D(graph, request, case_num, _3D=True, _2D=False, label=False):
         node = request.form.get("nodeName")
 
         attrDict = {
-            'block': request.form.get("nodeSet")
+            'block': request.form.get("classList"),
+            'class': request.form.get("classList")
         }
         i = 0
         while (request.form.get("attribute" + str(i)) is not None) and (
@@ -140,7 +141,8 @@ def SNA2Dand3D(graph, request, case_num, _3D=True, _2D=False, label=False):
         'RemoveNode': 'Removes the node inputted in the box below and any links to which it belongs.',
         'eigenvector': 'Centrality measure which sums the centralities of all adjacent nodes.',
         'betweenness': 'Centrality based on the shortest path that passes through the node.',
-        'Cliques':'Influence communities are detected in two-step Louvain modularity optimization. First, the core myth-symbol complexes are identified and named. Second, very proximate actors are grouped with the myth-symbol complex to form a full influence network.',
+        'Cliques':'Influence communities are  detected in two-step Louvain modularity optimization. First, the core myth-symbol complexes are identified and named. Second, very proximate actors are grouped with the myth-symbol complex to form a full influence network.',
+        'EventAddition': 'Choose a number of iterations to simulate event addition into the network. Events are drawn from input file.',
     }
 
     # Find cliques when requested
@@ -174,10 +176,16 @@ def SNA2Dand3D(graph, request, case_num, _3D=True, _2D=False, label=False):
         except nx.exception.NetworkXError:
             systemMeasures["Resilience"] = "Could not calculate resilience, NetworkX error."
 
+    if request.form.get("eventSubmit") != None:
+        fileDict['SNA_Events'] = 'static/sample/sna/suicide_attacks_subset.xlsx' ##TODO add a blueprint route for event sheet here
+        inputFile = fileDict['SNA_Events']
+        iters = int(request.form.get("iters"))
+        graph.event_update(inputFile,iters)
+
     copy_of_graph = copy.deepcopy(graph)
     fileDict['copy_of_graph'] = copy_of_graph
     # return based on inputs
-    ret3D = graph.create_json(graph.nodeSet, colorInput) if _3D else None
+    ret3D = graph.create_json(graph.classList, colorInput) if _3D else None
     label = True if not label and len(graph.nodes) < 20 else False
     ret2D = graph.plot_2D(attr, label) if _2D else None
     fileDict['jgdata'] = ret3D

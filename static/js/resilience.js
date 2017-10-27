@@ -24,6 +24,7 @@ function drawSVG(systemMeasures) {
               .attr("y",defaultY)
               .attr("fill","url(#gradient)")
       for ( cluster in systemMeasures[toDraw[measure]] ) {
+         var cluster_safe = cluster.replace("'","").replace(" ","")
          text.cluster = {}
          text.cluster.line = svgContainer.append("rect").attr("width",width/200)
              .attr("height",height*1.5)
@@ -35,10 +36,11 @@ function drawSVG(systemMeasures) {
              .attr("y",height*2+defaultY)
              .attr("fill","white")
              .attr("style","font-size:12px")
-             .attr("class",cluster+" content")
-             .attr("id",cluster+"_"+measure)
-         $("#"+cluster+"_"+measure)
+             .attr("class",cluster_safe+" content")
+             .attr("id",cluster_safe+"_"+measure)
+         $("#"+cluster_safe+"_"+measure)
             .mouseover(function() {
+                console.log("mouseover");
                var clusterClass = this.classList[0]
                d3.selectAll("text").transition().duration(1000).attr("opacity",function() {
                   return ( $.inArray(clusterClass, this.classList) ) ? .25 : 1.0;
@@ -76,7 +78,7 @@ function drawSVG(systemMeasures) {
              .attr("x",x-contentWidth/2)
              .attr("y",defaultY-height*.5)
              .attr("style","font-size:12px")
-             .attr("class",cluster+" value")
+             .attr("class",cluster_safe+" value")
              .style("font-weight","bold")
              .style("fill","rgb("+Math.round((1-percentile/100)*255)+","+0+","+Math.round(percentile/100*255)+")")
       }

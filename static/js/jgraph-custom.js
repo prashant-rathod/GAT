@@ -72,6 +72,13 @@ showAddNodeWindow = function() {
   attributeFlag = !attributeFlag;
 }
 
+// Add node window CSS transition support
+showAddEventWindow = function() {
+  $("#toolbar").toggleClass("closed")
+  $("#addEventWindow").toggleClass("closed")
+  attributeFlag = !attributeFlag;
+}
+
 // UI interactions for addNode form data
 // 29 Jun 2017 Ryan Steed
 counter = 0
@@ -110,6 +117,12 @@ handleAddClick = function() {
     showAddNodeWindow();
     $("#add").attr("value","Adding Nodes...")
              .attr("data-original-title","Currently conducting DRAG analysis (1-2 min).")
+}
+
+// Placeholder message during influence detection
+handleCliqueClick = function() {
+    $("#cliques").attr("value","Detecting Communities...")
+             .attr("data-original-title","Currently conducting community detection (30-90s).")
 }
 
 // Code for tooltips

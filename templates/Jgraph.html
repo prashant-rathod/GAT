@@ -65,8 +65,8 @@
           <!-- handle community detection -->
           <div id="commDetection">
             {% if systemMeasures.get("Cliques") == None -%}
-              <form id="resilienceForm" enctype="multipart/form-data" method="post">
-                <input id="resilience" name="cliqueSubmit" type="submit" value="Find Influence Communities" onclick="handleCliqueClick();" href="javascript:void(0)" data-toggle="tooltip" data-placement="left" title="{{systemMeasures['Description']['Cliques']}}">
+              <form id="cliqueForm" enctype="multipart/form-data" method="post">
+                <input id="cliques" name="cliqueSubmit" type="submit" value="Find Influence Communities" onclick="handleCliqueClick();" href="javascript:void(0)" data-toggle="tooltip" data-placement="left" title="{{systemMeasures['Description']['Cliques']}}">
               </form>
             {% else -%}
             <table id="cliqueTable">
@@ -145,10 +145,20 @@
     <div class = "output-window" id = "nodeWindow" style = "position:fixed;top:0;right:0;border:solid;">
       <div id = "toolbar" class='slider'>
         <input data-toggle="tooltip" data-placement="left" title="{{systemMeasures['Description']['AddNode']}}" id="add" type="submit" value="Add Node" onclick="showAddNodeWindow()"/>
+        <input data-toggle="tooltip" data-placement="left" title="{{systemMeasures['Description']['EventAddition']}}" id="event" type="submit" value="Add Events" onclick="showAddEventWindow()"/>
         <form id="removeNodeForm" enctype="multipart/form-data" method="post">
           <input data-toggle="tooltip" data-placement="left" title="{{systemMeasures['Description']['RemoveNode']}}"id="remove" name="removeNodeSubmit" type="submit" value="Remove Node" href="javascript:void(0)" >
           <input type="text" placeholder="Node Name" name=a id="delete">
         </form>
+      </div>
+      <div id="addEventWindow" class='slider closed'>
+        <form id="eventForm" enctype="multipart/form-data" method="post">
+          Iterations to simulate: <input type="text" value="1" name="iters">
+          <input id="eventSubmitButton" name="eventSubmit" type="submit" value="Add" href="javascript:void(0)" >
+        </form>
+        <div class="centeredIcon" onclick="showAddEventWindow()">
+          <i class='fa fa-arrow-circle-down'></i>
+        </div>
       </div>
       <!-- form element for adding a new node -->
       <div id="addNodeWindow" class='slider closed'>
@@ -159,17 +169,12 @@
             <tr>
               <td>Node Type:</td>
               <td>
-                <select name="nodeSet">
-                 {% for set in graph.nodeSet %}
+                <select name="classList">
+                 {% for set in graph.classList %}
                    <option value="{{set}}">
                      {{set}}
                    </option>
                  {% endfor %}
-                 {% if "Event" not in graph.nodeSet -%}
-                  <option value="Event">
-                     Event
-                   </option>
-                {% endif -%}
                </select>
               </td>
             </tr>
@@ -223,7 +228,7 @@
         <!-- color options form -->
         <form enctype = "multipart/form-data" method = "post">
           <b>Colors</b><br>
-          {% for set in graph.nodeSet %}
+          {% for set in graph.classList %}
             {{set}}:
             <select name = "{{set}}Color">
               {% for c in colors %}
@@ -240,6 +245,7 @@
     <script type="text/javascript">
       jgraph.create('.graph', {directed: true, edgeSize: .05, arrowSize:.5, defaultEdgeColor:0x808080});
       try {
+        console.log({{jgdata|safe}});
         jgraph.draw({{jgdata|safe}});
       }
       catch (err) {
