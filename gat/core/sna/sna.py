@@ -5,10 +5,12 @@ import numpy as np
 import xlrd
 from networkx.algorithms import bipartite as bi
 from networkx.algorithms import centrality
+from itertools import product
 
 from gat.core.sna import propensities
 from gat.core.sna import resilience
 from gat.core.sna import cliques
+from gat.core.sna import ergm
 
 
 class SNA():
@@ -171,9 +173,13 @@ class SNA():
         self.edges = nx.edges(self.G)
 
     def drag_predict(self,node):
-
         ## Smart prediction prototype
-        for target in self.nodes:
+
+        # ERGM generates probability matrix where order is G.nodes() x G.nodes()
+        ergm_prob_mat = ergm.probability(G=self.G)
+
+        # Assigning propensities probabilities and generating add_node links - TODO: merge this with overall method later
+        for target in self.G.nodes_iter():
             emoProps, roleProps, inflProps = propensities.propCalc(self, (node, target))
             if len(emoProps) > 0:
                 w = []
@@ -188,9 +194,28 @@ class SNA():
                     self.G[node][target]['Role'] = roleProps if len(roleProps) > 0 else None
                     self.G[node][target]['Influence'] = inflProps if len(inflProps) > 0 else None
                     self.G[node][target]['Predicted'] = True
+        # iterate through all possible edges
+        for i, j in product(range(len(self.G.nodes())), repeat=2):
+            if i != j:
+                node = self.G.nodes()[i]
+                target = self.G.nodes()[j]
+                prob = ergm_prob_mat[i, j] * 0.1
 
-        ## ERGM running
-        ergm.walk(G=self.G,iters=5000)
+                # check props
+                if self.G[node].get(target) is not None:
+                    ## check emo props to modify adjacency prob matrix if present
+                    if self.G[node][target].get('Emotion') is not None:
+                        w = []
+                        for prop in emoProps:
+                            w.append(prop[4] * prop[5])  # add the product of the attribute weights to a list for each prop
+                        w_avg = np.average(w)
+                        prob = (prob + w_avg * 0.5) / 2
+
+                presence = np.random.binomial(1, prob) if prob < 1 else 1
+                # use adjacency prob mat as the probability for a bernoulli distribution
+                if presence:
+                    self.G.add_edge(node, target)
+                    self.G[node][target]['Predicted'] = True
 
 
     # copy the original social network graph created with user input data.
