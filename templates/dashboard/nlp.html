@@ -2,8 +2,10 @@
     <div class="output-window resize-drag-outer" id="NLP Visualization Window">
         <div class="output-button-bar resize-drag">
             <span class="left-span">
-                <i class="btn btn-close fa fa-window-close-o" onclick="document.getElementById('NLP Visualization Window').style.display='none'"></i>
-                <i class="btn btn-hide fa fa-window-minimize" onclick="handleWindowResizeClick('NLP Visualization',this)"></i>
+                <i class="btn btn-close fa fa-window-close-o"
+                   onclick="document.getElementById('NLP Visualization Window').style.display='none'"></i>
+                <i class="btn btn-hide fa fa-window-minimize"
+                   onclick="handleWindowResizeClick('NLP Visualization',this)"></i>
             </span>
             <span class="right-span"><b>NLP Visualization</b></span>
         </div>
@@ -12,75 +14,94 @@
                 <h1>
                     <center>Natural Language Processing</center>
                 </h1>
-                <div class="tab">
-                    <input id="tab-sum" type="checkbox" name="tabs">
-                    <label for="tab-sum">Corpus Statistics</label>
-                    <div class="tab-content">
-                        <p>Number of documents analyzed: {{nlp_summary[0]}}<br>
-                            Total document word count: {{nlp_summary[2]}}<br>
-                        <center>Document length distribution
-                            <image src="out/nlp/{{ nlp_summary[1] }}" width="90%" height="50%"></image>
-                        </center>
-                        </p>
+                {% if not NLP_new_example_file %}
+                    <div class="tab">
+                        <input id="tab-sum" type="checkbox" name="tabs">
+                        <label for="tab-sum">Corpus Statistics</label>
+                        <div class="tab-content">
+                            <p>Number of documents analyzed: {{ nlp_summary[0] }}<br>
+                                Total document word count: {{ nlp_summary[2] }}<br>
+                            <center>Document length distribution
+                                <image src="out/nlp/{{ nlp_summary[1] }}" width="90%" height="50%"></image>
+                            </center>
+                            </p>
+                        </div>
                     </div>
-                </div>
+                {% endif %}
                 {% if False %}
-                <div class="tab">
-                    <input id="tab-one" type="checkbox" name="tabs">
-                    <label for="tab-one">Entity Sentiment</label>
-                    <div class="tab-content">
-                        <table class="sortable" border="2px">
-                            <tr>
-                                <th>Name</th>
-                                <th>Uses</th>
-                                <th>Positive</th>
-                                <th>Neutral</th>
-                                <th>Negative</th>
-                                <th><strong>Composite</strong></th>
-                            </tr>
-                            {% for entity in nlp_entities %}
-                            <tr>
-                                <td>{{entity[0]}}</td>
-                                <td>{{entity[5]}}</td>
-                                <td>{{entity[3]}}</td>
-                                <td>{{entity[2]}}</td>
-                                <td>{{entity[1]}}</td>
-                                <td>{{entity[4]}}</td>
-                            </tr>
-                            {% endfor -%}
-                        </table>
-                        <br/>
+                    <div class="tab">
+                        <input id="tab-one" type="checkbox" name="tabs">
+                        <label for="tab-one">Entity Sentiment</label>
+                        <div class="tab-content">
+                            <table class="sortable" border="2px">
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Uses</th>
+                                    <th>Positive</th>
+                                    <th>Neutral</th>
+                                    <th>Negative</th>
+                                    <th><strong>Composite</strong></th>
+                                </tr>
+                                {% for entity in nlp_entities %}
+                                    <tr>
+                                        <td>{{ entity[0] }}</td>
+                                        <td>{{ entity[5] }}</td>
+                                        <td>{{ entity[3] }}</td>
+                                        <td>{{ entity[2] }}</td>
+                                        <td>{{ entity[1] }}</td>
+                                        <td>{{ entity[4] }}</td>
+                                    </tr>
+                                {% endfor -%}
+                            </table>
+                            <br/>
+                        </div>
                     </div>
-                </div>
                 {% endif %}
                 {% if nlp_tropes %}
-                <div class="tab">
-                    <input id="tab-two" type="checkbox" name="tabs">
-                    <label for="tab-two">Entity Emotions</label>
-                    <div class="tab-content">
-                        {% for trope in nlp_tropes %}
-                        <img src="out/nlp/{{trope}}" height="40%" width="40%"></image>
-                        {% endfor -%}
+                    <div class="tab">
+                        <input id="tab-two" type="checkbox" name="tabs">
+                        <label for="tab-two">Entity Emotions</label>
+                        <div class="tab-content">
+                            {% for trope in nlp_tropes %}
+                                <img src="out/nlp/{{ trope }}" height="40%" width="40%"></image>
+                            {% endfor -%}
+                        </div>
                     </div>
-                </div>
                 {% endif %}
                 {% if nlp_actors %}
-                <div class="tab">
-                    <input id="tab-three" type="checkbox" name="tabs">
-                    <label for="tab-three">Actor Analysis</label>
-                    <div class="tab-content">
-                        <p>Person to other category table</p>
+                    <div class="tab">
+                        <input id="tab-three" type="checkbox" name="tabs">
+                        <label for="tab-three">Actor Analysis</label>
+                        <div class="tab-content">
+                            <p>Person to other category table</p>
+                        </div>
                     </div>
-                </div>
                 {% endif %}
                 {% if nlp_network %}
-                <div class="tab">
-                    <input id="tab-three" type="checkbox" name="tabs">
-                    <label for="tab-three">Entity Network</label>
-                    <div class="tab-content">
-                        <p>Jgraph 2D picture with link to SNA</p>
+                    <div class="tab">
+                        <input id="tab-three" type="checkbox" name="tabs">
+                        <label for="tab-three">Entity Network</label>
+                        <div class="tab-content">
+                            <p>Jgraph 2D picture with link to SNA</p>
+                        </div>
                     </div>
-                </div>
+                {% endif %}
+
+                {% if NLP_new_example_file %}
+                    <div class="tab">
+                        <input id="tab-four" type="checkbox" name="tabs">
+                        <label for="tab-four">Relationship Mining</label>
+                        <div class="tab-content">
+                            <img src={{ nlp_new_example_relationship }} height="50%" width="90%">
+                        </div>
+                    </div>
+                    <div class="tab">
+                        <input id="tab-five" type="checkbox" name="tabs">
+                        <label for="tab-five">Sentiment Mining</label>
+                        <div class="tab-content">
+                            <img src={{ nlp_new_example_sentiment }} height="50%" width="90%">
+                        </div>
+                    </div>
                 {% endif %}
             </div>
         </div>

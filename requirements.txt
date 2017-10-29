@@ -38,3 +38,4 @@ xlrd==1.0.0
 newspaper3k
 community
 pymc
+validators
