@@ -87,4 +87,4 @@ application.secret_key = 'na3928ewafds'
 
 if __name__ == "__main__":
     application.debug = True
-    application.run(host='0.0.0.0', threaded=True, port=5000)
+    application.run(host='127.0.0.1', threaded=False, port=5000)
