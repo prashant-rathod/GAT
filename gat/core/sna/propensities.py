@@ -89,10 +89,12 @@ def propCalc(graph, edge):
                                     ("Authority", attr, src_val[0], trg_val[0], src_w, trg_w, 0.7),
                                     ("Scarcity", attr, src_val[0], trg_val[0], src_w, trg_w, 0.8),
                                 ]
-                        ## Role Propensities ##
-                        if roleRelation is not None and roleRelation > -1:
-                            roleProps.append(("Consumer-Provider Relationship", attr, src_val[0], trg_val[0], src_w, trg_w, index_w) if attr == "Resource" else None)
-                            roleProps.append(("Protector", attr, src_val[0], trg_val[0], src_w, trg_w, index_w) if attr == "Belief" else None)
+                            ## Role Propensities ##
+                            if roleRelation is not None and roleRelation > -1:
+                                if attr == "Resource":
+                                    roleProps.append(("Consumer-Provider Relationship", attr, src_val[0], trg_val[0], src_w, trg_w, index_w))
+                                if attr == "Belief":
+                                    roleProps.append(("Protector", attr, src_val[0], trg_val[0], src_w, trg_w, index_w))
 
                     # Coercive and competitive propensities:
                     else:
@@ -137,10 +139,10 @@ def propCalc(graph, edge):
                                     ("Commitment & Consistency", attr, src_val[0], trg_val[0], src_w, trg_w,
                                      0.2),
                                 ]
-                        ## Role Propensities ##
-                        if roleRelation is not None and roleRelation < 0:
-                            roleProps.append(("Belligerent", attr, src_val[0], trg_val[0], src_w, trg_w, index_w) if attr == "Belief" else None)
-    if len(roleProps) > 0: print(roleProps)
+                            ## Role Propensities ##
+                            if roleRelation is not None and roleRelation < 0:
+                                if attr == "Belief":
+                                    roleProps.append(("Belligerent", attr, src_val[0], trg_val[0], src_w, trg_w, index_w))
     return emoProps, roleProps, inflProps
 
 # INPUT: list of propensities where last index is propensity weight

@@ -23,13 +23,14 @@ Pygments==2.2.0
 pyparsing==2.2.0
 pysal
 python-dateutil==2.6.0
-python-louvain
+python-louvain==0.8
 pytz==2017.2
 scikit-learn==0.18.1
 simplegeneric==0.8.1
 six==1.10.0
 sklearn
-spacy
+spacy>=1.8.0,<2.0.0
+-e https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-1.2.0/en_core_web_sm-1.2.0.tar.gz#egg=en_core_web_sm-1.2.0
 textacy
 traitlets==4.3.2
 wcwidth==0.1.7
@@ -38,3 +39,4 @@ xlrd==1.0.0
 newspaper3k
 community
 pymc
+validators

@@ -1,1 +1,0 @@
-This file makes sure that AWS sees the temp directory
