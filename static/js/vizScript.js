@@ -4,3 +4,9 @@ handleWindowResizeClick = function(targetWindow,el) {
   $(el).toggleClass('fa-window-maximize')
 }
 $('[data-toggle="tooltip"]').tooltip();
+
+// Placeholder message during resilience calculation
+handleResilienceClick = function() {
+    $("#resilience").attr("value","Calculating Resilience...")
+                    .attr("data-original-title","Resilience is being calculated. This is a heavy process and may require 1-2 minutes for completion.")
+}

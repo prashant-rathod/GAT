@@ -1,0 +1,54 @@
+def matchBrackets(string):
+	"""
+    Class representing a token.
+    token => category {semantics}
+    e.g. eat => S\\var[pl]/var {\\x y.eat(x,y)}
+    * `token` (string)
+    * `categ` (string)
+    * `semantics` (Expression)
+	"""
+    Class representing a lexicon for CCG grammars.
+    * `primitives`: The list of primitive categories for the lexicon
+    * `families`: Families of categories
+    * `entries`: A mapping of words to possible categories
+	"""
+    Separate the contents matching the first set of brackets from the rest of
+    the input.
+	"""
+	return nltk_lexicon.matchBrackets(string)
+def nextCategory(string):
+	"""
+    Separate the string for the next portion of the category from the rest
+    of the string
+	"""
+	return nltk_lexicon.nextCategory(string)
+def parseApplication(app):
+	"""
+    Parse an application operator
+	"""
+	return nltk_lexicon.parseApplication(app)
+def parseSubscripts(subscr):
+	"""
+    Parse the subscripts for a primitive category
+	"""
+	return nltk_lexicon.parseSubscripts(subscr)
+def parsePrimitiveCategory(chunks, primitives, families, var):
+	"""
+    Parse a primitive category
+    If the primitive is the special category 'var', replace it with the
+    correct `CCGVar`.
+	"""
+	return nltk_lexicon.parsePrimitiveCategory(chunks, primitives, families, var)
+def augParseCategory(line, primitives, families, var=None):
+	"""
+    Parse a string representing a category, and returns a tuple with
+    (possibly) the CCG variable for the category
+	"""
+	return nltk_lexicon.augParseCategory(line, primitives, families, var)
+def fromstring(lex_str, include_semantics=False):
+	"""
+    Convert string representation into a lexicon for CCGs.
+	"""
+	return nltk_lexicon.fromstring(lex_str, include_semantics)
+def parseLexicon(lex_str):
+	return nltk_lexicon.parseLexicon(lex_str)

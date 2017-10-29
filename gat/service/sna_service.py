@@ -19,13 +19,13 @@ def SNA2Dplot(graph, request, label=False):
         return None
     if request.form.get("options") == None:
         i = 0
-        for nodeSet in graph.nodeSet:
+        for nodeSet in graph.classList:
             attr[nodeSet] = [colors[i], 50]
             i += 1
             if i > len(colors) + 1:
                 i = 0
     else:
-        for nodeSet in graph.nodeSet:
+        for nodeSet in graph.classList:
             c = request.form.get(nodeSet + "Color")
             attr[nodeSet] = [c, 50]
 
@@ -47,14 +47,14 @@ def SNA2Dand3D(graph, request, case_num, _3D=True, _2D=False, label=False):
 
     if request.form.get("options") == None:
         i = 0
-        for nodeSet in graph.nodeSet:
+        for nodeSet in graph.classList:
             attr[nodeSet] = [colors[i], 50]
             colorInput.append(hexColors[colors[i]])
             i += 1
             if i == 8:
                 i = 0
     else:
-        for nodeSet in graph.nodeSet:
+        for nodeSet in graph.classList:
             attr[nodeSet] = [request.form.get(nodeSet + "Color"), 50]
             c = request.form.get(nodeSet + "Color")
             colorInput.append(hexColors[c])
@@ -68,7 +68,8 @@ def SNA2Dand3D(graph, request, case_num, _3D=True, _2D=False, label=False):
         node = request.form.get("nodeName")
 
         attrDict = {
-            'block': request.form.get("nodeSet")
+            'block': request.form.get("classList"),
+            'class': request.form.get("classList")
         }
         i = 0
         while (request.form.get("attribute" + str(i)) is not None) and (
@@ -135,12 +136,27 @@ def SNA2Dand3D(graph, request, case_num, _3D=True, _2D=False, label=False):
     systemMeasures["Description"] = {
         'Average Clustering': 'A high clustering coefficient indicates that actors within the network are closely connected to a statistically significant degree. It is a sophisticated measure of the density of a network.',
         'Connection Strength': 'Knowing whether a graph is strongly or weakly connected is helpful because it demonstrates the robustness of the graph based on its redundancy. If a graph is strongly connected, there are two links between each actor in the network, one in each direction. A strongly connected graph thus would likely have more redundant communication/information flow and be more difficult to perturb than a weakly connected graph.',
-        'Resilience': 'The baseline value for resilience is determined by identifying the cliques associated with the most central nodes in the network, perturbing those subgraphs, and measuring the mean shortest path average over several perturbations. The results are scaled on a normal curve across all cliques and a percentile resilience is determined for each clique. A high percentile resilience denotes resilience to perturbation. These values are visualized on a color spectrum from red to blue, where red is low relative resilience and blue is high relative resilience.',
+        'Resilience': 'The baseline value for resilience is determined by perturbing each community in the network and measuring the mean shortest path average over several perturbations. The results are scaled on a normal curve across all cliques and a percentile resilience is determined for each clique. A high percentile resilience denotes resilience to perturbation. These values are visualized on a color spectrum from red to blue, where red is low relative resilience and blue is high relative resilience.',
         'AddNode': 'Introduces a new node to the network, complete with a user-defined name, user-defined attributes and known links. Using the DRAG link prediction model, node attributes are used to form likely connections and intelligently model the effects of external change on the network. New nodes and their predicted links are colored red for easy identification.',
         'RemoveNode': 'Removes the node inputted in the box below and any links to which it belongs.',
         'eigenvector': 'Centrality measure which sums the centralities of all adjacent nodes.',
-        'betweenness': 'Centrality based on the shortest path that passes through the node.'
+        'betweenness': 'Centrality based on the shortest path that passes through the node.',
+        'Cliques':'Influence communities are  detected in two-step Louvain modularity optimization. First, the core myth-symbol complexes are identified and named. Second, very proximate actors are grouped with the myth-symbol complex to form a full influence network.',
+        'EventAddition': 'Choose a number of iterations to simulate event addition into the network. Events are drawn from input file.',
     }
+
+    # Find cliques when requested
+    if request.form.get("cliqueSubmit") != None:
+        cliques, names = graph.communityDetection()
+        systemMeasures["Cliques"] = []
+        for name, clique in zip(names, cliques):
+            central = graph.G.node[name].get('Name')[0] if graph.G.node[name].get('Name') is not None else name
+            nodes = []
+            for node in clique.nodes():
+                nodes.append(graph.G.node[node].get('Name')[0] if graph.G.node[node].get('Name') is not None else node)
+            systemMeasures["Cliques"].append((central,nodes))
+            ## TODO: create json file for subgraphs produced, as below:
+            # subgraph_json.append(graph.create_json(graph.nodeSet, colorInput, graph=clique))
 
     # Calculate resilience when requested
     if request.form.get("resilienceSubmit") != None:
@@ -160,10 +176,16 @@ def SNA2Dand3D(graph, request, case_num, _3D=True, _2D=False, label=False):
         except nx.exception.NetworkXError:
             systemMeasures["Resilience"] = "Could not calculate resilience, NetworkX error."
 
+    if request.form.get("eventSubmit") != None:
+        fileDict['SNA_Events'] = 'static/sample/sna/suicide_attacks_subset.xlsx' ##TODO add a blueprint route for event sheet here
+        inputFile = fileDict['SNA_Events']
+        iters = int(request.form.get("iters"))
+        graph.event_update(inputFile,iters)
+
     copy_of_graph = copy.deepcopy(graph)
     fileDict['copy_of_graph'] = copy_of_graph
     # return based on inputs
-    ret3D = graph.create_json(graph.nodeSet, colorInput) if _3D else None
+    ret3D = graph.create_json(graph.classList, colorInput) if _3D else None
     label = True if not label and len(graph.nodes) < 20 else False
     ret2D = graph.plot_2D(attr, label) if _2D else None
     fileDict['jgdata'] = ret3D

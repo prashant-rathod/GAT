@@ -283,36 +283,40 @@ select,input {
                     <!--<td class="centered"><input  type = "checkbox" onclick="toggleSrcSet(this)"></td>-->
                     <td colspan="2"></td>
                 </tr>
-                {% for node in nodes %}
+                <tr>
+                    <td>{{nodes[0]}}</td>
+                    <td class="centered"><label><input checked type="checkbox" onclick="return false;" /></label></td>
+                    <td>
+                        Source Nodeset
+                    </td>
+                    <td><input type="text" name="" value="{{ nodes[0] }}"></td>
+                </tr>0
+                {% for node in nodes[1:] %}
                 <tr>
                     <td>{{node}}</td>
                     <td class="centered"><label><input checked class="nodeset" type="checkbox"
                                                        name="{{ node + 'IsNode' }}"></label></td>
-                    <!--<td class="centered"><label><input class="srcset" type = "checkbox" name = "{{ node + 'IsSource' }}"></label></td>-->
                     <td>
+            <!--'position': 'position',-->
                         <select name="{{ node + 'Class' }}">
                             <option value="Agent" {% if
                             'Agent' in node %} selected="selected" {% endif %} >Agent</option>
                             <option value="Organization" {% if
                             'Org' in node %} selected="selected" {% endif %} >Organization</option>
-                            <option value="Knowledge" {% if
-                            'Knowledge' in node %} selected="selected" {% endif %}>Knowledge</option>
-                            <option value="f" {% if
-                            'Belief' in node %} selected="selected" {% endif %}>Belief</option>
-                            <option value="Event" {% if
-                            'Event' in node %} selected="selected" {% endif %}>Event</option>
-                            <option value="Task" {% if
-                            'Task' in node %} selected="selected" {% endif %}>Task</option>
-                            <option value="Location" {% if
-                            'Location' in node %} selected="selected" {% endif %}>Location</option>
+                            <option value="Audience" {% if
+                            'Audience' in node %} selected="selected" {% endif %}>Audience</option>
                             <option value="Role" {% if
                             'Role' in node %} selected="selected" {% endif %}>Role</option>
-                            <option value="Symbol" {% if
+                            <option value="Event" {% if
+                            'Event' in node %} selected="selected" {% endif %}>Event</option>
+                            <option value="Belief" {% if
+                            'Belief' in node %} selected="selected" {% endif %}>Belief</option>
+                            <option value="Symbols" {% if
                             'Symbol' in node %} selected="selected" {% endif %}>Symbol</option>
-                            <option value="Resource" {% if
-                            'Resource' in node %} selected="selected" {% endif %}>Resource</option>
-                            <option value="Infrastructure" {% if
-                            'Infrastructure' in node %} selected="selected" {% endif %}>Infrastructure</option>
+                            <option value="Knowledge" {% if
+                            'Knowledge' in node %} selected="selected" {% endif %}>Knowledge</option>
+                            <option value="Task Model" {% if
+                            'Task' in node %} selected="selected" {% endif %}>Task</option>
                         </select>
                     </td>
                     <td><input type="text" name="{{ node + 'Name' }}" value="{{ node }}"></td>
