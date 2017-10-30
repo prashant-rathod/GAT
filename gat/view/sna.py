@@ -118,7 +118,7 @@ def get_node_data():
     if graph.sentiment_dict != {} and graph.sentiment_dict != None and graph.sentiment_dict.get(name) != None:
         sentiment = str(round(graph.sentiment_dict.get(name), 4));
     else:
-        sentiment = "clustering not available"
+        sentiment = "Sentiment not available for this node."
     attributes = graph.get_node_attributes(name)
     toJsonify = dict(name=name,
                      eigenvector=eigenvector,
