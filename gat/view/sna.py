@@ -98,7 +98,8 @@ def get_node_data():
     if graph == None or len(graph.G) == 0:
         return jsonify(name=name,
                        eigenvector=None,
-                       betweenness=None
+                       betweenness=None,
+                       sentiment=None
                        )
     graph.closeness_centrality()
     graph.betweenness_centrality()
@@ -106,18 +107,23 @@ def get_node_data():
     # graph.katz_centrality()
     graph.eigenvector_centrality()
     graph.load_centrality()
-    if graph.eigenvector_centrality_dict != {} and graph.eigenvector_centrality_dict != None:
+    if graph.eigenvector_centrality_dict != {} and graph.eigenvector_centrality_dict != None and graph.eigenvector_centrality_dict.get(name) != None:
         eigenvector = str(round(graph.eigenvector_centrality_dict.get(name), 4));
     else:
         eigenvector = "clustering not available"
-    if graph.betweenness_centrality_dict != {} and graph.betweenness_centrality_dict != None:
+    if graph.betweenness_centrality_dict != {} and graph.betweenness_centrality_dict != None and graph.betweenness_centrality_dict.get(name) != None:
         betweenness = str(round(graph.betweenness_centrality_dict.get(name), 4));
     else:
         betweenness = "clustering not available"
+    if graph.sentiment_dict != {} and graph.sentiment_dict != None and graph.sentiment_dict.get(name) != None:
+        sentiment = str(round(graph.sentiment_dict.get(name), 4));
+    else:
+        sentiment = "clustering not available"
     attributes = graph.get_node_attributes(name)
     toJsonify = dict(name=name,
                      eigenvector=eigenvector,
                      betweenness=betweenness,
+                     sentiment=sentiment,
                      attributes=attributes)
     return jsonify(toJsonify)
 

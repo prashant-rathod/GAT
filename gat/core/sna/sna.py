@@ -308,9 +308,11 @@ class SNA():
                 for others in self.G.nodes_iter():
                     # rejection of source
                     if self.G.has_edge(node[0], others):
-                        sent = self.G.get_edge_data(node, others)
-                        if sent is not None:
-                            iterEdgeList.append((node[0], others, (sent[node, others] * .1) + sent[node, others]))
+                        for type in ["Agent","Org"]:
+                            sent = self.G.node[node].get(type)
+                            if sent is not None and sent[0] == others:
+                                print(sent)
+                                iterEdgeList.append((node[0], others, (sent[1] * .1) + sent[1]))
                     # sympathy for target
                     if self.G.has_edge(node[1], others):
                         sent = self.G.get_edge_data(node, others)
@@ -385,6 +387,21 @@ class SNA():
     def getEdges(self):
         return self.edges
 
+    def communityDetection(self):
+        undirected = self.G.to_undirected()
+        self.eigenvector_centrality()
+        return cliques.louvain(G = undirected, centralities = self.eigenvector_centrality_dict)
+
+    def calculateResilience(self,baseline=True,robustness=True):
+        cliques_found = self.communityDetection()
+        simpleRes, baseline = resilience.averagePathRes(cliques_found, iters=5) if baseline is not None else None
+        robustnessRes = resilience.laplacianRes(cliques_found, iters=5) if robustness else None
+        return baseline,simpleRes,robustnessRes
+
+    ##########################
+    ## System-wide measures ##
+    ##########################
+
     # set all the properties with this function.
     def set_property(self):
         self.clustering()
@@ -400,21 +417,6 @@ class SNA():
         self.communicability_centrality_exp()
         self.node_connectivity()
         self.average_clustering()
-
-    def communityDetection(self):
-        undirected = self.G.to_undirected()
-        self.eigenvector_centrality()
-        return cliques.louvain(G = undirected, centralities = self.eigenvector_centrality_dict)
-
-    def calculateResilience(self,baseline=True,robustness=True):
-        cliques_found = self.communityDetection()
-        simpleRes, baseline = resilience.averagePathRes(cliques_found, iters=5) if baseline is not None else None
-        robustnessRes = resilience.laplacianRes(cliques_found, iters=5) if robustness else None
-        return baseline,simpleRes,robustnessRes
-
-    ##########################
-    ## System-wide measures ##
-    ##########################
 
     def center(self):
         return nx.center(self.G)
@@ -454,6 +456,26 @@ class SNA():
     #############################
     ## Node-dependent measures ##
     #############################
+
+    # Sum sentiment for belief nodes
+    def sentiment(self,types,key):
+        sentiment_dict = {}
+        for type in types:
+            # nodes = [node for node in self.G.nodes_iter() if node.get("ontClass") == type]
+            # for typeNode in nodes:
+            for node in self.G.nodes_iter():
+                sent = self.G.node[node].get(type) # the belief attribute
+                if sent is not None:
+                    for item in [item for item in sent if len(item) == 2]: #TODO better way to do this
+                        if sentiment_dict.get(item[0]) is None:
+                            sentiment_dict[item[0]] = float(item[1][key])
+                        else:
+                            sentiment_dict[item[0]] += float(item[1][key])
+        self.sentiment_dict = sentiment_dict
+        return sentiment_dict
+
+
+
 
     # Find clustering coefficient for each nodes
     def clustering(self):

@@ -376,6 +376,9 @@
         if ($("#betweenness").length) {
           $('#betweenness').prepend('<i class="fa fa-info-circle white-tooltip" data-toggle="tooltip" data-placement="left" title="{{systemMeasures["Description"]["betweenness"]}}"></i> ')
         }
+        if ($("#sentiment").length) {
+          $('#sentiment').prepend('<i class="fa fa-info-circle white-tooltip" data-toggle="tooltip" data-placement="left" title="{{systemMeasures["Description"]["sentiment"]}}"></i> ')
+        }
         $('[data-toggle="tooltip"]').tooltip();
         // append all attributes with key and value
         for (var feature in nodeDict['attributes']) {
