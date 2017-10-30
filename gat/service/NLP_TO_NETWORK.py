@@ -65,7 +65,8 @@ def relationship_mining(txt_name):
     plt.figure(figsize=(40, 40))
     pos = nx.spring_layout(G)
     nx.draw(G, with_labels=True, pos=pos, node_size=500, font_size=24)
-    nx.draw_networkx_edge_labels(G, pos=pos, edge_labels=nx.get_edge_attributes(G, 'verbs'))
+    nx.draw_networkx_edge_labels(G, pos=pos,
+                                 edge_labels=nx.get_edge_attributes(G, 'verbs'), font_size=18, font_color='b')
     filename = 'new_nlp_relationship_example'
     filename = 'out/nlp/' + filename + '.png'
     plt.savefig(filename)
