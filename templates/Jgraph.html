@@ -376,14 +376,17 @@
         if ($("#betweenness").length) {
           $('#betweenness').prepend('<i class="fa fa-info-circle white-tooltip" data-toggle="tooltip" data-placement="left" title="{{systemMeasures["Description"]["betweenness"]}}"></i> ')
         }
+        if ($("#sentiment").length) {
+          $('#sentiment').prepend('<i class="fa fa-info-circle white-tooltip" data-toggle="tooltip" data-placement="left" title="{{systemMeasures["Description"]["sentiment"]}}"></i> ')
+        }
         $('[data-toggle="tooltip"]').tooltip();
         // append all attributes with key and value
         for (var feature in nodeDict['attributes']) {
-          if (feature == "block") {
+          if (feature == "ontClass") {
             $("#attributeInfo").append("<span id='class'>Class: </span>")
             $("#attributeInfo").append("<span>"+nodeDict['attributes'][feature]+"</span><br>")
           }
-          else {
+          else if (feature != "block" && feature != "Name") {
             $("#attributeInfo").append("<span id='"+feature+"'>"+feature+": </span>")
             var list = []
             for (var item in nodeDict['attributes'][feature]) {
