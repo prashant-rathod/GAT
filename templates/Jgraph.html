@@ -56,7 +56,7 @@
                 systemMeasures contains measures where key is name of measure, value is measure value
                 also contains dictionary of measure descriptions (systemMeasures["Description"]) used for tooltips
               -->
-              {% if measure not in ["Resilience","Description","Cliques","SentimentDict"] -%}
+              {% if measure not in ["Resilience","Description","Cliques","SentimentDict","Robustness"] -%}
               <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="left" title="{{systemMeasures['Description'][measure]}}"></i>
               {{ measure }}: {{ systemMeasures[measure] }}
               {% endif -%}
