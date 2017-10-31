@@ -142,3 +142,15 @@ def get_edge_data():
     for attr in link:
         toJsonify[attr] = link[attr]
     return jsonify(toJsonify)
+
+@sna_blueprint.route("/_subgraph_viz")
+def subgraph_viz():
+    case_num = request.args.get('case_num', None)
+    fileDict = dao.getFileDict(case_num)
+    centralNode = request.args.get('centralNode', '', type=str)
+    toJson = {}
+    for item in fileDict['Cliques']:
+        if item[0] == centralNode:
+            toJson = item[1]
+            return jsonify(toJson)
+    return jsonify(toJson)
