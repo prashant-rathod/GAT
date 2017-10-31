@@ -2,6 +2,7 @@ import copy
 
 import matplotlib
 import networkx as nx
+from flask import jsonify
 
 from gat.dao import dao
 
@@ -92,6 +93,12 @@ def SNA2Dand3D(graph, request, case_num, _3D=True, _2D=False, label=False):
 
         graph.addNode(node, attrDict, links)
 
+    if request.form.get("eventSubmit") != None:
+        fileDict['SNA_Events'] = 'static/sample/sna/suicide_attacks_subset.xlsx' ##TODO add a blueprint route for event sheet here
+        inputFile = fileDict['SNA_Events']
+        iters = int(request.form.get("iters"))
+        systemMeasures['SentimentDict'] = graph.event_update(inputFile,iters)
+
     # Add system measures dictionary
     try:
         systemMeasures["Node Connectivity"] = graph.node_connectivity() # Currently only returning zero...
@@ -121,7 +128,7 @@ def SNA2Dand3D(graph, request, case_num, _3D=True, _2D=False, label=False):
         systemMeasures["Periphery"] = graph.periphery()
     except:
         "No periphery"
-    systemMeasures["Overall Sentiment"] = graph.sentiment(types=["Belief"],key='W')
+    systemMeasures["Overall Sentiment"] = graph.sentiment(types=["Belief","Audience","Actor"],key='W')
     # try:
     #     systemMeasures["Triadic Census"] = graph.triadic_census()
     # except:
@@ -151,14 +158,18 @@ def SNA2Dand3D(graph, request, case_num, _3D=True, _2D=False, label=False):
     if request.form.get("cliqueSubmit") != None:
         cliques, names = graph.communityDetection()
         systemMeasures["Cliques"] = []
+        fileDict["Cliques"] = []
         for name, clique in zip(names, cliques):
             central = graph.G.node[name].get('Name')[0] if graph.G.node[name].get('Name') is not None else name
             nodes = []
+            json_clique = {}
+            i = 0
             for node in clique.nodes():
                 nodes.append(graph.G.node[node].get('Name')[0] if graph.G.node[node].get('Name') is not None else node)
+                json_clique["node"+str(i)] = node
+                i+=1
             systemMeasures["Cliques"].append((central,nodes))
-            ## TODO: create json file for subgraphs produced, as below:
-            # subgraph_json.append(graph.create_json(graph.nodeSet, colorInput, graph=clique))
+            fileDict["Cliques"].append((central,json_clique))
 
     # Calculate resilience when requested
     if request.form.get("resilienceSubmit") != None:
@@ -177,12 +188,6 @@ def SNA2Dand3D(graph, request, case_num, _3D=True, _2D=False, label=False):
             addColors(systemMeasures["Robustness"])
         except nx.exception.NetworkXError:
             systemMeasures["Resilience"] = "Could not calculate resilience, NetworkX error."
-
-    if request.form.get("eventSubmit") != None:
-        fileDict['SNA_Events'] = 'static/sample/sna/suicide_attacks_subset.xlsx' ##TODO add a blueprint route for event sheet here
-        inputFile = fileDict['SNA_Events']
-        iters = int(request.form.get("iters"))
-        systemMeasures['SentimentDict'] = graph.event_update(inputFile,iters)
 
     copy_of_graph = copy.deepcopy(graph)
     fileDict['copy_of_graph'] = copy_of_graph
