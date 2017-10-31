@@ -742,7 +742,7 @@ class SNA():
                      'color': '0xE74C3C',
                      'arrowColor': '0xE74C3C',
                      'arrowSize': 2})
-            if graph[edge[0]][edge[1]].get('W') is not None:
+            elif graph[edge[0]][edge[1]].get('W') is not None:
                 edges.append(
                     {'source': edge[0],
                      'target': edge[1],
@@ -753,7 +753,8 @@ class SNA():
                 edges.append(
                     {'source': edge[0],
                      'target': edge[1],
-                     'name': edge[0] + "," + edge[1]}) #TODO clean up repeated code above
+                     'name': edge[0] + "," + edge[1]
+                     }) #TODO clean up repeated code above
         for node in self.G.nodes_iter():
             temp = {}
             ontClass = self.G.node[node].get('ontClass')

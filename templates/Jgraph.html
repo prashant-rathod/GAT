@@ -86,10 +86,9 @@
                 <tr>
                     <th>{{ clique[0] }}</th>
                     <td>
-                      <a onclick="
-                      var json_object = {{ clique[1]|tojson }};
-                      console.log(json_object);
-                      handleSubgraphClick(json_object)">
+                      <a onclick='
+                      var centralNode = "{{ clique[0]}}";
+                      handleSubgraphClick(centralNode)'>
                         View
                       </a>
                     </td>
@@ -363,6 +362,16 @@
         });
       });
 
+      handleSubgraphClick = function(centralNode) {
+        console.log(centralNode);
+        $.getJSON("{{ url_for('sna_blueprint.subgraph_viz', case_num=case_num) }}", {
+              centralNode: centralNode
+            }, function(data) {
+              console.log(data)
+              jgraph.testing_subgraph(data);
+          });
+      }
+
       //update info displays with node data
       update = function(nodeDict) {
         console.log("NodeDict:",nodeDict)
@@ -450,11 +459,6 @@
       $('[data-toggle="tooltip"]').tooltip();
       handleSentimentClick =  function(sent_dict) {
         window.open(sent_dict);
-      }
-      handleSubgraphClick = function() {
-        console.log("triggered");
-        console.log(json_object);
-        jgraph.testing_subgraph(json_object);
       }
     </script>
   </body>

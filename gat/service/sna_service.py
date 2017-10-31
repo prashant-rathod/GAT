@@ -158,16 +158,18 @@ def SNA2Dand3D(graph, request, case_num, _3D=True, _2D=False, label=False):
     if request.form.get("cliqueSubmit") != None:
         cliques, names = graph.communityDetection()
         systemMeasures["Cliques"] = []
+        fileDict["Cliques"] = []
         for name, clique in zip(names, cliques):
             central = graph.G.node[name].get('Name')[0] if graph.G.node[name].get('Name') is not None else name
-            # nodes = []
+            nodes = []
             json_clique = {}
             i = 0
             for node in clique.nodes():
-                # nodes.append(graph.G.node[node].get('Name')[0] if graph.G.node[node].get('Name') is not None else node)
+                nodes.append(graph.G.node[node].get('Name')[0] if graph.G.node[node].get('Name') is not None else node)
                 json_clique["node"+str(i)] = node
                 i+=1
-            systemMeasures["Cliques"].append((central,jsonify(json_clique)))
+            systemMeasures["Cliques"].append((central,nodes))
+            fileDict["Cliques"].append((central,json_clique))
 
     # Calculate resilience when requested
     if request.form.get("resilienceSubmit") != None:
