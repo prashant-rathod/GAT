@@ -7,6 +7,7 @@ from networkx.algorithms import bipartite as bi
 from networkx.algorithms import centrality
 from itertools import product
 from collections import defaultdict
+from flask import jsonify
 import pandas as pd
 import datetime
 
@@ -304,19 +305,29 @@ class SNA():
                           min(dateList) + dateIter * i <= bombData[x]['Date'] < min(dateList) + dateIter * (i+1)]
             # adding attacks to test graph by datetime period and iterating through to change sentiments
             iterEdgeList = []
+            output_dict = {}
             for node in nodeList:
                 for others in self.G.nodes_iter():
                     # rejection of source
-                    if self.G.has_edge(node[0], others):
-                        for type in ["Agent","Org"]:
-                            sent = self.G.node[node].get(type)
-                            if sent is not None and sent[0] == others:
-                                print(sent)
-                                iterEdgeList.append((node[0], others, (sent[1] * .1) + sent[1]))
-                    # sympathy for target
-                    if self.G.has_edge(node[1], others):
-                        sent = self.G.get_edge_data(node, others)
-                        iterEdgeList.append((node[0], others, (sent[node, others] * 1.1) + sent[node, others]))
+                    if self.G.has_edge(node[0], others) or self.G.has_edge(node[1], others):
+                        for ontClass in self.classList:
+                            sent = self.G.node[others].get(ontClass) # the attribute, if it exists
+                            if sent is not None:
+                                for item in [item for item in sent if len(item) == 2]:
+                                    if item[1].get('W') is not None:
+                                        if item[0] == node[0]:
+                                            original = item[1]['W']
+                                            item[1]['W'] *= 1.1
+                                            output_dict[others + " towards " + node[0]] = item[1]['W'] - original
+                            sent = self.G.node[node[1]].get(ontClass)  # the attribute, if it exists
+                            if sent is not None:
+                                for item in [item for item in sent if len(item) == 2]:
+                                    if item[1].get('W') is not None:
+                                        if item[0] == node[1]:
+                                            original = item[1]['W']
+                                            item[1]['W'] *= 0.9
+                                            output_dict[others + " towards " + node[1]] = item[1]['W'] - original
+
                 # add an event node
                 event = 'Event '+str(node[2])+': '+node[0]+' to '+node[1]
                 self.G.add_node(event, {'ontClass':'Event', 'Name':['Event '+str(node[2])+': '+node[0]+' to '+node[1]], 'block':'Event',
@@ -327,6 +338,8 @@ class SNA():
 
         self.nodes = nx.nodes(self.G)  # update node list
         self.edges = nx.edges(self.G)  # update edge list
+
+        return jsonify(output_dict)
 
     # copy the original social network graph created with user input data.
     # this will be later used to reset the modified graph to inital state
@@ -471,6 +484,7 @@ class SNA():
                             sentiment_dict[item[0]] = float(item[1][key])
                         else:
                             sentiment_dict[item[0]] += float(item[1][key])
+                        sentiment_dict[item[0]] = round(sentiment_dict[item[0]],2)
         self.sentiment_dict = sentiment_dict
         return sentiment_dict
 
