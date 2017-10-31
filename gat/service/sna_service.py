@@ -150,6 +150,7 @@ def SNA2Dand3D(graph, request, case_num, _3D=True, _2D=False, label=False):
         'eigenvector': 'Centrality measure which sums the centralities of all adjacent nodes.',
         'betweenness': 'Centrality based on the shortest path that passes through the node.',
         'sentiment':'The sum of all actor sentiments towards this node.',
+        'Overall Sentiment': 'The sum of all actor sentiments towards this node.',
         'Cliques':'Influence communities are  detected in two-step Louvain modularity optimization. First, the core myth-symbol complexes are identified and named. Second, very proximate actors are grouped with the myth-symbol complex to form a full influence network.',
         'EventAddition': 'Choose a number of iterations to simulate event addition into the network. Events are drawn from input file.',
     }
