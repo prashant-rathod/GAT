@@ -162,7 +162,6 @@ class SNA():
                         attrList = []
                         node = self.G.node[nodeID]
                         if cell['header'] in self.subAttrs:  # handle subattributes, e.g. weight
-                            prevCell = row[row.index(cell) - 1]
                             key = {}
                             while prevCell['header'] in self.subAttrs:
                                 key[prevCell['header']] = prevCell['val']
@@ -182,6 +181,7 @@ class SNA():
                             attrList.append(cell['val'])
                             attrID = cell['header']
                         self.changeAttribute(nodeID, attrList, attrID)
+                prevCell = cell # save cell in case of subattribute data
 
     # Input: the node set that will serve as the source of all links
     # Output: updated list of edges connecting nodes in the same row
@@ -301,7 +301,7 @@ class SNA():
         dateIter = (max(dateList) - min(dateList)) / 10
 
         for i in range(max_iter):
-            nodeList = [(bombData[x]['Source'], bombData[x]['Target'], bombData[x]['CODE']) for x in bombData if
+            nodeList = [(bombData[x]['Actor'], bombData[x]['Target'], bombData[x]['CODE']) for x in bombData if
                           min(dateList) + dateIter * i <= bombData[x]['Date'] < min(dateList) + dateIter * (i+1)]
             # adding attacks to test graph by datetime period and iterating through to change sentiments
             iterEdgeList = []
@@ -309,24 +309,20 @@ class SNA():
             for node in nodeList:
                 for others in self.G.nodes_iter():
                     # rejection of source
-                    if self.G.has_edge(node[0], others) or self.G.has_edge(node[1], others):
-                        for ontClass in self.classList:
-                            sent = self.G.node[others].get(ontClass) # the attribute, if it exists
-                            if sent is not None:
-                                for item in [item for item in sent if len(item) == 2]:
-                                    if item[1].get('W') is not None:
-                                        if item[0] == node[0]:
-                                            original = item[1]['W']
-                                            item[1]['W'] *= 1.1
-                                            output_dict[others + " towards " + node[0]] = item[1]['W'] - original
-                            sent = self.G.node[node[1]].get(ontClass)  # the attribute, if it exists
-                            if sent is not None:
-                                for item in [item for item in sent if len(item) == 2]:
-                                    if item[1].get('W') is not None:
-                                        if item[0] == node[1]:
-                                            original = item[1]['W']
-                                            item[1]['W'] *= 0.9
-                                            output_dict[others + " towards " + node[1]] = item[1]['W'] - original
+                    # if self.G.has_edge(node[0], others) or self.G.has_edge(node[1], others):
+                    for ontClass in self.classList:
+                        sent = self.G.node[others].get(ontClass) # the attribute, if it exists
+                        if sent is not None:
+                            for item in [item for item in sent if len(item) == 2]:
+                                if item[1].get('W') is not None:
+                                    if item[0] == node[0]:
+                                        original = float(item[1]['W'])
+                                        item[1]['W'] = original * 0.9
+                                        output_dict[others + " towards " + node[0]] = item[1]['W'] - original
+                                    if item[0] == node[1]:
+                                        original = float(item[1]['W'])
+                                        item[1]['W'] = original * 1.1
+                                        output_dict[others + " towards " + node[1]] = item[1]['W'] - original
 
                 # add an event node
                 event = 'Event '+str(node[2])+': '+node[0]+' to '+node[1]

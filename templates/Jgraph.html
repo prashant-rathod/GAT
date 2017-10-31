@@ -85,7 +85,14 @@
                 {% for clique in systemMeasures['Cliques'] -%}
                 <tr>
                     <th>{{ clique[0] }}</th>
-                    <td>{{ clique[1] }}</td>
+                    <td>
+                      <a onclick="
+                      var json_object = {{ clique[1]|tojson }};
+                      console.log(json_object);
+                      handleSubgraphClick(json_object)">
+                        View
+                      </a>
+                    </td>
                 </tr>  
                 {% endfor -%}
             </table>
@@ -95,7 +102,7 @@
           <div id="resilienceInfo">
             {% if systemMeasures.get("Resilience") == None -%}
               <form id="resilienceForm" enctype="multipart/form-data" method="post">
-                <input id="resilience" name="resilienceSubmit" type="submit" value="Calculate Resilience" onclick="handleResilienceClick();" href="javascript:void(0)" data-toggle="tooltip" data-placement="left" title="{{systemMeasures['Description']['Resilience']}}">
+                <input id="resilience" name="resilienceSubmit" type="submit" value="Calculate Resilience" onclick="handleResilienceClick();" href="javascript:void(0)" data-toggle="tooltip" data-placement="left" title="{{systemMeasures['Description']['Resilience']}}"/>
               </form>
             {% else -%}
             <table id="resilienceTable">
@@ -252,7 +259,6 @@
     <script type="text/javascript">
       jgraph.create('.graph', {directed: true, edgeSize: .05, arrowSize:.5, defaultEdgeColor:0x808080});
       try {
-        console.log({{jgdata|safe}});
         jgraph.draw({{jgdata|safe}});
       }
       catch (err) {
@@ -444,6 +450,11 @@
       $('[data-toggle="tooltip"]').tooltip();
       handleSentimentClick =  function(sent_dict) {
         window.open(sent_dict);
+      }
+      handleSubgraphClick = function() {
+        console.log("triggered");
+        console.log(json_object);
+        jgraph.testing_subgraph(json_object);
       }
     </script>
   </body>
