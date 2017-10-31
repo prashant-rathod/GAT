@@ -19,10 +19,11 @@ import numpy as np
 from gat.service import file_io
 from gat.service.SVO_SENT_MODULE_spacy import SVOSENT
 
-svo_sent = SVOSENT()
+
 
 
 def txt_to_data(txt_name):
+    svo_sent = SVOSENT()
     with open(txt_name, 'r') as myfile:
         article = myfile.read().replace('\n', '')
     result = svo_sent.svo_senti_from_article(article)[['Subjects', 'Objects', 'Predicates', 'compound']]
