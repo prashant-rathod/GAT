@@ -182,7 +182,7 @@ def SNA2Dand3D(graph, request, case_num, _3D=True, _2D=False, label=False):
         fileDict['SNA_Events'] = 'static/sample/sna/suicide_attacks_subset.xlsx' ##TODO add a blueprint route for event sheet here
         inputFile = fileDict['SNA_Events']
         iters = int(request.form.get("iters"))
-        graph.event_update(inputFile,iters)
+        systemMeasures['SentimentDict'] = graph.event_update(inputFile,iters)
 
     copy_of_graph = copy.deepcopy(graph)
     fileDict['copy_of_graph'] = copy_of_graph

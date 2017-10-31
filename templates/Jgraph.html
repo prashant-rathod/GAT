@@ -56,12 +56,19 @@
                 systemMeasures contains measures where key is name of measure, value is measure value
                 also contains dictionary of measure descriptions (systemMeasures["Description"]) used for tooltips
               -->
-              {% if measure not in ["Resilience","Description","Cliques"] -%}
+              {% if measure not in ["Resilience","Description","Cliques","SentimentDict"] -%}
               <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="left" title="{{systemMeasures['Description'][measure]}}"></i>
               {{ measure }}: {{ systemMeasures[measure] }}
               {% endif -%}
             </div>
           {% endfor -%}
+          <!--<div>-->
+            <!--{% if systemMeasures.get("SentimentDict") != None -%}-->
+            <!--<a id="sentimentDict" name="sentimentDict" onclick="handleSentimentClick({{systemMeasures['SentimentDict']}});">-->
+              <!--View Sentiment Change-->
+            <!--</a>-->
+            <!--{% endif -%}-->
+          <!--</div>-->
           <!-- handle community detection -->
           <div id="commDetection">
             {% if systemMeasures.get("Cliques") == None -%}
@@ -435,6 +442,9 @@
         }
       }
       $('[data-toggle="tooltip"]').tooltip();
+      handleSentimentClick =  function(sent_dict) {
+        window.open(sent_dict);
+      }
     </script>
   </body>
 </html>
