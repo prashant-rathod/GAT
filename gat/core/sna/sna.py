@@ -324,6 +324,7 @@ class SNA():
                                         item[1]['W'] = original * 1.1
                                         output_dict[others + " towards " + node[1]] = item[1]['W'] - original
 
+
                 # add an event node
                 event = 'Event '+str(node[2])+': '+node[0]+' to '+node[1]
                 self.G.add_node(event, {'ontClass':'Event', 'Name':['Event '+str(node[2])+': '+node[0]+' to '+node[1]], 'block':'Event',
@@ -335,7 +336,7 @@ class SNA():
         self.nodes = nx.nodes(self.G)  # update node list
         self.edges = nx.edges(self.G)  # update edge list
 
-        return jsonify(output_dict)
+        return output_dict
 
     # copy the original social network graph created with user input data.
     # this will be later used to reset the modified graph to inital state
