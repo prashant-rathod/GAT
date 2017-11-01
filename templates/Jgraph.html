@@ -62,13 +62,13 @@
               {% endif -%}
             </div>
           {% endfor -%}
-          <!--<div>-->
-            <!--{% if systemMeasures.get("SentimentDict") != None -%}-->
-            <!--<a id="sentimentDict" name="sentimentDict" onclick="handleSentimentClick({{systemMeasures['SentimentDict']}});">-->
-              <!--View Sentiment Change-->
-            <!--</a>-->
-            <!--{% endif -%}-->
-          <!--</div>-->
+          <div>
+            {% if systemMeasures.get("SentimentDict") -%}
+            <a id="sentimentDict" name="sentimentDict" target="_blank" href="{{ url_for('sna_blueprint.view_sent_change', case_num=case_num) }}">
+              View Sentiment Change
+            </a>
+            {% endif -%}
+          </div>
           <!-- handle community detection -->
           <div id="commDetection">
             {% if systemMeasures.get("Cliques") == None -%}
@@ -457,9 +457,6 @@
         }
       }
       $('[data-toggle="tooltip"]').tooltip();
-      handleSentimentClick =  function(sent_dict) {
-        window.open(sent_dict);
-      }
     </script>
   </body>
 </html>

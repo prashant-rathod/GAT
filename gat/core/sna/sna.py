@@ -40,6 +40,7 @@ class SNA():
         self.node_attributes_dict = {}
         self.classList = ['Agent','Organization','Audience','Role','Event','Belief','Symbol','Knowledge','Task','Actor']
         self.attrSheet = attrSheet
+        self.output_dict = {}
 
     # Read xlsx file and save the header and all the cells, each a dict with value and header label
     # Input: xlsx file, sheet
@@ -299,13 +300,12 @@ class SNA():
         # using datetime to create iterations of flexible length
         dateList = [bombData[x]['Date'] for x in bombData]
         dateIter = (max(dateList) - min(dateList)) / 10
-
+        output_dict = {}
         for i in range(max_iter):
             nodeList = [(bombData[x]['Actor'], bombData[x]['Target'], bombData[x]['CODE']) for x in bombData if
                           min(dateList) + dateIter * i <= bombData[x]['Date'] < min(dateList) + dateIter * (i+1)]
             # adding attacks to test graph by datetime period and iterating through to change sentiments
             iterEdgeList = []
-            output_dict = {}
             for node in nodeList:
                 for others in self.G.nodes_iter():
                     # rejection of source
@@ -324,18 +324,41 @@ class SNA():
                                         item[1]['W'] = original * 1.1
                                         output_dict[others + " towards " + node[1]] = item[1]['W'] - original
 
+                                    # sympathy for city population - HARDCODED
+                                    if item[0] == "Shi'ism" and float(item[1]['W']) > -0.5:
+                                        if node[1] == 'Najaf':
+                                            original = float(item[1]['W'])
+                                            item[1]['W'] = original * 1.1
+                                            output_dict[others + " towards " + node[1]] = item[1]['W'] - original
+                                        if node[1] == 'Basra':
+                                            original = float(item[1]['W'])
+                                            item[1]['W'] = original * 1.1
+                                            output_dict[others + " towards " + node[1]] = item[1]['W'] - original
+                                    if item[0] == "Kurdish Nationalism" and float(item[1]['W']) > -0.5:
+                                        if node[1] == 'Kirkuk':
+                                            original = float(item[1]['W'])
+                                            item[1]['W'] = original * 1.1
+                                            output_dict[others + " towards " + node[1]] = item[1]['W'] - original
+                                    if item[0] == "Sunni'ism" and float(item[1]['W']) > -0.5:
+                                        if node[1] == 'Fallujah':
+                                            original = float(item[1]['W'])
+                                            item[1]['W'] = original * 1.1
+                                            output_dict[others + " towards " + node[1]] = item[1]['W'] - original
+                                    if others == 'ISIL_al-Baghdadi':
+                                        original = float(item[1]['W'])
+                                        item[1]['W'] = original * 0.9
+                                        output_dict[others + " towards " + node[1]] = item[1]['W'] - original
                 # add an event node
                 event = 'Event '+str(node[2])+': '+node[0]+' to '+node[1]
-                self.G.add_node(event, {'ontClass':'Event', 'Name':['Event '+str(node[2])+': '+node[0]+' to '+node[1]], 'block':'Event',
-                                        'Description': 'Conduct suicide, car, or other non-military bombing'})
+                self.G.add_node(event, {'ontClass':'Event', 'Name':['Event'+str(i)+' '+str(node[2])+': '+node[0]+' to '+node[1]], 'block':'Event','Description': 'Conduct suicide, car, or other non-military bombing'})
                 self.G.add_edge(node[0], event)
                 self.G.add_edge(event, node[1])
             self.G.add_weighted_edges_from(iterEdgeList, 'W')
 
         self.nodes = nx.nodes(self.G)  # update node list
         self.edges = nx.edges(self.G)  # update edge list
-
-        return jsonify(output_dict)
+        self.output_dict.update(output_dict)
+        return self.output_dict
 
     # copy the original social network graph created with user input data.
     # this will be later used to reset the modified graph to inital state
