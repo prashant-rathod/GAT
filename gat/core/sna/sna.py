@@ -322,32 +322,32 @@ class SNA():
                                     if item[0] == node[1]:
                                         original = float(item[1]['W'])
                                         item[1]['W'] = original * 1.1
-                                        output_dict[node[0] + " towards " + others] = item[1]['W'] - original
+                                        output_dict[node[1] + " towards " + others] = item[1]['W'] - original
 
                                     # sympathy for city population - HARDCODED
                                     if item[0] == "Shi'ism" and float(item[1]['W']) > -0.5:
                                         if node[1] == 'Najaf':
                                             original = float(item[1]['W'])
                                             item[1]['W'] = original * 1.1
-                                            output_dict[node[0] + " towards " + others] = item[1]['W'] - original
+                                            output_dict[node[1] + " towards " + others] = item[1]['W'] - original
                                         if node[1] == 'Basra':
                                             original = float(item[1]['W'])
                                             item[1]['W'] = original * 1.1
-                                            output_dict[node[0] + " towards " + others] = item[1]['W'] - original
+                                            output_dict[node[1] + " towards " + others] = item[1]['W'] - original
                                     if item[0] == "Kurdish Nationalism" and float(item[1]['W']) > -0.5:
                                         if node[1] == 'Kirkuk':
                                             original = float(item[1]['W'])
                                             item[1]['W'] = original * 1.1
-                                            output_dict[node[0] + " towards " + others] = item[1]['W'] - original
+                                            output_dict[node[1] + " towards " + others] = item[1]['W'] - original
                                     if item[0] == "Sunni'ism" and float(item[1]['W']) > -0.5:
                                         if node[1] == 'Fallujah':
                                             original = float(item[1]['W'])
                                             item[1]['W'] = original * 1.1
-                                            output_dict[node[0] + " towards " + others] = item[1]['W'] - original
+                                            output_dict[node[1] + " towards " + others] = item[1]['W'] - original
                                     if others == 'ISIL_al-Baghdadi':
                                         original = float(item[1]['W'])
                                         item[1]['W'] = original * 0.9
-                                        output_dict[node[0] + " towards " + others] = item[1]['W'] - original
+                                        output_dict[node[1] + " towards " + others] = item[1]['W'] - original
                 # add an event node
                 event = 'Event '+str(node[2])+': '+node[0]+' to '+node[1]
                 self.G.add_node(event, {'ontClass':'Event', 'block':'Event', 'Name':['Event'+str(i)+' '+str(node[2])+': '+node[0]+' to '+node[1]], 'block':'Event','Description': 'Conduct suicide, car, or other non-military bombing'})
