@@ -23,7 +23,7 @@ def probability(G):
 def calc_params(G):
     return {
         "density": edge_count(G),
-        "block_match": node_match(G, "block"),
+        "block_match": node_match(G, "ontClass"),
         # 'deltaistar2': istarDelta(adjMat, 2),
         # 'deltaistar3': istarDelta(adjMat, 3),
         # 'deltaostar2': ostarDelta(adjMat, 2),
@@ -144,7 +144,7 @@ def edge_count(G):
 
 def node_match(G, attrib):
     size = len(G)
-    attribs = [node[1][attrib] for node in G.nodes(data=True)]
+    attribs = [node[1].get("block") for node in G.nodes(data=True)]
     match = np.zeros(shape=(size, size))
     for i in range(size):
         for j in range(size):

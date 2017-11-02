@@ -9,7 +9,7 @@
     <link href="{{url_for('static', filename='css/jgraph-custom.css')}}" rel="stylesheet">
     <script src="{{url_for('static', filename='js/jquery-1.11.1.min.js')}}"></script>
     <script src="{{url_for('static', filename='js/bootstrap.min.js')}}"></script>
-    <script src="{{url_for('static', filename='js/jgraph_test1.min.js')}}"></script>
+    <script src="{{url_for('static', filename='js/jgraph_test3.min.js')}}"></script>
     <script src="{{url_for('static', filename='js/jgraph-custom.js')}}"></script>
     <title>Jgraph</title>
   </head>
@@ -56,12 +56,19 @@
                 systemMeasures contains measures where key is name of measure, value is measure value
                 also contains dictionary of measure descriptions (systemMeasures["Description"]) used for tooltips
               -->
-              {% if measure not in ["Resilience","Description","Cliques"] -%}
+              {% if measure not in ["Resilience","Description","Cliques","SentimentDict","Robustness"] -%}
               <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="left" title="{{systemMeasures['Description'][measure]}}"></i>
               {{ measure }}: {{ systemMeasures[measure] }}
               {% endif -%}
             </div>
           {% endfor -%}
+          <div>
+            {% if systemMeasures.get("SentimentDict") -%}
+            <a id="sentimentDict" name="sentimentDict" target="_blank" href="{{ url_for('sna_blueprint.view_sent_change', case_num=case_num) }}">
+              View Sentiment Change
+            </a>
+            {% endif -%}
+          </div>
           <!-- handle community detection -->
           <div id="commDetection">
             {% if systemMeasures.get("Cliques") == None -%}
@@ -78,7 +85,13 @@
                 {% for clique in systemMeasures['Cliques'] -%}
                 <tr>
                     <th>{{ clique[0] }}</th>
-                    <td>{{ clique[1] }}</td>
+                    <td>
+                      <a onclick='
+                      var centralNode = "{{ clique[0]}}";
+                      handleSubgraphClick(centralNode)'>
+                        View
+                      </a>
+                    </td>
                 </tr>  
                 {% endfor -%}
             </table>
@@ -88,7 +101,7 @@
           <div id="resilienceInfo">
             {% if systemMeasures.get("Resilience") == None -%}
               <form id="resilienceForm" enctype="multipart/form-data" method="post">
-                <input id="resilience" name="resilienceSubmit" type="submit" value="Calculate Resilience" onclick="handleResilienceClick();" href="javascript:void(0)" data-toggle="tooltip" data-placement="left" title="{{systemMeasures['Description']['Resilience']}}">
+                <input id="resilience" name="resilienceSubmit" type="submit" value="Calculate Resilience" onclick="handleResilienceClick();" href="javascript:void(0)" data-toggle="tooltip" data-placement="left" title="{{systemMeasures['Description']['Resilience']}}"/>
               </form>
             {% else -%}
             <table id="resilienceTable">
@@ -245,7 +258,6 @@
     <script type="text/javascript">
       jgraph.create('.graph', {directed: true, edgeSize: .05, arrowSize:.5, defaultEdgeColor:0x808080});
       try {
-        console.log({{jgdata|safe}});
         jgraph.draw({{jgdata|safe}});
       }
       catch (err) {
@@ -350,6 +362,16 @@
         });
       });
 
+      handleSubgraphClick = function(centralNode) {
+        console.log(centralNode);
+        $.getJSON("{{ url_for('sna_blueprint.subgraph_viz', case_num=case_num) }}", {
+              centralNode: centralNode
+            }, function(data) {
+              console.log(data)
+              jgraph.testing_subgraph(data);
+          });
+      }
+
       //update info displays with node data
       update = function(nodeDict) {
         console.log("NodeDict:",nodeDict)
@@ -376,14 +398,17 @@
         if ($("#betweenness").length) {
           $('#betweenness').prepend('<i class="fa fa-info-circle white-tooltip" data-toggle="tooltip" data-placement="left" title="{{systemMeasures["Description"]["betweenness"]}}"></i> ')
         }
+        if ($("#sentiment").length) {
+          $('#sentiment').prepend('<i class="fa fa-info-circle white-tooltip" data-toggle="tooltip" data-placement="left" title="{{systemMeasures["Description"]["sentiment"]}}"></i> ')
+        }
         $('[data-toggle="tooltip"]').tooltip();
         // append all attributes with key and value
         for (var feature in nodeDict['attributes']) {
-          if (feature == "block") {
+          if (feature == "ontClass") {
             $("#attributeInfo").append("<span id='class'>Class: </span>")
             $("#attributeInfo").append("<span>"+nodeDict['attributes'][feature]+"</span><br>")
           }
-          else {
+          else if (feature != "block" && feature != "Name") {
             $("#attributeInfo").append("<span id='"+feature+"'>"+feature+": </span>")
             var list = []
             for (var item in nodeDict['attributes'][feature]) {

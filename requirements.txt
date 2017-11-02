@@ -38,3 +38,4 @@ newspaper3k
 community
 pymc
 validators
+dateparser
