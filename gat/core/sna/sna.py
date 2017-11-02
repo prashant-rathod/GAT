@@ -259,7 +259,7 @@ class SNA():
                 for prop in emoProps:
                     w.append(prop[4] * prop[5])  # add the product of the attribute weights to a list for each prop
                 w_avg = np.average(w)  # find average propensity product weight
-                prob = np.random.binomial(1, w_avg * 1 / 2)
+                prob = np.random.binomial(1, w_avg * 1 / 2 if w_avg * 1/2 > 0 else 0)
                 # use w_avg as the probability for a bernoulli distribution
                 if prob:
                     self.G.add_edge(node, target)
@@ -318,39 +318,39 @@ class SNA():
                                     if item[0] == node[0]:
                                         original = float(item[1]['W'])
                                         item[1]['W'] = original * 0.9
-                                        output_dict[others + " towards " + node[0]] = item[1]['W'] - original
+                                        output_dict[node[0] + " towards " + others] = item[1]['W'] - original
                                     if item[0] == node[1]:
                                         original = float(item[1]['W'])
                                         item[1]['W'] = original * 1.1
-                                        output_dict[others + " towards " + node[1]] = item[1]['W'] - original
+                                        output_dict[node[0] + " towards " + others] = item[1]['W'] - original
 
                                     # sympathy for city population - HARDCODED
                                     if item[0] == "Shi'ism" and float(item[1]['W']) > -0.5:
                                         if node[1] == 'Najaf':
                                             original = float(item[1]['W'])
                                             item[1]['W'] = original * 1.1
-                                            output_dict[others + " towards " + node[1]] = item[1]['W'] - original
+                                            output_dict[node[0] + " towards " + others] = item[1]['W'] - original
                                         if node[1] == 'Basra':
                                             original = float(item[1]['W'])
                                             item[1]['W'] = original * 1.1
-                                            output_dict[others + " towards " + node[1]] = item[1]['W'] - original
+                                            output_dict[node[0] + " towards " + others] = item[1]['W'] - original
                                     if item[0] == "Kurdish Nationalism" and float(item[1]['W']) > -0.5:
                                         if node[1] == 'Kirkuk':
                                             original = float(item[1]['W'])
                                             item[1]['W'] = original * 1.1
-                                            output_dict[others + " towards " + node[1]] = item[1]['W'] - original
+                                            output_dict[node[0] + " towards " + others] = item[1]['W'] - original
                                     if item[0] == "Sunni'ism" and float(item[1]['W']) > -0.5:
                                         if node[1] == 'Fallujah':
                                             original = float(item[1]['W'])
                                             item[1]['W'] = original * 1.1
-                                            output_dict[others + " towards " + node[1]] = item[1]['W'] - original
+                                            output_dict[node[0] + " towards " + others] = item[1]['W'] - original
                                     if others == 'ISIL_al-Baghdadi':
                                         original = float(item[1]['W'])
                                         item[1]['W'] = original * 0.9
-                                        output_dict[others + " towards " + node[1]] = item[1]['W'] - original
+                                        output_dict[node[0] + " towards " + others] = item[1]['W'] - original
                 # add an event node
                 event = 'Event '+str(node[2])+': '+node[0]+' to '+node[1]
-                self.G.add_node(event, {'ontClass':'Event', 'Name':['Event'+str(i)+' '+str(node[2])+': '+node[0]+' to '+node[1]], 'block':'Event','Description': 'Conduct suicide, car, or other non-military bombing'})
+                self.G.add_node(event, {'ontClass':'Event', 'block':'Event', 'Name':['Event'+str(i)+' '+str(node[2])+': '+node[0]+' to '+node[1]], 'block':'Event','Description': 'Conduct suicide, car, or other non-military bombing'})
                 self.G.add_edge(node[0], event)
                 self.G.add_edge(event, node[1])
             self.G.add_weighted_edges_from(iterEdgeList, 'W')
