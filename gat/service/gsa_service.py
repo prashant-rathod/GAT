@@ -1,5 +1,6 @@
 import csv
 import json
+from xml.dom import minidom
 
 from gat.core.gsa.misc import util, map_generator
 
@@ -23,8 +24,9 @@ def tempParseGSA(GSA_file_CSV, GSA_file_SHP, idVar, nameVar):
         except:
             return (None, True)
 
+    #TODO: remove this
     gsaSVG = "out/gsa/mymap.svg"
-    map_generator.generateMap(GSA_file_SHP, gsaSVG)
+    generateMap(GSA_file_SHP, gsaSVG)
 
     with open(gsaSVG, 'r') as myfile:
         data = None
@@ -36,6 +38,15 @@ def tempParseGSA(GSA_file_CSV, GSA_file_SHP, idVar, nameVar):
     nameMapping = util.getNameMapping(gsaSVG, idVar, nameVar)
     nameMapping = {key: value.replace("'", "APOSTROPHE") for key, value in nameMapping.items()}
     return json.dumps(str(gsaCSV).replace('"', "'")), json.dumps(data), json.dumps(str(nameMapping).replace('"', "'"))
+
+def generateMap(GSA_file_SHP, path):
+    map_generator.generateMap(GSA_file_SHP, path)
+
+def getNameMapping(path, nameVar):
+    doc = minidom.parse(path)
+    ret = [path.getAttribute(nameVar) for path in doc.getElementsByTagName('path')]
+    doc.unlink()
+    return ret
 
 
 def parseGSA(GSA_file_CSV, GSA_file_SVG):

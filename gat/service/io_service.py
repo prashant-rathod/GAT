@@ -61,10 +61,6 @@ def storeGSA(file_list):
 def checkExtensions(case_num):
     errors = []
     fileDict = dao.getFileDict(case_num)
-    gsa_csv_file = fileDict['GSA_Input_CSV']
-    if gsa_csv_file != None:
-        if not gsa_csv_file.endswith('.csv'):
-            errors.append("Error: please upload csv file for GSA.")
 
     gsa_file_list = fileDict['GSA_file_list']
     exts = ['.shp', '.shx', '.dbf']

@@ -31,7 +31,6 @@ def upload():
     # here the use of fileDict is probably more clear
     # the strings used to index request.files come from the HTML name of the input field
     # see upload.html
-    fileDict['GSA_Input_CSV'] = io_service.storefile(request.files.get('GSA_Input_CSV'))
     fileDict['GSA_Input_SHP'] = io_service.storeGSA(request.files.getlist('GSA_Input_map'))
     fileDict['GSA_file_list'] = request.files.getlist('GSA_Input_map')
     fileDict['NLP_Input_corpus'] = io_service.storeNLP(request.files.getlist('NLP_Input_corpus'))
@@ -56,8 +55,8 @@ def upload():
     if fileDict['SNA_Input']:
         return redirect(url_for('sna_blueprint.sheetSelect', case_num=case_num))
 
-    if fileDict['GSA_Input_CSV']:
-        return redirect(url_for('gsa_blueprint.gsa_select', case_num=case_num))
+    if fileDict['GSA_Input_SHP']:
+        return redirect(url_for('gsa_blueprint.shp_vars_get', case_num=case_num))
 
     # if a user does both SNA and NLP, as it stands, the NLP intermediary data will never be gotten to. This is a problem.
     if fileDict['NLP_Input_corpus']:
