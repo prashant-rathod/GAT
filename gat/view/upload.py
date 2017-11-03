@@ -1,4 +1,5 @@
 import random
+from datetime import timedelta
 
 from flask import Blueprint, render_template, request, redirect, url_for
 from flask import make_response
@@ -65,5 +66,5 @@ def landing_page():
     case_num = 100000 + random.randint(0, 100000)
     dao.createFileDict(case_num)
     response = make_response(render_template("upload.html"))
-    response.set_cookie('case_num', str(case_num), expires_days=1)
+    response.set_cookie('case_num', str(case_num), max_age=timedelta(days=1))
     return response
