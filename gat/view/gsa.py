@@ -105,13 +105,14 @@ def get_autocorrelation(case_num):
         return jsonify(year=year, loc=loc, glob=glob)
     return jsonify(year="something went wrong", loc=0, glob=0)
 
+
 @gsa_blueprint.route("/_gsa_csv", methods = ['GET'])
 def upload_csv_get():
     case_num = request.args.get('case_num', None)
     fileDict = dao.getFileDict(case_num)
     GSA_file_SHP = fileDict.get('GSA_Input_SHP')
     gsaSVG = "out/gsa/mymap.svg"
-    gsa_service.generateMap(GSA_file_SHP, gsaSVG)
+    #gsa_service.generateMap(GSA_file_SHP, gsaSVG)
     nameMapping = gsa_service.getNameMapping(gsaSVG, fileDict['GSA_SHP_VARS'][1])
     return render_template("gsaUploadCsv.html", names = nameMapping)
 
@@ -125,11 +126,17 @@ def upload_csv_post():
 
 @gsa_blueprint.route("/_gsa_vars", methods = ['GET'])
 def shp_vars_get():
-    return render_template("gsaVars.html", id = "NAME_1", name_var = "data-name-1")
+    case_num = request.args.get('case_num', None)
+    fileDict = dao.getFileDict(case_num)
+    possible_names = gsa_service.getColumns(fileDict['GSA_Input_DBF'])
+    return render_template("gsaVars.html", id="NAME_1", names=possible_names)
+    #return render_template("gsaVars.html", id = "NAME_1", name_var = "data-name-1", names = possible_names)
 
 @gsa_blueprint.route("/_gsa_vars", methods=['POST'])
 def shp_vars_post():
     case_num = request.args.get('case_num', None)
     fileDict = dao.getFileDict(case_num)
-    fileDict['GSA_SHP_VARS'] = [request.form.get('gsa-id'), request.form.get('gsa-name-var')]
+    name_var = "data-" + request.form.get('gsa-id').lower()
+    fileDict['GSA_SHP_VARS'] = [request.form.get('gsa-id'), name_var]
+    #fileDict['GSA_SHP_VARS'] = [request.form.get('gsa-id'), request.form.get('gsa-name-var')]
     return redirect(url_for("gsa_blueprint.upload_csv_get", case_num = case_num))

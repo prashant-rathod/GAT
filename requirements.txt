@@ -39,3 +39,4 @@ community
 pymc
 validators
 dateparser
+dbfread

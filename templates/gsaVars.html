@@ -7,11 +7,27 @@
 <body>
 <form enctype="multipart/form-data" method="post">
     <p>Id</p>
-    <input type="text" name="gsa-id" id="gsa-id" value="{{ id }}">
+    <select name="gsa-id" id="gsa-id" >
+        {% for name in names %}
+            {% if name == id %}
+                <option value="{{ name }}" selected>{{ name }}</option>
+            {% else %}
+                <option value="{{ name }}">{{ name }}</option>
+            {% endif %}
+        {% endfor %}
+    </select>
     <br>
 
-    <p>Name Variable</p>
-    <input type="text" name="gsa-name-var" id="gsa-name-var" value="{{ name_var }}">
+    <!--<p>Name Variable</p>
+    <select name="gsa-name-var" id="gsa-name-var">
+        {% for name in names %}
+            {% if name == name_var %}
+                <option value="{{ name }}" selected>{{ name }}</option>
+            {% else %}
+                <option value="{{ name }}">{{ name }}</option>
+            {% endif %}
+        {% endfor %}
+    </select>-->
 
     <input type="submit" value="CONTINUE">
 </form>

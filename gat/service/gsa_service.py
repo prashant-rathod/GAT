@@ -1,6 +1,7 @@
 import csv
 import json
-from xml.dom import minidom
+#from xml.dom import minidom
+from dbfread import DBF
 
 from gat.core.gsa.misc import util, map_generator
 
@@ -42,12 +43,11 @@ def tempParseGSA(GSA_file_CSV, GSA_file_SHP, idVar, nameVar):
 def generateMap(GSA_file_SHP, path):
     map_generator.generateMap(GSA_file_SHP, path)
 
-def getNameMapping(path, nameVar):
-    doc = minidom.parse(path)
-    ret = [path.getAttribute(nameVar) for path in doc.getElementsByTagName('path')]
-    doc.unlink()
-    return ret
+def getColumns(path):
+    return DBF(path).field_names
 
+def getNameMapping(path, nameVar):
+    return [record[nameVar] for record in DBF(path).records]
 
 def parseGSA(GSA_file_CSV, GSA_file_SVG):
     if GSA_file_CSV == None or GSA_file_SVG == None:
