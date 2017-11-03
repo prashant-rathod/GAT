@@ -20,7 +20,8 @@ def gsa_select():
     #csv = "usjoin.csv" if sample_path == "usa" else "IRQcasualties.csv"
     #shp = "us48.shp" if sample_path == "usa" else "IRQ_adm1.shp"
 
-    csv = "IRQcasualties.csv"
+    #csv = "IRQcasualties.csv"
+    csv = "IRQattacks_Oct27_GSA.csv"
     shp = "IRQ_adm1.shp"
 
     if 'GSA_Input_CSV' not in fileDict:

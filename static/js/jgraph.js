@@ -114,6 +114,73 @@ var jgraph = (function () {
             }
             this.animate();
         },
+
+        /**
+        * 
+        */
+        testing_subgraph: function(single_node){
+            var self, node_default, i;
+            self = this;
+            //node_default = new THREE.Color(0xb7ecff);
+            for (i = 0; i < self.nodes.length; i += 1) {
+                if (self.nodes[i].name === single_node) {
+                    self.nodes[i].material = self.makeMaterial(0xb7ecff);
+                    break;
+                }
+            }
+
+            
+            if (this.runOptimization) {
+                this.optimize();
+            }
+        },
+
+        /**
+        *
+        * Create subgraph from jgraph
+        * Input: json_object
+        *        The json object should simply contain all the nodes that are in the subgraph.
+        *        Ex: {node1: name1, node2: name2, node3: name3, node4: name4, etc...}
+        * Output: visualization of a subgraph (all nodes/edges that are not part of the subgraph will be colored 0xb7ecff)
+        *
+        */
+
+       testing_subgraph: function(json_object){
+            this.reset();
+            var self, node_default, i, j;
+            self = this;
+
+            // create a list with node names from the json object
+            var arr = Object.keys(json_object).map(function(k) { return json_object[k] });
+
+            // if node not in arr, then make it into default color
+            for (i = 0; i < self.nodes.length; i += 1) {
+                if (arr.indexOf(self.nodes[i].name) === -1) {
+                    self.nodes[i].material = self.makeMaterial(0xb7ecff);
+                }
+            }
+
+            // if edge does not share any intersection with the nodes in arr, make it into default color
+            for (j = 0; j < self.edges.length; j += 1){
+                if (arr.indexOf(self.edges[j].source) === -1 && arr.indexOf(self.edges[j].target) === -1) {
+                    self.edges[j].material = self.makeMaterial(0xb7ecff);
+                }
+            }
+            
+            // optimize the code
+            if (this.runOptimization) {
+                this.optimize();
+            }
+        },
+
+        /*
+        * Reset the graph to the original
+        */
+        reset: function(){
+            this.clear();
+            this.draw(this.current);
+        },
+
         /**
          * Draws webgl meshes from input javascript object
          */

@@ -1,7 +1,7 @@
-Location, time1, time2, time3, time4, time5, etc.
-Location1, data1, data2, data3, data4, data5
-Location2, data1, data2, data3, data4, data5
-Location3, data1, data2, data3, data4, data5
-Location4, data1, data2, data3, data4, data5
-Location5, data1, data2, data3, data4, data5
+Location ,time1,time2,time3,time4,time5,etc.
+Location1,data1,data2,data3,data4,data5
+Location2,data1,data2,data3,data4,data5
+Location3,data1,data2,data3,data4,data5
+Location4,data1,data2,data3,data4,data5
+Location5,data1,data2,data3,data4,data5
 Etc.

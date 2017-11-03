@@ -9,7 +9,7 @@
     <link href="{{url_for('static', filename='css/jgraph-custom.css')}}" rel="stylesheet">
     <script src="{{url_for('static', filename='js/jquery-1.11.1.min.js')}}"></script>
     <script src="{{url_for('static', filename='js/bootstrap.min.js')}}"></script>
-    <script src="{{url_for('static', filename='js/jgraph_test1.min.js')}}"></script>
+    <script src="{{url_for('static', filename='js/jgraph_test3.min.js')}}"></script>
     <script src="{{url_for('static', filename='js/jgraph-custom.js')}}"></script>
     <title>Jgraph</title>
   </head>
@@ -56,17 +56,24 @@
                 systemMeasures contains measures where key is name of measure, value is measure value
                 also contains dictionary of measure descriptions (systemMeasures["Description"]) used for tooltips
               -->
-              {% if measure not in ["Resilience","Description","Cliques"] -%}
+              {% if measure not in ["Resilience","Description","Cliques","SentimentDict","Robustness"] -%}
               <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="left" title="{{systemMeasures['Description'][measure]}}"></i>
               {{ measure }}: {{ systemMeasures[measure] }}
               {% endif -%}
             </div>
           {% endfor -%}
+          <div>
+            {% if systemMeasures.get("SentimentDict") -%}
+            <a id="sentimentDict" name="sentimentDict" target="_blank" href="{{ url_for('sna_blueprint.view_sent_change', case_num=case_num) }}">
+              View Sentiment Change
+            </a>
+            {% endif -%}
+          </div>
           <!-- handle community detection -->
           <div id="commDetection">
             {% if systemMeasures.get("Cliques") == None -%}
-              <form id="resilienceForm" enctype="multipart/form-data" method="post">
-                <input id="resilience" name="cliqueSubmit" type="submit" value="Find Influence Communities" onclick="handleCliqueClick();" href="javascript:void(0)" data-toggle="tooltip" data-placement="left" title="{{systemMeasures['Description']['Cliques']}}">
+              <form id="cliqueForm" enctype="multipart/form-data" method="post">
+                <input id="cliques" name="cliqueSubmit" type="submit" value="Find Influence Communities" onclick="handleCliqueClick();" href="javascript:void(0)" data-toggle="tooltip" data-placement="left" title="{{systemMeasures['Description']['Cliques']}}">
               </form>
             {% else -%}
             <table id="cliqueTable">
@@ -78,7 +85,13 @@
                 {% for clique in systemMeasures['Cliques'] -%}
                 <tr>
                     <th>{{ clique[0] }}</th>
-                    <td>{{ clique[1] }}</td>
+                    <td>
+                      <a onclick='
+                      var centralNode = "{{ clique[0]}}";
+                      handleSubgraphClick(centralNode)'>
+                        View
+                      </a>
+                    </td>
                 </tr>  
                 {% endfor -%}
             </table>
@@ -88,7 +101,7 @@
           <div id="resilienceInfo">
             {% if systemMeasures.get("Resilience") == None -%}
               <form id="resilienceForm" enctype="multipart/form-data" method="post">
-                <input id="resilience" name="resilienceSubmit" type="submit" value="Calculate Resilience" onclick="handleResilienceClick();" href="javascript:void(0)" data-toggle="tooltip" data-placement="left" title="{{systemMeasures['Description']['Resilience']}}">
+                <input id="resilience" name="resilienceSubmit" type="submit" value="Calculate Resilience" onclick="handleResilienceClick();" href="javascript:void(0)" data-toggle="tooltip" data-placement="left" title="{{systemMeasures['Description']['Resilience']}}"/>
               </form>
             {% else -%}
             <table id="resilienceTable">
@@ -145,10 +158,20 @@
     <div class = "output-window" id = "nodeWindow" style = "position:fixed;top:0;right:0;border:solid;">
       <div id = "toolbar" class='slider'>
         <input data-toggle="tooltip" data-placement="left" title="{{systemMeasures['Description']['AddNode']}}" id="add" type="submit" value="Add Node" onclick="showAddNodeWindow()"/>
+        <input data-toggle="tooltip" data-placement="left" title="{{systemMeasures['Description']['EventAddition']}}" id="event" type="submit" value="Add Events" onclick="showAddEventWindow()"/>
         <form id="removeNodeForm" enctype="multipart/form-data" method="post">
           <input data-toggle="tooltip" data-placement="left" title="{{systemMeasures['Description']['RemoveNode']}}"id="remove" name="removeNodeSubmit" type="submit" value="Remove Node" href="javascript:void(0)" >
           <input type="text" placeholder="Node Name" name=a id="delete">
         </form>
+      </div>
+      <div id="addEventWindow" class='slider closed'>
+        <form id="eventForm" enctype="multipart/form-data" method="post">
+          Iterations to simulate: <input type="text" value="1" name="iters">
+          <input id="eventSubmitButton" name="eventSubmit" type="submit" value="Add" href="javascript:void(0)" >
+        </form>
+        <div class="centeredIcon" onclick="showAddEventWindow()">
+          <i class='fa fa-arrow-circle-down'></i>
+        </div>
       </div>
       <!-- form element for adding a new node -->
       <div id="addNodeWindow" class='slider closed'>
@@ -159,8 +182,8 @@
             <tr>
               <td>Node Type:</td>
               <td>
-                <select name="nodeSet">
-                 {% for set in graph.nodeSet %}
+                <select name="classList">
+                 {% for set in graph.classList %}
                    <option value="{{set}}">
                      {{set}}
                    </option>
@@ -218,7 +241,7 @@
         <!-- color options form -->
         <form enctype = "multipart/form-data" method = "post">
           <b>Colors</b><br>
-          {% for set in graph.nodeSet %}
+          {% for set in graph.classList %}
             {{set}}:
             <select name = "{{set}}Color">
               {% for c in colors %}
@@ -339,6 +362,16 @@
         });
       });
 
+      handleSubgraphClick = function(centralNode) {
+        console.log(centralNode);
+        $.getJSON("{{ url_for('sna_blueprint.subgraph_viz', case_num=case_num) }}", {
+              centralNode: centralNode
+            }, function(data) {
+              console.log(data)
+              jgraph.testing_subgraph(data);
+          });
+      }
+
       //update info displays with node data
       update = function(nodeDict) {
         console.log("NodeDict:",nodeDict)
@@ -365,14 +398,17 @@
         if ($("#betweenness").length) {
           $('#betweenness').prepend('<i class="fa fa-info-circle white-tooltip" data-toggle="tooltip" data-placement="left" title="{{systemMeasures["Description"]["betweenness"]}}"></i> ')
         }
+        if ($("#sentiment").length) {
+          $('#sentiment').prepend('<i class="fa fa-info-circle white-tooltip" data-toggle="tooltip" data-placement="left" title="{{systemMeasures["Description"]["sentiment"]}}"></i> ')
+        }
         $('[data-toggle="tooltip"]').tooltip();
         // append all attributes with key and value
         for (var feature in nodeDict['attributes']) {
-          if (feature == "block") {
+          if (feature == "ontClass") {
             $("#attributeInfo").append("<span id='class'>Class: </span>")
             $("#attributeInfo").append("<span>"+nodeDict['attributes'][feature]+"</span><br>")
           }
-          else {
+          else if (feature != "block" && feature != "Name") {
             $("#attributeInfo").append("<span id='"+feature+"'>"+feature+": </span>")
             var list = []
             for (var item in nodeDict['attributes'][feature]) {

@@ -1,10 +1,8 @@
-scipy
+scipy==0.19.0
 click==6.7
 cycler==0.10.0
 decorator==4.0.11
 Flask==0.12.2
-ipython==6.0.0
-ipython-genutils==0.2.0
 itsdangerous==0.24
 jedi==0.10.2
 jgraph==0.2.1
@@ -21,7 +19,7 @@ prompt-toolkit==1.0.14
 ptyprocess==0.5.1
 Pygments==2.2.0
 pyparsing==2.2.0
-pysal
+pysal==1.12.0
 python-dateutil==2.6.0
 python-louvain==0.8
 pytz==2017.2
@@ -29,7 +27,8 @@ scikit-learn==0.18.1
 simplegeneric==0.8.1
 six==1.10.0
 sklearn
-spacy
+spacy>=1.8.0,<2.0.0
+-e https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-1.2.0/en_core_web_sm-1.2.0.tar.gz#egg=en_core_web_sm-1.2.0
 textacy
 traitlets==4.3.2
 wcwidth==0.1.7
@@ -38,3 +37,5 @@ xlrd==1.0.0
 newspaper3k
 community
 pymc
+validators
+dateparser
