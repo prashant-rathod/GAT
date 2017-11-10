@@ -49,7 +49,7 @@ def get_batch(image_dir, label_dict, batch_size, width, height, channels):
 
 image_dir = "/home/cheesecake/Desktop/KHATT_v1.0/LineImages_v1.0/FixedTextLineImages/Train"
 label_path = '/home/cheesecake/GAT/gat/scraping/ArabicTextExtractor/FixedTextLinesLatinTransliteration/TrainLabels_Translated.txt'
-width,height,channels = 400,256,3
+height,width,channels = 256,256,3
 
 
 image_batch, label_batch = get_batch(image_dir,get_labels(label_path), 16, width,height,channels)
@@ -74,6 +74,7 @@ model.add(Conv2D(64, (3, 3), activation='relu'))
 model.add(MaxPooling2D(pool_size=(2, 2)))
 model.add(Dropout(0.25))
 model.add(Flatten())
+model.add(SpatialPyramidPooling([1, 2, 4]))
 model.add(Dense(128, activation='relu'))
 model.add(Dropout(0.5))
 model.add(Dense(43, activation='softmax'))
