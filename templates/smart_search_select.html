@@ -90,19 +90,6 @@
 	  });
 
     </script>
-    <style>
-		body {
-			height:100vh;
-		}
-		label {
-			display: block;
-		}
-		center {
-			color: white;
-		}
-
-    </style>
-
 </head>
 
 <style>
@@ -110,6 +97,22 @@
  font-size: 100%;
  font-family: Segoe UI;
 }
+
+#name_entities{
+	margin: 0px 0px;
+}
+
+#NE_titles{
+	position: relative;
+	display: block;
+	margin-bottom: 3px;
+	font-weight: bold;
+	line-height: 1;
+	font-family: Segoe, "Segoe UI";
+	color: white;
+}
+
+
 
 </style>
 
@@ -294,18 +297,27 @@ select,input {
                 	<td><i>{{sentences[4]}}</i></td>
                     <td class="centered"><input name= "cameo" type="radio"></td>
 				</tr>
+                <tr> 
+                	<td>
+                    <select name = "cameos" id="cameos">
+                		{% for code in cameoCodes %}
+        					<option><i>{{ code }}<i></option>
+			    		{% endfor %}
+          			</select>
+                    </td>
+                    <td class="centered"><input name= "cameo" type="radio"></td>
+				</tr>
           </table>
           <br>
-          <select name = "cameos" id="cameos">
-                {% for code in cameoCodes %}
-        			<option>{{ code }}</option>
-			    {% endfor %}
-          </select>
+          <label id = "NE_titles"> Name Entities: </label>
+          <textarea id="name_entities" form="cameoFORM" rows="4" cols="30" style="display:inline;"></textarea>
           <br>
           <br>
-          <textarea form="cameoFORM" rows="4" cols="50"></textarea>
+          <label id = "NE_titles"> Number of Articles to be Scraped: (1 to 400) </label>
+          <input type="number" name="numArticlesScraped" min="1" max="400">
           <br>
-          <input type="submit" value="CONTINUE" style="box-sizing:border-box;"/>
+          <br>
+          <input type="submit" value="CONTINUE" style="box-sizing:border-box; margin:0"/>
         </form>
     </div>
   </section>
