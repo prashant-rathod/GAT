@@ -14,6 +14,8 @@ from keras import backend as K
 import scipy
 
 
+#First approach is just 47*125 output of softmax layer
+
 #So from here hopefully the one hot is done, now the labels will have to be transformed and then use the .fit() method to train the network
 #Potentially need to make the image reading better
 
@@ -53,6 +55,22 @@ def get_batch(image_dir, label_dict, batch_size, width, height, channels):
         label_batch.append(label_dict[image_name[0:image_name.find(".")]])
     return image_batch, label_batch
 
+def to_one_hot(label_list):
+    for labels in label_list:
+        for i, label in enumerate(labels):
+            temp = np.zeros(47, dtype=int)
+            temp[label] = 1
+            temp = temp.tolist()
+            labels[i] = temp
+    ans = []
+    for sublist in label_list:
+        for item in sublist:
+            for i in item:
+                ans.append(i)
+    while len(ans) < 5875:
+        ans.append(0)
+    return ans
+
 model = Sequential()
 model.add(Conv2D(32, kernel_size=(3, 3), activation='relu', input_shape=(None, None, 3)))
 model.add(Conv2D(64, (3, 3), activation='relu'))
@@ -61,7 +79,7 @@ model.add(Dropout(0.25))
 model.add(SpatialPyramidPooling([1, 2, 4]))
 model.add(Dense(128, activation='relu'))
 model.add(Dropout(0.5))
-model.add(Dense(43, activation='softmax'))
+model.add(Dense(5875, activation='sigmoid'))
 model.compile(loss=keras.losses.categorical_crossentropy,
               optimizer=keras.optimizers.adam(),
               metrics=['accuracy'])
@@ -69,7 +87,7 @@ model.compile(loss=keras.losses.categorical_crossentropy,
 image_dir = "/home/cheesecake/Desktop/KHATT_v1.0/LineImages_v1.0/FixedTextLineImages/Train"
 label_path = '/home/cheesecake/GAT/gat/scraping/ArabicTextExtractor/FixedTextLinesLatinTransliteration/TrainLabels_Translated.txt'
 height,width,channels = 256,256,3
-batch_size = 16
+batch_size = 1
 
 label_list = get_labels(label_path).values()
 all_labels = []
@@ -79,7 +97,6 @@ for i in label_list:
 
 one_hot_dict = create_one_hot(all_labels)
 one_hot_dict[''] = len(one_hot_dict)
-print(one_hot_dict)
 
 for i in range(1000):
     image_batch, label_batch = get_batch(image_dir, get_labels(label_path), batch_size, width, height, channels)
@@ -87,7 +104,10 @@ for i in range(1000):
         image = image_batch[i]
         plt.imshow(image)
         plt.show()
-
-    for i in range(batch_size):
+    for i, image in enumerate(image_batch):
         image_batch[i] = image_batch[i].astype('float32')
         image_batch[i] = image_batch[i] / 255
+    for labels in label_batch:
+        for i,label in enumerate(labels):
+            labels[i] = one_hot_dict[labels[i]]
+    model.fit(image_batch, label_batch)
