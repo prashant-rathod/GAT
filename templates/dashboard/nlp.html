@@ -96,12 +96,12 @@
                         </div>
                     </div>
                     <div class="tab">
-                        <p><a href="{{ url_for('nlp_blueprint.jgvis', case_num=case_num) }}" style="color:lightblue">Click here for 3D visualization</a></p>
                         <input id="tab-five" type="checkbox" name="tabs">
                         <label for="tab-five">Sentiment Mining</label>
                         <div class="tab-content">
                             <img src={{ nlp_new_example_sentiment }} height="50%" width="90%">
                         </div>
+                        <p><a href="{{ url_for('nlp_blueprint.jgvis', case_num=case_num) }}" style="color:lightblue">Click here for 3D visualization of Sentiment Mining</a></p>
                     </div>
 
                 {% endif %}
