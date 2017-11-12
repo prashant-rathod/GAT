@@ -49,8 +49,8 @@ def get_batch(image_dir, label_dict, batch_size, width, height, channels):
     label_batch = []
     for i in range(batch_size):
         image_name = random.choice(os.listdir(image_dir))
-        img = load_img(image_dir+'/'+image_name) # this is a PIL image
-        x = img_to_array(img)  # this is a Numpy array with shape (3, 150, 150)
+        img = load_img(image_dir+'/'+image_name, grayscale=False)
+        x = img_to_array(img)
         image_batch.append(x)
         label_batch.append(label_dict[image_name[0:image_name.find(".")]])
     return image_batch, label_batch
@@ -72,12 +72,13 @@ def to_one_hot(label_list):
     return ans
 
 model = Sequential()
-model.add(Conv2D(32, kernel_size=(3, 3), activation='relu', input_shape=(None, None, 3)))
+model.add(Conv2D(32, (3,3), activation='relu', input_shape=(None, None, 3)))
 model.add(Conv2D(64, (3, 3), activation='relu'))
 model.add(MaxPooling2D(pool_size=(2, 2)))
 model.add(Dropout(0.25))
+model.add(Conv2D(32, (3, 3), activation='relu'))
 model.add(SpatialPyramidPooling([1, 2, 4]))
-model.add(Dense(128, activation='relu'))
+model.add(Dense(5875, activation='relu'))
 model.add(Dropout(0.5))
 model.add(Dense(5875, activation='sigmoid'))
 model.compile(loss=keras.losses.categorical_crossentropy,
@@ -102,7 +103,7 @@ for i in range(1000):
     image_batch, label_batch = get_batch(image_dir, get_labels(label_path), batch_size, width, height, channels)
     for i in range(0):
         image = image_batch[i]
-        plt.imshow(image)
+        plt.imshow(image, cmap='gray')
         plt.show()
     for i, image in enumerate(image_batch):
         image_batch[i] = image_batch[i].astype('float32')
@@ -110,4 +111,8 @@ for i in range(1000):
     for labels in label_batch:
         for i,label in enumerate(labels):
             labels[i] = one_hot_dict[labels[i]]
-    model.fit(image_batch, label_batch)
+    image = image_batch[0]
+    new_batch = np.zeros((1,image.shape[0],image.shape[1],image.shape[2]))
+    new_batch[0,:,:,:] = image
+    label_batch = np.array(label_batch)
+    model.fit(new_batch, label_batch)
