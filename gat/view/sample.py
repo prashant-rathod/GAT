@@ -52,6 +52,8 @@ def nlp_sample(sample_path):
     fileDict = dao.getFileDict(case_num)
     if sample_path == 'iran':
         fileDict['NLP_Input_Sentiment'] = 'static/sample/nlp/sample_sentiment.txt'
+    elif sample_path == 'new_nlp_example':
+        fileDict['NLP_New_Example'] = 'static/sample/nlp/nlp_new_example.txt'
     else:
         fileDict['NLP_Input_corpus'] = url_for('static', filename="sample/nlp/" + sample_path + '/')[1:]
     return redirect(url_for('visualize_blueprint.visualize', case_num=case_num))
