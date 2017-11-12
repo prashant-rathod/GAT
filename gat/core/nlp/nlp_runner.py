@@ -277,7 +277,6 @@ def sentimentGraph(docs):
             graph.add_edge(k1, k2, sentiment = crossEnt[k1][k2][3])
     return graph
 
-
 def emotionalValences(docs, lexicon):
     # Formerly what built the tropes
     # Input: docs, the emotional lexicon

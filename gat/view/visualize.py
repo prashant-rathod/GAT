@@ -1,9 +1,10 @@
 import copy
+import gc
 
 from flask import Blueprint, render_template, request
 
 from gat.dao import dao
-from gat.service import scraper_service, sna_service, gsa_service, nlp_service, NLP_TO_NETWORK
+from gat.service import scraper_service, sna_service, gsa_service, nlp_service, NLP_TO_NETWORK, NLP_OTHER
 
 visualize_blueprint = Blueprint('visualize_blueprint', __name__)
 
@@ -56,22 +57,44 @@ def visualize():
     fileDict['copy_of_graph'] = copy_of_graph
 
     if NLP_dir:
-        nlp_summary, nlp_entities, nlp_network, nlp_sources, nlp_tropes = nlp_service.nlp_dir(NLP_dir)
+        nlp_summary, nlp_entities, nlp_network, nlp_sources, nlp_tropes= nlp_service.nlp_dir(NLP_dir)
     else:
-        nlp_summary, nlp_entities, nlp_network, nlp_sources, nlp_tropes = nlp_service.nlp_urls(NLP_urls)
+        nlp_summary, nlp_entities, nlp_network, nlp_sources, nlp_tropes= nlp_service.nlp_urls(NLP_urls)
 
     nlp_sentiment = nlp_service.sentiment(NLP_file_sentiment)
     research_question = scraper_service.scrape(research_question)
 
     nlp_new_example_sentiment = ''
     nlp_new_example_relationship = ''
-    if NLP_new_example_file != None:
+    if NLP_new_example_file is not None:
         nlp_new_example_sentiment = NLP_TO_NETWORK.sentiment_mining(NLP_new_example_file)
+        gc.collect()
         nlp_new_example_relationship = NLP_TO_NETWORK.relationship_mining(NLP_new_example_file)
+        gc.collect()
+        #nlp_3d_json, G = NLP_TO_NETWORK.sentiment3D(NLP_new_example_file)
+        #nlp_wordcloud = NLP_OTHER.wordcloud(NLP_new_example_file)
+        #gc.collect()
+        #nlp_stemmerize = NLP_OTHER.stemmerize(NLP_new_example_file)
+        #nlp_lemmatize = NLP_OTHER.lemmatize(NLP_new_example_file)
+        #nlp_abstract = NLP_OTHER.abstract(NLP_new_example_file)
+        #nlp_top20_verbs = NLP_OTHER.top20_verbs(NLP_new_example_file)
+        #nlp_top20_persons = NLP_OTHER.top20_persons(NLP_new_example_file)
+        #nlp_top20_locations = NLP_OTHER.top20_locations(NLP_new_example_file)
+        #nlp_top20_organizations = NLP_OTHER.top20_organizations(NLP_new_example_file)
+        #nlp_sentence_sentiment_distribution = NLP_OTHER.sentence_sentiment_distribution(NLP_new_example_file)
 
         nlp_summary = 'Enable'
 
     return render_template('visualizations.html',
+                           #nlp_wordcloud=nlp_wordcloud,
+                           #nlp_stemmerize=nlp_stemmerize,
+                           #nlp_lemmatize=nlp_lemmatize,
+                           #nlp_abstract=nlp_abstract,
+                           #nlp_top20_verbs=nlp_top20_verbs,
+                           #nlp_top20_persons=nlp_top20_persons,
+                           #nlp_top20_locations=nlp_top20_locations,
+                           #nlp_top20_organizations=nlp_top20_organizations,
+                           #nlp_sentence_sentiment_distribution=nlp_sentence_sentiment_distribution,
                            research_question=research_question,
                            SNAbpPlot=SNAbpPlot,
                            graph=copy_of_graph,
@@ -88,6 +111,7 @@ def visualize():
                            sp_dyn=sp_dyn,
                            error=error,
                            case_num=case_num,
+                           #nlp_3d_json=nlp_3d_json,
                            nlp_sentiment=nlp_sentiment,
                            nlp_summary=nlp_summary,
                            nlp_entities=nlp_entities,
