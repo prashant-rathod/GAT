@@ -75,7 +75,7 @@ class SVOSENT(object):
                 corrected_names.append(e.text)
             if e.label_ == 'GPE' or e.label == 'LOC':
                 locations.append(e.text)
-            #                if e.text.lower() in self.allcities:   # detect cities, slowdone the speed
+            # if e.text.lower() in self.allcities:   # detect cities, slowdone the speed
             #                    cities.append(e.text)
             if e.label_ == 'PERSON':
                 persons.append(e.text)
@@ -104,11 +104,10 @@ class SVOSENT(object):
 
         # event date
         try:
-            event_date = list(set(sentence.replace('.', '').split()) & set(['Monday', 'Tuesday', 'Wednesday', 'Tursday',
-                                                                            'Friday', 'Saturday', 'Sunday', 'Today',
-                                                                            'today',
-                                                                            'Tomorrow', 'tomorrow', 'Yesterday',
-                                                                            'yesterday']))[0]
+            event_date = list(set(sentence.replace('.', '').split()) & {'Monday', 'Tuesday', 'Wednesday', 'Tursday',
+                                                                        'Friday', 'Saturday', 'Sunday', 'Today',
+                                                                        'today', 'Tomorrow', 'tomorrow', 'Yesterday',
+                                                                        'yesterday'})[0]
 
         except:
             try:
@@ -120,7 +119,7 @@ class SVOSENT(object):
                 event_date = None
 
 
-            # correct subject and object
+                # correct subject and object
         corrected_subjects = []
         corrected_objects = []
         corrected_names_copy = list(corrected_names)

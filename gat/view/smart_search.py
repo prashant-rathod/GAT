@@ -1,12 +1,13 @@
 import time
+from threading import Lock
+import pandas as pd
 from flask import Blueprint, render_template, request, redirect, url_for, jsonify
 from gat.CameoPrediction.PredictCameo import top5CAMEO
 from gat.dao import dao
 from gat.service.SmartSearch.smart_search_thread import SmartSearchThread
 
 # No need of global here. We are just modifying the
-search_workers = {}
-
+search_workers: dict[str, SmartSearchThread] = {}
 
 smart_search_blueprint = Blueprint('smart_search_blueprint', __name__)
 
@@ -55,7 +56,10 @@ def smart_search_progress(case_num, sentence):
         return redirect(url_for('smart_search_blueprint.results', case_num=case_num))
 
 
-
 @smart_search_blueprint.route('/results/<casenum>/<sentence>', methods=['GET'])
-def smart_search_results(casenum, sentence):
-    raise NotImplemented
+def smart_search_results(case_num, sentence):
+    selected_thread = search_workers[case_num + 'sentence' + sentence]
+    selected_thread.result_lock.acquire()
+    result = selected_thread.result
+    selected_thread.result_lock.release()
+
