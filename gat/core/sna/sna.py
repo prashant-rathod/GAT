@@ -392,6 +392,94 @@ class SNA():
         self.sent_outputs = ret
         return ret
 
+    def meaning_value_chains(self):
+    # this function takes an attribute list and constructs meaning value chains by iterating through attribute...
+    # combinations for each node and returning a list of the average weight for each value chain. The final result...
+    # is a list of every possible value chain for each actor and the average weight of each value chain. 'Heavier'...
+    # VCs can be seen as having higher centers of gravity.
+
+        b = self.attrList
+        y = len(b)
+        tit_list = []
+        pos_list = []
+        org_list = []
+        age_list = []
+        rol_list = []
+        bel_list = []
+
+        # iterating through attribute sheet to create lists of the ID, attribute and weight for every actor for...
+        # each possible attribute.
+        for n in range(0, y):
+            for attr in range(0, (len(b[n]))):
+                if b[n][attr]['header'] == 'Title':
+                    tit_list.append(
+                        (b[n][0]['val'], b[n][attr]['val'], b[n][attr]['header'], b[n][attr + 1]['val']))
+                if b[n][attr]['header'] == 'Position':
+                    pos_list.append(
+                        (b[n][0]['val'], b[n][attr]['val'], b[n][attr]['header'], b[n][attr + 1]['val']))
+                if b[n][attr]['header'] == 'Org':
+                    org_list.append(
+                        (b[n][0]['val'], b[n][attr]['val'], b[n][attr]['header'], b[n][attr + 1]['val']))
+                if b[n][attr]['header'] == 'Agent':
+                    age_list.append(
+                        (b[n][0]['val'], b[n][attr]['val'], b[n][attr]['header'], b[n][attr + 1]['val']))
+                if b[n][attr]['header'] == 'Role':
+                    rol_list.append(
+                        (b[n][0]['val'], b[n][attr]['val'], b[n][attr]['header'], b[n][attr + 1]['val']))
+                if b[n][attr]['header'] == 'Belief':
+                    bel_list.append(
+                        (b[n][0]['val'], b[n][attr]['val'], b[n][attr]['header'], b[n][attr + 1]['val']))
+
+        # combining the above attribute lists into a single node list that follows the form of the VC's we're making
+        nod_list = []
+        for x in range(0, len(pos_list)):
+            for y in range(0, len(org_list)):
+                if pos_list[x][0] == org_list[y][0]:
+                    nod_list.append((pos_list[x][0], pos_list[x][1], org_list[y][1], org_list[y][3]))
+
+        for x in range(0, len(org_list)):
+            for y in range(0, len(age_list)):
+                if org_list[x][0] == age_list[y][0]:
+                    nod_list.append((org_list[x][0], org_list[x][1], age_list[y][1], age_list[y][3]))
+
+        for x in range(0, len(age_list)):
+            for y in range(0, len(rol_list)):
+                if age_list[x][0] == rol_list[y][0]:
+                    nod_list.append((age_list[x][0], age_list[x][1], rol_list[y][1], rol_list[y][3]))
+
+        for x in range(0, len(rol_list)):
+            for y in range(0, len(bel_list)):
+                if rol_list[x][0] == bel_list[y][0]:
+                    nod_list.append((rol_list[x][0], rol_list[x][1], bel_list[y][1], bel_list[y][3]))
+
+        # creating a list of every possible value chain for each actor
+        av_weight_list = []
+        vc_list = []
+        [vc_list.append((tm_1[0], tm_1[1], tm_1[2], tm_1[3],
+                         tm_2[0], tm_2[1], tm_2[2], tm_2[3],
+                         tm_3[0], tm_3[1], tm_3[2], tm_3[3],))
+            for tm_1 in nod_list
+            for tm_2 in nod_list
+            for tm_3 in nod_list if tm_1[0] == tm_2[0] and tm_2[0] == tm_3[0]]
+
+        # creating a graph for each value chain and returning the edges as weights to be used to calculate the...
+        # average weight for each task model. I spent a lot of time trying to find a measure that we could..
+        # effectively use incorporating a more robust method, but ASPL can run into significant problems with...
+        # negative edge weights in hierarchical graphs. nx.bellman_ford() works with negative edge weights, but...
+        # it's really slow for the amount of iterations necessary here.
+        for vc in vc_list:
+            self.vc_graph = nx.Graph()
+            vc_edge_list = ([vc[0], vc[2], float(vc[3])],
+                            [vc[2], vc[6], float(vc[7])],
+                            [vc[6], vc[10], float(vc[11])])
+            self.vc_graph.add_weighted_edges_from(vc_edge_list, 'W')
+            weights = nx.get_edge_attributes(self.vc_graph, 'W')
+            weights_list = list(weights.values())
+            weights_mean = np.mean(weights_list)
+            av_weight_list.append((vc_edge_list, weights_mean))
+
+        return av_weight_list
+
     # copy the original social network graph created with user input data.
     # this will be later used to reset the modified graph to inital state
     def copyGraph(self):
