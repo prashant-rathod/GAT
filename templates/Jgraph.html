@@ -64,7 +64,7 @@
           {% endfor -%}
           <div>
             {% if systemMeasures.get("SentimentDict") -%}
-            <a id="sentimentDict" name="sentimentDict" target="_blank" href="{{ url_for('sna_blueprint.view_sent_change', case_num=case_num) }}">
+            <a id="sentimentDict" name="sentimentDict" href="{{ url_for('sna_blueprint.view_sent_change', case_num=case_num) }}">
               View Sentiment Change
             </a>
             {% endif -%}

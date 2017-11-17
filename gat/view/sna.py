@@ -1,7 +1,7 @@
 import warnings
 
 import xlrd
-from flask import Blueprint, render_template, request, redirect, url_for, jsonify, json
+from flask import Blueprint, render_template, request, redirect, url_for, jsonify, json, send_file
 
 from gat.core.sna.sna import SNA
 from gat.dao import dao
@@ -160,6 +160,4 @@ def view_sent_change():
     case_num = request.args.get('case_num', None)
     fileDict = dao.getFileDict(case_num)
     response = fileDict["SentimentChange"]
-    return render_template("sentiment_change.html",
-                    sent_json = json.dumps(response, sort_keys=True, indent=4, separators=(',',':'))
-                    )
+    return send_file(response,as_attachment=True)

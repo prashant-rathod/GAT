@@ -6,7 +6,7 @@ import xlrd
 from networkx.algorithms import bipartite as bi
 from networkx.algorithms import centrality
 from itertools import product
-from collections import defaultdict
+from collections import defaultdict, namedtuple
 from flask import jsonify
 import pandas as pd
 import datetime
@@ -40,7 +40,7 @@ class SNA():
         self.node_attributes_dict = {}
         self.classList = ['Agent','Organization','Audience','Role','Event','Belief','Symbol','Knowledge','Task','Actor']
         self.attrSheet = attrSheet
-        self.output_dict = {}
+        self.sent_outputs = []
 
     # Read xlsx file and save the header and all the cells, each a dict with value and header label
     # Input: xlsx file, sheet
@@ -300,9 +300,21 @@ class SNA():
         # using datetime to create iterations of flexible length
         dateList = [bombData[x]['Date'] for x in bombData]
         dateIter = (max(dateList) - min(dateList)) / 10
-        output_dict = {}
-        ret = {}
+        SentChange = namedtuple('SentChange', ['source','target','change'])
+
+        ret = []
+
+        def checkScale(num):
+            num = round(num, 5)
+            if num > 1:
+                num = 1
+            if num < 0:
+                num = 0
+            return num
+
+
         for i in range(max_iter):
+            output_rows = []
             nodeList = [(bombData[x]['Actor'], bombData[x]['Target'], bombData[x]['CODE']) for x in bombData if
                          min(dateList) + dateIter * i <= bombData[x]['Date'] < min(dateList) + dateIter * (i + 1)]
             # adding attacks to test graph by datetime period and iterating through to change sentiments
@@ -321,45 +333,50 @@ class SNA():
                                         original = float(item[1]['W'])
 
                                         item[1]['W'] = original * 0.99
-                                        output_dict[node[0] + " towards " + others] = item[1]['W'] - original
-                                        # output_dict[node[0] + " towards " + others + " (previous) "] = original_output
+
+                                        output_rows.append(
+                                            SentChange(node[0], others, checkScale(item[1]['W'] - original)))
+                                        # output_dict[node[0] + " towards " + others] = item[1]['W'] - original
                                     if item[0] == node[1]:
                                         original = float(item[1]['W'])
 
                                         item[1]['W'] = original * 1.05
-                                        output_dict[node[1] + " towards " + others] = item[1]['W'] - original
-                                        # output_dict[node[1] + " towards " + others + " (previous) "] = original_output
+                                        output_rows.append(
+                                            SentChange(node[0], others, checkScale(item[1]['W'] - original)))
+                                        # output_dict[node[1] + " towards " + others] = item[1]['W'] - original
 
                                     # response of city populations - HARDCODED
                                     if item[0] == "Shi'ism" and float(item[1]['W']) > -0.5:
                                         if node[1] == 'Najaf':
                                             original = float(item[1]['W'])
                                             item[1]['W'] = original * 1.05
-                                            output_dict[node[1] + " towards " + others] = item[1]['W'] - original
-                                            # output_dict[node[1] + " towards " + others + " (previous) "] = original_output
+                                            output_rows.append(
+                                                SentChange(node[0], others, checkScale(item[1]['W'] - original)))
+                                            # output_dict[node[1] + " towards " + others] = item[1]['W'] - original
                                         if node[1] == 'Basra':
                                             original = float(item[1]['W'])
                                             item[1]['W'] = original * 1.05
-                                            output_dict[node[1] + " towards " + others] = item[1]['W'] - original
-                                            # output_dict[node[1] + " towards " + others + " (previous) "] = original_output
+                                            output_rows.append(
+                                                SentChange(node[0], others, checkScale(item[1]['W'] - original)))
+                                            # output_dict[node[1] + " towards " + others] = item[1]['W'] - original
                                     if item[0] == "Kurdish Nationalism" and float(item[1]['W']) > -0.5:
                                         if node[1] == 'Kirkuk':
                                             original = float(item[1]['W'])
                                             item[1]['W'] = original * 1.05
-                                            output_dict[node[1] + " towards " + others] = item[1]['W'] - original
-                                            # output_dict[node[1] + " towards " + others + " (previous) "] = original_output
+                                            output_rows.append(
+                                                SentChange(node[0], others, checkScale(item[1]['W'] - original)))
                                     if item[0] == "Sunni'ism" and float(item[1]['W']) > -0.5:
                                         if node[1] == 'Fallujah':
                                             original = float(item[1]['W'])
                                             item[1]['W'] = original * 1.05
-                                            output_dict[node[1] + " towards " + others] = item[1]['W'] - original
-                                            # output_dict[node[1] + " towards " + others + " (previous) "] = original_output
+                                            output_rows.append(SentChange(node[0], others, checkScale(item[1]['W'] - original)))
+                                            # output_dict[node[1] + " towards " + others] = item[1]['W'] - original
                                     if others == 'ISIL_al-Baghdadi':
                                         original = float(item[1]['W'])
                                         item[1]['W'] = original * 0.99
-                                        output_dict[node[1] + " towards " + others] = item[1]['W'] - original
-                                        # output_dict[node[1] + " towards " + others + " (previous) "] = original_output
-
+                                        output_rows.append(
+                                            SentChange(node[0], others, checkScale(item[1]['W'] - original)))
+                                        # output_dict[node[1] + " towards " + others] = item[1]['W'] - original
                 # add an event node
                 event = 'Event ' + str(node[2]) + ': ' + node[0] + ' to ' + node[1]
                 self.G.add_node(event, {'ontClass': 'Event', 'Name': [
@@ -368,30 +385,11 @@ class SNA():
                 self.G.add_edge(node[0], event)
                 self.G.add_edge(event, node[1])
             self.G.add_weighted_edges_from(iterEdgeList, 'W')
-
-            ### -1 TO 1 SCALING METHODS ###
-
-            # division by largest value -1 to 1 scaling: (works best with large numbers)
-            # for k, v in output_dict.items():
-            #    abs_list = [abs(n) for n in list(output_dict.values())]
-            #    output_dict[k] = round((v / max(abs_list)), 5)
-
-            # max and min cut off -1 to 1 scaling: (if there are too many 1 or -1 results...
-            # ...the multipliers (n) in <item[1]['W'] = original * n> are too divergent from 1
-            for k, v in output_dict.items():
-                output_dict[k] = round(v, 5)
-                if v > 1:
-                    output_dict[k] = 1
-                if v < -1:
-                    output_dict[k] = -1
-
-            # this print statement needs to be where out_put dict is printed after each iteration:
-            #print(output_dict)
-            ret[i] = output_dict.copy()
+            ret.append(list(output_rows))
 
         self.nodes = nx.nodes(self.G)  # update node list
         self.edges = nx.edges(self.G)  # update edge list
-        self.output_dict.update(output_dict)
+        self.sent_outputs = ret
         return ret
 
     # copy the original social network graph created with user input data.
