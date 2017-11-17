@@ -38,7 +38,7 @@ def wordcloud(txt_name):
     fig = plt.figure(1)
     plt.imshow(wordcloud)
     plt.axis('off')
-    filename = 'out/nlp/wordcloud.png'
+    filename = 'out/nlp/nlp_wordcloud.png'
     fig.savefig(filename, dpi=1200)
     return filename
 

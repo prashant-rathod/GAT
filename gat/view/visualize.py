@@ -66,35 +66,45 @@ def visualize():
 
     nlp_new_example_sentiment = ''
     nlp_new_example_relationship = ''
+    nlp_wordcloud = ''
+    nlp_stemmerize = ''
+    nlp_lemmatize = ''
+    nlp_abstract = ''
+    nlp_top20_verbs = ''
+    nlp_top20_persons = ''
+    nlp_top20_locations = ''
+    nlp_top20_organizations = ''
+    nlp_sentence_sentiment_distribution = ''
     if NLP_new_example_file is not None:
-        nlp_new_example_sentiment = NLP_TO_NETWORK.sentiment_mining(NLP_new_example_file)
-        gc.collect()
-        nlp_new_example_relationship = NLP_TO_NETWORK.relationship_mining(NLP_new_example_file)
-        gc.collect()
-        #nlp_3d_json, G = NLP_TO_NETWORK.sentiment3D(NLP_new_example_file)
-        #nlp_wordcloud = NLP_OTHER.wordcloud(NLP_new_example_file)
         #gc.collect()
-        #nlp_stemmerize = NLP_OTHER.stemmerize(NLP_new_example_file)
-        #nlp_lemmatize = NLP_OTHER.lemmatize(NLP_new_example_file)
-        #nlp_abstract = NLP_OTHER.abstract(NLP_new_example_file)
-        #nlp_top20_verbs = NLP_OTHER.top20_verbs(NLP_new_example_file)
-        #nlp_top20_persons = NLP_OTHER.top20_persons(NLP_new_example_file)
-        #nlp_top20_locations = NLP_OTHER.top20_locations(NLP_new_example_file)
-        #nlp_top20_organizations = NLP_OTHER.top20_organizations(NLP_new_example_file)
-        #nlp_sentence_sentiment_distribution = NLP_OTHER.sentence_sentiment_distribution(NLP_new_example_file)
-
+        nlp_new_example_sentiment = NLP_TO_NETWORK.sentiment_mining(NLP_new_example_file)
+        #gc.collect()
+        nlp_new_example_relationship = NLP_TO_NETWORK.relationship_mining(NLP_new_example_file)
+        #gc.collect()
+        nlp_wordcloud = NLP_OTHER.wordcloud(NLP_new_example_file)
+        #gc.collect()
+        nlp_stemmerize = NLP_OTHER.stemmerize(NLP_new_example_file)
+        nlp_lemmatize = NLP_OTHER.lemmatize(NLP_new_example_file)
+        nlp_abstract = NLP_OTHER.abstract(NLP_new_example_file)
+        nlp_top20_verbs = NLP_OTHER.top20_verbs(NLP_new_example_file)
+        #gc.collect()
+        nlp_top20_persons = NLP_OTHER.top20_persons(NLP_new_example_file)
+        nlp_top20_locations = NLP_OTHER.top20_locations(NLP_new_example_file)
+        nlp_top20_organizations = NLP_OTHER.top20_organizations(NLP_new_example_file)
+        nlp_sentence_sentiment_distribution = NLP_OTHER.sentence_sentiment_distribution(NLP_new_example_file)
+        gc.collect()
         nlp_summary = 'Enable'
 
     return render_template('visualizations.html',
-                           #nlp_wordcloud=nlp_wordcloud,
-                           #nlp_stemmerize=nlp_stemmerize,
-                           #nlp_lemmatize=nlp_lemmatize,
-                           #nlp_abstract=nlp_abstract,
-                           #nlp_top20_verbs=nlp_top20_verbs,
-                           #nlp_top20_persons=nlp_top20_persons,
-                           #nlp_top20_locations=nlp_top20_locations,
-                           #nlp_top20_organizations=nlp_top20_organizations,
-                           #nlp_sentence_sentiment_distribution=nlp_sentence_sentiment_distribution,
+                           nlp_wordcloud=nlp_wordcloud,
+                           nlp_stemmerize=nlp_stemmerize,
+                           nlp_lemmatize=nlp_lemmatize,
+                           nlp_abstract=nlp_abstract,
+                           nlp_top20_verbs=nlp_top20_verbs,
+                           nlp_top20_persons=nlp_top20_persons,
+                           nlp_top20_locations=nlp_top20_locations,
+                           nlp_top20_organizations=nlp_top20_organizations,
+                           nlp_sentence_sentiment_distribution=nlp_sentence_sentiment_distribution,
                            research_question=research_question,
                            SNAbpPlot=SNAbpPlot,
                            graph=copy_of_graph,
@@ -111,7 +121,6 @@ def visualize():
                            sp_dyn=sp_dyn,
                            error=error,
                            case_num=case_num,
-                           #nlp_3d_json=nlp_3d_json,
                            nlp_sentiment=nlp_sentiment,
                            nlp_summary=nlp_summary,
                            nlp_entities=nlp_entities,
