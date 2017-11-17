@@ -301,7 +301,6 @@ class SNA():
         dateList = [bombData[x]['Date'] for x in bombData]
         dateIter = (max(dateList) - min(dateList)) / 10
         output_dict = {}
-        ret = {}
         for i in range(max_iter):
             nodeList = [(bombData[x]['Actor'], bombData[x]['Target'], bombData[x]['CODE']) for x in bombData if
                          min(dateList) + dateIter * i <= bombData[x]['Date'] < min(dateList) + dateIter * (i + 1)]
@@ -386,13 +385,12 @@ class SNA():
                     output_dict[k] = -1
 
             # this print statement needs to be where out_put dict is printed after each iteration:
-            #print(output_dict)
-            ret[i] = output_dict.copy()
+            print(output_dict)
 
         self.nodes = nx.nodes(self.G)  # update node list
         self.edges = nx.edges(self.G)  # update edge list
         self.output_dict.update(output_dict)
-        return ret
+        return self.output_dict
 
     # copy the original social network graph created with user input data.
     # this will be later used to reset the modified graph to inital state

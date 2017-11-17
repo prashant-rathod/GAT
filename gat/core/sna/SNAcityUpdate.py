@@ -7,7 +7,6 @@ from networkx.algorithms import bipartite as bi
 from networkx.algorithms import centrality
 from itertools import product
 from collections import defaultdict
-from flask import jsonify
 import pandas as pd
 import datetime
 
@@ -40,7 +39,6 @@ class SNA():
         self.node_attributes_dict = {}
         self.classList = ['Agent','Organization','Audience','Role','Event','Belief','Symbol','Knowledge','Task','Actor']
         self.attrSheet = attrSheet
-        self.output_dict = {}
 
     # Read xlsx file and save the header and all the cells, each a dict with value and header label
     # Input: xlsx file, sheet
@@ -163,6 +161,7 @@ class SNA():
                         attrList = []
                         node = self.G.node[nodeID]
                         if cell['header'] in self.subAttrs:  # handle subattributes, e.g. weight
+                            prevCell = row[row.index(cell) - 1]
                             key = {}
                             while prevCell['header'] in self.subAttrs:
                                 key[prevCell['header']] = prevCell['val']
@@ -182,7 +181,6 @@ class SNA():
                             attrList.append(cell['val'])
                             attrID = cell['header']
                         self.changeAttribute(nodeID, attrList, attrID)
-                prevCell = cell # save cell in case of subattribute data
 
     # Input: the node set that will serve as the source of all links
     # Output: updated list of edges connecting nodes in the same row
@@ -259,7 +257,7 @@ class SNA():
                 for prop in emoProps:
                     w.append(prop[4] * prop[5])  # add the product of the attribute weights to a list for each prop
                 w_avg = np.average(w)  # find average propensity product weight
-                prob = np.random.binomial(1, w_avg * 1 / 2 if w_avg * 1/2 > 0 else 0)
+                prob = np.random.binomial(1, w_avg * 1 / 2)
                 # use w_avg as the probability for a bernoulli distribution
                 if prob:
                     self.G.add_edge(node, target)
@@ -300,99 +298,48 @@ class SNA():
         # using datetime to create iterations of flexible length
         dateList = [bombData[x]['Date'] for x in bombData]
         dateIter = (max(dateList) - min(dateList)) / 10
-        output_dict = {}
-        ret = {}
+
         for i in range(max_iter):
-            nodeList = [(bombData[x]['Actor'], bombData[x]['Target'], bombData[x]['CODE']) for x in bombData if
-                         min(dateList) + dateIter * i <= bombData[x]['Date'] < min(dateList) + dateIter * (i + 1)]
+            nodeList = [(bombData[x]['Source'], bombData[x]['Target'], bombData[x]['CODE'], bombData['Location'])
+                        for x in bombData if
+                        min(dateList) + dateIter * i <= bombData[x]['Date'] < min(dateList) + dateIter * (i+1)]
             # adding attacks to test graph by datetime period and iterating through to change sentiments
             iterEdgeList = []
             for node in nodeList:
                 for others in self.G.nodes_iter():
                     # rejection of source
-                    # if self.G.has_edge(node[0], others) or self.G.has_edge(node[1], others):
-                    for ontClass in self.classList:
-                        sent = self.G.node[others].get(ontClass)  # the attribute, if it exists
-                        if sent is not None:
-                            for item in [item for item in sent if len(item) == 2]:
-                                original_output = float(item[1]['W'])
-                                if item[1].get('W') is not None:
-                                    if item[0] == node[0]:
-                                        original = float(item[1]['W'])
-
-                                        item[1]['W'] = original * 0.99
-                                        output_dict[node[0] + " towards " + others] = item[1]['W'] - original
-                                        # output_dict[node[0] + " towards " + others + " (previous) "] = original_output
-                                    if item[0] == node[1]:
-                                        original = float(item[1]['W'])
-
-                                        item[1]['W'] = original * 1.05
-                                        output_dict[node[1] + " towards " + others] = item[1]['W'] - original
-                                        # output_dict[node[1] + " towards " + others + " (previous) "] = original_output
-
-                                    # response of city populations - HARDCODED
-                                    if item[0] == "Shi'ism" and float(item[1]['W']) > -0.5:
-                                        if node[1] == 'Najaf':
-                                            original = float(item[1]['W'])
-                                            item[1]['W'] = original * 1.05
-                                            output_dict[node[1] + " towards " + others] = item[1]['W'] - original
-                                            # output_dict[node[1] + " towards " + others + " (previous) "] = original_output
-                                        if node[1] == 'Basra':
-                                            original = float(item[1]['W'])
-                                            item[1]['W'] = original * 1.05
-                                            output_dict[node[1] + " towards " + others] = item[1]['W'] - original
-                                            # output_dict[node[1] + " towards " + others + " (previous) "] = original_output
-                                    if item[0] == "Kurdish Nationalism" and float(item[1]['W']) > -0.5:
-                                        if node[1] == 'Kirkuk':
-                                            original = float(item[1]['W'])
-                                            item[1]['W'] = original * 1.05
-                                            output_dict[node[1] + " towards " + others] = item[1]['W'] - original
-                                            # output_dict[node[1] + " towards " + others + " (previous) "] = original_output
-                                    if item[0] == "Sunni'ism" and float(item[1]['W']) > -0.5:
-                                        if node[1] == 'Fallujah':
-                                            original = float(item[1]['W'])
-                                            item[1]['W'] = original * 1.05
-                                            output_dict[node[1] + " towards " + others] = item[1]['W'] - original
-                                            # output_dict[node[1] + " towards " + others + " (previous) "] = original_output
-                                    if others == 'ISIL_al-Baghdadi':
-                                        original = float(item[1]['W'])
-                                        item[1]['W'] = original * 0.99
-                                        output_dict[node[1] + " towards " + others] = item[1]['W'] - original
-                                        # output_dict[node[1] + " towards " + others + " (previous) "] = original_output
-
+                    if self.G.has_edge(node[0], others):
+                        for type in ["Agent", "Org"]:
+                            sent = self.G.node[node].get(type)
+                            if sent is not None and sent[0] == others:
+                                print(sent)
+                                iterEdgeList.append((node[0], others, (sent[1] * .1) + sent[1]))
+                    # sympathy for target
+                    if self.G.has_edge(node[1], others):
+                        sent = self.G.get_edge_data(node, others)
+                        iterEdgeList.append((node[0], others, (sent[node, others] * 1.1) + sent[node, others]))
+                    # sympathy for city population
+                    if node[0]['Location'][0:5] == 'IRQNAJ' and \
+                       self.G.node(data=True)['Belief'] == "Shi'ism" and \
+                       self.G.node(data=True)['Belief'] + 1 > 0:
+                    if node[0]['Location'] == 'IRQANBFAL' and \
+                       self.G.node(data=True)['Belief'] == "Shi'ism" and \
+                       self.G.node(data=True)['Belief'] + 1 > 0:
+                        iterEdgeList.append((node[0], others, (sent[node, others] * 1.1) + sent[node, others]))
+                    if node[0]['Location'][0:5] == 'IRQKIR' and \
+                       self.G.node(data=True)['Belief'] == 'Kurdish Nationalism' and \
+                       self.G.node(data=True)['Belief'] + 1 > 0:
+                        iterEdgeList.append((node[0], others, (sent[node, others] * 1.1) + sent[node, others]))
                 # add an event node
-                event = 'Event ' + str(node[2]) + ': ' + node[0] + ' to ' + node[1]
-                self.G.add_node(event, {'ontClass': 'Event', 'Name': [
-                    'Event' + str(i) + ' ' + str(node[2]) + ': ' + node[0] + ' to ' + node[1]], 'block': 'Event',
+                event = 'Event '+str(node[2])+': '+node[0]+' to '+node[1]
+                self.G.add_node(event, {'ontClass':'Event', 'Name':['Event '+str(node[2])+': '+node[0]+' to '+node[1]], 'block':'Event',
                                         'Description': 'Conduct suicide, car, or other non-military bombing'})
                 self.G.add_edge(node[0], event)
                 self.G.add_edge(event, node[1])
             self.G.add_weighted_edges_from(iterEdgeList, 'W')
 
-            ### -1 TO 1 SCALING METHODS ###
-
-            # division by largest value -1 to 1 scaling: (works best with large numbers)
-            # for k, v in output_dict.items():
-            #    abs_list = [abs(n) for n in list(output_dict.values())]
-            #    output_dict[k] = round((v / max(abs_list)), 5)
-
-            # max and min cut off -1 to 1 scaling: (if there are too many 1 or -1 results...
-            # ...the multipliers (n) in <item[1]['W'] = original * n> are too divergent from 1
-            for k, v in output_dict.items():
-                output_dict[k] = round(v, 5)
-                if v > 1:
-                    output_dict[k] = 1
-                if v < -1:
-                    output_dict[k] = -1
-
-            # this print statement needs to be where out_put dict is printed after each iteration:
-            #print(output_dict)
-            ret[i] = output_dict.copy()
-
         self.nodes = nx.nodes(self.G)  # update node list
         self.edges = nx.edges(self.G)  # update edge list
-        self.output_dict.update(output_dict)
-        return ret
 
     # copy the original social network graph created with user input data.
     # this will be later used to reset the modified graph to inital state
@@ -537,7 +484,6 @@ class SNA():
                             sentiment_dict[item[0]] = float(item[1][key])
                         else:
                             sentiment_dict[item[0]] += float(item[1][key])
-                        sentiment_dict[item[0]] = round(sentiment_dict[item[0]],2)
         self.sentiment_dict = sentiment_dict
         return sentiment_dict
 
@@ -799,7 +745,7 @@ class SNA():
                      'color': '0xE74C3C',
                      'arrowColor': '0xE74C3C',
                      'arrowSize': 2})
-            elif graph[edge[0]][edge[1]].get('W') is not None:
+            if graph[edge[0]][edge[1]].get('W') is not None:
                 edges.append(
                     {'source': edge[0],
                      'target': edge[1],
@@ -810,8 +756,7 @@ class SNA():
                 edges.append(
                     {'source': edge[0],
                      'target': edge[1],
-                     'name': edge[0] + "," + edge[1]
-                     }) #TODO clean up repeated code above
+                     'name': edge[0] + "," + edge[1]}) #TODO clean up repeated code above
         for node in self.G.nodes_iter():
             temp = {}
             ontClass = self.G.node[node].get('ontClass')
