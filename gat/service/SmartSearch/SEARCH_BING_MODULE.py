@@ -24,7 +24,8 @@ class bingURL(object):
     def __init__(self):
         self.display = Display(visible=0, size=(800, 600))
         self.display.start()
-        self.driver = webdriver.Chrome(os.path.expanduser('./chromedriver'))
+        current_file_path = os.path.dirname(os.path.abspath(__file__))
+        self.driver = webdriver.Chrome(os.path.join(current_file_path, 'chromedriver'))
 
     def get_urls(self, url):
         driver = self.driver

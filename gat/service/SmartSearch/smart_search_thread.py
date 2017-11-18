@@ -1,12 +1,14 @@
+import os
+import math
 import threading
 import spacy
 import time
 import datefinder
+from typing import List
 import pandas as pd
 from newspaper import Article
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 from gat.service.SmartSearch.SEARCH_BING_MODULE import bingURL
-from gat.service.SmartSearch.SVO_SENT_MODULE_spacy import SVOSENT
 from gat.service import file_io
 from nltk import data
 import gat.service.SmartSearch.SCRAPER as SCRAPER
@@ -14,17 +16,20 @@ from dateparser import parse
 
 
 class SmartSearchThread(threading.Thread):
-    def __init__(self, language='english'):
+    def __init__(self, language='english', search_question='', article_count=0):
         super().__init__()
-        self.messages = [str]
+        self.messages: List[str] = []
         self.messages_lock = threading.Lock()
         self.result = None
         self.result_lock = threading.Lock()
         self.__nlp = spacy.load('en')  # spacy parser
         self.__sent_detector = data.load('tokenizers/punkt/english.pickle')
         self.__analyzer = SentimentIntensityAnalyzer()  # for sentiment analysis
-        self.__keyverbs = list(pd.read_csv('KeyVerbs.csv')['key_verbs'])
-        self.__allcities = list(pd.read_csv('Allcities.csv')['City'])
+        current_file_path = os.path.dirname(os.path.abspath(__file__))
+        self.__keyverbs = list(pd.read_csv(os.path.join(current_file_path, 'KeyVerbs.csv'))['key_verbs'])
+        self.__allcities = list(pd.read_csv(os.path.join(current_file_path, 'Allcities.csv'))['City'])
+        self.__search_question = search_question
+        self.__article_count = int(article_count)
 
     @classmethod
     def __getTexts(cls, directory):
@@ -109,8 +114,7 @@ class SmartSearchThread(threading.Thread):
                 event_date = str(event_date)
             except:
                 event_date = None
-
-
+                
         # correct subject and object
         corrected_subjects = []
         corrected_objects = []
@@ -312,20 +316,20 @@ class SmartSearchThread(threading.Thread):
         self.messages_lock.release()
         return articles
 
-    def run(self, sentence: str = ''):
-        if sentence:
+    def run(self):
+        if self.__search_question:
             self.messages_lock.acquire()
             self.messages.append('Smart Search started.')
             self.messages_lock.release()
             bing = bingURL()
             t0 = time.time()
-            urls = bing.search_urls(sentence, 3)
+            urls = bing.search_urls(self.__search_question, math.ceil(self.__article_count/20.0))
             t1 = time.time()
             self.messages_lock.acquire()
             self.messages.append('time cost:' + str(t1 - t0))
             self.messages.append('#urls found:' + str(len(urls)))
             self.messages_lock.release()
-            articles = SCRAPER.scrape_from_urls(urls)
+            articles = self.__scrape_from_urls(urls)
             articles_list = self.__split_and_clean(articles)
             self.result_lock.acquire()
             self.result = self.__batchProcessArticles(articles_list)
