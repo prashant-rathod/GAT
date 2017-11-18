@@ -6,14 +6,14 @@ from flask import Blueprint, render_template, request, redirect, url_for, jsonif
 from gat.CameoPrediction.PredictCameo import top5CAMEO
 from gat.dao import dao
 from gat.service.SmartSearch.smart_search_thread import SmartSearchThread
-
 smart_search_blueprint = Blueprint('smart_search_blueprint', __name__)
-
 search_workers: Dict[str, SmartSearchThread] = {}
-
 
 @smart_search_blueprint.route('/smart_search_select', methods=['GET', 'POST'])
 def sheetSelect():
+    # case_num = None
+    case_num = request.args.get("case_num", None)
+
     if request.method == 'GET':
         # that means a form was submitted
         case_num = request.args.get("case_num", None)
@@ -24,7 +24,7 @@ def sheetSelect():
         # read sentences.txt, read in sentences, and pass the results on to  that
 
         return render_template('smart_search_select.html', sentences=sentences)
-
+      
     if request.method == 'POST':
         case_num = request.args.get('case_num', None)
         fileDict = dao.getFileDict(case_num)
@@ -55,8 +55,7 @@ def landing(case_num, sentence, article_count):
 @smart_search_blueprint.route('/progress/<case_num>/<sentence>', methods=['GET'])
 def smart_search_progress(case_num, sentence):
     selected_thread = search_workers[case_num + 'sentence' + sentence]
-    selected_thread.messages_lock.acquire()
-    # Copy the list
+    selected_thread.messages_lock.acquire()    # Copy the list
     messages = list(selected_thread.messages)
     del selected_thread.messages[:]
     selected_thread.messages_lock.release()

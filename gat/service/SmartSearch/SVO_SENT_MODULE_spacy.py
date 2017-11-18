@@ -174,11 +174,9 @@ class SVOSENT(object):
             result = self.sentimentAnalysis(sent)
             val.append(result)
         return pd.DataFrame(val)
-
-    ###############################################
+      
+     
     # get both SVO and sent in one dataframe
-
-
     def svo_senti_from_article(self, article, subject=None):
         title = article[0:article.find('(title_end)')]
         try:

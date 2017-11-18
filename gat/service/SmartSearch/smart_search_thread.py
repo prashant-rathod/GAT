@@ -114,7 +114,7 @@ class SmartSearchThread(threading.Thread):
                 event_date = str(event_date)
             except:
                 event_date = None
-
+                
         # correct subject and object
         corrected_subjects = []
         corrected_objects = []

@@ -1,3 +1,4 @@
+
 import tempfile
 import matplotlib.pyplot as plt
 import networkx as nx
@@ -7,7 +8,6 @@ from networkx.algorithms import bipartite as bi
 from networkx.algorithms import centrality
 from itertools import product
 from collections import defaultdict
-from flask import jsonify
 import pandas as pd
 import datetime
 
@@ -40,7 +40,6 @@ class SNA():
         self.node_attributes_dict = {}
         self.classList = ['Agent','Organization','Audience','Role','Event','Belief','Symbol','Knowledge','Task','Actor']
         self.attrSheet = attrSheet
-        self.output_dict = {}
 
     # Read xlsx file and save the header and all the cells, each a dict with value and header label
     # Input: xlsx file, sheet
@@ -163,6 +162,7 @@ class SNA():
                         attrList = []
                         node = self.G.node[nodeID]
                         if cell['header'] in self.subAttrs:  # handle subattributes, e.g. weight
+                            prevCell = row[row.index(cell) - 1]
                             key = {}
                             while prevCell['header'] in self.subAttrs:
                                 key[prevCell['header']] = prevCell['val']
@@ -182,7 +182,6 @@ class SNA():
                             attrList.append(cell['val'])
                             attrID = cell['header']
                         self.changeAttribute(nodeID, attrList, attrID)
-                prevCell = cell # save cell in case of subattribute data
 
     # Input: the node set that will serve as the source of all links
     # Output: updated list of edges connecting nodes in the same row
@@ -259,7 +258,7 @@ class SNA():
                 for prop in emoProps:
                     w.append(prop[4] * prop[5])  # add the product of the attribute weights to a list for each prop
                 w_avg = np.average(w)  # find average propensity product weight
-                prob = np.random.binomial(1, w_avg * 1 / 2 if w_avg * 1/2 > 0 else 0)
+                prob = np.random.binomial(1, w_avg * 1 / 2)
                 # use w_avg as the probability for a bernoulli distribution
                 if prob:
                     self.G.add_edge(node, target)
@@ -300,99 +299,121 @@ class SNA():
         # using datetime to create iterations of flexible length
         dateList = [bombData[x]['Date'] for x in bombData]
         dateIter = (max(dateList) - min(dateList)) / 10
-        output_dict = {}
-        ret = {}
+
         for i in range(max_iter):
-            nodeList = [(bombData[x]['Actor'], bombData[x]['Target'], bombData[x]['CODE']) for x in bombData if
-                         min(dateList) + dateIter * i <= bombData[x]['Date'] < min(dateList) + dateIter * (i + 1)]
+            nodeList = [(bombData[x]['Source'], bombData[x]['Target'], bombData[x]['CODE']) for x in bombData if
+                          min(dateList) + dateIter * i <= bombData[x]['Date'] < min(dateList) + dateIter * (i+1)]
             # adding attacks to test graph by datetime period and iterating through to change sentiments
             iterEdgeList = []
             for node in nodeList:
                 for others in self.G.nodes_iter():
                     # rejection of source
-                    # if self.G.has_edge(node[0], others) or self.G.has_edge(node[1], others):
-                    for ontClass in self.classList:
-                        sent = self.G.node[others].get(ontClass)  # the attribute, if it exists
+                    if self.G.has_edge(node[0], others):
+                        sent = self.G.get_edge_data(node, others)
                         if sent is not None:
-                            for item in [item for item in sent if len(item) == 2]:
-                                original_output = float(item[1]['W'])
-                                if item[1].get('W') is not None:
-                                    if item[0] == node[0]:
-                                        original = float(item[1]['W'])
-
-                                        item[1]['W'] = original * 0.99
-                                        output_dict[node[0] + " towards " + others] = item[1]['W'] - original
-                                        # output_dict[node[0] + " towards " + others + " (previous) "] = original_output
-                                    if item[0] == node[1]:
-                                        original = float(item[1]['W'])
-
-                                        item[1]['W'] = original * 1.05
-                                        output_dict[node[1] + " towards " + others] = item[1]['W'] - original
-                                        # output_dict[node[1] + " towards " + others + " (previous) "] = original_output
-
-                                    # response of city populations - HARDCODED
-                                    if item[0] == "Shi'ism" and float(item[1]['W']) > -0.5:
-                                        if node[1] == 'Najaf':
-                                            original = float(item[1]['W'])
-                                            item[1]['W'] = original * 1.05
-                                            output_dict[node[1] + " towards " + others] = item[1]['W'] - original
-                                            # output_dict[node[1] + " towards " + others + " (previous) "] = original_output
-                                        if node[1] == 'Basra':
-                                            original = float(item[1]['W'])
-                                            item[1]['W'] = original * 1.05
-                                            output_dict[node[1] + " towards " + others] = item[1]['W'] - original
-                                            # output_dict[node[1] + " towards " + others + " (previous) "] = original_output
-                                    if item[0] == "Kurdish Nationalism" and float(item[1]['W']) > -0.5:
-                                        if node[1] == 'Kirkuk':
-                                            original = float(item[1]['W'])
-                                            item[1]['W'] = original * 1.05
-                                            output_dict[node[1] + " towards " + others] = item[1]['W'] - original
-                                            # output_dict[node[1] + " towards " + others + " (previous) "] = original_output
-                                    if item[0] == "Sunni'ism" and float(item[1]['W']) > -0.5:
-                                        if node[1] == 'Fallujah':
-                                            original = float(item[1]['W'])
-                                            item[1]['W'] = original * 1.05
-                                            output_dict[node[1] + " towards " + others] = item[1]['W'] - original
-                                            # output_dict[node[1] + " towards " + others + " (previous) "] = original_output
-                                    if others == 'ISIL_al-Baghdadi':
-                                        original = float(item[1]['W'])
-                                        item[1]['W'] = original * 0.99
-                                        output_dict[node[1] + " towards " + others] = item[1]['W'] - original
-                                        # output_dict[node[1] + " towards " + others + " (previous) "] = original_output
-
+                            iterEdgeList.append((node[0], others, (sent[node, others] * .1) + sent[node, others]))
+                    # sympathy for target
+                    if self.G.has_edge(node[1], others):
+                        sent = self.G.get_edge_data(node, others)
+                        iterEdgeList.append((node[0], others, (sent[node, others] * 1.1) + sent[node, others]))
                 # add an event node
-                event = 'Event ' + str(node[2]) + ': ' + node[0] + ' to ' + node[1]
-                self.G.add_node(event, {'ontClass': 'Event', 'Name': [
-                    'Event' + str(i) + ' ' + str(node[2]) + ': ' + node[0] + ' to ' + node[1]], 'block': 'Event',
+                event = 'Event '+str(node[2])+': '+node[0]+' to '+node[1]
+                self.G.add_node(event, {'ontClass':'Event', 'Name':['Event '+str(node[2])+': '+node[0]+' to '+node[1]], 'block':'Event',
                                         'Description': 'Conduct suicide, car, or other non-military bombing'})
                 self.G.add_edge(node[0], event)
                 self.G.add_edge(event, node[1])
             self.G.add_weighted_edges_from(iterEdgeList, 'W')
 
-            ### -1 TO 1 SCALING METHODS ###
-
-            # division by largest value -1 to 1 scaling: (works best with large numbers)
-            # for k, v in output_dict.items():
-            #    abs_list = [abs(n) for n in list(output_dict.values())]
-            #    output_dict[k] = round((v / max(abs_list)), 5)
-
-            # max and min cut off -1 to 1 scaling: (if there are too many 1 or -1 results...
-            # ...the multipliers (n) in <item[1]['W'] = original * n> are too divergent from 1
-            for k, v in output_dict.items():
-                output_dict[k] = round(v, 5)
-                if v > 1:
-                    output_dict[k] = 1
-                if v < -1:
-                    output_dict[k] = -1
-
-            # this print statement needs to be where out_put dict is printed after each iteration:
-            #print(output_dict)
-            ret[i] = output_dict.copy()
-
         self.nodes = nx.nodes(self.G)  # update node list
         self.edges = nx.edges(self.G)  # update edge list
-        self.output_dict.update(output_dict)
-        return ret
+
+    def meaning_value_chains(self):
+    # this function takes an attribute list and constructs meaning value chains by iterating through attribute...
+    # combinations for each node and returning a list of the average weight for each value chain. The final result...
+    # is a lit of every possible value chain for each actor and the average weight of each value chain. 'Heavier'...
+    # VCs can be seen as having higher centers of gravity.
+
+        b = self.attrList
+        y = len(b)
+        tit_list = []
+        pos_list = []
+        org_list = []
+        age_list = []
+        rol_list = []
+        bel_list = []
+
+        # iterating through attribute sheet to create lists of the ID, attribute and weight for every actor for...
+        # each possible attribute.
+        for n in range(0, y):
+            for attr in range(0, (len(b[n]))):
+                if b[n][attr]['header'] == 'Title':
+                    tit_list.append(
+                        (b[n][0]['val'], b[n][attr]['val'], b[n][attr]['header'], b[n][attr + 1]['val']))
+                if b[n][attr]['header'] == 'Position':
+                    pos_list.append(
+                        (b[n][0]['val'], b[n][attr]['val'], b[n][attr]['header'], b[n][attr + 1]['val']))
+                if b[n][attr]['header'] == 'Org':
+                    org_list.append(
+                        (b[n][0]['val'], b[n][attr]['val'], b[n][attr]['header'], b[n][attr + 1]['val']))
+                if b[n][attr]['header'] == 'Agent':
+                    age_list.append(
+                        (b[n][0]['val'], b[n][attr]['val'], b[n][attr]['header'], b[n][attr + 1]['val']))
+                if b[n][attr]['header'] == 'Role':
+                    rol_list.append(
+                        (b[n][0]['val'], b[n][attr]['val'], b[n][attr]['header'], b[n][attr + 1]['val']))
+                if b[n][attr]['header'] == 'Belief':
+                    bel_list.append(
+                        (b[n][0]['val'], b[n][attr]['val'], b[n][attr]['header'], b[n][attr + 1]['val']))
+
+        # combining the above attribute lists into a single node list that follows the form of the VC's we're making
+        nod_list = []
+        for x in range(0, len(pos_list)):
+            for y in range(0, len(org_list)):
+                if pos_list[x][0] == org_list[y][0]:
+                    nod_list.append((pos_list[x][0], pos_list[x][1], org_list[y][1], org_list[y][3]))
+
+        for x in range(0, len(org_list)):
+            for y in range(0, len(age_list)):
+                if org_list[x][0] == age_list[y][0]:
+                    nod_list.append((org_list[x][0], org_list[x][1], age_list[y][1], age_list[y][3]))
+
+        for x in range(0, len(age_list)):
+            for y in range(0, len(rol_list)):
+                if age_list[x][0] == rol_list[y][0]:
+                    nod_list.append((age_list[x][0], age_list[x][1], rol_list[y][1], rol_list[y][3]))
+
+        for x in range(0, len(rol_list)):
+            for y in range(0, len(bel_list)):
+                if rol_list[x][0] == bel_list[y][0]:
+                    nod_list.append((rol_list[x][0], rol_list[x][1], bel_list[y][1], bel_list[y][3]))
+
+        # creating a list of every possible value chain for each actor
+        av_weight_list = []
+        vc_list = []
+        [vc_list.append((tm_1[0], tm_1[1], tm_1[2], tm_1[3],
+                         tm_2[0], tm_2[1], tm_2[2], tm_2[3],
+                         tm_3[0], tm_3[1], tm_3[2], tm_3[3],))
+            for tm_1 in nod_list
+            for tm_2 in nod_list
+            for tm_3 in nod_list if tm_1[0] == tm_2[0] and tm_2[0] == tm_3[0]]
+
+        # creating a graph for each value chain and returning the edges as weights to be used to calculate the...
+        # average weight for each task model. I spent a lot of time trying to find a measure that we could..
+        # effectively use incorporating a more robust method, but ASPL can run into significant problems with...
+        # negative edge weights in hierarchical graphs. nx.bellman_ford() works with negative edge weights, but...
+        # it's really slow for the amount of iterations necessary here.
+        for vc in vc_list:
+            self.G = nx.Graph()
+            vc_edge_list = ([vc[0], vc[2], float(vc[3])],
+                            [vc[2], vc[6], float(vc[7])],
+                            [vc[6], vc[10], float(vc[11])])
+            self.G.add_weighted_edges_from(vc_edge_list, 'W')
+            weights = nx.get_edge_attributes(self.G, 'W')
+            weights_list = list(weights.values())
+            weights_mean = np.mean(weights_list)
+            av_weight_list.append((vc_edge_list, weights_mean))
+
+        return av_weight_list
 
     # copy the original social network graph created with user input data.
     # this will be later used to reset the modified graph to inital state
@@ -453,21 +474,6 @@ class SNA():
     def getEdges(self):
         return self.edges
 
-    def communityDetection(self):
-        undirected = self.G.to_undirected()
-        self.eigenvector_centrality()
-        return cliques.louvain(G = undirected, centralities = self.eigenvector_centrality_dict)
-
-    def calculateResilience(self,baseline=True,robustness=True):
-        cliques_found = self.communityDetection()
-        simpleRes, baseline = resilience.averagePathRes(cliques_found, iters=5) if baseline is not None else None
-        robustnessRes = resilience.laplacianRes(cliques_found, iters=5) if robustness else None
-        return baseline,simpleRes,robustnessRes
-
-    ##########################
-    ## System-wide measures ##
-    ##########################
-
     # set all the properties with this function.
     def set_property(self):
         self.clustering()
@@ -483,6 +489,21 @@ class SNA():
         self.communicability_centrality_exp()
         self.node_connectivity()
         self.average_clustering()
+
+    def communityDetection(self):
+        undirected = self.G.to_undirected()
+        self.eigenvector_centrality()
+        return cliques.louvain(G = undirected, centralities = self.eigenvector_centrality_dict)
+
+    def calculateResilience(self,baseline=True,robustness=True):
+        cliques_found = self.communityDetection()
+        simpleRes, baseline = resilience.averagePathRes(cliques_found, iters=5) if baseline is not None else None
+        robustnessRes = resilience.laplacianRes(cliques_found, iters=5) if robustness else None
+        return baseline,simpleRes,robustnessRes
+
+    ##########################
+    ## System-wide measures ##
+    ##########################
 
     def center(self):
         return nx.center(self.G)
@@ -522,27 +543,6 @@ class SNA():
     #############################
     ## Node-dependent measures ##
     #############################
-
-    # Sum sentiment for belief nodes
-    def sentiment(self,types,key):
-        sentiment_dict = {}
-        for type in types:
-            # nodes = [node for node in self.G.nodes_iter() if node.get("ontClass") == type]
-            # for typeNode in nodes:
-            for node in self.G.nodes_iter():
-                sent = self.G.node[node].get(type) # the belief attribute
-                if sent is not None:
-                    for item in [item for item in sent if len(item) == 2]: #TODO better way to do this
-                        if sentiment_dict.get(item[0]) is None:
-                            sentiment_dict[item[0]] = float(item[1][key])
-                        else:
-                            sentiment_dict[item[0]] += float(item[1][key])
-                        sentiment_dict[item[0]] = round(sentiment_dict[item[0]],2)
-        self.sentiment_dict = sentiment_dict
-        return sentiment_dict
-
-
-
 
     # Find clustering coefficient for each nodes
     def clustering(self):
@@ -799,7 +799,7 @@ class SNA():
                      'color': '0xE74C3C',
                      'arrowColor': '0xE74C3C',
                      'arrowSize': 2})
-            elif graph[edge[0]][edge[1]].get('W') is not None:
+            if graph[edge[0]][edge[1]].get('W') is not None:
                 edges.append(
                     {'source': edge[0],
                      'target': edge[1],
@@ -810,8 +810,7 @@ class SNA():
                 edges.append(
                     {'source': edge[0],
                      'target': edge[1],
-                     'name': edge[0] + "," + edge[1]
-                     }) #TODO clean up repeated code above
+                     'name': edge[0] + "," + edge[1]}) #TODO clean up repeated code above
         for node in self.G.nodes_iter():
             temp = {}
             ontClass = self.G.node[node].get('ontClass')
@@ -828,3 +827,6 @@ class SNA():
         data['edges'] = edges
         data['nodes'] = nodes_property
         return data
+
+
+
