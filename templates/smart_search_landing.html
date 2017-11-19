@@ -1,9 +1,8 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
-<title>Smart Search Landing</title>
-{% include "header.html" -%}
+    <title>Smart Search Landing</title>
+    {% include "header.html" -%}
     <link href="{{url_for('static', filename='css/vizStyle.css')}}" rel="stylesheet">
     <script src="../static/js/jquery-1.11.1.min.js"></script>
     <script type="text/javascript">
@@ -89,9 +88,57 @@
 	    target.setAttribute('data-x', x);
 	    target.setAttribute('data-y', y);
 	  });
-
+	function getUpdate(){
+		while(True){
+			$.ajax({
+				type: 'GET',
+				url: "/progress/{{ case_num }}/{{ sentence }}",
+				dataType: 'json', 
+				traditional:true
+				
+			}).done(function(data) {
+				//do whatever else u need to do 
+				// you can also have a callback function that gets triggered on success/failure
+				console.log(data);
+				if(data[-1] == "###FINISHED###"){
+					break;
+				});
+				$("#output").empty();
+				var sentences = [];
+				for(var i=0; i<data.length; i++){
+					sentences.push(data[i] + "<br>");
+				}
+				sentencesAppended = sentences.join(" ");
+				$("#output").append(sentencesAppended);
+		}
+	}
+	window.onload = getUpdate;
     </script>
 </head>
+
+<style>
+* {
+ font-size: 100%;
+ font-family: Segoe UI;
+}
+
+#name_entities{
+	margin: 0px 0px;
+}
+
+#NE_titles{
+	position: relative;
+	display: block;
+	margin-bottom: 3px;
+	font-weight: bold;
+	line-height: 1;
+	font-family: Segoe, "Segoe UI";
+	color: white;
+}
+
+
+
+</style>
 
 <script>
 		function show1(){
@@ -235,8 +282,6 @@ select,input {
 
     <body>
     <br>
-
-
     <div id="help" style="display:none;">
         <button onClick="closeHelp(this)">Close Help</button>
         <p>Each box in this section corresponds to a column in your specified spreadsheet. Each column should correspond
@@ -246,9 +291,12 @@ select,input {
             spreadsheet. The next page will allow you to select which relationships between the nodesets you would like
             to visualize and analyze.</p>
     </div>
-    
-    
-    
- 
-</body>
+
+    <div class="indented">
+    	<textarea readonly name="smart_search_output" id="output"> 
+        
+        </textarea>
+    </div>
+  {% include 'modal.html' -%}
+    </body>
 </html>
