@@ -173,21 +173,19 @@ class SmartSearchThread(threading.Thread):
 
     ###############################################
     # get both SVO and sent in one dataframe
-
-    @classmethod
-    def __svo_senti_from_article(cls, article, subject=None):
+    def __svo_senti_from_article(self, article, subject=None):
         title = article[0:article.find('(title_end)')]
         try:
             date = list(datefinder.find_dates(article))[-1]
         except:
             date = None
-        sentences = cls.__sentence_split(article)
+        sentences = self.__sentence_split(article)
         val1 = []
         val2 = []
 
         for sent in sentences:
-            val1.append(cls.__sentimentAnalysis(sent))
-            val2.append(cls.__get_svo(sent))
+            val1.append(self.__sentimentAnalysis(sent))
+            val2.append(self.__get_svo(sent))
         result = pd.merge(pd.DataFrame(val1), pd.DataFrame(val2), on='Sentence')[
             ['Sentence', 'Names', 'Persons', 'Organizations', 'Facilities', 'Locations', 'Subjects', 'Predicates',
              'Objects', 'compound', 'Event_date']]
@@ -264,16 +262,22 @@ class SmartSearchThread(threading.Thread):
             try:
                 result = self.__svo_senti_from_article(article)
                 results.append(result)
+                self.messages_lock.acquire()
                 self.messages.append(str(i + 1) + 'th/' + str(len(articles)) + 'article is done')
+                self.messages_lock.release()
 
             except Exception as e:
+                self.messages_lock.acquire()
                 self.messages.append(str(i) + 'th article has error:' + str(e))
+                self.messages_lock.release()
 
         t1 = time.time()
         results = pd.concat(results, axis=0)
         result = result.drop_duplicates(subset=['Sentence'], keep='first')  # remove duplicate rows
+        self.messages_lock.acquire()
         self.messages.append('time cost' + ':')
         self.messages.append(str(t1 - t0))
+        self.messages_lock.release()
         return results
 
     def __url_reader(self, url):

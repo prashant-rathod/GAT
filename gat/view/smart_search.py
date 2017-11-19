@@ -1,8 +1,6 @@
-import time
-from threading import Lock
-import pandas as pd
+from io import StringIO
 from typing import Dict
-from flask import Blueprint, render_template, request, redirect, url_for, jsonify
+from flask import Blueprint, render_template, request, redirect, url_for, jsonify, send_file, Response
 from gat.CameoPrediction.PredictCameo import top5CAMEO
 from gat.dao import dao
 from gat.service.SmartSearch.smart_search_thread import SmartSearchThread
@@ -26,7 +24,7 @@ def sheetSelect():
         with open("static/resources/smartsearch/cameocodes.txt", 'r') as file:
             for line in file:
                 cameoCodes.append(line)
-    
+
         return render_template('smart_search_select.html', sentences=sentences, cameoCodes=cameoCodes)
 
     if request.method == 'POST':
@@ -34,7 +32,10 @@ def sheetSelect():
         fileDict = dao.getFileDict(case_num)
         researchQuestion = fileDict.get('research_question', None).strip()
         sentences = top5CAMEO(researchQuestion)
-        cameo_code = sentences[int(request.form.get('cameo', 0))]
+        if request.form.get('cameo') != 'SeeDropdown':
+            cameo_code = sentences[int(request.form.get('cameo', 0))]
+        else:
+            cameo_code = request.form.get('cameos', '')
         # Now it only works for radio button. Need to create a special case for
         # drop down menu
         articles_to_scrape = int(request.form.get('numArticlesScraped', 0))
@@ -53,7 +54,9 @@ def landing(case_num, sentence, article_count):
     new_search_thread = SmartSearchThread(search_question=sentence, article_count=article_count)
     search_workers[case_num + 'sentence' + sentence] = new_search_thread
     new_search_thread.start()
-    return render_template('smart_search_landing.html')
+    return render_template('smart_search_landing.html',
+                           case_num=case_num,
+                           sentence=sentence)
 
 
 @smart_search_blueprint.route('/progress/<case_num>/<sentence>', methods=['GET'])
@@ -62,20 +65,27 @@ def smart_search_progress(case_num, sentence):
     selected_thread.messages_lock.acquire()
     # Copy the list
     messages = list(selected_thread.messages)
-    del selected_thread.messages[:]
     selected_thread.messages_lock.release()
-    selected_thread.result_lock.acquire()
-    if not selected_thread.result:
-        selected_thread.result_lock.release()
-        return jsonify(messages)
-    else:
-        selected_thread.result_lock.release()
-        return redirect(url_for('smart_search_blueprint.results', case_num=case_num))
-
-
-@smart_search_blueprint.route('/results/<casenum>/<sentence>', methods=['GET'])
-def smart_search_results(case_num, sentence):
-    selected_thread = search_workers[case_num + 'sentence' + sentence]
     selected_thread.result_lock.acquire()
     result = selected_thread.result
     selected_thread.result_lock.release()
+    if result is not None:
+        messages.append('###FINISHED###')
+    return jsonify(messages)
+
+
+@smart_search_blueprint.route('/results/<case_num>/<sentence>', methods=['GET'])
+def smart_search_results(case_num, sentence):
+    selected_thread = search_workers[case_num + 'sentence' + sentence]
+    selected_thread.result_lock.acquire()
+    result_df = selected_thread.result
+    selected_thread.result_lock.release()
+    if result_df:
+        result_str = StringIO()
+        result_str.write(result_df.to_csv())
+        return send_file(result_str,
+                         mimetype='text/csv',
+                         as_attachment=True,
+                         attachment_filename=case_num + 'sentence' + sentence + '_result.csv')
+    else:
+        return Response('Analysis Not Finished', content_type='text/plain')
