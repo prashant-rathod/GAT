@@ -8,19 +8,16 @@ import keras
 from keras.datasets import mnist
 from keras.models import Sequential
 from keras.layers import Dense, Dropout, Flatten
-from keras.layers import Conv2D, MaxPooling2D
+from keras.layers import Conv2D, MaxPooling2D, GlobalMaxPooling2D
 from spp.SpatialPyramidPooling import SpatialPyramidPooling
 from keras import backend as K
 import scipy
+import tensorflow as tf
+import keras.backend.tensorflow_backend as KTF
 
-
+#Might need to figure out what to do because 5875 is not divisible by 3
 #First approach is just 47*125 output of softmax layer
-
-#So from here hopefully the one hot is done, now the labels will have to be transformed and then use the .fit() method to train the network
 #Potentially need to make the image reading better
-
-#Up to 125 characters per line
-#Potential problem, all the pictures with whitespace at the top?
 
 def clean_line(line):
     cleaned = line[line.find('.tif')+4:]
@@ -71,14 +68,19 @@ def to_one_hot(label_list):
         ans.append(0)
     return ans
 
+config = tf.ConfigProto()
+config.gpu_options.allow_growth = True
+sess = tf.Session(config = config)
+KTF.set_session(sess)
+
 model = Sequential()
 model.add(Conv2D(32, (3,3), activation='relu', input_shape=(None, None, 3)))
 model.add(Conv2D(64, (3, 3), activation='relu'))
 model.add(MaxPooling2D(pool_size=(2, 2)))
 model.add(Dropout(0.25))
-model.add(Conv2D(32, (3, 3), activation='relu'))
+model.add(Conv2D(128, (3, 3), activation='relu'))
+model.add(Dropout(.5))
 model.add(SpatialPyramidPooling([1, 2, 4]))
-model.add(Dropout(0.5))
 model.add(Dense(5875, activation='sigmoid'))
 model.compile(loss=keras.losses.categorical_crossentropy,
               optimizer=keras.optimizers.adam(),
@@ -98,6 +100,7 @@ for i in label_list:
 one_hot_dict = create_one_hot(all_labels)
 one_hot_dict[''] = len(one_hot_dict)
 
+
 for i in range(1000):
     image_batch, label_batch = get_batch(image_dir, get_labels(label_path), batch_size, width, height, channels)
     for i in range(0):
@@ -110,8 +113,13 @@ for i in range(1000):
     for labels in label_batch:
         for i,label in enumerate(labels):
             labels[i] = one_hot_dict[labels[i]]
+    label_batch = to_one_hot(label_batch)
     image = image_batch[0]
     new_batch = np.zeros((1,image.shape[0],image.shape[1],image.shape[2]))
     new_batch[0,:,:,:] = image
-    label_batch = np.array(label_batch)
-    model.fit(new_batch, label_batch)
+    best_batch = []
+    best_batch.append(label_batch)
+    best_batch = np.array(best_batch)
+    print(best_batch)
+    model.fit(new_batch, best_batch, epochs=1)
+    print('Nice!')
