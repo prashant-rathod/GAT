@@ -2,10 +2,11 @@
 <html>
 <head>
     <title>Smart Search Select</title>
-    {% include "header.html" -%}
+    {% include "header.html" %}
     <link href="{{ url_for('static', filename='css/vizStyle.css') }}" rel="stylesheet">
-    <script src="../static/js/jquery-1.11.1.min.js"></script>
     <script type="text/javascript">
+        console.log("SELECT");
+        console.log("{{url_for('static', filename='js/bootstrap.min.js')}}");
         function get(id) {
             return document.getElementById(id);
         }
@@ -332,6 +333,6 @@
         </form>
     </div>
 </section>
-{% include 'modal.html' -%}
+{% include 'modal.html' %}
 </body>
 </html>

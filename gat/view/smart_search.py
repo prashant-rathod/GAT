@@ -54,6 +54,8 @@ def landing(case_num, sentence, article_count):
     new_search_thread = SmartSearchThread(search_question=sentence, article_count=article_count)
     search_workers[case_num + 'sentence' + sentence] = new_search_thread
     new_search_thread.start()
+    print("TEST")
+    print(url_for("static", filename='js/sorttable.js'))
     return render_template('smart_search_landing.html',
                            case_num=case_num,
                            sentence=sentence)
@@ -80,7 +82,7 @@ def smart_search_results(case_num, sentence):
     selected_thread.result_lock.acquire()
     result_df = selected_thread.result
     selected_thread.result_lock.release()
-    if result_df:
+    if result_df is not None:
         result_str = StringIO()
         result_str.write(result_df.to_csv())
         return send_file(result_str,
