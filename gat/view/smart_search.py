@@ -83,11 +83,18 @@ def smart_search_results(case_num, sentence):
     result_df = selected_thread.result
     selected_thread.result_lock.release()
     if result_df is not None:
-        result_str = StringIO()
-        result_str.write(result_df.to_csv())
-        return send_file(result_str,
-                         mimetype='text/csv',
-                         as_attachment=True,
-                         attachment_filename=case_num + 'sentence' + sentence + '_result.csv')
+        # Create a new buffer, let pandas to write to that buffer,
+        # then set the start pos of the buffer to zero.
+        # Finally, get the string value from the buffer.
+        # Return the string, but set content as attachment, and then set filename.
+        result_buffer = StringIO()
+        result_df.to_csv(result_buffer, encoding='utf-8')
+        result_buffer.seek(0)
+        print(result_buffer.getvalue())
+        return Response(result_buffer.getvalue(),
+                        mimetype='text/csv',
+                        headers={'Content-disposition':
+                                     'attachment; filename=' + case_num + '_result.csv'}
+                        )
     else:
         return Response('Analysis Not Finished', content_type='text/plain')
