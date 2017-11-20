@@ -177,8 +177,6 @@ class SVOSENT(object):
 
     ###############################################
     # get both SVO and sent in one dataframe
-
-
     def svo_senti_from_article(self, article, subject=None):
         title = article[0:article.find('(title_end)')]
         try:

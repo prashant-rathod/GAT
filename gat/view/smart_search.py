@@ -6,12 +6,16 @@ from gat.dao import dao
 from gat.service.SmartSearch.smart_search_thread import SmartSearchThread
 
 smart_search_blueprint = Blueprint('smart_search_blueprint', __name__)
+search_workers: Dict[str, SmartSearchThread] = {}
 
 search_workers: Dict[str, SmartSearchThread] = {}
 
 
 @smart_search_blueprint.route('/smart_search_select', methods=['GET', 'POST'])
 def sheetSelect():
+    # case_num = None
+    case_num = request.args.get("case_num", None)
+
     if request.method == 'GET':
         # that means a form was submitted
         case_num = request.args.get("case_num", None)
@@ -74,7 +78,6 @@ def smart_search_progress(case_num, sentence):
     if result is not None:
         messages.append('###FINISHED###')
     return jsonify(messages)
-
 
 @smart_search_blueprint.route('/results/<case_num>/<sentence>', methods=['GET'])
 def smart_search_results(case_num, sentence):
