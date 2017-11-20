@@ -25,6 +25,9 @@ map or the provide CSV has characters/letters that our tool cannot understand.
         {% if gsaCSV %}
         {% include "kartograph.html" %}
         {% endif %}
+        {% if geoNet %}
+            {% include "network.html" %}
+        {% endif %}
 
     </div>
   </div>

@@ -71,6 +71,9 @@ def visualize():
 
         nlp_summary = 'Enable'
 
+    #call gsa_service.geoNet, produce output, do whatever else you need
+    #geoNet = true if there is a geonet produced
+    # fileDict[geoNetFiles...]
     return render_template('visualizations.html',
                            research_question=research_question,
                            SNAbpPlot=SNAbpPlot,
@@ -97,4 +100,5 @@ def visualize():
                            NLP_new_example_file=NLP_new_example_file,
                            nlp_new_example_sentiment=nlp_new_example_sentiment,
                            nlp_new_example_relationship=nlp_new_example_relationship,
+                           geoNet=geoNet
                            )

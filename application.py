@@ -13,6 +13,7 @@ from gat.view.upload import upload_blueprint
 from gat.view.visualize import visualize_blueprint
 from gat.view.out import out_blueprint
 from gat.view.smart_search import smart_search_blueprint
+from gat.view.geonet import geonet_blueprint
 
 ''' Before running:
         Make sure you have flask and jinja2 installed
@@ -78,6 +79,7 @@ application.register_blueprint(sna_blueprint)
 application.register_blueprint(gsa_blueprint)
 application.register_blueprint(out_blueprint)
 application.register_blueprint(smart_search_blueprint)
+application.register_blueprint(geonet_blueprint)
 
 #################
 #### Running ####

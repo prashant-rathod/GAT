@@ -2,8 +2,7 @@ import csv
 import json
 
 from gat.core.gsa.misc import util, map_generator
-
-from gat.core.gsa.core import spatial_dynamics, autocorrelation, weights
+from gat.core.gsa.core import spatial_dynamics, autocorrelation, weights, network, geojson
 from gat.dao import dao
 
 
@@ -64,3 +63,10 @@ def runGSA(case_num, autocorrelationRows, autocorrelationCols, sdRows, sdCols, i
     observations = weights.extractObservations(fileDict['GSA_Input_CSV'], sdRows, sdCols)
     spatialDynamics = spatial_dynamics.markov(observations, w, method="spatial")
     return localAutoCorrelation, globalAutoCorrelation, spatialDynamics
+
+def geoNetwork(case_num):
+    fileDict = dao.getFileDict(case_num)
+    outputShape = network.create_network(fileDict['Geonet_Input_Streets'], fileDict['Geonet_Input_Crimes'])
+    geojson.convert(outputShape + '.shp')
+    #can modify filedict in here so that you can access the files in visualization.py
+    #call ur code in here
