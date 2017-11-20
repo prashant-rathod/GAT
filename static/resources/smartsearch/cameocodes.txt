@@ -1,0 +1,376 @@
+Make a statement
+Decline comment
+Make a pessimistic comment
+Make optimistic comment
+Consider policy option
+Acknowledge or claim responsibility
+Deny responsibility
+Engage in symbolic act
+Make empathetic comment
+Express accord
+Make an appeal or request
+Appeal for material cooperation
+Appeal for economic cooperation
+Appeal for military cooperation
+Appeal for judicial cooperation
+Appeal for intelligence
+Appeal for diplomatic cooperation
+Appeal for material aid
+Appeal for economic aid
+Appeal for military aid
+Appeal for humanitarian aid
+Appeal for military protection or peacekeeping
+Appeal for political reform
+Appeal for change in leadership
+Appeal for policy change
+Appeal for rights
+Appeal for change in institutions, regime
+Appeal to yield
+Appeal for easing of administrative sanctions
+Appeal for easing of political dissent
+Appeal for release of persons or property
+Appeal for easing of economic sanctions, boycott, or embargo
+Appeal for target to allow international involvment (non-mediation)
+Appeal for target for de-escalation of military engagement
+Appeal for others to meet or negotiate
+Appeal for others to settle disputes
+Appeal to engage in or accept mediation
+Appeal to following, not specified
+Appeal to religious following, not specified
+Appeal to ethno-political following, not specified
+Appeal to internet following, not specified
+Appeal to build/increase information infrastructure, not specified
+Appeal to decrease censorship
+Appeal to increase information outlets
+Appeal to build energy infrastructure, not specified
+Appeal to build social infrastructure, not specified
+Appeal to build political infrastructure, not specified
+Appeal to build military infrastructure, not specified
+Appeal  to build/increase economic infrastructure, not specified
+Appeal for government funds for alternative energy
+Appeal for alternative energy options
+Appeal for energy cooperation
+Appeal to share energy resources
+Express intent to reduce censorship
+Express intent to increase censorship
+Express intent to reduce information outlets
+Express intent to increase information outlets
+Express intent to gather/mine natural resources
+Express intent to raise oil prices
+Express intent to raise energy prices
+Expresss intent to share natural resources , not specified
+Express intent to share energy resources
+Express intent to cooperate
+Express intent to engage in material cooperation
+Express intent to cooperate economically
+Express intent to cooperate militarily
+Express intent to cooperate on judicial matters
+Express intent to cooperate on intelligence
+Express intent to engage in diplomatic cooperation (such as policy support)
+Express intent to provide material aid
+Express intent to provide economic aid
+Express intent to provide military protection or peacekeeping
+Express intent to provide humanitarian aid
+Express intent to provide rights
+Express intent to institute political reform 
+Express intent to change leadership
+Express intent to change policy
+Express intent to provide rights
+Express intent to provide diplomatic guidence
+Express intent to change institutions, regime
+Express intent to yield
+Express intent to ease administrative sanctions
+Express intent to ease popular dissent
+Express intent to release persons or property
+Express intent to ease economic sanctions, boycott, or embargo
+Expresss intent to allow international involvement
+Express intent to de-escalate military engagement
+Express intent to meet or negotiate
+Express intent to settle dispute
+Express intent to accept mediation
+Express intent to mediate
+Express intent to build infrastructure, not specified
+Express intent to build energy infrastructure, not specified
+Express intent to build social infrastructure, not specified
+Express intent to build political infrastructure, not specified
+Express intent to build military infrastructure, not specified
+Express intent to build/increase information infrastructure, not specified
+Express intent to build/increase economic infrastructure, not specified
+Consult
+Consult with allies
+Consult with cabinet
+Call for a meeting (international organization, alliance etc.)
+Discuss by telephone
+Make a visit
+Host a visit
+Meet at a "third" location
+Mediate
+Engage in negotiation
+Engage in diplomatic cooperation
+Praise or endorse
+Defend verbally
+Rally support or on behalf of
+Grant diplomatic recognition
+Apologize
+Forgive
+Sign formal agreement 
+Engage in material cooperation, not specified
+Cooperate economically
+Cooperate militarily
+Engage in judicial cooperation
+Share intelligence or information
+Provide aid
+Provide economic aid
+Provide military aid
+Provide humanitarian aid
+Provide military protection or peacekeeping
+Grant asylum
+Yield
+Ease administrative sanctions
+Ease restrictions on political freedoms
+Ease ban on political parties or politicians
+Ease curfew
+Ease state of emergency or martial law
+Ease political dissent
+Accede to requests or demands for political reform
+Accede to demands for change in leadership
+Accede to demands for change in policy
+Accede to demands for rights
+Accede to demands for change in institutions, regime
+Return, release, not specified below
+Return, release persons
+Return, release property
+Ease economic sanctions, boycott, embargo
+Allow international involvement
+Receive deployment of peacekeepers
+Receive inspectors
+Allow humanitarian access
+De-escalate military engagement
+Declare truce, ceasefire
+Ease military blockade
+Demobilize armed forces
+Retreat or surrender militarily
+Investigate (non-specific)
+Investigate crime, corruption
+Investigate human rights abuses
+Investigate military action
+Investigate war crimes
+Demand, not specified
+Demand material cooperation
+Demand economic cooperation
+Demand military cooperation
+Demand judicial cooperation
+Demand intelligence cooperation
+Demand diplomatic cooperation
+Demand material aid, not specified
+Demand economic aid
+Demand military aid
+Demand humanitarian aid
+Demand military protection or peacekeeping
+Demand political reform
+Demand leadership change
+Demand policy change
+Demand rights
+Demand change in institutions, regime
+Demand that target yields, not specified
+Demand easing of administrative sanctions
+Demand easing of political dissent
+Demand target yields
+Demand easing of economic sanctions, boycott, or embargo
+Demand that target allows international involvement (non-mediation)
+Demand meeting, negotiation
+Demand settling of dispute
+Demand mediation
+Demand building of infrastructure, not specified
+Demand to build social infrastructure, not specified
+Demand to build political infrastructure, not specified
+Demand to build military infrastructure, not specified
+Demand to build/increase information infrastructure, not specified
+Demand to build/increase economic infrastructure, not specified
+Demand to build energy infrastructure, not specified
+Demand to reduce censorship
+Disapprove, not specified
+Criticize or denounce
+Accuse, not specified below
+Accuse of crime, corruption
+Accuse of human rights abuses
+Accuse of aggression
+Accuse of war crimes
+Accuse of espionage, treason
+Rally opposition against
+Complain officially
+Bring lawsuit against
+Find guilty or liable (legally)
+Secede from a federal union, an alliance, or a political organization
+Violate international agreement 
+Reject, not specified
+Reject material cooperation, not specified
+Reject economic cooperation
+Reject military cooperation
+Reject judicial cooperation
+Reject intelligence cooperation
+Reject request or demand for material aid
+Reject request for economic aid
+Reject request for military aid
+Reject request for humanitarian aid
+Reject request for military protection or peacekeeping
+Reject request or demand for political reform
+Reject request for change in leadership
+Reject request for policy change
+Reject request for rights
+Reject request for change in institutions
+Refuse to yield
+Refuse to ease administrative sanctions
+Refuse to ease popular dissent
+Refuse to release persons or property
+Reject to ease economic sanctions, boycott, or embargo
+Refuse to allow international involvement (non-mediation)
+Refuse to de-escalate military engagement
+Reject proposal to meet, discuss, or negotiate
+Reject mediation
+Reject plan, agreement to settle dispute
+Defy norms, law
+Veto
+Recall ambassador
+Refuse to reduce censorship
+Refuse to build energy infrastructure, not specified
+Refuse to build social infrastructure, not specified
+Refuset to build political infrastructure, not specified
+Refuse to build military infrastructure, not specified
+Refuse to build/increase information infrastructure, not specified
+Refuse to build/increase economic infrastructure, not specified
+Threaten
+Threaten non-force
+Threaten to reduce or stop aid
+Threaten with sanctions, boycott, embargo
+Threaten to reduce or break relations
+Threaten with administrative sanctions
+Threaten with restrictions on political freedoms
+Threaten to reduce information outlets
+Threaten to increase censorhip
+Threaten to ban political parties or politicians
+Threaten to impose curfew
+Threaten to impose state of emergency or martial law
+Threaten political dissent
+Threaten to halt negotiations
+Threaten to halt mediation
+Threaten to halt international involvement
+Threaten with repression
+Threaten with military force, not specified
+Threaten blockade
+Threaten occupation
+Threaten unconventional attack
+Threaten cyber attack
+Threaten conventional attack
+Threaten unconventional mass violence
+Violate airspace
+Violate inland waters
+Give ultimatum
+Engage in political dissent
+Demonstrate or rally
+Demonstrate for leadership change
+Demonstrate for policy change
+Demonstrate for rights
+Demonstrate for change in institutions, regime
+Conduct hunger strike
+Conduct hunger strike for leadership change
+Conduct hunger strike for policy change
+Conduct hunger strike for rights
+Conduct hunger strike for change in institutions, regime
+Conduct strike or boycott
+Conduct strike or boycott for leadership change
+Conduct strike  or boycott for policy change
+Conduct strike or boycott for rights
+Conduct strike or boycott for change in institutions
+Obstruct passage, block
+Obstruct passage to demand leadership change
+Obstruct passage to demand policy change
+Obstruct passage to demand rights
+Obstruct passage to demand change in institutions
+Protests violently, riot
+Engage in violent protest for leadership change
+Engage in violent protests for policy change
+Engage in violent protests for rights
+Engage in violent protest for change in institutions
+Demonstrate military or police power
+Increase police alert status
+Increase military alert status
+Mobilize or increase police power
+Mobilize or increase armed forces
+Mobilize or increase cyber-forces
+Reduce relations
+Reduce or break diplomatic relations
+Redue or stop material aid, not specified
+Reduce or stop economic assistance
+Reduce or stop military assistance
+Reduce or stop humanitarian assistance
+Impose embargo, boycott, or sanctions
+Halt negotiations
+Halt mediation
+Expel or withdraw
+Expel or withdraw peacekeepers
+Expel or withdraw inspectors, observers
+Expel or withdraw aid agencies
+Coerce
+Seize or damage property
+Confiscate property
+Destroy property
+Impose administrative sanctions, not specified
+Impose restrictions on political freedoms
+Ban political parties or politicians
+Impose curfew
+Impose state of emergency or martial law
+Arrest, detain, or charge with legal action
+Expel or deport individuals
+Use tactics of violence repression
+Attack cybernetically
+Use unconvenitional violence
+Abduct, hijack, or take hostage
+Physically assault
+Sexually assault
+Torture
+Kill by phsyical assault
+Conduct suicide, car, or other non-military bombing
+Conduct cyber attack
+Carry out suicide bombing
+Carry out vehicular bombing
+Carry out roadside bombing
+Carry out location bombing
+Use as a human shield
+Attempt to assassinate
+Assassinate
+Use conventional violence
+Impose blockade, restrict movement
+Occupy territory
+Fight with small arms and light weapons
+Fight with artillery tanks
+Employ aerial weapons, not specified
+Employ precision-guided aerial munitions
+Employ remotely piloted aerial munitions
+Violate ceasefire
+Use unconventional mass violence
+Engage in mass expulsion
+Engage in mass killings
+Engage in ethnic cleansing
+Use weapons of mass destruction
+Use chemical, biological, or radiological weapons
+Detonate nuclear weapons
+Build a religious following
+Build an ethno-political following
+Build an internet following
+Increase censorship
+Reduce information outlets
+Build energy infrastructure (unspecified)
+Build social infrastructure (unspecified)
+Build political infrastructure (unspecified)
+Build military infrastructure (unspecified)
+Build/increase information infrastructure (unspecified)
+Build/increase economic infrastructure (unspecified)
+Gather/mine natural resources (unspecified)
+Raise oil prices
+Lower oil prices
+Raise energy prices
+Lower energy prices
+Raise energy prices
+Spend more government funds on alternative energy
+Spend less government funds on alternative energy

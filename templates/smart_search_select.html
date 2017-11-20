@@ -2,10 +2,11 @@
 <html>
 <head>
     <title>Smart Search Select</title>
-    {% include "header.html" -%}
+    {% include "header.html" %}
     <link href="{{ url_for('static', filename='css/vizStyle.css') }}" rel="stylesheet">
-    <script src="../static/js/jquery-1.11.1.min.js"></script>
     <script type="text/javascript">
+        console.log("SELECT");
+        console.log("{{url_for('static', filename='js/bootstrap.min.js')}}");
         function get(id) {
             return document.getElementById(id);
         }
@@ -289,7 +290,7 @@
                 </tr>
                 <tr>
                     <td><i>{{ sentences[0] }}</i></td>
-                    <td class="centered"><input name="cameo" value= "0" type="radio"></td>
+                    <td class="centered"><input name="cameo" value="0" type="radio"></td>
                 </tr>
                 <tr>
                     <td><i>{{ sentences[1] }}</i></td>
@@ -311,16 +312,18 @@
                     <td>
                         <select name="cameos" id="cameos">
                             {% for code in cameoCodes %}
-                                <option><i>{{ code }}<i></option>
+                                <option><i>{{ code }}</i></option>
                             {% endfor %}
                         </select>
                     </td>
-                    <td class="centered"><input name="cameo" type="radio"></td>
+                    <td class="centered"><input name="cameo" value="SeeDropdown" type="radio"></td>
+
                 </tr>
             </table>
             <br>
             <label id="NE_titles"> Name Entities: </label>
-            <textarea id="name_entities" name="name_entities" form="cameoFORM" rows="4" cols="30"
+            <textarea name="name_entities" id="name_entities" form="cameoFORM" rows="4" cols="30"
+
                       style="display:inline;"></textarea>
             <br>
             <br>
@@ -332,6 +335,6 @@
         </form>
     </div>
 </section>
-{% include 'modal.html' -%}
+{% include 'modal.html' %}
 </body>
 </html>
