@@ -4,21 +4,19 @@ import threading
 import spacy
 import time
 import datefinder
-from typing import List
 import pandas as pd
 from newspaper import Article
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 from gat.service.SmartSearch.SEARCH_BING_MODULE import bingURL
 from gat.service import file_io
 from nltk import data
-import gat.service.SmartSearch.SCRAPER as SCRAPER
 from dateparser import parse
 
 
 class SmartSearchThread(threading.Thread):
     def __init__(self, language='english', search_question='', article_count=0):
         super().__init__()
-        self.messages: List[str] = []
+        self.messages = []
         self.messages_lock = threading.Lock()
         self.result = None
         self.result_lock = threading.Lock()
