@@ -1,5 +1,4 @@
 from io import StringIO
-from typing import Dict
 from flask import Blueprint, render_template, request, redirect, url_for, jsonify, send_file, Response
 from gat.CameoPrediction.PredictCameo import top5CAMEO
 from gat.dao import dao
@@ -7,7 +6,7 @@ from gat.service.SmartSearch.smart_search_thread import SmartSearchThread
 
 smart_search_blueprint = Blueprint('smart_search_blueprint', __name__)
 
-search_workers: Dict[str, SmartSearchThread] = {}
+search_workers = {}
 
 
 @smart_search_blueprint.route('/smart_search_select', methods=['GET', 'POST'])
