@@ -28,7 +28,6 @@ simplegeneric==0.8.1
 six==1.10.0
 sklearn
 spacy>=1.8.0,<2.0.0
--e https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-1.2.0/en_core_web_sm-1.2.0.tar.gz#egg=en_core_web_sm-1.2.0
 textacy
 traitlets==4.3.2
 wcwidth==0.1.7
