@@ -5,8 +5,6 @@ from gat.dao import dao
 from gat.service.SmartSearch.smart_search_thread import SmartSearchThread
 
 smart_search_blueprint = Blueprint('smart_search_blueprint', __name__)
-search_workers: Dict[str, SmartSearchThread] = {}
-
 search_workers = {}
 
 
