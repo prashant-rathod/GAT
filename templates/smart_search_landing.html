@@ -317,7 +317,9 @@
         </textarea>
         <br>
         <br>
-        <a href="/results/{{ case_num }}/{{ sentence }}" id="NE_titles">Download the file! (wait until progress says "###FINISHED###")</a>
+        <a href="/results/{{ case_num }}/{{ sentence }}" id="NE_titles">Download the raw result (wait until progress says "###FINISHED###")</a>
+        <br>
+      <a href="/results_ontology/{{ case_num }}/{{ sentence }}" id="NE_titles">Download the ontology result! (wait until progress says "###FINISHED###")</a>
     </div>
     {% include 'modal.html' -%}
     </body>
