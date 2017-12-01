@@ -202,6 +202,7 @@
     </div>
 
     <script type="text/javascript">
+
         function get(id) {
             return document.getElementById(id);
         }
@@ -295,7 +296,6 @@
             color: initial;
         }
 
-
     </style>
 
     <body>
@@ -309,6 +309,7 @@
             spreadsheet. The next page will allow you to select which relationships between the nodesets you would like
             to visualize and analyze.</p>
     </div>
+
     <div class="indented">
         <label id="NE_titles">Progress on the scan:</label>
         <br>
@@ -316,7 +317,9 @@
         </textarea>
         <br>
         <br>
-        <a href="/results/{{ case_num }}/{{ sentence }}" id="NE_titles">Download the file! (wait until progress says "###FINISHED###")</a>
+        <a href="/results/{{ case_num }}/{{ sentence }}" id="NE_titles">Download the raw result (wait until progress says "###FINISHED###")</a>
+        <br>
+      <a href="/results_ontology/{{ case_num }}/{{ sentence }}" id="NE_titles">Download the ontology result! (wait until progress says "###FINISHED###")</a>
     </div>
     {% include 'modal.html' -%}
     </body>
