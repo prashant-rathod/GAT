@@ -70,3 +70,4 @@ def geoNetwork(case_num):
     geojson.convert(outputShape + '.shp')
     #can modify filedict in here so that you can access the files in visualization.py
     #call ur code in here
+    return fileDict

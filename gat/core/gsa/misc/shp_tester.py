@@ -13,7 +13,7 @@ write values for all locations given in csv <- this is the only part we don't kn
 location_names contains the names of all the locations inside of the shapefile.
 '''
 
-def add_data(data_values, shp_path, csv_path, shp_name, csv_name):
+def add_data(shp_path, csv_path, shp_name):
     driver = ogr.GetDriverByName('ESRI Shapefile')
     dataSource = driver.Open(shp_path, 1) #1 is read/write
 

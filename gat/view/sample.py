@@ -16,7 +16,7 @@ def gsa_sample(sample_path):
         #run gsa_service.geonet, redirect to visualization page
         fileDict['Geonet_Input_Streets'] = 'static/mygeodata/streets.shp'
         fileDict['Geonet_Input_Crimes'] = 'static/mygeodata/crimes.shp'
-        return redirect(url_for('geonet_blueprint.get_json', case_num=case_num))
+        return redirect(url_for('gsa_blueprint.get_json', case_num=case_num))
     else:
         return redirect(url_for('gsa_blueprint.gsa_select', case_num=case_num))
 
