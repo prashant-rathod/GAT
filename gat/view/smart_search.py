@@ -67,10 +67,10 @@ def smart_search_progress(case_num, sentence):
     # Copy the list
     messages = list(selected_thread.messages)
     selected_thread.messages_lock.release()
-    selected_thread.result_lock.acquire()
-    result = selected_thread.result
-    selected_thread.result_lock.release()
-    if result is not None:
+    selected_thread.result_ontology_lock.acquire()
+    result_ontology = selected_thread.result_ontology
+    selected_thread.result_ontology_lock.release()
+    if result_ontology is not None:
         messages.append('###FINISHED###')
     return jsonify(messages)
 
@@ -102,7 +102,7 @@ def smart_search_results(case_num, sentence):
 def smart_search_ontology_results(case_num, sentence):
     selected_thread = search_workers[case_num + 'sentence' + sentence]
     selected_thread.result_ontology_lock.acquire()
-    result_df = selected_thread.result
+    result_df = selected_thread.result_ontology
     selected_thread.result_ontology_lock.release()
     if result_df is not None:
         result_buffer = StringIO()
