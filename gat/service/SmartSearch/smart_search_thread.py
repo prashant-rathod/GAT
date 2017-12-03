@@ -20,6 +20,8 @@ class SmartSearchThread(threading.Thread):
         self.messages_lock = threading.Lock()
         self.result = None
         self.result_lock = threading.Lock()
+        self.result_ontology = None
+        self.result_ontology_lock = threading.Lock()
         self.__nlp = spacy.load('en')  # spacy parser
         self.__sent_detector = data.load('tokenizers/punkt/english.pickle')
         self.__analyzer = SentimentIntensityAnalyzer()  # for sentiment analysis
@@ -112,7 +114,7 @@ class SmartSearchThread(threading.Thread):
                 event_date = str(event_date)
             except:
                 event_date = None
-                
+
         # correct subject and object
         corrected_subjects = []
         corrected_objects = []
@@ -318,6 +320,90 @@ class SmartSearchThread(threading.Thread):
         self.messages_lock.release()
         return articles
 
+    def __generate_ontology(self, result):
+        result['Audience'] = (
+            result['Names'].apply(lambda x: set(x)) - result['Subjects'].apply(lambda x: set(x)) - result[
+                'Objects'].apply(
+                lambda x: set(x))).apply(lambda x: list(x))
+        subjects = list(result['Subjects'])
+        objects = list(result['Objects'])
+        sentiment = list(result['Sentiment'])
+        audiences = list(result['Audience'])
+        all_combination1 = []
+        for i in range(len(result)):
+            if len(subjects[i]) != 0 and len(objects[i]) != 0:
+                combine = []
+                for x in range(len(subjects[i])):
+                    for y in range(len(objects[i])):
+                        combine.append([subjects[i][x], objects[i][y]])
+                all_combination1.append(combine)
+
+        dflist1 = []
+        for i in range(len(all_combination1)):
+            df = pd.DataFrame(all_combination1[i], columns=['Name', 'Agent'])
+            df['sentiment'] = sentiment[i]
+            dflist1.append(df)
+        Name_Agent_pro = pd.concat(dflist1)
+
+        Name_Agent_pro = Name_Agent_pro.groupby(['Name', 'Agent']).agg({'sentiment': 'mean'
+                                                                        }).reset_index()
+
+        Name_Agent = Name_Agent_pro.groupby('Name')['Agent'].apply(lambda x: pd.Series(x.values)).unstack()
+        Name_Agent = Name_Agent.rename(columns={i: 'Agent_N{}'.format(i + 1) for i in range(len(Name_Agent))}).iloc[:,
+                     0:10].reset_index()
+        Name_Weight = Name_Agent_pro.groupby('Name')['sentiment'].apply(lambda x: pd.Series(x.values)).unstack()
+        Name_Weight = Name_Weight.rename(columns={i: 'Agent_W{}'.format(i + 1) for i in range(len(Name_Weight))}).iloc[
+                      :, 0:10].reset_index()
+        labels = []
+
+        for i in range(len(list(Name_Agent))):
+            labels.append(list(Name_Agent)[i])
+            labels.append(list(Name_Weight)[i])
+        labels.remove('Name')
+        Name_Agent_Weight = Name_Agent.merge(Name_Weight, on='Name')[labels]
+
+        all_combination2 = []
+        for i in range(len(result)):
+            if len(subjects[i]) != 0 and len(audiences[i]) != 0:
+                combine = []
+                for x in range(len(subjects[i])):
+                    for y in range(len(audiences[i])):
+                        combine.append([subjects[i][x], audiences[i][y]])
+                all_combination2.append(combine)
+
+        dflist2 = []
+        for i in range(len(all_combination2)):
+            df = pd.DataFrame(all_combination2[i], columns=['Name', 'Audience'])
+            df['sentiment'] = sentiment[i]
+            dflist2.append(df)
+        Name_Audience_pro = pd.concat(dflist2)
+
+        Name_Audience_pro = Name_Audience_pro.groupby(['Name', 'Audience']).agg({'sentiment': 'mean'
+                                                                                 }).reset_index()
+
+        Name_Audience = Name_Audience_pro.groupby('Name')['Audience'].apply(lambda x: pd.Series(x.values)).unstack()
+        Name_Audience = Name_Audience.rename(
+            columns={i: 'Audience_N{}'.format(i + 1) for i in range(len(Name_Audience))}).iloc[:, 0:10].reset_index()
+        Name_Weight_Audience = Name_Audience_pro.groupby('Name')['sentiment'].apply(
+            lambda x: pd.Series(x.values)).unstack()
+        Name_Weight_Audience = Name_Weight_Audience.rename(
+            columns={i: 'Audience_W{}'.format(i + 1) for i in range(len(Name_Weight_Audience))}).iloc[:,
+                               0:10].reset_index()
+        labels = []
+
+        for i in range(len(list(Name_Audience))):
+            labels.append(list(Name_Audience)[i])
+            labels.append(list(Name_Weight_Audience)[i])
+        labels.remove('Name')
+        Name_Audience_Weight = Name_Audience.merge(Name_Weight_Audience, on='Name')[labels]
+        ontology = Name_Agent_Weight.merge(Name_Audience_Weight, on='Name', how='outer')
+        ontology = ontology.drop_duplicates()
+        ontology.columns = ['Name', 'Agent', 'W', 'Agent', 'W', 'Agent', 'W', 'Agent', 'W', 'Agent', 'W', 'Agent', 'W',
+                            'Agent', 'W', 'Agent', 'W', 'Agent', 'W', 'Agent', 'W',
+                            'Audience', 'W', 'Audience', 'W', 'Audience', 'W', 'Audience', 'W', 'Audience', 'W',
+                            'Audience', 'W', 'Audience', 'W', 'Audience', 'W', 'Audience', 'W', 'Audience', 'W']
+        return ontology
+
     def run(self):
         if self.__search_question:
             self.messages_lock.acquire()
@@ -325,7 +411,7 @@ class SmartSearchThread(threading.Thread):
             self.messages_lock.release()
             bing = bingURL()
             t0 = time.time()
-            urls = bing.search_urls(self.__search_question, math.ceil(self.__article_count/20.0))
+            urls = bing.search_urls(self.__search_question, math.ceil(self.__article_count / 20.0))
             t1 = time.time()
             self.messages_lock.acquire()
             self.messages.append('time cost:' + str(t1 - t0))
@@ -335,4 +421,9 @@ class SmartSearchThread(threading.Thread):
             articles_list = self.__split_and_clean(articles)
             self.result_lock.acquire()
             self.result = self.__batchProcessArticles(articles_list)
+            self.result_lock.release()
+            self.result_lock.acquire()
+            self.result_ontology_lock.acquire()
+            self.result_ontology = self.__generate_ontology(self.result)
+            self.result_ontology_lock.release()
             self.result_lock.release()
