@@ -89,7 +89,6 @@ def smart_search_results(case_num, sentence):
         result_buffer = StringIO()
         result_df.to_csv(result_buffer, encoding='utf-8')
         result_buffer.seek(0)
-        print(result_buffer.getvalue())
         return Response(result_buffer.getvalue(),
                         mimetype='text/csv',
                         headers={'Content-disposition':
@@ -109,7 +108,6 @@ def smart_search_ontology_results(case_num, sentence):
         result_buffer = StringIO()
         result_df.to_csv(result_buffer, encoding='utf-8')
         result_buffer.seek(0)
-        print(result_buffer.getvalue())
         return Response(result_buffer.getvalue(),
                         mimetype='text/csv',
                         headers={'Content-disposition':
