@@ -6,7 +6,7 @@ Created on Mon Aug 21 22:28:48 2017
 @author: ruobingwang
 """
 from spacy.en import English
-import file_io
+from gat.service import file_io
 import spacy
 import pandas as pd
 from nltk import data
@@ -177,8 +177,6 @@ class SVOSENT(object):
 
     ###############################################
     # get both SVO and sent in one dataframe
-
-
     def svo_senti_from_article(self, article, subject=None):
         title = article[0:article.find('(title_end)')]
         try:

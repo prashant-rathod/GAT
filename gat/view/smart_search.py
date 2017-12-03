@@ -37,7 +37,7 @@ def smart_search_landing(case_num, sentence):
     new_search_thread = SmartSearchThread()
     search_workers[case_num + 'sentence' + sentence] = new_search_thread
     new_search_thread.start()
-    raise NotImplemented
+    return render_template('smart_search_landing.html')
 
 
 @smart_search_blueprint.route('/progress/<case_num>/<sentence>', methods=['GET'])
