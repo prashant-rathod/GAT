@@ -1,5 +1,5 @@
 from io import StringIO
-from flask import Blueprint, render_template, request, redirect, url_for, jsonify, send_file, Response
+from flask import Blueprint, render_template, request, redirect, url_for, jsonify, Response
 from gat.CameoPrediction.PredictCameo import top5CAMEO
 from gat.dao import dao
 from gat.service.SmartSearch.smart_search_thread import SmartSearchThread
@@ -55,8 +55,6 @@ def landing(case_num, sentence, article_count):
     new_search_thread = SmartSearchThread(search_question=sentence, article_count=article_count)
     search_workers[case_num + 'sentence' + sentence] = new_search_thread
     new_search_thread.start()
-    print("TEST")
-    print(url_for("static", filename='js/sorttable.js'))
     return render_template('smart_search_landing.html',
                            case_num=case_num,
                            sentence=sentence)
@@ -69,12 +67,13 @@ def smart_search_progress(case_num, sentence):
     # Copy the list
     messages = list(selected_thread.messages)
     selected_thread.messages_lock.release()
-    selected_thread.result_lock.acquire()
-    result = selected_thread.result
-    selected_thread.result_lock.release()
-    if result is not None:
+    selected_thread.result_ontology_lock.acquire()
+    result_ontology = selected_thread.result_ontology
+    selected_thread.result_ontology_lock.release()
+    if result_ontology is not None:
         messages.append('###FINISHED###')
     return jsonify(messages)
+
 
 @smart_search_blueprint.route('/results/<case_num>/<sentence>', methods=['GET'])
 def smart_search_results(case_num, sentence):
@@ -90,11 +89,29 @@ def smart_search_results(case_num, sentence):
         result_buffer = StringIO()
         result_df.to_csv(result_buffer, encoding='utf-8')
         result_buffer.seek(0)
-        print(result_buffer.getvalue())
         return Response(result_buffer.getvalue(),
                         mimetype='text/csv',
                         headers={'Content-disposition':
                                      'attachment; filename=' + case_num + '_result.csv'}
+                        )
+    else:
+        return Response('Analysis Not Finished', content_type='text/plain')
+
+
+@smart_search_blueprint.route('/results_ontology/<case_num>/<sentence>', methods=['GET'])
+def smart_search_ontology_results(case_num, sentence):
+    selected_thread = search_workers[case_num + 'sentence' + sentence]
+    selected_thread.result_ontology_lock.acquire()
+    result_df = selected_thread.result_ontology
+    selected_thread.result_ontology_lock.release()
+    if result_df is not None:
+        result_buffer = StringIO()
+        result_df.to_csv(result_buffer, encoding='utf-8')
+        result_buffer.seek(0)
+        return Response(result_buffer.getvalue(),
+                        mimetype='text/csv',
+                        headers={'Content-disposition':
+                                     'attachment; filename=' + case_num + '_ontology_result.csv'}
                         )
     else:
         return Response('Analysis Not Finished', content_type='text/plain')
