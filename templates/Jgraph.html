@@ -446,10 +446,12 @@
         $("#propInfo").append("<span>Propensities for the link from <b>"+edgeDict['source']+"</b> to <b>"+edgeDict['target']+"</b>:<br></span>")
         empty = true
         for (var key in edgeDict) {
-          if (key != "source" && key != "target" && key != "name") {
+          if (key != "source" && key != "target" && key != "name" && key != "propsFlag") {
             if (edgeDict[key] != null) {
-              console.log(key, edgeDict[key])
-              $("#propInfo").append("<span id='"+key+"'>"+key+": "+edgeDict[key][0][0]+" (resulting from attribute {"+edgeDict[key][0][1]+": "+edgeDict[key][0][2]+"})</span><br>")
+              $("#propInfo").append("<span id='"+key+"'><i>"+key+":</i></span><br>")
+              for (var prop in edgeDict[key]) {
+                $("#propInfo").append("<span id='"+prop+"'>"+prop+": "+edgeDict[key][prop]+"</span><br>")
+              }
               empty = false
             }
           }

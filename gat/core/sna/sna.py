@@ -182,6 +182,7 @@ class SNA():
                             attrList.append(cell['val'])
                             attrID = cell['header']
                         self.changeAttribute(nodeID, attrList, attrID)
+
                 prevCell = cell # save cell in case of subattribute data
 
     # Input: the node set that will serve as the source of all links
@@ -221,25 +222,22 @@ class SNA():
         self.G.add_edges_from(newEdgeList)
         self.edges.extend(newEdgeList)
 
-    def calculatePropensities(self, emo=True, role=True):
+    def calculatePropensities(self, emo=True, role=True, infl=True):
 
         for edge in self.edges:  # for every edge, calculate propensities and append as an attribute
-            attributeDict = {}
+            attributeDict = {"propsFlag": True}
 
             emoPropList = propensities.propCalc(self, edge)[0] if emo else None
             if len(emoPropList) > 0:
                 attributeDict['Emotion'] = emoPropList
-                attributeDict['emoWeight'] = propensities.aggregateProps(emoPropList)
 
             rolePropList = propensities.propCalc(self, edge)[1] if role else None
             if len(rolePropList) > 0:
                 attributeDict['Role'] = rolePropList
-                attributeDict['roleWeight'] = propensities.aggregateProps(rolePropList)
 
-            inflPropList = propensities.propCalc(self, edge)[2] if role else None
+            inflPropList = propensities.propCalc(self, edge)[2] if infl else None
             if len(inflPropList) > 0:
                 attributeDict['Influence'] = inflPropList
-                attributeDict['inflWeight'] = propensities.aggregateProps(inflPropList)
 
             self.G[edge[0]][edge[1]] = attributeDict
 
@@ -381,7 +379,7 @@ class SNA():
                 event = 'Event ' + str(node[2]) + ': ' + node[0] + ' to ' + node[1]
                 self.G.add_node(event, {'ontClass': 'Event', 'Name': [
                     'Event' + str(i) + ' ' + str(node[2]) + ': ' + node[0] + ' to ' + node[1]], 'block': 'Event',
-                                        'Description': 'Conduct suicide, car, or other non-military bombing'})
+                                        'Description': 'Conduct suicide, car, or other non-military bombing', 'code': node[2]})
                 self.G.add_edge(node[0], event)
                 self.G.add_edge(event, node[1])
             self.G.add_weighted_edges_from(iterEdgeList, 'W')
@@ -869,7 +867,7 @@ class SNA():
         if graph is None:
             graph = self.G
         for edge in self.G.edges_iter():
-            if graph[edge[0]][edge[1]].get('Emotion') is not None:
+            if graph[edge[0]][edge[1]].get("propsFlag") is True:
                 # links with propensities can be given hex code colors for arrow, edge; can also change arrow size
                 edges.append(
                     {'source': edge[0],

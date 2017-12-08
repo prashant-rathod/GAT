@@ -1,152 +1,258 @@
 import numpy as np
 
+
+### Globals
+A = (-.8,-.6)
+B = (-.6,-.3)
+C = (-.3,.3)
+D = (.3,.6)
+E = (.6,.8)
+role_keys = ["Hegemon", "Revisionist", "Ally", "DoF", "Dependent", "Independent", "Mediator", "Isolationist"]
+role_weight_table = [ # (Hegemon, Revisionist, Ally, DoF, Dependent, Independent, Mediator, Isolationist) ^ 2
+    [ # Hegemon
+        [B,B,D,A,D], # Hegemon
+        [A,A,B,B,C], # Revisionist
+        [E,D,D,D,D], # Ally
+        [C,B,B,C,B], # DoF
+        [D,C,B,E,C], # Dependent
+        [C,B,A,A,B], # Isolationist
+        [C,C,C,B,C], # Mediator
+        [D,C,B,D,C], # Independent
+    ],
+    [ # Revisionist
+        [A,A,C,C,B], # Hegemon
+        [C,C,D,A,B], # Revisionist
+        [D,D,C,C,C], # Ally
+        [A,B,C,B,C], # DoF
+        [D,D,B,D,B], # Dependent
+        [C,B,B,C,C], # Isolationist
+        [C,C,B,B,D], # Mediator
+        [C,C,C,B,B], # Independent
+    ],
+    [ # Ally
+        [E,D,E,A,E], # Hegemon
+        [E,D,C,B,C], # Revisionist
+        [D,D,D,A,D], # Ally
+        [C,C,C,C,C], # DoF
+        [C,D,B,D,B], # Dependent
+        [B,B,B,A,C], # Isolationist
+        [C,C,D,A,D], # Mediator
+        [B,B,B,B,A], # Independent
+    ],
+    [ #DoF
+        [C,D,B,C,D], # Hegemon
+        [B,C,B,B,B], # Revisionist
+        [B,C,C,C,B], # Ally
+        [B,C,B,A,A], # DoF
+        [C,D,C,D,C], # Dependent
+        [C,B,A,B,C], # Isolationist
+        [B,C,C,B,C], # Mediator
+        [C,B,C,B,C], # Independent
+    ],
+    [ # Dependent
+        [E,C,E,A,E], # Hegemon
+        [D,C,D,A,D], # Revisionist
+        [D,C,C,A,C], # Ally
+        [C,C,C,A,D], # DoF
+        [D,D,A,B,B], # Dependent
+        [B,A,A,B,A], # Isolationist
+        [D,C,D,A,D], # Mediator
+        [C,C,C,B,A], # Independent
+    ],
+    [ # Independent
+        [B,C,D,B,D], # Hegemon
+        [A,C,C,C,C], # Revisionist
+        [C,C,B,C,C], # Ally
+        [C,D,C,C,C], # DoF
+        [C,C,B,C,C], # Dependent
+        [D,D,C,C,D], # Isolationist
+        [C,C,D,B,D], # Mediator
+        [E,D,D,A,E], # Independent
+    ],
+    [ # Mediator
+        [B,C,D,B,E], # Hegemon
+        [C,C,D,C,C], # Revisionist
+        [D,D,C,D,C], # Ally
+        [C,C,C,D,C], # DoF
+        [C,C,B,D,B], # Dependent
+        [B,B,B,D,B], # Isolationist
+        [C,E,D,A,D], # Mediator
+        [C,C,B,D,C], # Independent
+    ],
+    [ # Isolationist
+        [C,B,D,A,C], # Hegemon
+        [A,A,C,A,B], # Revisionist
+        [C,B,C,C,B], # Ally
+        [B,A,B,B,B], # DoF
+        [A,B,A,D,A], # Dependent
+        [D,B,D,B,D], # Isolationist
+        [B,C,C,B,C], # Mediator
+        [C,C,D,B,C], # Independent
+    ]
+]
+role_labels = [ # (Hegemon, Revisionist, Ally, DoF, Dependent, Independent, Mediator, Isolationist) ^ 2
+    [ # Hegemon
+        ["Facilitator","Belligerent"], # Hegemon
+        ["Facilitator", "Belligerent"], # Revisionist
+        ["Protector", "Provacateur"], # Ally
+        ["Protector", "Provacateur"], # DoF
+        ["Provider", "Provacateur"], # Dependent
+        ["Facilitator", "Supporter"], # Isolationist
+        ["Facilitator", "Belligerent"], # Mediator
+        ["Protector", "Protector"], # Independent
+    ],
+    [ # Revisionist
+        ["Consumer", "Belligerent"], # Hegemon
+        ["Facilitator", "Belligerent"], # Revisionist
+        ["Protector", "Provacateur"], # Ally
+        ["Supporter", "Provacateur"], # DoF
+        ["Provider", "Belligerent"], # Dependent
+        ["Facilitator", "Supporter"], # Isolationist
+        ["Supporter", "Belligerent"], # Mediator
+        ["Facilitator", "Provacateur"], # Independent
+    ],
+    [ # Ally
+        ["Consumer", "Provacateur"], # Hegemon
+        ["Facilitator", "Belligerent"], # Revisionist
+        ["Supporter", "Belligerent"], # Ally
+        ["Consumer", "Provacateur"], # DoF
+        ["Provider", "Provacateur"], # Dependent
+        ["Facilitator", "Provacateur"], # Isolationist
+        ["Facilitator", "Provacateur"], # Mediator
+        ["Facilitator", "Supporter"], # Independent
+    ],
+    [ #DoF
+        ["Consumer", "Belligerent"], # Hegemon
+        ["Supporter", "Belligerent"], # Revisionist
+        ["Supporter", "Belligerent"], # Ally
+        ["Supporter", "Provacateur"], # DoF
+        ["Provider", "Provacateur"], # Dependent
+        ["Facilitator", "Supporter"], # Isolationist
+        ["Facilitator", "Provacateur"], # Mediator
+        ["Facilitator", "Provacateur"], # Independent
+    ],
+    [ # Dependent
+        ["Consumer", "Supporter"], # Hegemon
+        ["Consumer", "Supporter"], # Revisionist
+        ["Supporter", "Provacateur"], # Ally
+        ["Consumer", "Supporter"], # DoF
+        ["Facilitator", "Supporter"], # Dependent
+        ["Consumer", "Belligerent"], # Isolationist
+        ["Consumer", "Belligerent"], # Mediator
+        ["Consumer", "Belligerent"], # Independent
+    ],
+    [ # Independent
+        ["Supporter", "Belligerent"], # Hegemon
+        ["Supporter", "Belligerent"], # Revisionist
+        ["Facilitator", "Provacateur"], # Ally
+        ["Supporter", "Belligerent"], # DoF
+        ["Provider", "Provacateur"], # Dependent
+        ["Facilitator", "Supporter"], # Isolationist
+        ["Supporter", "Provacateur"], # Mediator
+        ["Belligerent", "Provacateur"], # Independent
+    ],
+    [ # Mediator
+        ["Consumer", "Belligerent"], # Hegemon
+        ["Supporter", "Belligerent"], # Revisionist
+        ["Facilitator", "Provacateur"], # Ally
+        ["Supporter", "Provacateur"], # DoF
+        ["Provider", "Supporter"], # Dependent
+        ["Facilitator", "Supporter"], # Isolationist
+        ["Supporter", "Provacateur"], # Mediator
+        ["Facilitator", "Provacateur"], # Independent
+    ],
+    [ # Isolationist
+        ["Facilitator", "Provacateur"], # Hegemon
+        ["Facilitator", "Belligerent"], # Revisionist
+        ["Facilitator", "Belligerent"], # Ally
+        ["Facilitator", "Provacateur"], # DoF
+        ["Facilitator", "Provacateur"], # Dependent
+        ["Supporter", "Provacateur"], # Isolationist
+        ["Belligerent", "Provacateur"], # Mediator
+        ["Supporter", "Supporter"] # Independent
+    ]
+]
+infl_weight_table = [ # influence x IO
+    [D,D,C,D,D],
+    [D,B,C,A,C],
+    [B,A,B,A,B],
+    [B,B,D,A,D],
+    [E,D,D,B,D],
+    [C,B,C,B,B]
+]
+
+
 def propCalc(graph, edge):
-    emoProps = []
-    roleProps = []
-    inflProps = []
-    roleAttrSet = ["Belief","Resource"]
     source = graph.G.node[edge[0]]
     target = graph.G.node[edge[1]]
-    src_role = source.get("Role")
-    trg_role = target.get("Role")
+
+    IO = IOCalc(graph, source, target)
+    emoProps = []
+    inflProps = inflCalc(IO)
+
+    roles = (source.get("Role"),target.get("Role"))
+    roleProps = roleCalc(IO,roles) if None not in roles else []
+
+    return emoProps, roleProps, inflProps
+
+
+# INPUT: list of propensities where last index is propensity weight
+# OUTPUT: average propensity weight as float
+def aggregateProps(propList):
+    return np.average(propList)
+
+def IOCalc(graph, source, target):
+    IO = [np.random.random_sample() * 2 - 1 for x in range(5)]
+    mutualAffiliations = []  # What should the values here be?
 
     for attr in (target if len(source) > len(target) else source):
         if attr not in ['block', 'newNode', 'Name'] and source.get(attr) is not None and target.get(attr) is not None:
             for src_val in [x for x in source.get(attr) if len(x) > 1]:
                 for trg_val in [x for x in target.get(attr) if len(x) > 1]:
 
-                    #####################################
-                    ### Propensity assignment section ###
-                    #####################################
+                    ##############################
+                    ### IO Calculation Section ###
+                    ##############################
 
-                    ### Emotion & Influence Propensities ###
                     src_w = float(src_val[1]["W"]) if "W" in src_val[1] else None
                     trg_w = float(trg_val[1]["W"]) if "W" in trg_val[1] else None
 
-                    ### Relationship Categories for Roles ###
-                    # Check if role attribute is present; if not, no role propensities calculated
-                    roleRelation = 0 if source.get("Role") is not None and target.get("Role") is not None else None
-                    if roleRelation == 0 and attr in roleAttrSet:
-                        ## Calculate relationship type: 0 for neutral, 1 for friend, -1 for adversary
-                        # Friends
-                        if src_role == "Developer" and trg_role == "Developer":
-                            roleRelation += 1
-                        if src_role not in ["Model","Defender of the Faith","Nonaffiliated Independent","Mediator"] and trg_role in ["Ally","Supporter","Dependent"]:
-                            roleRelation += 1
-                        # Adversary
-                        if src_role == "Hegemon" and trg_role == "Revisionist" or src_role == "Revisionist" and trg_role == "Hegemon":
-                            roleRelation -= 1
-                        # If a hegemon/revisionist is a neighbor of the target node, adversarial
-                        if src_role == "Hegemon" and "Revisionist" in [neighbor.get("Role") for neighbor in graph[edge[0]]] or src_role == "Revisionist" and "Hegemon" in [neighbor.get("Role") for neighbor in graph[edge[0]]]:
-                            roleRelation -= 1
-                        # Could be using resources, but not yet
-                        # src_amt = float(src_val[1]["AMT"]) if attr == "Resource" and "AMT" in src_val[1] else None
-                        # trg_amt = float(trg_val[1]["AMT"]) if attr == "Resource" and "AMT" in trg_val[1] else None
+                    aff_w = src_w ** 2 * trg_w ** 2 if src_w is not None and trg_w is not None else None  # 3d parabola
 
-                    index_w = src_w * trg_w if src_w is not None and trg_w is not None else None
-                    # Cooperative propensities
+                    ### Warmth IO ###
+                    # Warmth IO is simply affect of source towards target
+                    if src_val == target and src_w is not None:
+                        IO[0] = aff_w  # warmth IO is simple affect
+
+                    ### Affiliation IO ###
+                    # Affiliation is average index weight of affect towards a shared attribute (average calculated outside loop)
                     if src_val[0] == trg_val[0]:
-                        if index_w is not None:
-                            # Checking to see if each combo's attribute weight index fall within specified ranges:
-                            if index_w > 0.36:
-                                emoProps.append(("Trust", attr, src_val[0], trg_val[0], src_w, trg_w, index_w))
-                                inflProps += [
-                                    ("Reciprocation", attr, src_val[0], trg_val[0], src_w, trg_w, 0.8),
-                                    ("Commitment & Consistency", attr, src_val[0], trg_val[0], src_w, trg_w, 0.8),
-                                    ("Social Proof", attr, src_val[0], trg_val[0], src_w, trg_w, 0.8),
-                                    ("Liking", attr, src_val[0], trg_val[0], src_w, trg_w, 0.8),
-                                    ("Authority", attr, src_val[0], trg_val[0], src_w, trg_w, 0.8),
-                                    ("Scarcity", attr, src_val[0], trg_val[0], src_w, trg_w, 0.8),
-                                ]
-                            elif index_w > 0.09:
-                                emoProps.append(("Joy", attr, src_val[0], trg_val[0], src_w, trg_w, index_w))
-                                inflProps += [
-                                    ("Reciprocation", attr, src_val[0], trg_val[0], src_w, trg_w, 0.5),
-                                    ("Commitment & Consistency", attr, src_val[0], trg_val[0], src_w, trg_w, 0.5),
-                                    ("Social Proof", attr, src_val[0], trg_val[0], src_w, trg_w, 0.7),
-                                    ("Liking", attr, src_val[0], trg_val[0], src_w, trg_w, 0.8),
-                                    ("Authority", attr, src_val[0], trg_val[0], src_w, trg_w, 0.5),
-                                ]
-                            elif (src_w >= 0.9 and trg_w <= 0.09) or (src_w <= 0.09 and trg_w >= 0.9): # if very different weights, disgust
-                                emoProps.append(
-                                    ("Disgust", attr, src_val[0], trg_val[0], src_w, trg_w, index_w))
-                                inflProps += [
-                                    ("Reciprocation", attr, src_val[0], trg_val[0], src_w, trg_w, 0.2),
-                                    ("Commitment & Consistency", attr, src_val[0], trg_val[0], src_w, trg_w, 0.2),
-                                    ("Social Proof", attr, src_val[0], trg_val[0], src_w, trg_w, 0.2),
-                                    ("Liking", attr, src_val[0], trg_val[0], src_w, trg_w, 0.2),
-                                    ("Authority", attr, src_val[0], trg_val[0], src_w, trg_w, 0.2),
-                                    ("Scarcity", attr, src_val[0], trg_val[0], src_w, trg_w, 0.4),
-                                ]
-                            else:
-                                emoProps.append(
-                                    ("Anticipation", attr, src_val[0], trg_val[0], src_w, trg_w, index_w))
-                                inflProps += [
-                                    ("Reciprocation", attr, src_val[0], trg_val[0], src_w, trg_w, 0.5),
-                                    ("Commitment & Consistency", attr, src_val[0], trg_val[0], src_w, trg_w, 0.8),
-                                    ("Social Proof", attr, src_val[0], trg_val[0], src_w, trg_w, 0.5),
-                                    ("Liking", attr, src_val[0], trg_val[0], src_w, trg_w, 0.5),
-                                    ("Authority", attr, src_val[0], trg_val[0], src_w, trg_w, 0.7),
-                                    ("Scarcity", attr, src_val[0], trg_val[0], src_w, trg_w, 0.8),
-                                ]
-                            ## Role Propensities ##
-                            if roleRelation is not None and roleRelation > -1:
-                                if attr == "Resource":
-                                    roleProps.append(("Consumer-Provider Relationship", attr, src_val[0], trg_val[0], src_w, trg_w, index_w))
-                                if attr == "Belief":
-                                    roleProps.append(("Protector", attr, src_val[0], trg_val[0], src_w, trg_w, index_w))
+                        if aff_w is not None:
+                            mutualAffiliations.append(aff_w)
 
-                    # Coercive and competitive propensities:
-                    else:
-                        if index_w is not None:
-                            # Checking to see if each node's attribute weights fall within specified ranges:
-                            if index_w > 0.62:
-                                emoProps.append(
-                                    ("Anger", attr, src_val[0], trg_val[0], src_w, trg_w, index_w))
-                                inflProps += [
-                                    ("Reciprocation", attr, src_val[0], trg_val[0], src_w, trg_w, 0.2),
-                                    ("Commitment & Consistency", attr, src_val[0], trg_val[0], src_w, trg_w,
-                                     0.2),
-                                    ("Social Proof", attr, src_val[0], trg_val[0], src_w, trg_w, 0.2),
-                                    ("Liking", attr, src_val[0], trg_val[0], src_w, trg_w, 0.2),
-                                    ("Authority", attr, src_val[0], trg_val[0], src_w, trg_w, 0.2),
-                                    ("Scarcity", attr, src_val[0], trg_val[0], src_w, trg_w, 0.5),
-                                ]
-                            elif index_w > 0.25:
-                                emoProps.append(("Fear", attr, src_val[0], trg_val[0], src_w, trg_w, index_w))
-                                inflProps += [
-                                    ("Reciprocation", attr, src_val[0], trg_val[0], src_w, trg_w, 0.8),
-                                    ("Commitment & Consistency", attr, src_val[0], trg_val[0], src_w, trg_w,
-                                     0.8),
-                                    ("Social Proof", attr, src_val[0], trg_val[0], src_w, trg_w, 0.8),
-                                    ("Liking", attr, src_val[0], trg_val[0], src_w, trg_w, 0.2),
-                                    ("Authority", attr, src_val[0], trg_val[0], src_w, trg_w, 0.8),
-                                    ("Scarcity", attr, src_val[0], trg_val[0], src_w, trg_w, 0.5),
-                                ]
-                            elif index_w > 0.06:
-                                emoProps.append(
-                                    ("Sadness", attr, src_val[0], trg_val[0], src_w, trg_w, index_w))
-                                inflProps += [
-                                    ("Social Proof", attr, src_val[0], trg_val[0], src_w, trg_w, 0.2),
-                                    ("Liking", attr, src_val[0], trg_val[0], src_w, trg_w, 0.2),
-                                    ("Authority", attr, src_val[0], trg_val[0], src_w, trg_w, 0.5),
-                                ]
-                            else: # anything under 0.06 is surprise
-                                emoProps.append(
-                                    ("Surprise", attr, src_val[0], trg_val[0], src_w, trg_w, index_w))
-                                inflProps += [
-                                    ("Reciprocation", attr, src_val[0], trg_val[0], src_w, trg_w, 0.4),
-                                    ("Commitment & Consistency", attr, src_val[0], trg_val[0], src_w, trg_w,
-                                     0.2),
-                                ]
-                            ## Role Propensities ##
-                            if roleRelation is not None and roleRelation < 0:
-                                if attr == "Belief":
-                                    roleProps.append(("Belligerent", attr, src_val[0], trg_val[0], src_w, trg_w, index_w))
-    return emoProps, roleProps, inflProps
+    ## Affiliation IO (average) ##
+    if len(mutualAffiliations) > 0:
+        IO[1] = np.average(mutualAffiliations) - 1 # -1 to place on -1 to 1 scale, currently on 0 to 2 scale
+    ## Legitimacy IO ## TODO
+    ## Dominance IO
+    ## Competence IO
 
-# INPUT: list of propensities where last index is propensity weight
-# OUTPUT: average propensity weight as float
-def aggregateProps(propList):
-    data = [prop[-1] for prop in propList]
-    return np.average(data)
+    return IO
+
+def inflCalc(IO):
+    inflProps = [] # reciprocity, commitment, social proof, authority, liking, scarcity
+    inflKey = ["Reciprocity","Commitment","Social Proof","Authority","Liking","Scarcity"]
+    output = {}
+    for i in range(len(infl_weight_table)-1):
+        inflProps.append(np.average([a*np.random.uniform(low=b[0],high=b[1]) for a,b in zip(IO,infl_weight_table[i])])) # influence is a weighted average of the IOs, where weight random selection from a range in the weight table
+        output[inflKey[i]] = inflProps[i]
+    return output
+
+def roleCalc(IO, roles):
+    src_role_key = role_keys.index(roles[0])
+    trg_role_key = role_keys.index(roles[1])
+    weighted_avg = np.mean([a*np.random.uniform(low=b[0],high=b[1]) for a,b in zip(IO,role_weight_table[src_role_key][trg_role_key])])
+    if weighted_avg > 0.5:
+        return (role_labels[src_role_key][trg_role_key][0],weighted_avg)
+    else:
+        return (role_labels[src_role_key][trg_role_key][1], weighted_avg)
