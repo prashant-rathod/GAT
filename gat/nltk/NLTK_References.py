@@ -1,4 +1,3 @@
-from nltk.tokenize import sent_tokenize
 
 
 def reference_extractor(text_file):
