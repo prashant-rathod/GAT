@@ -43,8 +43,6 @@ class SNA():
         self.attrSheet = attrSheet
         self.sent_outputs = []
 
-
-
     # create set of nodes for multipartite graph
     # name = names of the node. This is defined by the header. ex: Abbasi-Davani.F: Name  or Abbasi-Davani.F: Faction leader
     # nodeSet = names that define a set of node. For example, we can define Person, Faction Leader, and Party Leader as ".['agent']"

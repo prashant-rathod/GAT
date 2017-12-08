@@ -232,7 +232,7 @@ def IOCalc(graph, source, target):
 
     ## Affiliation IO (average) ##
     if len(mutualAffiliations) > 0:
-        IO[1] = np.average(mutualAffiliations) - 1 # -1 to place on -1 to 1 scale, currently on 0 to 2 scale
+        IO[1] = np.average(mutualAffiliations) - 1 # -1 to place on -1Aff to 1 scale, currently on 0 to 2 scale
     ## Legitimacy IO ## TODO
     ## Dominance IO
     ## Competence IO
