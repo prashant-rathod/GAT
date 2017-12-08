@@ -122,8 +122,10 @@ def get_autocorrelation(case_num):
 def get_json():
 
     case_num = request.args.get('case_num', None)
-    gsa_service.geoNetwork(case_num=case_num)
+    return redirect(url_for('visualize_blueprint.visualize', case_num=case_num))
 
-    #return render_template('network.html')
+@gsa_blueprint.route('/emo', methods=['GET', 'POST'])
+def emotional_space():
 
+    case_num = request.args.get('case_num', None)
     return redirect(url_for('visualize_blueprint.visualize', case_num=case_num))

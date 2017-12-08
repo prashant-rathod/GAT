@@ -69,6 +69,8 @@ def visualize():
     if network_sample is not None:
         geoNet = gsa_service.geoNetwork(case_num=case_num)
 
+    actors, relations = gsa_service.emoSpace(case_num=case_num)
+
     nlp_new_example_sentiment = ''
     nlp_new_example_relationship = ''
     if NLP_new_example_file != None:
@@ -106,4 +108,6 @@ def visualize():
                            NLP_new_example_file=NLP_new_example_file,
                            nlp_new_example_sentiment=nlp_new_example_sentiment,
                            nlp_new_example_relationship=nlp_new_example_relationship,
-                           geoNet=geoNet)
+                           geoNet=geoNet,
+                           actors=actors,
+                           relations=relations)

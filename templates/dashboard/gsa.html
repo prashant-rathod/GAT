@@ -22,7 +22,9 @@ map or the provide CSV has characters/letters that our tool cannot understand.
             visualization</a>
         {% endif %}
 
-        {% if geoNet %}
+        {% if actors %}
+            {% include "emoSpace.html" %}
+        {% elif geoNet %}
             {% include "network.html" %}
         {% elif gsaCSV %}
             {% include "kartograph.html" %}
@@ -60,6 +62,17 @@ map or the provide CSV has characters/letters that our tool cannot understand.
             <p style="font-weight:bold;">Geonetwork Statistics:</p>
             <p>Location: Mesa, Arizona</p>
             <p>Average Number of Crime on the street: {{ auto[1] }}</p><br>
+        {% endif %}
+
+        {% if actors %}
+
+            {% for i in relations.keys() %}
+                <p style="font-weight:bold;">Relations between {{ i }}</p>
+                <p>Money: {{ relations[i][0] }}</p>
+                <p>Belief: {{ relations[i][1] }}</p>
+                <p>Symbol: {{ relations[i][2] }}</p>
+                <p>Info: {{ relations[i][3] }}</p>
+            {% endfor %}
         {% endif %}
     </div>
   </div>

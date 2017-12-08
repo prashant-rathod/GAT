@@ -2,7 +2,7 @@ import csv
 import json
 
 from gat.core.gsa.misc import util, map_generator
-from gat.core.gsa.core import spatial_dynamics, autocorrelation, weights, network, geojson
+from gat.core.gsa.core import spatial_dynamics, autocorrelation, weights, network, geojson, emotional_space
 from gat.dao import dao
 
 
@@ -71,3 +71,10 @@ def geoNetwork(case_num):
     #can modify filedict in here so that you can access the files in visualization.py
     #call ur code in here
     return fileDict
+
+def emoSpace(case_num):
+
+    actors, relations = emotional_space.getRelations()
+    #can modify filedict in here so that you can access the files in visualization.py
+    #call ur code in here
+    return actors, relations
