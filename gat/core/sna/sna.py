@@ -2,7 +2,6 @@ import tempfile
 import matplotlib.pyplot as plt
 import networkx as nx
 import numpy as np
-import xlrd
 from networkx.algorithms import bipartite as bi
 from networkx.algorithms import centrality
 from itertools import product
@@ -15,14 +14,16 @@ from gat.core.sna import propensities
 from gat.core.sna import resilience
 from gat.core.sna import cliques
 from gat.core.sna import ergm
+from gat.core.sna import excel_parser
 
 
 class SNA():
     def __init__(self, excel_file, nodeSheet, attrSheet=None):
         self.subAttrs = ["W", "SENT", "SZE", "AMT"]
-        self.header, self.list = self.readFile(excel_file, nodeSheet)
+        self.header, self.list = excel_parser.readFile(self.subAttrs, excel_file, nodeSheet)
+        self.header = [head[0] for head in self.header]
         if attrSheet != None:
-            self.attrHeader, self.attrList = self.readFile(excel_file, attrSheet)
+            self.attrHeader, self.attrList = excel_parser.readFile(self.subAttrs, excel_file, attrSheet)
         self.G = nx.DiGraph()
         self.nodes = []
         self.edges = []
@@ -42,43 +43,7 @@ class SNA():
         self.attrSheet = attrSheet
         self.sent_outputs = []
 
-    # Read xlsx file and save the header and all the cells, each a dict with value and header label
-    # Input: xlsx file, sheet
-    def readFile(self, excel_file, sheet):
 
-        workbook = xlrd.open_workbook(excel_file)
-        sh = workbook.sheet_by_name(sheet)
-        header = [str(sh.cell(0, col).value).strip("\n") for col in range(sh.ncols)]
-        New_ncols = sh.ncols - 1
-
-        # If any, delete all the empty features in the header
-        while header[New_ncols] == '':
-            header.remove(header[New_ncols])
-            New_ncols -= 1
-
-        # a list of nodes
-        list = []
-        for row in range(1, sh.nrows):
-            tempList = []
-            for col in range(New_ncols + 1):
-                feature = str(sh.cell(0, col).value).strip("\n")
-                cell = sh.cell(row, col).value
-                if type(cell) == type(""):
-                    val = cell.strip("\n")
-                else:
-                    val = str(cell)
-                if val != "":  # handle empty cells
-                    # Make each node a dict with node name and node header, to assign later
-                    tempList.append({'val': val, 'header': feature})  # need to define attributes later
-            list.append(tempList)
-
-        # remove repeated column titles
-        consolidatedHeader = []
-        for feature in header:
-            if (feature not in consolidatedHeader) and (feature not in self.subAttrs):
-                consolidatedHeader.append(feature)
-
-        return consolidatedHeader, list
 
     # create set of nodes for multipartite graph
     # name = names of the node. This is defined by the header. ex: Abbasi-Davani.F: Name  or Abbasi-Davani.F: Faction leader
