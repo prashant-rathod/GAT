@@ -35,11 +35,11 @@ def wordcloud(txt_name):
                               random_state=42
                              ).generate(article)
     
-    fig = plt.figure(1)
+    plt.figure()
     plt.imshow(wordcloud)
     plt.axis('off')
     filename = 'out/nlp/nlp_wordcloud.png'
-    fig.savefig(filename, dpi=1200)
+    plt.savefig(filename, dpi=100)
     return filename
 
 
@@ -87,14 +87,14 @@ def top20_verbs(txt_name):
     indexes = np.arange(len(labels))
     
     bar_width = 0.35
-    fig = plt.figure(1) 
+    plt.figure() 
     plt.bar(indexes, values)
     
     # add labels
     plt.xticks(indexes + bar_width, labels,rotation=45)
     plt.show()
-    fig.savefig("top20_verbs.png", dpi=1200)
-    return "top20_verbs.png"
+    plt.savefig("out/nlp/nlp_top20_verbs.png", dpi=100)
+    return "out/nlp/nlp_top20_verbs.png"
     
 def top20_persons(txt_name):
     nlp=spacy.load("en")
@@ -117,14 +117,14 @@ def top20_persons(txt_name):
     indexes = np.arange(len(labels))
     
     bar_width = 0.35
-    fig = plt.figure(1) 
+    plt.figure() 
     plt.bar(indexes, values)
     
     # add labels
     plt.xticks(indexes + bar_width, labels,rotation=90)
     plt.show()
-    fig.savefig("top20_persons.png", dpi=1200)
-    return "top20_persons.png"
+    plt.savefig("out/nlp/top20_persons.png", dpi=100)
+    return "out/nlp/top20_persons.png"
     
 def top20_locations(txt_name):
     nlp=spacy.load("en")
@@ -147,14 +147,14 @@ def top20_locations(txt_name):
     indexes = np.arange(len(labels))
     
     bar_width = 0.35
-    fig = plt.figure(1) 
+    plt.figure() 
     plt.bar(indexes, values)
     
     # add labels
     plt.xticks(indexes + bar_width, labels,rotation=90)
     plt.show()
-    fig.savefig("top20_locations.png", dpi=1200)
-    return "top20_locations.png"
+    plt.savefig("out/nlp/top20_locations.png", dpi=100)
+    return "out/nlp/top20_locations.png"
     
 def top20_organizations(txt_name):
     nlp=spacy.load("en")
@@ -177,14 +177,14 @@ def top20_organizations(txt_name):
     indexes = np.arange(len(labels))
     
     bar_width = 0.35
-    fig = plt.figure(1) 
+    plt.figure() 
     plt.bar(indexes, values)
     
     # add labels
     plt.xticks(indexes + bar_width, labels,rotation=90)
     plt.show()
-    fig.savefig("top20_organizations.png", dpi=1200)    
-    return "top20_organizations.png"
+    plt.savefig("out/nlp/top20_organizations.png", dpi=100)    
+    return "out/nlp/top20_organizations.png"
 
 
 def sentence_sentiment_distribution(txt_name):
@@ -212,14 +212,14 @@ def sentence_sentiment_distribution(txt_name):
     indexes = np.arange(len(labels))
     
     bar_width = 0.35
-    fig = plt.figure(1) 
+    plt.figure() 
     plt.bar(indexes, values)
 
     # add labels
     plt.xticks(indexes + bar_width, labels, rotation=45)
     plt.show()
-    fig.savefig("sentence_sentiment_distribution.png", dpi=1200)    
-    return "sentence_sentiment_distribution.png"
+    plt.savefig("out/nlp/sentence_sentiment_distribution.png", dpi=100)    
+    return "out/nlp/sentence_sentiment_distribution.png"
     
 
 
