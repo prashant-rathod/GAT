@@ -1,6 +1,5 @@
 import copy
 import gc
-
 from flask import Blueprint, render_template, request
 
 from gat.dao import dao
@@ -12,6 +11,8 @@ visualize_blueprint = Blueprint('visualize_blueprint', __name__)
 @visualize_blueprint.route('/visualize', methods=['GET', 'POST'])
 def visualize():
     case_num = request.args.get('case_num', None)
+    if not case_num:
+        case_num = request.form.get('case_num', None)
     fileDict = dao.getFileDict(case_num)
 
     GSA_file_CSV = fileDict.get('GSA_Input_CSV')
@@ -42,16 +43,16 @@ def visualize():
     if (GSA_file_CSV is not None and GSA_file_SHP is not None and fileDict.get('GSA_meta') is not None):
         gsaCSV, mymap, nameMapping = gsa_service.tempParseGSA(GSA_file_CSV, GSA_file_SHP, fileDict['GSA_meta'][0],
                                                               fileDict['GSA_meta'][1])
-    if GSA_file_SVG != None:
+    if GSA_file_SVG is not None:
         gsaCSV, mymap = gsa_service.parseGSA(GSA_file_CSV, GSA_file_SVG)
 
-    if gsaCSV == None and mymap == True:
+    if gsaCSV is None and mymap == True:
         error = True
         mymap = None
 
     sna_service.prep(graph)
     jgdata, SNAbpPlot, attr, systemMeasures = sna_service.SNA2Dand3D(graph, request, case_num, _2D=True)
-    fileDict['SNAbpPlot'] = '/' + SNAbpPlot if SNAbpPlot != None else None
+    fileDict['SNAbpPlot'] = '/' + SNAbpPlot if SNAbpPlot is not None else None
 
     copy_of_graph = copy.deepcopy(graph)
     fileDict['copy_of_graph'] = copy_of_graph
@@ -66,12 +67,16 @@ def visualize():
 
     nlp_new_example_sentiment = ''
     nlp_new_example_relationship = ''
+    
     if NLP_new_example_file is not None:
         nlp_new_example_sentiment = NLP_TO_NETWORK.sentiment_mining(NLP_new_example_file)
+        
         gc.collect()
         nlp_new_example_relationship = NLP_TO_NETWORK.relationship_mining(NLP_new_example_file)
+
         gc.collect()
         nlp_stemmerize, nlp_lemmatize, nlp_abstract, nlp_top20_verbs, nlp_top20_persons, nlp_top20_locations, nlp_top20_organizations, nlp_sentence_sentiment_distribution, nlp_wordcloud=NLP_OTHER_PREP.getNLPOTHER(NLP_new_example_file)
+        
         gc.collect()
         nlp_summary = 'Enable'
 

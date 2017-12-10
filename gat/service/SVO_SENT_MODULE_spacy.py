@@ -91,7 +91,7 @@ class SVOSENT(object):
                 if obj in name:
                     corrected_objects.append(name)
                     corrected_names_copy.remove(name)
-                    break;
+                    break
 
         return {'Sentence': sentence,
                 'Subjects': corrected_subjects,
