@@ -76,6 +76,7 @@ def relationship_mining(txt_name):
 
 def sentiment_mining(txt_name):
     data = txt_to_data(txt_name)
+
     G = nx.DiGraph()
     G.add_edges_from(data['edges'])
     pos = nx.spring_layout(G)

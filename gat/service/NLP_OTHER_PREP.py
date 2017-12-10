@@ -10,12 +10,4 @@ def getNLPOTHER(file):
 	nlp_top20_organizations = NLP_OTHER.top20_organizations(file)
 	nlp_sentence_sentiment_distribution = NLP_OTHER.sentence_sentiment_distribution(file)
 	nlp_wordcloud = NLP_OTHER.wordcloud(file)
-	return nlp_stemmerize, 
-	nlp_lemmatize, 
-	nlp_abstract, 
-	nlp_top20_verbs, 
-	nlp_top20_persons, 
-	nlp_top20_locations, 
-	nlp_top20_organizations, 
-	nlp_sentence_sentiment_distribution, 
-	nlp_wordcloud
+	return nlp_stemmerize, nlp_lemmatize, nlp_abstract, nlp_top20_verbs, nlp_top20_persons, nlp_top20_locations, nlp_top20_organizations, nlp_sentence_sentiment_distribution, nlp_wordcloud
