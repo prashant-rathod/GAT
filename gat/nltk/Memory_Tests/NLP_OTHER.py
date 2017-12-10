@@ -1,5 +1,9 @@
 from gat.service.SVO_SENT_MODULE_spacy import SVOSENT
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
+from nltk.tokenize import sent_tokenize
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
+from nltk.tokenize.moses import MosesDetokenizer
 from nltk import data
 import pandas as pd
 import networkx as nx
@@ -14,10 +18,6 @@ from collections import Counter
 from wordcloud import WordCloud, STOPWORDS
 import matplotlib as mpl
 from gensim.summarization import summarize
-from nltk.corpus import stopwords
-from nltk.tokenize import word_tokenize
-from nltk.tokenize.moses import MosesDetokenizer
-from nltk.tokenize import sent_tokenize
 
 
 ##NLP functions
@@ -39,11 +39,11 @@ def wordcloud(txt_name):
         random_state=42
     ).generate(article)
 
-    fig = plt.figure(1)
+    plt.figure()
     plt.imshow(wordcloud)
     plt.axis('off')
     filename = 'out/nlp/nlp_wordcloud.png'
-    fig.savefig(filename, dpi=1200)
+    plt.savefig(filename, dpi=100)
     return filename
 
 
@@ -94,14 +94,14 @@ def top20_verbs(txt_name):
     indexes = np.arange(len(labels))
 
     bar_width = 0.35
-    fig = plt.figure(1)
+    plt.figure()
     plt.bar(indexes, values)
 
     # add labels
     plt.xticks(indexes + bar_width, labels, rotation=45)
     plt.show()
-    fig.savefig("top20_verbs.png", dpi=1200)
-    return "top20_verbs.png"
+    plt.savefig("out/nlp/nlp_top20_verbs.png", dpi=100)
+    return "out/nlp/nlp_top20_verbs.png"
 
 
 def top20_persons(txt_name):
@@ -125,14 +125,14 @@ def top20_persons(txt_name):
     indexes = np.arange(len(labels))
 
     bar_width = 0.35
-    fig = plt.figure(1)
+    plt.figure()
     plt.bar(indexes, values)
 
     # add labels
     plt.xticks(indexes + bar_width, labels, rotation=90)
     plt.show()
-    fig.savefig("top20_persons.png", dpi=1200)
-    return "top20_persons.png"
+    plt.savefig("out/nlp/top20_persons.png", dpi=100)
+    return "out/nlp/top20_persons.png"
 
 
 def top20_locations(txt_name):
@@ -156,14 +156,14 @@ def top20_locations(txt_name):
     indexes = np.arange(len(labels))
 
     bar_width = 0.35
-    fig = plt.figure(1)
+    plt.figure()
     plt.bar(indexes, values)
 
     # add labels
     plt.xticks(indexes + bar_width, labels, rotation=90)
     plt.show()
-    fig.savefig("top20_locations.png", dpi=1200)
-    return "top20_locations.png"
+    plt.savefig("out/nlp/top20_locations.png", dpi=100)
+    return "out/nlp/top20_locations.png"
 
 
 def top20_organizations(txt_name):
@@ -187,14 +187,14 @@ def top20_organizations(txt_name):
     indexes = np.arange(len(labels))
 
     bar_width = 0.35
-    fig = plt.figure(1)
+    plt.figure()
     plt.bar(indexes, values)
 
     # add labels
     plt.xticks(indexes + bar_width, labels, rotation=90)
     plt.show()
-    fig.savefig("top20_organizations.png", dpi=1200)
-    return "top20_organizations.png"
+    plt.savefig("out/nlp/top20_organizations.png", dpi=100)
+    return "out/nlp/top20_organizations.png"
 
 
 def sentence_sentiment_distribution(txt_name):
@@ -204,13 +204,10 @@ def sentence_sentiment_distribution(txt_name):
         article = myfile.read().replace('\n', '')
     sentences = sent_detector.tokenize(article)
     sentiments = []
-    most_positive_phrases = []
-    most_negative_phrases = []
     for sen in sentences:
         emotion = sid.polarity_scores(text=sen)['compound']
         if emotion <= 1.0 and emotion > 0.75:
             sentiments.append('very positive')
-            most_positive_phrases.append(sen)
         if emotion <= 0.75 and emotion > 0.25:
             sentiments.append('positive')
         if emotion <= 0.25 and emotion > -0.25:
@@ -219,8 +216,6 @@ def sentence_sentiment_distribution(txt_name):
             sentiments.append('negative')
         if emotion <= -0.75 and emotion >= -1.0:
             sentiments.append('very negative')
-            most_negative_phrases.append(sen)
-
     counts = Counter(sentiments)
     labels = ['very negative', 'negative', 'neutral', 'positive', 'very positive']
     values = [counts['very negative'], counts['negative'], counts['neutral'], counts['positive'],
@@ -228,34 +223,15 @@ def sentence_sentiment_distribution(txt_name):
     indexes = np.arange(len(labels))
 
     bar_width = 0.35
-    fig = plt.figure(1)
+    plt.figure()
     plt.bar(indexes, values)
 
     # add labels
     plt.xticks(indexes + bar_width, labels, rotation=45)
     plt.show()
-    fig.savefig("sentence_sentiment_distribution.png", dpi=1200)
-
-    return ["sentence_sentiment_distribution.png", most_positive_phrases, most_negative_phrases]
-
-
-def stop_word_filter(text_file):
-    """
-    Returns a string that's a shortened version of the input without any stop words
-    :param text_file: name of text file with article
-    :type text_file: string
-    """
-    with open(text_file) as f:
-        content = f.readlines()
-    article_string = ""
-    for x in content:
-        article_string += x.strip('')
-    stop_words = set(stopwords.words('english'))  # TODO: enable automatic language change
-    word_tokens = word_tokenize(article_string)
-    filtered_sentence = [w for w in word_tokens if not w in stop_words]
-    detokenizer = MosesDetokenizer()
-    filtered_article = detokenizer.detokenize(filtered_sentence, return_str=True)
-    return filtered_article
+    plt.savefig("out/nlp/sentence_sentiment_distribution.png", dpi=100)
+    return "out/nlp/sentence_sentiment_distribution.png"
+    #return sentiments
 
 
 def quote_extractor(text_file):
@@ -291,8 +267,28 @@ def reference_extractor(text_file):
     for line in content:
         if is_bibliography:
             references.append(line)
-        if line.lower() in buzzwords and not is_bibliography:
+        if line.lower() in buzzwords:
             is_bibliography = True
     if len(references) == 0:
-        return "No references found."
+        return ["No references found."]
     return references
+
+
+def stop_word_filter(text_file):
+    """
+    Returns a string that's a shortened version of the input without any stop words
+    :param text_file: name of text file with article
+    :type text_file: string
+    """
+    with open(text_file) as f:
+        content = f.readlines()
+    article_string = ""
+    for x in content:
+        article_string += x.strip('')
+    stop_words = set(stopwords.words('english'))  # TODO: enable automatic language change
+    word_tokens = word_tokenize(article_string)
+    filtered_sentence = [w for w in word_tokens if not w in stop_words]
+    detokenizer = MosesDetokenizer()
+    filtered_article = detokenizer.detokenize(filtered_sentence, return_str=True)
+    return filtered_article
+
