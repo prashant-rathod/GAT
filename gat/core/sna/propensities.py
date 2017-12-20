@@ -9,6 +9,8 @@ C = (-.3,.3)
 D = (.3,.6)
 E = (.6,.8)
 IO_keys = ["Warmth", "Affiliation", "Legitimacy", "Dominance", "Competence"]
+legit_keys = ["Title","Role","Belief","Knowledge"]
+dom_keys = ["Resource","Knowledge"]
 role_keys = ["Hegemon", "Revisionist", "Ally", "DoF", "Dependent", "Independent", "Mediator", "Isolationist"]
 role_weight_table = [ # (Hegemon, Revisionist, Ally, DoF, Dependent, Independent, Mediator, Isolationist) ^ 2
     [ # Hegemon
@@ -182,7 +184,6 @@ infl_weight_table = [ # influence x IO
     [E,D,D,B,D],
     [C,B,C,B,B]
 ]
-legit_keys = ["Title","Role","Belief","Knowledge"]
 
 def propCalc(graph, edge):
     source = graph.G.node[edge[0]]
@@ -249,7 +250,20 @@ def IOCalc(graph, source, target):
                     legit_weights.append(scaled * 2 - 1) # place on -1 to 1 scale, currently on a 0 to 1 scale
     if len(legit_weights) > 0:
         IO[2] = np.average(legit_weights)
+
     ## Dominance IO
+    resources = graph.sentiment(types=dom_keys,key="AMT",operation='sum')
+    dom_weights = []
+    for attr in dom_keys:
+        if source.get(attr) is not None:
+            for subattr in source[attr]:
+                if len(subattr) > 0 and subattr[0] in resources.keys():
+                    # compare source actor's resource share to the total amount of that resource
+                    ratio = float(subattr[1]["AMT"])/resources[subattr[0]]
+                    dom_weights.append(ratio * 2 - 1)  # place on -1 to 1 scale, currently on a 0 to 1 scale
+    if len(dom_weights) > 0:
+        IO[3] = np.average(dom_weights)
+
     ## Competence IO
 
     verbose = {}
