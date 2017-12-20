@@ -2,139 +2,141 @@
 <html>
 <head>
     <title>Smart Search Select</title>
-    {% include "header.html" -%}
-    <link href="{{url_for('static', filename='css/vizStyle.css')}}" rel="stylesheet">
-    <script src="../static/js/jquery-1.11.1.min.js"></script>
+    {% include "header.html" %}
+    <link href="{{ url_for('static', filename='css/vizStyle.css') }}" rel="stylesheet">
     <script type="text/javascript">
-	  function get(id) {
-			return document.getElementById(id);
-		}
-		function openHelp(source){
-			get("help").style.display = "block";
-		}
-		function closeHelp(source) {
-			get("help").style.display = "none";
-		}
-		// target elements with the "draggable" class
-		interact('.draggable')
-		  .draggable({
-		    // enable inertial throwing
-		    inertia: true,
-		    // keep the element within the area of it's parent
-		    restrict: {
-		      restriction: "parent",
-		      endOnly: true,
-		      elementRect: { top: 0, left: 0, bottom: 1, right: 1 }
-		    },
-		    // enable autoScroll
-		    autoScroll: true,
+        console.log("SELECT");
+        console.log("{{url_for('static', filename='js/bootstrap.min.js')}}");
+        function get(id) {
+            return document.getElementById(id);
+        }
+        function openHelp(source) {
+            get("help").style.display = "block";
+        }
+        function closeHelp(source) {
+            get("help").style.display = "none";
+        }
+        // target elements with the "draggable" class
+        interact('.draggable')
+            .draggable({
+                // enable inertial throwing
+                inertia: true,
+                // keep the element within the area of it's parent
+                restrict: {
+                    restriction: "parent",
+                    endOnly: true,
+                    elementRect: {top: 0, left: 0, bottom: 1, right: 1}
+                },
+                // enable autoScroll
+                autoScroll: true,
 
-		    // call this function on every dragmove event
-		    onmove: dragMoveListener,
-		    // call this function on every dragend event
-		    onend: function (event) {
-		      var textEl = event.target.querySelector('p');
+                // call this function on every dragmove event
+                onmove: dragMoveListener,
+                // call this function on every dragend event
+                onend: function (event) {
+                    var textEl = event.target.querySelector('p');
 
-		      textEl && (textEl.textContent =
-		        'moved a distance of '
-		        + (Math.sqrt(event.dx * event.dx +
-		                     event.dy * event.dy)|0) + 'px');
-		    }
-		  });
+                    textEl && (textEl.textContent =
+                        'moved a distance of '
+                        + (Math.sqrt(event.dx * event.dx +
+                            event.dy * event.dy) | 0) + 'px');
+                }
+            });
 
-		  function dragMoveListener (event) {
-		    var target = event.target,
-		        // keep the dragged position in the data-x/data-y attributes
-		        x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx,
-		        y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
+        function dragMoveListener(event) {
+            var target = event.target,
+                // keep the dragged position in the data-x/data-y attributes
+                x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx,
+                y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
 
-		    // translate the element
-		    target.style.webkitTransform =
-		    target.style.transform =
-		      'translate(' + x + 'px, ' + y + 'px)';
+            // translate the element
+            target.style.webkitTransform =
+                target.style.transform =
+                    'translate(' + x + 'px, ' + y + 'px)';
 
-		    // update the posiion attributes
-		    target.setAttribute('data-x', x);
-		    target.setAttribute('data-y', y);
-		  }
+            // update the posiion attributes
+            target.setAttribute('data-x', x);
+            target.setAttribute('data-y', y);
+        }
 
-		  // this is used later in the resizing and gesture demos
-		  window.dragMoveListener = dragMoveListener;
-		interact('.resize-drag-outer')
-	  .draggable({
-	    onmove: window.dragMoveListener
-	  })
-	  .allowFrom('.resize-drag')
-	  .resizable({
-	    preserveAspectRatio: true,
-	    edges: { left: true, right: true, bottom: true, top: true }
-	  })
-	  .on('resizemove', function (event) {
-	    var target = event.target,
-	        x = (parseFloat(target.getAttribute('data-x')) || 0),
-	        y = (parseFloat(target.getAttribute('data-y')) || 0);
+        // this is used later in the resizing and gesture demos
+        window.dragMoveListener = dragMoveListener;
+        interact('.resize-drag-outer')
+            .draggable({
+                onmove: window.dragMoveListener
+            })
+            .allowFrom('.resize-drag')
+            .resizable({
+                preserveAspectRatio: true,
+                edges: {left: true, right: true, bottom: true, top: true}
+            })
+            .on('resizemove', function (event) {
+                var target = event.target,
+                    x = (parseFloat(target.getAttribute('data-x')) || 0),
+                    y = (parseFloat(target.getAttribute('data-y')) || 0);
 
-	    // update the element's style
-	    target.style.width  = event.rect.width + 'px';
-	    target.style.height = event.rect.height + 'px';
+                // update the element's style
+                target.style.width = event.rect.width + 'px';
+                target.style.height = event.rect.height + 'px';
 
-	    // translate when resizing from top or left edges
-	    x += event.deltaRect.left;
-	    y += event.deltaRect.top;
+                // translate when resizing from top or left edges
+                x += event.deltaRect.left;
+                y += event.deltaRect.top;
 
-	    target.style.webkitTransform = target.style.transform =
-	        'translate(' + x + 'px,' + y + 'px)';
+                target.style.webkitTransform = target.style.transform =
+                    'translate(' + x + 'px,' + y + 'px)';
 
-	    target.setAttribute('data-x', x);
-	    target.setAttribute('data-y', y);
-	  });
-
+                target.setAttribute('data-x', x);
+                target.setAttribute('data-y', y);
+            });
 
     </script>
-    <style>
-		body {
-			height:100vh;
-		}
-		label {
-			display: block;
-		}
-		center {
-			color: white;
-		}
-
-    </style>
-
 </head>
 
 <style>
-* {
- font-size: 100%;
- font-family: Segoe UI;
-}
+    * {
+        font-size: 100%;
+        font-family: Segoe UI;
+    }
+
+    #name_entities {
+        margin: 0px 0px;
+    }
+
+    #NE_titles {
+        position: relative;
+        display: block;
+        margin-bottom: 3px;
+        font-weight: bold;
+        line-height: 1;
+        font-family: Segoe, "Segoe UI";
+        color: white;
+    }
+
 
 </style>
 
 <script>
-		function show1(){
-			$('#nlp_modal').modal('show');
-			$('#sna_modal').modal('hide');
-			$('#gsa_modal').modal('hide');
-		}
+    function show1() {
+        $('#nlp_modal').modal('show');
+        $('#sna_modal').modal('hide');
+        $('#gsa_modal').modal('hide');
+    }
 
-		function show2(){
-			$('#nlp_modal').modal('hide');
-			$('#sna_modal').modal('show');
-			$('#gsa_modal').modal('hide');
-		}
+    function show2() {
+        $('#nlp_modal').modal('hide');
+        $('#sna_modal').modal('show');
+        $('#gsa_modal').modal('hide');
+    }
 
-		function show3(){
-			$('#nlp_modal').modal('hide');
-			$('#sna_modal').modal('hide');
-			$('#gsa_modal').modal('show');
-		}
-		function openurl(link){
-				window.open(link);
-			}
+    function show3() {
+        $('#nlp_modal').modal('hide');
+        $('#sna_modal').modal('hide');
+        $('#gsa_modal').modal('show');
+    }
+    function openurl(link) {
+        window.open(link);
+    }
 
 </script>
 
@@ -146,8 +148,8 @@
     <div class="wrapperul" align="center">
         <ul>
             <li class="dropdown contains-image">
-                <a href="{{url_for('upload_blueprint.upload', case_num = case_num)}}"><img
-                        src="{{url_for('static', filename='GATLogo.svg')}}" alt="hermes logo"></a>
+                <a href="{{ url_for('upload_blueprint.upload', case_num = case_num) }}"><img
+                        src="{{ url_for('static', filename='GATLogo.svg') }}" alt="hermes logo"></a>
             </li>
             <li class="dropdown" onclick="show1()">
                 <a href="#" class="dropbtn">NLP</a>
@@ -162,7 +164,7 @@
                 <a href="#" class="dropbtn"><i class="fa fa-question-circle fa-lg"></i></a>
                 <div class="dropdown-content">
                     <a href="#" onClick="openHelp(this)">GSA Output Help</a>
-                    <a href="{{url_for('info_blueprint.help', case_num = case_num)}}">Help Page</a>
+                    <a href="{{ url_for('info_blueprint.help', case_num = case_num) }}">Help Page</a>
                 </div>
             </li>
         </ul>
@@ -170,48 +172,51 @@
 
     <script type="text/javascript">
 
-	function get(id) {
-		return document.getElementById(id);
-	}
+        function get(id) {
+            return document.getElementById(id);
+        }
 
-	function openHelp(source){
-		get("help").style.display = "block";
-	}
+        function openHelp(source) {
+            get("help").style.display = "block";
+        }
 
-	function closeHelp(source) {
-		get("help").style.display = "none";
-	}
-	function toggleNodeSet(source) {
-	  checkboxes = document.getElementsByClassName("nodeset");
-	  for(var i=0, n=checkboxes.length;i<n;i++) {
-		checkboxes[i].checked = source.checked;
-	  }
-	}
-	function toggleSrcSet(source) {
-	  checkboxes = document.getElementsByClassName("srcset");
-	  for(var i=0, n=checkboxes.length;i<n;i++) {
-		checkboxes[i].checked = source.checked;
-	  }
-	}
+        function closeHelp(source) {
+            get("help").style.display = "none";
+        }
+        function toggleNodeSet(source) {
+            checkboxes = document.getElementsByClassName("nodeset");
+            for (var i = 0, n = checkboxes.length; i < n; i++) {
+                checkboxes[i].checked = source.checked;
+            }
+        }
+        function toggleSrcSet(source) {
+            checkboxes = document.getElementsByClassName("srcset");
+            for (var i = 0, n = checkboxes.length; i < n; i++) {
+                checkboxes[i].checked = source.checked;
+            }
+        }
 
     </script>
     <style>
-		table {
-			background-color: #071138;
-			border: solid white;
-			border-collapse: collapse;
-		}
-		table .centered {
-			text-align: center
-		}
-		th,td {
-			padding: 5px;
-			border-top: solid thin white;
-		}
-		.last td {
-			border-bottom: solid thick white;
-			border-top: none;
-		}
+        table {
+            background-color: #071138;
+            border: solid white;
+            border-collapse: collapse;
+        }
+
+        table .centered {
+            text-align: center
+        }
+
+        th, td {
+            padding: 5px;
+            border-top: solid thin white;
+        }
+
+        .last td {
+            border-bottom: solid thick white;
+            border-top: none;
+        }
 
     </style>
 
@@ -219,38 +224,46 @@
     </head>
 
     <style>
-* {
- font-size: 100%;
- font-family: Segoe UI;
-}
-* {
- font-size: 100%;
- font-family: Segoe UI;
-}
-h3, p {
-	color: white;
-}
-.indented {
-	margin: 0 10%;
-}
-input {
-	opacity: 1;
-	position: initial;
-}
-label  {
-	background: transparent;
-	padding:0;
-}
-table {
-	color:white;
-}
-th, td {
-	text-align:center;
-	padding:none
-}
-select,input {
-	color: initial;
-}
+        * {
+            font-size: 100%;
+            font-family: Segoe UI;
+        }
+
+        * {
+            font-size: 100%;
+            font-family: Segoe UI;
+        }
+
+        h3, p {
+            color: white;
+        }
+
+        .indented {
+            margin: 0 10%;
+        }
+
+        input {
+            opacity: 1;
+            position: initial;
+        }
+
+        label {
+            background: transparent;
+            padding: 0;
+        }
+
+        table {
+            color: white;
+        }
+
+        th, td {
+            text-align: center;
+            padding: none
+        }
+
+        select, input {
+            color: initial;
+        }
 
     </style>
 
@@ -269,39 +282,57 @@ select,input {
     </div>
 
     <div class="indented">
-        <form enctype="multipart/form-data" method="post" style="display:inline;">
+        <form id="cameoFORM" enctype="multipart/form-data" method="post" style="display:inline;">
             <table>
                 <tr>
                     <th>CAMEO Code Sentence</th>
                     <th>Include?</th>
                 </tr>
-                <tr> 
-                	<td><i>{{sentences[0]}}</i></td>
-                    <td class="centered"><input name="cameo" type="radio"></td>
-				</tr>
                 <tr>
-                	<td><i>{{sentences[1]}}</i></td>
-                    <td class="centered"><input name="cameo" type="radio"></td>
+                    <td><i>{{ sentences[0] }}</i></td>
+                    <td class="centered"><input name="cameo" value="0" type="radio"></td>
                 </tr>
                 <tr>
-                	<td><i>{{sentences[2]}}</i></td>
-                    <td class="centered"><input name="cameo" type="radio"></td> 
-				</tr>
-                <tr>
-                	<td><i>{{sentences[3]}}</i></td>
-                    <td class="centered"><input name="cameo" type="radio"></td>
+                    <td><i>{{ sentences[1] }}</i></td>
+                    <td class="centered"><input name="cameo" value="1" type="radio"></td>
                 </tr>
-                <tr> 
-                	<td><i>{{sentences[4]}}</i></td>
-                    <td class="centered"><input name= "cameo" type="radio"></td>
-				</tr>
-                
+                <tr>
+                    <td><i>{{ sentences[2] }}</i></td>
+                    <td class="centered"><input name="cameo" value="2" type="radio"></td>
+                </tr>
+                <tr>
+                    <td><i>{{ sentences[3] }}</i></td>
+                    <td class="centered"><input name="cameo" value="3" type="radio"></td>
+                </tr>
+                <tr>
+                    <td><i>{{ sentences[4] }}</i></td>
+                    <td class="centered"><input name="cameo" value="4" type="radio"></td>
+                </tr>
+                <tr>
+                    <td>
+                        <select name="cameos" id="cameos">
+                            {% for code in cameoCodes %}
+                                <option><i>{{ code }}</i></option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                    <td class="centered"><input name="cameo" value="SeeDropdown" type="radio"></td>
+                </tr>
             </table>
-            <br/>
-            <input type="submit" value="CONTINUE" style="box-sizing:border-box;"/>
+            <br>
+            <label id="NE_titles"> Name Entities: </label>
+            <textarea name="name_entities" id="name_entities" form="cameoFORM" rows="4" cols="30"
+                      style="display:inline;"></textarea>
+            <br>
+            <br>
+            <label id="NE_titles"> Number of Articles to be Scraped: (1 to 400) </label>
+            <input type="number" name="numArticlesScraped" min="1" max="400">
+            <br>
+            <br>
+            <input type="submit" value="CONTINUE" style="box-sizing:border-box; margin:0"/>
         </form>
     </div>
-  </section>
-  {% include 'modal.html' -%}
-    </body>
+</section>
+{% include 'modal.html' %}
+</body>
 </html>

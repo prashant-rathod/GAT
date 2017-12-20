@@ -64,7 +64,7 @@
           {% endfor -%}
           <div>
             {% if systemMeasures.get("SentimentDict") -%}
-            <a id="sentimentDict" name="sentimentDict" target="_blank" href="{{ url_for('sna_blueprint.view_sent_change', case_num=case_num) }}">
+            <a id="sentimentDict" name="sentimentDict" href="{{ url_for('sna_blueprint.view_sent_change', case_num=case_num) }}">
               View Sentiment Change
             </a>
             {% endif -%}
@@ -182,7 +182,7 @@
             <tr>
               <td>Node Type:</td>
               <td>
-                <select name="classList">
+                <select id="classList" name="classList">
                  {% for set in graph.classList %}
                    <option value="{{set}}">
                      {{set}}
@@ -190,6 +190,9 @@
                  {% endfor %}
                </select>
               </td>
+            </tr>
+            <tr>
+              <td colspan="2"><div id="additionAdvice"></div></td>
             </tr>
             <tr>
               <td>Add Attribute:</td>
@@ -443,10 +446,12 @@
         $("#propInfo").append("<span>Propensities for the link from <b>"+edgeDict['source']+"</b> to <b>"+edgeDict['target']+"</b>:<br></span>")
         empty = true
         for (var key in edgeDict) {
-          if (key != "source" && key != "target" && key != "name") {
+          if (key != "source" && key != "target" && key != "name" && key != "propsFlag") {
             if (edgeDict[key] != null) {
-              console.log(key, edgeDict[key])
-              $("#propInfo").append("<span id='"+key+"'>"+key+": "+edgeDict[key][0][0]+" (resulting from attribute {"+edgeDict[key][0][1]+": "+edgeDict[key][0][2]+"})</span><br>")
+              $("#propInfo").append("<span id='"+key+"'><i>"+key+":</i></span><br>")
+              for (var prop in edgeDict[key]) {
+                $("#propInfo").append("<span id='"+prop+"'>"+prop+": "+edgeDict[key][prop]+"</span><br>")
+              }
               empty = false
             }
           }
@@ -457,6 +462,18 @@
         }
       }
       $('[data-toggle="tooltip"]').tooltip();
+
+      // Add custom advice for node addition.
+      $('#classList').on('change', function() {
+        var selected = $( "#classList option:selected" ).val();
+        console.log(selected)
+        if(selected == "Event") {
+          $("#additionAdvice").html("For events, specify CAMEO code ('code'), event source ('source'), and event target ('target') attributes below.");
+        }
+        else {
+          $("#additionAdvice").html("");
+        }
+      });
     </script>
   </body>
 </html>
