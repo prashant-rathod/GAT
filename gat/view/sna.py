@@ -1,7 +1,7 @@
 import warnings
 
 import xlrd
-from flask import Blueprint, render_template, request, redirect, url_for, jsonify, json
+from flask import Blueprint, render_template, request, redirect, url_for, jsonify, json, send_file
 
 from gat.core.sna.sna import SNA
 from gat.dao import dao
@@ -167,3 +167,4 @@ def view_sent_change():
     return render_template("sentiment_change.html",
                            sent_json=json.dumps(response, sort_keys=True, indent=4, separators=(',', ':'))
                            )
+

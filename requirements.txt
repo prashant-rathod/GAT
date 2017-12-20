@@ -38,3 +38,5 @@ community
 pymc
 validators
 dateparser
+xlsxwriter
+
