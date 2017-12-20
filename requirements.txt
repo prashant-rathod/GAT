@@ -40,4 +40,8 @@ validators
 dateparser
 dbfread
 xlsxwriter
-
+wordcloud
+gensim
+datefinder
+pyvirtualdisplay
+selenium
