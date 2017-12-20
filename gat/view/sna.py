@@ -6,6 +6,7 @@ from flask import Blueprint, render_template, request, redirect, url_for, jsonif
 from gat.core.sna.sna import SNA
 from gat.dao import dao
 from gat.service import sna_service
+from gat.core.sna.propensities import IOCalc
 
 sna_blueprint = Blueprint('sna_blueprint', __name__)
 

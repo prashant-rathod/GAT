@@ -39,6 +39,7 @@ class SNA():
         self.communicability_centrality_dict = {}
         self.communicability_centrality_exp_dict = {}
         self.node_attributes_dict = {}
+        self.sentiment_dict = {}
         self.classList = ['Agent','Organization','Audience','Role','Event','Belief','Symbol','Knowledge','Task','Actor']
         self.attrSheet = attrSheet
         self.sent_outputs = []
@@ -190,19 +191,19 @@ class SNA():
         for edge in self.edges:  # for every edge, calculate propensities and append as an attribute
             attributeDict = {"propsFlag": True}
 
-            emoPropList = propensities.propCalc(self, edge)[0] if emo else None
-            if len(emoPropList) > 0:
+            IO, emoPropList, rolePropList, inflPropList = propensities.propCalc(self, edge)
+            attributeDict['IO'] = IO
+
+            if emo and len(emoPropList) > 0:
                 attributeDict['Emotion'] = emoPropList
 
-            rolePropList = propensities.propCalc(self, edge)[1] if role else None
-            if len(rolePropList) > 0:
+            if role and len(rolePropList) > 0:
                 attributeDict['Role'] = rolePropList
 
-            inflPropList = propensities.propCalc(self, edge)[2] if infl else None
-            if len(inflPropList) > 0:
+            if infl and len(inflPropList) > 0:
                 attributeDict['Influence'] = inflPropList
 
-            self.G[edge[0]][edge[1]] = attributeDict
+            self.G[edge[0]][edge[1]].update(attributeDict)
 
         self.edges = nx.edges(self.G)
 
@@ -212,7 +213,7 @@ class SNA():
         # ERGM generates probability matrix where order is G.nodes() x G.nodes()
         ergm_prob_mat = ergm.probability(G=self.G)
 
-        # Assigning propensities probabilities and generating add_node links - TODO: merge this with overall method later
+        # Assigning propensities probabilities and generating add_node links
         for target in self.G.nodes_iter():
             emoProps, roleProps, inflProps = propensities.propCalc(self, (node, target))
             if len(emoProps) > 0:
@@ -571,24 +572,33 @@ class SNA():
     #############################
 
     # Sum sentiment for belief nodes
-    def sentiment(self,types,key):
+    def sentiment(self,types,key,operation='sum'):
         sentiment_dict = {}
+        if operation == 'average':
+            counts = {}
         for type in types:
             # nodes = [node for node in self.G.nodes_iter() if node.get("ontClass") == type]
             # for typeNode in nodes:
             for node in self.G.nodes_iter():
-                sent = self.G.node[node].get(type) # the belief attribute
+                sent = self.G.node[node].get(type)
                 if sent is not None:
-                    for item in [item for item in sent if len(item) == 2]: #TODO better way to do this
+                    items = [item for item in sent if len(item) == 2]
+                    for item in items:
                         if sentiment_dict.get(item[0]) is None:
                             sentiment_dict[item[0]] = float(item[1][key])
+                            if operation == 'average':
+                                counts[item[0]] = 1
                         else:
                             sentiment_dict[item[0]] += float(item[1][key])
+                            if operation == 'average':
+                                counts[item[0]] += 1
                         sentiment_dict[item[0]] = round(sentiment_dict[item[0]],2)
-        self.sentiment_dict = sentiment_dict
+        if operation == 'average':
+            for key in sentiment_dict:
+                sentiment_dict[key] /= counts[key]
+        if operation == 'sum':
+            self.sentiment_dict = sentiment_dict
         return sentiment_dict
-
-
 
 
     # Find clustering coefficient for each nodes
