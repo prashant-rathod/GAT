@@ -101,6 +101,70 @@
                         <div class="tab-content">
                             <img src={{ nlp_new_example_sentiment }} height="50%" width="90%">
                         </div>
+                        <p><a href="{{ url_for('nlp_blueprint.jgvis', case_num=case_num) }}" style="color:lightblue">Click here for 3D visualization of Sentiment Mining</a></p>
+                    </div>
+                    <div class="tab">
+                        <input id="tab-six" type="checkbox" name="tabs">
+                        <label for="tab-six">Wordcloud</label>
+                        <div class="tab-content">
+                            <img src={{ nlp_wordcloud }} height="50%" width="90%">
+                        </div>
+                    </div>
+                    <div class="tab">
+                        <input id="tab-seven" type="checkbox" name="tabs">
+                        <label for="tab-seven">Stemmerize</label>
+                        <div class="tab-content">
+                            <p> {{ nlp_stemmerize }}</p>
+                        </div>
+                    </div>
+                    <div class="tab">
+                        <input id="tab-eight" type="checkbox" name="tabs">
+                        <label for="tab-eight">Lemmatize</label>
+                        <div class="tab-content">
+                            <p> {{ nlp_lemmatize }}</p>
+                        </div>
+                    </div>
+                    <div class="tab">
+                        <input id="tab-nine" type="checkbox" name="tabs">
+                        <label for="tab-nine">Abstract</label>
+                        <div class="tab-content">
+                            <p> {{ nlp_abstract }}</p>
+                        </div>
+                    </div>
+                    <div class="tab">
+                        <input id="tab-ten" type="checkbox" name="tabs">
+                        <label for="tab-ten">Top 20 Verbs</label>
+                        <div class="tab-content">
+                            <img src={{ nlp_top20_verbs }} height="50%" width="90%">
+                        </div>
+                    </div>
+                    <div class="tab">
+                        <input id="tab-eleven" type="checkbox" name="tabs">
+                        <label for="tab-eleven">Top 20 Persons</label>
+                        <div class="tab-content">
+                            <img src={{ nlp_top20_persons }} height="50%" width="90%">
+                        </div>
+                    </div>
+                    <div class="tab">
+                        <input id="tab-twelve" type="checkbox" name="tabs">
+                        <label for="tab-twelve">Top 20 Locations</label>
+                        <div class="tab-content">
+                            <img src={{ nlp_top20_locations }} height="50%" width="90%">
+                        </div>
+                    </div>
+                    <div class="tab">
+                        <input id="tab-thirteen" type="checkbox" name="tabs">
+                        <label for="tab-thirteen">Top 20 Organizations</label>
+                        <div class="tab-content">
+                            <img src={{ nlp_top20_organizations }} height="50%" width="90%">
+                        </div>
+                    </div>
+                    <div class="tab">
+                        <input id="tab-fourteen" type="checkbox" name="tabs">
+                        <label for="tab-fourteen">Sentence Sentiment Distribution</label>
+                        <div class="tab-content">
+                            <img src={{ nlp_sentence_sentiment_distribution }} height="50%" width="90%">
+                        </div>
                     </div>
                 {% endif %}
             </div>
