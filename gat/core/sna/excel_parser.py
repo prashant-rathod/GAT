@@ -41,3 +41,37 @@ def readFile(subAttrs, excel_file, sheet):
             consolidatedHeader.append((feature,personal))
 
     return consolidatedHeader, list
+
+def buildJSON(excel_file):
+
+    workbook = xlrd.open_workbook(excel_file)
+    sh = workbook.sheet_by_name(workbook.sheet_names()[0])
+    header = [str(sh.cell(0, col).value).strip("\n") for col in range(sh.ncols)]
+    New_ncols = sh.ncols - 1
+
+    # If any, delete all the empty features in the header
+    while header[New_ncols] == '':
+        header.remove(header[New_ncols])
+        New_ncols -= 1
+
+    master = {}
+    for row in range(1, sh.nrows):
+        tempDict = {}
+        for col in range(New_ncols + 1):
+            feature = str(sh.cell(0, col).value).strip("\n")
+            cell = str(sh.cell(row, col).value).strip("\n")
+            if type(cell) == type(""):
+                val = cell.strip("\n")
+            else:
+                val = str(cell)
+            if val != "":  # handle empty cells
+                if col == 0:
+                    currentClass = val
+                if col == 1:
+                    key = val
+                else:
+                    tempDict[feature] = val
+        tempDict[header[0]] = currentClass
+        master[key] = tempDict
+
+    return master

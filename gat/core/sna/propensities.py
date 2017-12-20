@@ -1,8 +1,12 @@
 import numpy as np
 import scipy as sp
 
+from gat.core.sna import excel_parser
 
-### Globals
+###############
+### GLOBALS ###
+###############
+
 A = (-.8,-.6)
 B = (-.6,-.3)
 C = (-.3,.3)
@@ -185,12 +189,16 @@ infl_weight_table = [ # influence x IO
     [C,B,C,B,B]
 ]
 
+###############
+### METHODS ###
+###############
+
 def propCalc(graph, edge):
     source = graph.G.node[edge[0]]
     target = graph.G.node[edge[1]]
 
     IO, verboseIO = IOCalc(graph, source, target)
-    emoProps = []
+    emoProps = emoCalc()
     inflProps = inflCalc(IO)
 
     roles = (source.get("Role"),target.get("Role"))
@@ -270,6 +278,11 @@ def IOCalc(graph, source, target):
     for i in range(len(IO)):
         verbose[IO_keys[i]] = IO[i]
     return IO, verbose
+
+def emoCalc():
+    eventTable = excel_parser.buildJSON('static/sample/sna/CAMEO-Emotion.xlsx') #TODO create a blueprint for Excel
+
+    return {}
 
 def inflCalc(IO):
     inflProps = [] # reciprocity, commitment, social proof, authority, liking, scarcity
