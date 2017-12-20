@@ -34,7 +34,7 @@ def readFile(subAttrs, excel_file, sheet):
     consolidatedHeader = []
     personal = True
     for feature in header:
-        if (feature not in consolidatedHeader) and (feature not in subAttrs):
+        if (feature not in [header for header, tag in consolidatedHeader]) and (feature not in subAttrs):
             if feature == '':
                 personal = False
                 continue
