@@ -46,7 +46,7 @@ def nodeSelect():
         classAssignments = {}
 
         nodeColNames.append(graph.header[0])  # add source column
-        for header in graph.header[1:]: # exclude first column, automatically included as source set
+        for header in graph.header[1:]:  # exclude first column, automatically included as source set
             fileDict[header + "IsNode"] = True if request.form.get(header + "IsNode") == "on" else False
             classAssignments[header] = request.form[header + "Class"]
             fileDict[header + "Name"] = request.form[header + "Name"]
@@ -58,7 +58,7 @@ def nodeSelect():
         if fileDict['attrSheet'] != None:
             graph.loadAttributes()
         graph.createEdgeList(nodeColNames[0])
-        graph.loadOntology(source=nodeColNames[0],classAssignments=classAssignments)
+        graph.loadOntology(source=nodeColNames[0], classAssignments=classAssignments)
         if fileDict['attrSheet'] != None:
             graph.calculatePropensities(emo=True)
 
@@ -107,11 +107,13 @@ def get_node_data():
     # graph.katz_centrality()
     graph.eigenvector_centrality()
     graph.load_centrality()
-    if graph.eigenvector_centrality_dict != {} and graph.eigenvector_centrality_dict != None and graph.eigenvector_centrality_dict.get(name) != None:
+    if graph.eigenvector_centrality_dict != {} and graph.eigenvector_centrality_dict != None and graph.eigenvector_centrality_dict.get(
+            name) != None:
         eigenvector = str(round(graph.eigenvector_centrality_dict.get(name), 4));
     else:
         eigenvector = "clustering not available"
-    if graph.betweenness_centrality_dict != {} and graph.betweenness_centrality_dict != None and graph.betweenness_centrality_dict.get(name) != None:
+    if graph.betweenness_centrality_dict != {} and graph.betweenness_centrality_dict != None and graph.betweenness_centrality_dict.get(
+            name) != None:
         betweenness = str(round(graph.betweenness_centrality_dict.get(name), 4));
     else:
         betweenness = "clustering not available"
@@ -143,6 +145,7 @@ def get_edge_data():
         toJsonify[attr] = link[attr]
     return jsonify(toJsonify)
 
+
 @sna_blueprint.route("/_subgraph_viz")
 def subgraph_viz():
     case_num = request.args.get('case_num', None)
@@ -155,9 +158,13 @@ def subgraph_viz():
             return jsonify(toJson)
     return jsonify(toJson)
 
+
 @sna_blueprint.route("/_sentiment_change")
 def view_sent_change():
     case_num = request.args.get('case_num', None)
     fileDict = dao.getFileDict(case_num)
     response = fileDict["SentimentChange"]
-    return send_file(response,as_attachment=True)
+    return render_template("sentiment_change.html",
+                           sent_json=json.dumps(response, sort_keys=True, indent=4, separators=(',', ':'))
+                           )
+
