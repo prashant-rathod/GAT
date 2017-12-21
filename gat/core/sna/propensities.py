@@ -1,12 +1,20 @@
 import numpy as np
+import scipy as sp
 
+from gat.core.sna import excel_parser
 
-### Globals
+###############
+### GLOBALS ###
+###############
+
 A = (-.8,-.6)
 B = (-.6,-.3)
 C = (-.3,.3)
 D = (.3,.6)
 E = (.6,.8)
+IO_keys = ["Warmth", "Affiliation", "Legitimacy", "Dominance", "Competence"]
+legit_keys = ["Title","Role","Belief","Knowledge"]
+dom_keys = ["Resource","Knowledge"]
 role_keys = ["Hegemon", "Revisionist", "Ally", "DoF", "Dependent", "Independent", "Mediator", "Isolationist"]
 role_weight_table = [ # (Hegemon, Revisionist, Ally, DoF, Dependent, Independent, Mediator, Isolationist) ^ 2
     [ # Hegemon
@@ -181,19 +189,22 @@ infl_weight_table = [ # influence x IO
     [C,B,C,B,B]
 ]
 
+###############
+### METHODS ###
+###############
 
 def propCalc(graph, edge):
     source = graph.G.node[edge[0]]
     target = graph.G.node[edge[1]]
 
-    IO = IOCalc(graph, source, target)
-    emoProps = []
+    IO, verboseIO = IOCalc(graph, source, target)
+    emoProps = emoCalc()
     inflProps = inflCalc(IO)
 
     roles = (source.get("Role"),target.get("Role"))
     roleProps = roleCalc(IO,roles) if None not in roles else []
 
-    return emoProps, roleProps, inflProps
+    return verboseIO, emoProps, roleProps, inflProps
 
 
 # INPUT: list of propensities where last index is propensity weight
@@ -202,7 +213,7 @@ def aggregateProps(propList):
     return np.average(propList)
 
 def IOCalc(graph, source, target):
-    IO = [np.random.random_sample() * 2 - 1 for x in range(5)]
+    IO = [np.random.random_sample() * 2 - 1 for x in range(5)] # Warmth, Affiliation, Legitimacy, Dominance, Competence
     mutualAffiliations = []  # What should the values here be?
 
     for attr in (target if len(source) > len(target) else source):
@@ -232,12 +243,46 @@ def IOCalc(graph, source, target):
 
     ## Affiliation IO (average) ##
     if len(mutualAffiliations) > 0:
-        IO[1] = np.average(mutualAffiliations) - 1 # -1 to place on -1Aff to 1 scale, currently on 0 to 2 scale
-    ## Legitimacy IO ## TODO
+        IO[1] = np.average(mutualAffiliations) - 1 # -1 to place on -1 to 1 scale, currently on 0 to 2 scale
+
+    ## Legitimacy IO ##
+    # Get sentiment towards relevant attributes
+    sentiment = graph.sentiment(types=legit_keys,key='W',operation='average')
+    legit_weights = []
+    for attr in legit_keys:
+        if source.get(attr) is not None:
+            for subattr in source[attr]:
+                if len(subattr)>0 and subattr[0] in sentiment.keys():
+                    # compare source actor's attribute weight to the normal scale and add the percentile as a legitimacy weight
+                    scaled = sp.stats.percentileofscore([sentiment[key] for key in sentiment], float(subattr[1]['W']))/100
+                    legit_weights.append(scaled * 2 - 1) # place on -1 to 1 scale, currently on a 0 to 1 scale
+    if len(legit_weights) > 0:
+        IO[2] = np.average(legit_weights)
+
     ## Dominance IO
+    resources = graph.sentiment(types=dom_keys,key="AMT",operation='sum')
+    dom_weights = []
+    for attr in dom_keys:
+        if source.get(attr) is not None:
+            for subattr in source[attr]:
+                if len(subattr) > 0 and subattr[0] in resources.keys():
+                    # compare source actor's resource share to the total amount of that resource
+                    ratio = float(subattr[1]["AMT"])/resources[subattr[0]]
+                    dom_weights.append(ratio * 2 - 1)  # place on -1 to 1 scale, currently on a 0 to 1 scale
+    if len(dom_weights) > 0:
+        IO[3] = np.average(dom_weights)
+
     ## Competence IO
 
-    return IO
+    verbose = {}
+    for i in range(len(IO)):
+        verbose[IO_keys[i]] = IO[i]
+    return IO, verbose
+
+def emoCalc():
+    eventTable = excel_parser.buildJSON('static/sample/sna/CAMEO-Emotion.xlsx') #TODO create a blueprint for Excel
+
+    return {}
 
 def inflCalc(IO):
     inflProps = [] # reciprocity, commitment, social proof, authority, liking, scarcity
