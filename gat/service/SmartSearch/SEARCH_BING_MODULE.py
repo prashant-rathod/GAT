@@ -66,7 +66,9 @@ class bingURL(object):
 
         for i in range(pagenum):
             # driver.find_element_by_name('Next').click()
-            driver.find_elements_by_class_name("sb_pagN")[0].click()  # for chrome
+            # driver.find_elements_by_class_name("sb_pagN")[0].click()  # for chrome
+            element = driver.find_element_by_class_name("sb_pagN")
+            driver.execute_script("arguments[0].click();", element)
             time.sleep(5)  # wait to load page
             current_url = driver.current_url
             # print(current_url)
