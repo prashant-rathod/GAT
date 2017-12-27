@@ -25,7 +25,7 @@ def resilience(G,iters,mu):
     traces = trace(matrix=nx.to_numpy_matrix(G),params=params,iters=iters,burn=0,mu=mu)
     estimates = {coef: np.mean(trace) for coef, trace in traces.items()}
     estimated_coefs, estimated_term_list = create_coefs(params=params, priors=estimates)
-    return estimated_coefs
+    return estimated_coefs, traces
 
 def calc_params(G,type="drag"):
     if type=="resilience":

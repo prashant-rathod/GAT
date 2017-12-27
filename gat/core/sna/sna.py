@@ -508,9 +508,9 @@ class SNA():
 
     def calculateResilience(self,baseline=True,robustness=True):
         cliques_found = self.communityDetection()
-        baseline, simple = resilience.resilience(cliques_found, ergm_iters=15000)
+        baseline, simple, trace = resilience.resilience(cliques_found, ergm_iters=1500)
         robustness = resilience.laplacianRes(cliques_found, iters=5) if robustness else None
-        return baseline,simple,robustness
+        return baseline,simple,robustness, trace
 
     ##########################
     ## System-wide measures ##

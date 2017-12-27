@@ -11,6 +11,8 @@ def resilience(cliques_found, ergm_iters=3000):
     scaledBaseline = {}
     toScale = []
     baselinesToScale = []
+    traces = []
+    formatted_traces = {}
     cliques, selected = cliques_found
     # Find resilience of subgraphs
     for clique in cliques:
@@ -20,16 +22,18 @@ def resilience(cliques_found, ergm_iters=3000):
         G = clique.copy()  # percent of nodes removed can be changed here
         rSample = random.sample(G.nodes(), int(G.number_of_nodes() * 0.1))
         G.remove_nodes_from(rSample)
-        new_measure = ergm.resilience(G, ergm_iters, mu=initShortestPath*.2)["aspl"][0]
+        coefs, new_trace = ergm.resilience(G, ergm_iters, mu=initShortestPath*.2)
+        new_measure = coefs["aspl"][0]
         toScale.append(initShortestPath - new_measure)
+        traces.append(new_trace["aspl"].tolist())
 
     # scale resilience measures on a normal scale
     for i in range(len(cliques)):
-        # scaledResilienceDict[cliques[i].nodes()[0]] = sp.stats.percentileofscore(toScale,toScale[i])
-        scaledResilience[selected[i]] = sp.stats.percentileofscore(toScale, toScale[i])
+        scaledResilience[selected[i]] = toScale[i]
         scaledBaseline[selected[i]] = sp.stats.percentileofscore(baselinesToScale, baselinesToScale[i])
+        formatted_traces[selected[i]] = traces[i]
 
-    return scaledBaseline,scaledResilience
+    return scaledBaseline,scaledResilience, formatted_traces
 
 
 # Resilience function based on Laplacian Spectrum of G:
