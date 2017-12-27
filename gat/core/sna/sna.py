@@ -215,7 +215,7 @@ class SNA():
 
         # Assigning propensities probabilities and generating add_node links
         for target in self.G.nodes_iter():
-            emoProps, roleProps, inflProps = propensities.propCalc(self, (node, target))
+            IO, emoProps, roleProps, inflProps = propensities.propCalc(self, (node, target))
             if len(emoProps) > 0:
                 w = []
                 for prop in emoProps:
@@ -508,9 +508,9 @@ class SNA():
 
     def calculateResilience(self,baseline=True,robustness=True):
         cliques_found = self.communityDetection()
-        simpleRes, baseline = resilience.averagePathRes(cliques_found, iters=5) if baseline is not None else None
-        robustnessRes = resilience.laplacianRes(cliques_found, iters=5) if robustness else None
-        return baseline,simpleRes,robustnessRes
+        baseline, simple = resilience.resilience(cliques_found, ergm_iters=15000)
+        robustness = resilience.laplacianRes(cliques_found, iters=5) if robustness else None
+        return baseline,simple,robustness
 
     ##########################
     ## System-wide measures ##

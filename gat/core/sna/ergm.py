@@ -16,11 +16,23 @@ import os
 
 def probability(G):
     params = calc_params(G)
-    estimates = coef_estimate(matrix=nx.to_numpy_matrix(G),params=params,iters=3000)
+    estimates = {coef: np.mean(trace) for coef, trace in trace(matrix=nx.to_numpy_matrix(G),params=params,iters=3000,burn=1000).items()}
     estimated_coefs, estimated_term_list = create_coefs(params=params,priors=estimates)
     return coefs_to_prob(term_list=estimated_term_list)
 
-def calc_params(G):
+def resilience(G,iters,mu):
+    params = calc_params(G,type="resilience")
+    traces = trace(matrix=nx.to_numpy_matrix(G),params=params,iters=iters,burn=0,mu=mu)
+    estimates = {coef: np.mean(trace) for coef, trace in traces.items()}
+    estimated_coefs, estimated_term_list = create_coefs(params=params, priors=estimates)
+    return estimated_coefs
+
+def calc_params(G,type="drag"):
+    if type=="resilience":
+        # using sample params until actual param for resilience is chosen (ASPL? Eigenvector?)
+        return {
+            "aspl":aspl(G,key="W"),
+        }
     return {
         "density": edge_count(G),
         "block_match": node_match(G, "ontClass"),
@@ -29,13 +41,14 @@ def calc_params(G):
         # 'deltaostar2': ostarDelta(adjMat, 2),
     }
 
-def coef_estimate(matrix,params,iters):
+def trace(matrix,params,iters,burn,mu=0):
     # using specified set of priors, create coefficients
-    coefs, term_list = create_coefs(params=params, priors={coef: pymc.Normal(coef, 0, 0.001) for coef in params})
+    coefs, term_list = create_coefs(params=params, priors={coef: pymc.Normal(coef, mu, 0.01) for coef in params})
 
     @pymc.deterministic
     def probs(term_list=term_list):
-        probs = 1 / (1 + np.exp(-1 * sum(term_list)))  # The logistic function
+        probs = 1 / (1 + np.exp(-1 * sum(term_list)))
+        probs = np.array([[prob if prob > 0 else 0 for prob in row] for row in probs])
         probs[np.diag_indices_from(probs)] = 0
         # Manually cut off the top triangle:
         probs[np.triu_indices_from(probs)] = 0
@@ -43,7 +56,7 @@ def coef_estimate(matrix,params,iters):
 
     # Fitting
     matrix[np.triu_indices_from(matrix)] = 0
-    max_attempts = 10
+    max_attempts = 50
     attempts = 0
     while attempts < max_attempts:
         try:
@@ -52,7 +65,7 @@ def coef_estimate(matrix,params,iters):
         except:
             print("Encountered zero probability error number",attempts,", trying again...")
             if attempts >= max_attempts:
-                raise
+                raise ValueError("Something went wrong with the stochastic probabilities")
             attempts += 1
 
     sim_outcome = pymc.Bernoulli("sim_outcome", probs)
@@ -65,13 +78,13 @@ def coef_estimate(matrix,params,iters):
             args.append(item)
     model = pymc.Model(args)
     mcmc = pymc.MCMC(model)
-    mcmc.sample(iters, 1000, 50)  # approx. 30 seconds
+    mcmc.sample(iter=iters, burn=burn, thin=50)  # approx. 30 seconds
 
     traces = diagnostics(coefs=coefs, mcmc=mcmc)
 
     goodness_of_fit(mcmc=mcmc)
 
-    return {coef: np.mean(trace) for coef, trace in traces.items()}
+    return traces
 
 ## Service functions ##
 def draw_init(G):
@@ -133,7 +146,28 @@ def save_ergm_file(fig,name):
     os.makedirs(os.path.dirname(dir), exist_ok=True)
     fig.savefig(dir+name)
 
+def coefs_to_prob(term_list):
+    probs = 1 / (1 + np.exp(-1 * sum(term_list)))  # The logistic function
+    probs[np.diag_indices_from(probs)] = 0
+    return probs
+
 ## Covariate methods ##
+def aspl(G,key):
+    size = len(G)
+    spl = np.zeros(shape=(size, size))
+    for i in range(size):
+        for j in range(size):
+            try:
+                spl[i,j] = nx.shortest_path_length(G,source=G.nodes()[i],target=G.nodes()[j]) * .2
+                if spl[i,j] > 1:
+                    spl[i,j] = 1
+                continue
+            except:
+                spl[i,j] = 0
+    if not G.is_directed():
+        spl[np.triu_indices_from(spl)] = 0
+    return spl
+
 def edge_count(G):
     size = len(G)
     ones = np.ones((size, size))
@@ -144,7 +178,7 @@ def edge_count(G):
 
 def node_match(G, attrib):
     size = len(G)
-    attribs = [node[1].get("block") for node in G.nodes(data=True)]
+    attribs = [node[1].get(attrib) for node in G.nodes(data=True)]
     match = np.zeros(shape=(size, size))
     for i in range(size):
         for j in range(size):
@@ -180,8 +214,3 @@ def ostarDelta(am,k):
             nin = am[i,:].sum()-am[i,j]
             res[i,j] = comb(nin,k-1,exact=True)
     return(res)
-
-def coefs_to_prob(term_list):
-    probs = 1 / (1 + np.exp(-1 * sum(term_list)))  # The logistic function
-    probs[np.diag_indices_from(probs)] = 0
-    return probs

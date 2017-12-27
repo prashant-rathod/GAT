@@ -15,6 +15,7 @@ E = (.6,.8)
 IO_keys = ["Warmth", "Affiliation", "Legitimacy", "Dominance", "Competence"]
 legit_keys = ["Title","Role","Belief","Knowledge"]
 dom_keys = ["Resource","Knowledge"]
+inflKey = ["Reciprocity","Commitment","Social Proof","Authority","Liking","Scarcity"]
 role_keys = ["Hegemon", "Revisionist", "Ally", "DoF", "Dependent", "Independent", "Mediator", "Isolationist"]
 role_weight_table = [ # (Hegemon, Revisionist, Ally, DoF, Dependent, Independent, Mediator, Isolationist) ^ 2
     [ # Hegemon
@@ -188,6 +189,7 @@ infl_weight_table = [ # influence x IO
     [E,D,D,B,D],
     [C,B,C,B,B]
 ]
+eventTable = excel_parser.buildJSON('static/sample/sna/CAMEO-Emotion.xlsx') #TODO create a blueprint for Excel
 
 ###############
 ### METHODS ###
@@ -280,13 +282,10 @@ def IOCalc(graph, source, target):
     return IO, verbose
 
 def emoCalc():
-    eventTable = excel_parser.buildJSON('static/sample/sna/CAMEO-Emotion.xlsx') #TODO create a blueprint for Excel
-
-    return {}
+    return []
 
 def inflCalc(IO):
     inflProps = [] # reciprocity, commitment, social proof, authority, liking, scarcity
-    inflKey = ["Reciprocity","Commitment","Social Proof","Authority","Liking","Scarcity"]
     output = {}
     for i in range(len(infl_weight_table)-1):
         inflProps.append(np.average([a*np.random.uniform(low=b[0],high=b[1]) for a,b in zip(IO,infl_weight_table[i])])) # influence is a weighted average of the IOs, where weight random selection from a range in the weight table
