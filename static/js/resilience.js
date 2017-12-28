@@ -18,7 +18,6 @@ function drawSVG(systemMeasures) {
                 y: val
             }
         }
-        console.log(trace);
     }
     var svgContainer = d3.select("#resilienceInfo").append("svg").attr("style","width:570px;height:540px")
                                                                  .attr("id","vis")
@@ -26,32 +25,37 @@ function drawSVG(systemMeasures) {
     var vis = d3.select("#vis"),
                         MARGINS = {
                             top: 20,
-                            right: 20,
+                            right: 100,
                             bottom: 20,
                             left: 50
                         },
                         WIDTH = 500,
                         HEIGHT = 500,
                         xScale = d3.scaleLinear().rangeRound([MARGINS.left, WIDTH - MARGINS.right]).domain([domain.min, domain.max]),
-                        yScale = d3.scaleLinear().rangeRound([HEIGHT - MARGINS.top, MARGINS.bottom]).domain([range.min, range.max]),
+                        yScale = d3.scaleLinear().rangeRound([HEIGHT - MARGINS.top, MARGINS.bottom]).domain([-1, 1]),
                         xAxis = d3.axisBottom()
                         .scale(xScale),
                         yAxis = d3.axisLeft()
                         .scale(yScale)
     vis.append("g")
         .attr("class", "x axis")
-        .attr("transform", "translate(0," + (HEIGHT - MARGINS.bottom) + ")")
+        .attr("transform", "translate(0," + (HEIGHT / 2) + ")")
         .call(xAxis);
     vis.append("g")
         .attr("class", "y axis")
         .attr("transform", "translate(" + (MARGINS.left) + ",0)")
         .call(yAxis);
+    var reScaleY = function(d) {
+        var scaleCoef = 2/(range.max-range.min);
+        var diff = d - range.min;
+        return yScale(scaleCoef * diff - 1);
+    }
     var lineGen = d3.line()
         .x(function(d) {
             return xScale(d.x);
         })
         .y(function(d) {
-            return yScale(d.y);
+            return reScaleY(d.y);
         })
     var i = 0;
     var colors = ["green","red","blue","yellow"];
@@ -62,7 +66,12 @@ function drawSVG(systemMeasures) {
             .attr('stroke', colors[i])
             .attr('stroke-width', 2)
             .attr('fill', 'none');
-        console.log(systemMeasures["Resilience"])
+        vis.append("text")
+            .attr("transform", "translate(" + (WIDTH-50) + "," + (20*(1+i)) + ")")
+            .attr("dy", ".35em")
+            .attr("text-anchor", "start")
+            .style("fill", colors[i])
+            .text(cluster);
         var baseline = [];
         for (var k=0; k<trace.length; k++) {
             baseline[k] = {
@@ -76,7 +85,12 @@ function drawSVG(systemMeasures) {
             .attr('stroke-width', 2)
             .attr('fill', 'none')
             .style('stroke-dasharray',("2,2"));
+        vis.append("text")
+            .attr("transform", "translate(" + (WIDTH-MARGINS.right) + "," + reScaleY(systemMeasures["Resilience"][cluster]) + ")")
+            .attr("dy", ".35em")
+            .attr("text-anchor", "start")
+            .style("fill", colors[i])
+            .text("Average");
         i++;
     }
-
 }

@@ -23,8 +23,7 @@ def resilience(cliques_found, ergm_iters=3000):
         rSample = random.sample(G.nodes(), int(G.number_of_nodes() * 0.1))
         G.remove_nodes_from(rSample)
         coefs, new_trace = ergm.resilience(G, ergm_iters, mu=initShortestPath*.2)
-        new_measure = coefs["aspl"][0]
-        toScale.append(initShortestPath - new_measure)
+        toScale.append(coefs["aspl"])
         traces.append(new_trace["aspl"].tolist())
 
     # scale resilience measures on a normal scale
