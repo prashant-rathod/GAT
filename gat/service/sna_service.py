@@ -99,6 +99,7 @@ def SNA2Dand3D(graph, request, case_num, _3D=True, _2D=False, label=False):
         iters = int(request.form.get("iters"))
         systemMeasures['SentimentDict'] = True
         fileDict['SentimentChange'] = write_to_excel(graph.event_update(inputFile,iters))
+        graph.calculatePropensities()
 
     # Add system measures dictionary
     try:

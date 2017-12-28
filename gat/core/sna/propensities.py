@@ -15,6 +15,45 @@ E = (.6,.8)
 IO_keys = ["Warmth", "Affiliation", "Legitimacy", "Dominance", "Competence"]
 legit_keys = ["Title","Role","Belief","Knowledge"]
 dom_keys = ["Resource","Knowledge"]
+emoKey = {
+    "Assault":"Rage",
+    "Use unconventional mass violence":"Terror",
+    "Fight": "Anger",
+    "Coerce": "Vigilance",
+    "Exhibit force posture": "Amazement",
+    "Reduce relations": "Disgust",
+    "Threaten": "Fear",
+    "Reject": "Loathing",
+    "Disapprove": "Surprise",
+    "Investigate": "Interest",
+    "Control information": "Distraction",
+    "Yield":"Acceptance",
+    "Protest":"Grief",
+    "Refuse to build infrastructure":"Sadness",
+    "Demand":"Annoyance",
+    "Appeal":"Acceptance",
+    "Make a public statement":"Interest",
+    "Build energy infrastructure":"Trust",
+    "Build social infrastructure":"Trust",
+    "Build political infrastructure":"Trust",
+    "Build military infrastructure":"Trust",
+    "Build information infrastructure":"Trust",
+    "Build economic infrastructure":"Trust",
+    "Gather/mine for materials":"Joy",
+    "Change price":"Apprehension",
+    "Government funds":"Joy",
+    "Express intent":"Pensiveness",
+    "Appeal to build infrastructure":"Trust",
+    "Express intent to cooperate":"Joy",
+    "Express intent to build infrastructure":"Serenity",
+    "Consult":"Admiration",
+    "Accede":"Ecstasy",
+    "Use social following":"Anticipation",
+    "Demand to build infrastructure":"Anticipation",
+    "Engage in material cooperation":"Admiration",
+    "Engage in diplomatic cooperation":"Ecstasy",
+    "Provide aid":"Ecstasy"
+}
 inflKey = ["Reciprocity","Commitment","Social Proof","Authority","Liking","Scarcity"]
 role_keys = ["Hegemon", "Revisionist", "Ally", "DoF", "Dependent", "Independent", "Mediator", "Isolationist"]
 role_weight_table = [ # (Hegemon, Revisionist, Ally, DoF, Dependent, Independent, Mediator, Isolationist) ^ 2
@@ -195,16 +234,16 @@ eventTable = excel_parser.buildJSON('static/sample/sna/CAMEO-Emotion.xlsx') #TOD
 ### METHODS ###
 ###############
 
-def propCalc(graph, edge):
+def propCalc(graph, edge, emo=True, infl=True, role=True):
     source = graph.G.node[edge[0]]
     target = graph.G.node[edge[1]]
 
     IO, verboseIO = IOCalc(graph, source, target)
-    emoProps = emoCalc()
-    inflProps = inflCalc(IO)
+    emoProps = emoCalc(graph.G, edge) if emo else []
+    inflProps = inflCalc(IO) if infl else []
 
     roles = (source.get("Role"),target.get("Role"))
-    roleProps = roleCalc(IO,roles) if None not in roles else []
+    roleProps = roleCalc(IO,roles) if None not in roles and role else []
 
     return verboseIO, emoProps, roleProps, inflProps
 
@@ -281,8 +320,27 @@ def IOCalc(graph, source, target):
         verbose[IO_keys[i]] = IO[i]
     return IO, verbose
 
-def emoCalc():
-    return []
+def emoCalc(G,edge):
+    source = edge[0]
+    eventNodes = [x for x,y in G.nodes(data=True) if y.get('ontClass') == 'Event']
+    neighbors = G.neighbors(source)
+    neighborEvents = [event for event in eventNodes if event in neighbors]
+    if len(neighborEvents) < 1:
+        return []
+
+    # If connected to an event, get emotion associated with that event
+    emotions = []
+    for event in neighborEvents:
+        emotion = emoKey.get(eventTable.get(str(float(G.node[event].get("code"))))["Type"])
+        if emotion is not None:
+            emotions.append(emotion)
+    if len(emotions) < 1:
+        return []
+
+    # TODO Else if event affects object of salience to actor or close associate, get emotion
+
+    # Use IO to determine specific emotion in polar coordinate grid
+    return emotions
 
 def inflCalc(IO):
     inflProps = [] # reciprocity, commitment, social proof, authority, liking, scarcity
