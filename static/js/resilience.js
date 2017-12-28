@@ -58,6 +58,19 @@ function drawSVG(systemMeasures) {
                 .attr('stroke-width', 1)
                 .attr('fill', 'none');
     }
+    // axis labels
+    vis.append("text")
+                .attr("transform", "translate(" + (10) + "," + yScale(0.4) + ")rotate(-90)")
+                .attr("dy", ".50em")
+                .attr("text-anchor", "start")
+                .style("fill", "black")
+                .text("Resilience Measure");
+    vis.append("text")
+                .attr("transform", "translate(" + (10) + "," + yScale(.1) + ")")
+                .attr("dy", ".50em")
+                .attr("text-anchor", "start")
+                .style("fill", "black")
+                .text("Time");
 
     //drawing the lines
     var lineGen = d3.line()
@@ -76,7 +89,9 @@ function drawSVG(systemMeasures) {
             .attr('d', lineGen(trace))
             .attr('stroke', colors[i])
             .attr('stroke-width', 2)
-            .attr('fill', 'none');
+            .attr('fill', 'none')
+            .transition()
+            .duration(3000)
         // the label
         vis.append("text")
             .attr("transform", "translate(" + (WIDTH-MARGINS.right/3) + "," + (20*(1+i)) + ")")
