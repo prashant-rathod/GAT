@@ -12,9 +12,36 @@ B = (-.6,-.3)
 C = (-.3,.3)
 D = (.3,.6)
 E = (.6,.8)
+
 IO_keys = ["Warmth", "Affiliation", "Legitimacy", "Dominance", "Competence"]
 legit_keys = ["Title","Role","Belief","Knowledge"]
 dom_keys = ["Resource","Knowledge"]
+
+# TODO this needs to be done graphically - shoddy rank-based solution below
+# lists all emotions in 180 degree wheels, from anger to fear, for each level of plutchik's wheel
+threatRanking = {
+    "low":[
+        ["Anxiety","Interest","Resignation","Serenity","Content","Acceptance","Worry"],
+        ["Curiosity","Boredom","Disgruntled","Pensiveness","Apathy","Distraction","Dismay"]
+    ],
+    "medium": [
+        ["Despair","Anticipation","Vulnerability","Joy","Love","Trust","Paranoia"],
+        ["Excitement","Disgust","Hatred","Sadness","Broodiness","Surprise","Melancholy"]
+    ],
+    "high": [
+        ["Hopeless","Vigilence","Envy","Ecstasy","Adoration","Admiration","Wonder"],
+        ["Dread","Loathing","Cruel","Grief","Resentment","Amazement","Hopeful"]
+    ]
+}
+emoPoles = {
+    "low": ["Annoyance","Apprehension"],
+    "medium": ["Anger","Fear"],
+    "high": ["Rage","Terror"]
+}
+for key in threatRanking:
+    for i in range(len(threatRanking[key])):
+        threatRanking[key][i] = [emoPoles[key][0]] + threatRanking[key][i] + [emoPoles[key][1]]
+
 emoKey = {
     "Assault":"Rage",
     "Use unconventional mass violence":"Terror",
@@ -54,7 +81,18 @@ emoKey = {
     "Engage in diplomatic cooperation":"Ecstasy",
     "Provide aid":"Ecstasy"
 }
+
+
 inflKey = ["Reciprocity","Commitment","Social Proof","Authority","Liking","Scarcity"]
+infl_weight_table = [ # influence x IO
+    [D,D,C,D,D],
+    [D,B,C,A,C],
+    [B,A,B,A,B],
+    [B,B,D,A,D],
+    [E,D,D,B,D],
+    [C,B,C,B,B]
+]
+
 role_keys = ["Hegemon", "Revisionist", "Ally", "DoF", "Dependent", "Independent", "Mediator", "Isolationist"]
 role_weight_table = [ # (Hegemon, Revisionist, Ally, DoF, Dependent, Independent, Mediator, Isolationist) ^ 2
     [ # Hegemon
@@ -220,14 +258,7 @@ role_labels = [ # (Hegemon, Revisionist, Ally, DoF, Dependent, Independent, Medi
         ["Supporter", "Supporter"] # Independent
     ]
 ]
-infl_weight_table = [ # influence x IO
-    [D,D,C,D,D],
-    [D,B,C,A,C],
-    [B,A,B,A,B],
-    [B,B,D,A,D],
-    [E,D,D,B,D],
-    [C,B,C,B,B]
-]
+
 eventTable = excel_parser.buildJSON('static/sample/sna/CAMEO-Emotion.xlsx') #TODO create a blueprint for Excel
 
 ###############
@@ -238,8 +269,8 @@ def propCalc(graph, edge, emo=True, infl=True, role=True):
     source = graph.G.node[edge[0]]
     target = graph.G.node[edge[1]]
 
-    IO, verboseIO = IOCalc(graph, source, target)
-    emoProps = emoCalc(graph.G, edge) if emo else []
+    IO, verboseIO = IOCalc(graph, source, target) # Warmth, Affiliation, Legitimacy, Dominance, Competence
+    emoProps = emoCalc(graph.G, edge, IO) if emo else []
     inflProps = inflCalc(IO) if infl else []
 
     roles = (source.get("Role"),target.get("Role"))
@@ -320,7 +351,7 @@ def IOCalc(graph, source, target):
         verbose[IO_keys[i]] = IO[i]
     return IO, verbose
 
-def emoCalc(G,edge):
+def emoCalc(G,edge,IO):
     source = edge[0]
     eventNodes = [x for x,y in G.nodes(data=True) if y.get('ontClass') == 'Event']
     neighbors = G.neighbors(source)
@@ -339,7 +370,49 @@ def emoCalc(G,edge):
 
     # TODO Else if event affects object of salience to actor or close associate, get emotion
 
-    # Use IO to determine specific emotion in polar coordinate grid
+    ## Use IO to determine threat level, -1 for low, 0 for medium, 1 for high
+    # IO[0] = Warmth, IO[4] = Competence
+    # high warmth and low competence equals medium threat
+    # high warmth and high competence equal no threat
+    # Low warmth and high competence equals high threat
+    # Low warmth and low competence equals medium threat
+    if IO[0] > 0:
+        if IO[4] > 0:
+            threat = -1
+        else:
+            threat = 0
+    else:
+        if IO[4] > 0:
+            threat = 1
+        else:
+            threat = 0
+
+    specEmos = []
+    # Use threat level to determine direction of emotion
+    for emotion in emotions:
+        for key,arcs in threatRanking.items():
+            for arc in arcs:
+                if emotion in arc:
+                    index = arc.index(emotion)
+                    # Which is closer to this emotion - anger or fear?
+                    # -1 for anger, 1 for fear
+                    shift = -1 if index < len(arc) - index - 1 else 1
+                    if index == 0 or index == len(arc) - 1:
+                        specEmos.append(arc[index - shift])
+                        break
+                    # If high threat, shift towards fear or anger (whichever is closer)
+                    if threat == 1:
+                        specEmos.append(arc[index+shift])
+                        break
+                    # If no threat, shift away from fear or anger (whichever is closer)
+                    if threat == -1:
+                        specEmos.append(arc[index-shift])
+                        break
+                    # If medium threat, 50/50 chance
+                    else:
+                        specEmos.append(arc[index+np.random.binomial(1, 0.5) * 2 - 1])
+                        break
+
     return emotions
 
 def inflCalc(IO):
