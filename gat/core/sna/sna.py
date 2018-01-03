@@ -268,7 +268,7 @@ class SNA():
                             # update this sentiment weight
                             globalSent = currentSents.get(item[0])
                             # some function to decide the weighting, dependent on node sent
-                            globalWeight = .5
+                            globalWeight = (float(item[1]['W'])**2 * globalWeight**2) / 2 # another 3D parabola - the greater the difference, the higher the weight
                             # set new sentiment
                             self.G.node[node][type][i][1]['W'] = str((1-globalWeight)*float(item[1]['W']) + globalWeight*globalSent)
         self.calculatePropensities(self.propToggle)
@@ -375,7 +375,7 @@ class SNA():
         self.edges = nx.edges(self.G)  # update edge list
         self.sent_outputs = ret
         self.feedbackUpdate()
-        
+
         return ret
 
     def meaning_value_chains(self):
