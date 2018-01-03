@@ -374,6 +374,8 @@ class SNA():
         self.nodes = nx.nodes(self.G)  # update node list
         self.edges = nx.edges(self.G)  # update edge list
         self.sent_outputs = ret
+        self.feedbackUpdate()
+        
         return ret
 
     def meaning_value_chains(self):
