@@ -187,6 +187,7 @@ class SNA():
         self.edges.extend(newEdgeList)
 
     def calculatePropensities(self, propToggle={'emo':True,'infl':True,'role':True}):
+        self.propToggle = propToggle
 
         for edge in self.edges:  # for every edge, calculate propensities and append as an attribute
             attributeDict = {"propsFlag": True}
@@ -208,7 +209,7 @@ class SNA():
         self.edges = nx.edges(self.G)
 
     def drag_predict(self,node):
-        ## Smart prediction prototype
+        ## Smart prediction prototype - combines propensities and data-based statistical model
 
         # ERGM generates probability matrix where order is G.nodes() x G.nodes()
         ergm_prob_mat = ergm.probability(G=self.G)
@@ -251,6 +252,27 @@ class SNA():
                 if presence:
                     self.G.add_edge(node, target)
                     self.G[node][target]['Predicted'] = True
+        self.feedbackUpdate()
+
+    def feedbackUpdate(self):
+        currentSents = self.sentiment(types=self.classList,key="W",operation='average')
+        for type in self.classList:
+            # nodes = [node for node in self.G.nodes_iter() if node.get("ontClass") == type]
+            # for typeNode in nodes:
+            for node in self.G.nodes_iter():
+                sent = self.G.node[node].get(type)
+                if sent is not None:
+                    for i in range(len(sent)):
+                        if len(sent[i]) == 2 and currentSents.get(sent[i][0]) is not None:
+                            item = sent[i]
+                            # update this sentiment weight
+                            globalSent = currentSents.get(item[0])
+                            # some function to decide the weighting, dependent on node sent
+                            globalWeight = .5
+                            # set new sentiment
+                            self.G.node[node][type][i][1]['W'] = str((1-globalWeight)*float(item[1]['W']) + globalWeight*globalSent)
+        self.calculatePropensities(self.propToggle)
+
 
     # input: spreadsheet of bomb attacks
     # output: updated dict of sentiment changes for each of attack events
