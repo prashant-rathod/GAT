@@ -186,21 +186,21 @@ class SNA():
         self.G.add_edges_from(newEdgeList)
         self.edges.extend(newEdgeList)
 
-    def calculatePropensities(self, emo=True, role=True, infl=True):
+    def calculatePropensities(self, propToggle={'emo':True,'infl':True,'role':True}):
 
         for edge in self.edges:  # for every edge, calculate propensities and append as an attribute
             attributeDict = {"propsFlag": True}
 
-            IO, emoPropList, rolePropList, inflPropList = propensities.propCalc(self, edge)
+            IO, emoPropList, rolePropList, inflPropList = propensities.propCalc(self, edge, propToggle)
             attributeDict['IO'] = IO
 
-            if emo and len(emoPropList) > 0:
+            if propToggle['emo'] and len(emoPropList) > 0:
                 attributeDict['Emotion'] = emoPropList
 
-            if role and len(rolePropList) > 0:
+            if propToggle['role'] and len(rolePropList) > 0:
                 attributeDict['Role'] = rolePropList
 
-            if infl and len(inflPropList) > 0:
+            if propToggle['infl'] and len(inflPropList) > 0:
                 attributeDict['Influence'] = inflPropList
 
             self.G[edge[0]][edge[1]].update(attributeDict)

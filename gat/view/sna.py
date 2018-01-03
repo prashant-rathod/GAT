@@ -54,13 +54,19 @@ def nodeSelect():
                 nodeColNames.append(fileDict[header + "Name"])
         fileDict['nodeColNames'] = nodeColNames
 
+        fileDict['propToggle'] = {
+            'emo': True if request.form.get("emo") == "on" else False,
+            'infl': True if request.form.get("infl") == "on" else False,
+            'role': True if request.form.get("role") == "on" else False
+        }
+
         graph.createNodeList(nodeColNames)
         if fileDict['attrSheet'] != None:
             graph.loadAttributes()
         graph.createEdgeList(nodeColNames[0])
         graph.loadOntology(source=nodeColNames[0], classAssignments=classAssignments)
         if fileDict['attrSheet'] != None:
-            graph.calculatePropensities(emo=True)
+            graph.calculatePropensities(fileDict['propToggle'])
 
         # Only the first column is a source
         graph.closeness_centrality()

@@ -265,16 +265,16 @@ eventTable = excel_parser.buildJSON('static/sample/sna/CAMEO-Emotion.xlsx') #TOD
 ### METHODS ###
 ###############
 
-def propCalc(graph, edge, emo=True, infl=True, role=True):
+def propCalc(graph, edge, propToggle={'emo':True,'infl':True,'role':True}):
     source = graph.G.node[edge[0]]
     target = graph.G.node[edge[1]]
 
     IO, verboseIO = IOCalc(graph, source, target) # Warmth, Affiliation, Legitimacy, Dominance, Competence
-    emoProps = emoCalc(graph.G, edge, IO) if emo else []
-    inflProps = inflCalc(IO) if infl else []
+    emoProps = emoCalc(graph.G, edge, IO) if propToggle["emo"] else []
+    inflProps = inflCalc(IO) if propToggle["infl"] else []
 
     roles = (source.get("Role"),target.get("Role"))
-    roleProps = roleCalc(IO,roles) if None not in roles and role else []
+    roleProps = roleCalc(IO,roles) if None not in roles and propToggle["role"] else []
 
     return verboseIO, emoProps, roleProps, inflProps
 
