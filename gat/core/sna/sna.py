@@ -52,7 +52,7 @@ class SNA():
         self.nodeSet = nodeSet
         self.nodes = nx.nodes(self.G)
 
-    def loadOntology(self, source, classAssignments):
+    def loadOntology(self, source, classAssignments, weight='val'):
 
         # Creating an edge list and setting its length for the conditional iterations:
         b = self.attrList
@@ -60,7 +60,6 @@ class SNA():
 
         # Creating master edge list, and empty lists to fill from each ontology class
         classLists = defaultdict(list)  # creates a dictionary with default list values, no need to initialize - nifty!
-        edgeList = []
 
         # iterating through ontology classes to add them to the network as nodes connected by weighted
         # edge attributes to other ontological entities
@@ -68,48 +67,35 @@ class SNA():
             for q in range(0, len(b[x])):
                 nodeHeader = b[x][q]['header']
                 nodeClass = classAssignments.get(nodeHeader)
-                if nodeHeader == source and b[x][q]['val'] is not None:
-                    classLists['actor'].append(b[x][q]['val'])
-                if nodeClass == 'Belief' and b[x][q]['val'] is not None:
-                    classLists['belief'].append(b[x][q]['val'])
-                if nodeClass == 'Symbols' and b[x][q]['val'] is not None:
-                    classLists['symbol'].append(b[x][q]['val'])
-                if nodeClass == 'Resource' and b[x][q]['val'] is not None:
-                    classLists['resource'].append(b[x][q]['val'])
-                if nodeClass == 'Agent' and b[x][q]['val'] is not None:
-                    classLists['agent'].append(b[x][q]['val'])
-                if nodeClass == 'Organization' and b[x][q]['val'] is not None:
-                    classLists['org'].append(b[x][q]['val'])
-                if nodeClass == 'Event' and b[x][q]['val'] is not None:
-                    classLists['event'].append(b[x][q]['val'])
-                if nodeClass == 'Audience' and b[x][q]['val'] is not None:
-                    classLists['aud'].append(b[x][q]['val'])
+                if nodeHeader == source and b[x][q][weight] is not None:
+                    classLists['Actor'].append(b[x][q][weight])
+                if nodeClass == 'Belief' and b[x][q][weight] is not None:
+                    classLists['Belief'].append(b[x][q][weight])
+                if nodeClass == 'Symbols' and b[x][q][weight] is not None:
+                    classLists['Symbol'].append(b[x][q][weight])
+                if nodeClass == 'Resource' and b[x][q][weight] is not None:
+                    classLists['Resource'].append(b[x][q][weight])
+                if nodeClass == 'Agent' and b[x][q][weight] is not None:
+                    classLists['Agent'].append(b[x][q][weight])
+                if nodeClass == 'Organization' and b[x][q][weight] is not None:
+                    classLists['Organization'].append(b[x][q][weight])
+                if nodeClass == 'Event' and b[x][q][weight] is not None:
+                    classLists['Event'].append(b[x][q][weight])
+                if nodeClass == 'Audience' and b[x][q][weight] is not None:
+                    classLists['Audience'].append(b[x][q][weight])
+                if nodeClass == 'Role' and b[x][q][weight] is not None:
+                    classLists['Role'].append(b[x][q][weight])
+                if nodeClass == 'Knowledge' and b[x][q][weight] is not None:
+                    classLists['Knowledge'].append(b[x][q][weight])
 
         # removing duplicates from each list
         # (this does not remove the effect that numerous connections to one node have on the network)
         classLists = {key: set(val) for key, val in classLists.items()}  # dict comprehension method
 
-        # adding ontological class to each node as node attribute
-        stringDict = {
-            'actor': 'Actor',
-            'belief': 'Belief',
-            'symbol': 'Symbol',
-            'resource': 'Resource',
-            'agent': 'Agent',
-            'org': 'Organization',
-            'aud': 'Audience',
-            'event': 'Event',
-            'role': 'Role',
-            'know': 'Knowledge',
-            'taskModel': 'Task Model',
-            'location': 'Location',
-            'title': 'Title',
-            'position': 'position',
-        }
         for x in nx.nodes(self.G):
             for key, entityList in classLists.items():
                 if x in entityList:
-                    self.G.node[x]['ontClass'] = stringDict[key]
+                    self.G.node[x]['ontClass'] = key
 
     # Input: header list and list of attributes with header label from attribute sheet
     # Output: updated list of nodes with attributes
@@ -557,8 +543,6 @@ class SNA():
         return nx.diameter(self.G)
     def periphery(self):
         return nx.periphery(self.G)
-    def eigenvector(self):
-        return nx.eigenvector_centrality(self.G)
     def triadic_census(self):
         return nx.triadic_census(self.G)
     def average_degree_connectivity(self):
