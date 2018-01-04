@@ -2,15 +2,15 @@
 
 ## Contents
 
-1. [Construction](#Construction)
-2. [Analysis](#Analysis)
-	1. [Measures](#Measures)
-	2. [Communities](#Communities)
-	3. [ERGM](#ERGM)
-	4. [Resilience](#Resilience)
-3. [Forecasting](#Forecasting)
-	1. [Simple](#Simple)
-	2. [Smart](#Smart)
+1. [Construction](#construction)
+2. [Analysis](#analysis)
+	1. [Measures](#measures)
+	2. [Communities](#communities)
+	3. [ERGM](#ergm)
+	4. [Resilience](#resilience)
+3. [Forecasting](#forecasting)
+	1. [Simple](#simple)
+	2. [Smart](#smart)
 
 ## Construction
 
