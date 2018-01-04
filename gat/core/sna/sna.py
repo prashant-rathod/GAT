@@ -532,7 +532,7 @@ class SNA():
         self.katz_centrality()
         self.eigenvector_centrality()
         self.load_centrality()
-        self.communicability_centrality()  # Not available for directed graphs
+        self.communicability_centrality()
         self.communicability_centrality_exp()
         self.node_connectivity()
         self.average_clustering()
@@ -550,23 +550,18 @@ class SNA():
     def degree_assortativity_coefficient(self):
         return nx.degree_assortativity_coefficient(self.G)
 
-    # node connectivity:
     def node_connectivity(self):
         return nx.node_connectivity(self.G)
 
-    # average clustering coefficient:
     def average_clustering(self):
         return nx.average_clustering(self.G.to_undirected())
 
-    # attribute assortivity coefficient:
     def attribute_assortivity(self, attr):
         return nx.attribute_assortativity_coefficient(self.G, attr)
 
-    # is strongly connected:
     def is_strongly_connected(self):
         return nx.is_strongly_connected(self.G)
 
-    # is weakly connected:
     def is_weakly_connected(self):
         return nx.is_weakly_connected(self.G)
 
@@ -574,14 +569,11 @@ class SNA():
     ## Node-dependent measures ##
     #############################
 
-    # Sum sentiment for belief nodes
     def sentiment(self,types,key,operation='sum'):
         sentiment_dict = {}
         if operation == 'average':
             counts = {}
         for type in types:
-            # nodes = [node for node in self.G.nodes_iter() if node.get("ontClass") == type]
-            # for typeNode in nodes:
             for node in self.G.nodes_iter():
                 sent = self.G.node[node].get(type)
                 if sent is not None:
