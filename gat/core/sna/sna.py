@@ -186,21 +186,22 @@ class SNA():
         self.G.add_edges_from(newEdgeList)
         self.edges.extend(newEdgeList)
 
-    def calculatePropensities(self, emo=True, role=True, infl=True):
+    def calculatePropensities(self, propToggle={'emo':True,'infl':True,'role':True}):
+        self.propToggle = propToggle
 
         for edge in self.edges:  # for every edge, calculate propensities and append as an attribute
             attributeDict = {"propsFlag": True}
 
-            IO, emoPropList, rolePropList, inflPropList = propensities.propCalc(self, edge)
+            IO, emoPropList, rolePropList, inflPropList = propensities.propCalc(self, edge, propToggle)
             attributeDict['IO'] = IO
 
-            if emo and len(emoPropList) > 0:
+            if propToggle['emo'] and len(emoPropList) > 0:
                 attributeDict['Emotion'] = emoPropList
 
-            if role and len(rolePropList) > 0:
+            if propToggle['role'] and len(rolePropList) > 0:
                 attributeDict['Role'] = rolePropList
 
-            if infl and len(inflPropList) > 0:
+            if propToggle['infl'] and len(inflPropList) > 0:
                 attributeDict['Influence'] = inflPropList
 
             self.G[edge[0]][edge[1]].update(attributeDict)
@@ -208,14 +209,14 @@ class SNA():
         self.edges = nx.edges(self.G)
 
     def drag_predict(self,node):
-        ## Smart prediction prototype
+        ## Smart prediction prototype - combines propensities and data-based statistical model
 
         # ERGM generates probability matrix where order is G.nodes() x G.nodes()
         ergm_prob_mat = ergm.probability(G=self.G)
 
         # Assigning propensities probabilities and generating add_node links
         for target in self.G.nodes_iter():
-            emoProps, roleProps, inflProps = propensities.propCalc(self, (node, target))
+            IO, emoProps, roleProps, inflProps = propensities.propCalc(self, (node, target))
             if len(emoProps) > 0:
                 w = []
                 for prop in emoProps:
@@ -251,6 +252,27 @@ class SNA():
                 if presence:
                     self.G.add_edge(node, target)
                     self.G[node][target]['Predicted'] = True
+        self.feedbackUpdate()
+
+    def feedbackUpdate(self):
+        currentSents = self.sentiment(types=self.classList,key="W",operation='average')
+        for type in self.classList:
+            # nodes = [node for node in self.G.nodes_iter() if node.get("ontClass") == type]
+            # for typeNode in nodes:
+            for node in self.G.nodes_iter():
+                sent = self.G.node[node].get(type)
+                if sent is not None:
+                    for i in range(len(sent)):
+                        if len(sent[i]) == 2 and currentSents.get(sent[i][0]) is not None:
+                            item = sent[i]
+                            # update this sentiment weight
+                            globalSent = currentSents.get(item[0])
+                            # some function to decide the weighting, dependent on node sent
+                            localWeight = -4*(float(item[1]['W'])-0.5)**2+1 #inverse parabola scaled to width 1, height 1, intersects origin
+                            # set new sentiment
+                            self.G.node[node][type][i][1]['W'] = str((localWeight)*float(item[1]['W']) + (1-localWeight)*globalSent)
+        self.calculatePropensities(self.propToggle)
+
 
     # input: spreadsheet of bomb attacks
     # output: updated dict of sentiment changes for each of attack events
@@ -352,6 +374,8 @@ class SNA():
         self.nodes = nx.nodes(self.G)  # update node list
         self.edges = nx.edges(self.G)  # update edge list
         self.sent_outputs = ret
+        self.feedbackUpdate()
+
         return ret
 
     def meaning_value_chains(self):
@@ -508,9 +532,9 @@ class SNA():
 
     def calculateResilience(self,baseline=True,robustness=True):
         cliques_found = self.communityDetection()
-        simpleRes, baseline = resilience.averagePathRes(cliques_found, iters=5) if baseline is not None else None
-        robustnessRes = resilience.laplacianRes(cliques_found, iters=5) if robustness else None
-        return baseline,simpleRes,robustnessRes
+        baseline, simple, trace = resilience.resilience(cliques_found, ergm_iters=1500)
+        robustness = resilience.laplacianRes(cliques_found, iters=5) if robustness else None
+        return baseline,simple,robustness, trace
 
     ##########################
     ## System-wide measures ##
