@@ -6,7 +6,6 @@ from networkx.algorithms import bipartite as bi
 from networkx.algorithms import centrality
 from itertools import product
 from collections import defaultdict, namedtuple
-from flask import jsonify
 import pandas as pd
 import datetime
 
