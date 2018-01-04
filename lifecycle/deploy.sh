@@ -52,7 +52,7 @@ wget -N http://chromedriver.storage.googleapis.com/2.26/chromedriver_linux64.zip
 unzip chromedriver_linux64.zip;
 chmod +x chromedriver;
 
-cd ../..;
+cd ~/Projects/GAT;
 
 sudo service nginx restart;
 
