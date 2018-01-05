@@ -179,7 +179,7 @@ Specifically, propensities are split into three independent categories:
 - [Role](#role)
 
 `sna.calculatePropensities([propToggle])`
-> The primary class method for calculating propensities. Iterates through network edges and assigns propensity calculation output (see `propensities.propCalc(edge, propToggle)`) in the attribute dictionary (see also [attribute assignment](#network)). Filters which propensities are included based on user toggle input.
+> The primary class method for calculating propensities. Iterates through network edges and assigns propensity calculation output (see `propensities.propCalc`) in the attribute dictionary (see also [attribute assignment](#network)). Filters which propensities are included based on user toggle input.
 >
 > *Arguments:*
 >- `propToggle` (optional): a **dict** keyed by propensity type (one of `"emo"`, `"infl"`, or `"role"`) with Boolean values (`True` if propensity should be calculated, else `False`)
@@ -201,10 +201,13 @@ Specifically, propensities are split into three independent categories:
 #### IO
 
 `propensities.IOCalc(graph, source, target)`
-> A helper function used to calculate intersubjective orientation (IO) for a directed dyad. First creates a **list** of random floats, one for each IO value, then assigns new floats to each place according to their respective model (see [Warmth](#warmth), [Affiliation](#affiliation), [Legitimacy](#legitimacy), [Dominance](#dominance), and [Competence](#competence)). Uses globally stored list of IO descriptors to generate a verbose output **dict** as well as a condensed **list**.
+> A helper function used to calculate intersubjective orientation (IO) for a directed dyad. First creates a **list** of random floats, one for each IO value, then assigns new floats to each place according to their respective model (see [Warmth](#warmth), [Affiliation](#affiliation), [Legitimacy](#legitimacy), [Dominance](#dominance), and [Competence](#competence)). Uses globally stored list of IO descriptors to generate a verbose output **dict** as well as a condensed **list**:
+```python
+IO_keys = ["Warmth", "Affiliation", "Legitimacy", "Dominance", "Competence"]
+```
 >
 >*Returns:*
->- a **list** of floats, one for each IO value
+>- a **list** of floats, one for each IO value, from -1 to 1
 >- a **dictionary** with the same length, keyed by **strings** describing each value, where values are **floats**
 >
 >*Arguments:*
@@ -218,15 +221,28 @@ Warmth is simply the affect of the source node towards the target node, accessed
 
 ##### Affiliation
 
-Affiliation is the average index weight of affect towards any shared attribute value (e.g. `"Nationalism"`). Index weight is calculated according to the following equation, which creates a hyperboloid from -1 to 1 in all dimensions:
+Affiliation is the *average index weight* of affect towards any shared attribute value (e.g. `"Nationalism"`). Index weight is calculated according to the following equation, which creates a hyperboloid from -1 to 1 in all dimensions:
 ```python
 w_index = w_src ** 2 + w_trg ** 2 - 1
 ```
-![hyperboloid](./resources/hyperboloid)
+![hyperboloid](./resources/hyperboloid.png)
+
+A combination of any two extreme affects will produce an accordingly extreme affect index weight (either positive or negative).
 
 ##### Legitimacy
 
+Legitimacy accounts for the network-wide sentiment towards various attributes that are also represented as nodes in the network. Using the `sna.sentiment` function (see [Measures](#measures)), the average sentiments for all nodes with acceptable ontology classes for legitimacy measurement are calculated. Currently, the acceptable ontology classes are defined by a global variable:
+```python
+legit_keys = ["Title","Role","Belief","Knowledge"]
+```
+If a node belonging to one of these classes appears in the source node's attribute **dict**, it is given a percentile according to the distribution of average sentiments across all nodes for which average sentiment was calculated. This percentile is rescaled. Once all relevant attributes are scored and rescaled, legitimacy is assigned the average percentile average sentiment towards nodes appearing in the source node's attributes.
+
 ##### Dominance
+
+Dominance is simply the source node's average percent share of a network resource. Network resources belong to ontology classes defined by a global variable:
+```python
+dom_keys = ["Resource","Knowledge"]
+```
 
 ##### Competence
 
