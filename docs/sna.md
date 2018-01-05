@@ -57,7 +57,7 @@ The first stage of SNA parses an Excel sheet into a node list and an edge list. 
 
 `sna.__init__(excel_file, nodeSheet[, attrSheet])`
 > On class instantiation, parses a list of nodes from a user-inputted Excel sheet and a list of attributes if provided to `SNA.list` and `SNA.attrList`, respectively (see also [excel_parser](#excel_parser)). Creates an empty directed NetworkX graph object (refer to [networkx](https://networkx.github.io/documentation/networkx-1.10/index.html) for documentation) at `SNA.G`. Also initializes several other class variables used in various methods, including lists of nodes, edges, and measure values. 
-
+>
 > *Arguments:*
 - `excel_file`: a **string** with a path to an Excel file
 - `nodeSheet`: a **string** with the name of the node sheet in that Excel file
@@ -69,22 +69,22 @@ The `excel_parser` library script provides methods for parsing the custom Excel 
 
 `excel_parser.readFile(subAttrs, excel_file, sheet)`
 > Reads a specified sheet in an SNA Excel template and return the first row (without repeats) and a list of lists, each containing dictionaries for each cell. The dictionary has two keys: 'val', the value in that cell, and 'header', the column to which that cell belongs by column title. If there are subattributes (e.g. an attribute weight), these are not included in the list of column headers. 
-
+>
 > *Arguments:*
 - `subAttrs`: a **list of strings** containing column headers that are subattributes
 - `excel_file`: a **string** with the path to an SNA Excel template
 - `sheet`: a **string** with the name of the sheet to parse)
 
-**`excel_parser.buildJSON(excel_file)`**
+`excel_parser.buildJSON(excel_file)`
 > Creates a jsonifiable dictionary in which the keys are the last-parsed cell in the second column (parsing left to right, top to bottom) and the values are lists of dictionaries. Each dictionary represents a row, where the keys are column headers and the values are cell values corresponding to each header. Repeated headers are permitted but not expected. 
-
+>
 > *Arguments:*
 - `excel_file`: a **string** path to an Excel document with a single sheet
 
 ### Network
 `sna.createNodeList(nodeSet)`
 > Using list of **node** sheet cells generated during [instantation](#parsing), adds nodes to `SNA.G` graph object with attribute 'block' equal to the node's header in the Excel sheet (see also [excel_parser](#excel_parser)). Only includes nodes in the user-selected columns specified by `nodeSet`, and excludes repeated node names. 
-
+>
 > *Arguments:*
 - `nodeSet`: a **list** of the node columns to include in the network by column header
 
@@ -103,13 +103,13 @@ attributes = {
 
 `sna.createEdgeList(sourceSet)`
 > Using list of **node** sheet cells generated during [instantation](#parsing), creates directed edges between nodes occupying the same row. The node occupying the column specified by `sourceSet` is the source of each edge. Every other node in the row is the target of an edge from the node occupying the source column. If the target node is an attribute value (see `SNA.loadAttributes()`) of the source node, and that attribute has a weight, that weight is applied to the edge. 
-
+>
 >*Arguments:*
 - `sourceSet`: a **string** with the source column header
 
 `sna.loadOntology()(source, classAssignments[, weight])`
 > Using a user-provided set of class assignments for each column of nodes parsed during [instantation](#parsing), adds the attribute "ontClass" to each node with the value equal to the ontology class assigned to that node by the user. **Warning: the ontology classes are hardcoded strings in this method**. 
-
+>
 > *Arguments:*
 - `source`: a **string** with the source column header
 - `classAssignments`: a **dict** of class assignments keyed by node column header **strings**
@@ -153,7 +153,7 @@ SNA includes several basic network measures that utilize the NetworkX [API](http
 `sna.sentiment(types, key[, operation])`
 > A node-dependent custom measure that iterates through all node attributes and sums the weight towards every node of the given types. If "operation" is set to "average", the weights are averaged instead. 
 *Returns: a **dict** of sentiment values keyed by node.*
-
+>
 > *Arguments:*
 - `types`: a **list** of **strings**, one for each ontology class to be analyzed (e.g. "Belief")
 - `key`: a **string** with the attribute key containing the weight to be analyzed (e.g. "W")
