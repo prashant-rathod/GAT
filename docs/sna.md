@@ -166,6 +166,7 @@ SNA includes several basic network measures that utilize the NetworkX [API](http
 > *Arguments:*
 >- `types`: a **list** of **strings**, one for each ontology class to be analyzed (e.g. `"Belief"`)
 >- `key`: a **string** with the attribute key containing the weight to be analyzed (e.g. `"W"`)
+>- `operation` (optional): a **string** with the operation to be performed (one of `"sum"` or `"average"`)
 
 ### Propensities
 
@@ -452,6 +453,31 @@ For each dyad, one role weight is calculated and one role label is determined.
 >- `roles`: a **tuple** containing two **strings** describing the role of the source node and target node, sequentially
 
 ### Communities
+
+Influence communities are detected using the [Louvain](https://arxiv.org/abs/0803.0476) algorithm. The Louvain algorithm is a modularity optimization technique used to create communities of nodes with high intracommunity edge density and low intercommunity edge density.
+
+SNA community detection utilizes two stages of community detection. First, a Louvain algorithm partitions the general network of all nodes based on raw edges. Second, a core myth-symbol complex consisting of Belief, Symbol, Event, or Role nodes within each partition is identified.
+
+Each identified community is labelled by the most central node in its myth-symbol complex.
+
+`sna.communityDetection()`
+> The primary class method for community detection. Ensures eigenvector centrality analysis is complete and converts `sna.G` to an undirected network (the Louvain algorithm does not support directed edges).
+>
+>*Returns:*
+>- a **list** of graph objects (the identified communities as subgraphs)
+>- a **list** of **strings** containing the labels for each subgraph
+
+`communities.louvain(G[, weightKey, centralities])`
+> The modified two-step weighted Louvain algorithm for SNA, using the model above. Uses `best_partition` algorithm from [python-louvain](https://pypi.python.org/pypi/python-louvain) package, rearranges messy data return type, and constructs a subgraph for each community. Labels subgraphs using eigenvector centrality of core community nodes, or by first node listed if centrality is not available.
+>
+>*Returns:*
+>- a **list** of graph objects (the identified communities as subgraphs)
+>- a **list** of **strings** containing the labels for each subgraph
+>
+>*Arguments:*
+>- `G`: a NetworkX **graph object**
+>- `weightKey` (optional): a **string** with the edge attribute to be used as a weight in the algorithm
+>- `centralities` (optional): a **dict** of **floats** for centrality values, keyed by node name
 
 ### ERGM
 

@@ -11,7 +11,7 @@ import datetime
 
 from gat.core.sna import propensities
 from gat.core.sna import resilience
-from gat.core.sna import cliques
+from gat.core.sna import communities
 from gat.core.sna import ergm
 from gat.core.sna import excel_parser
 
@@ -509,7 +509,7 @@ class SNA():
     def communityDetection(self):
         undirected = self.G.to_undirected()
         self.eigenvector_centrality()
-        return cliques.louvain(G = undirected, centralities = self.eigenvector_centrality_dict)
+        return communities.louvain(G = undirected, centralities = self.eigenvector_centrality_dict)
 
     def calculateResilience(self,baseline=True,robustness=True):
         cliques_found = self.communityDetection()

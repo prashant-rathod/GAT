@@ -4,8 +4,6 @@ Tutorials from http://socialabstractions-blog.tumblr.com/post/53391947460/expone
 Author: Ryan Steed
 10 July 2017
 '''
-
-from scipy.stats import logistic
 from scipy.misc import comb
 from itertools import product
 import numpy as np
