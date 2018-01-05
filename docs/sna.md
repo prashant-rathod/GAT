@@ -14,6 +14,10 @@ Last updated: January 15, 2017
 3. [Analysis](#analysis)
 	1. [Measures](#measures)
 	2. [Propensities](#propensities)
+		1. [IOs](#ios)
+		2. [Emotion](#emotion)
+		3. [Influence](#influence)
+		4. [Role](#role)
 	3. [Communities](#communities)
 	4. [ERGM](#ergm)
 	5. [Resilience](#resilience)
@@ -71,22 +75,22 @@ The `excel_parser` library script provides methods for parsing the custom Excel 
 > Reads a specified sheet in an SNA Excel template and return the first row (without repeats) and a list of lists, each containing dictionaries for each cell. The dictionary has two keys: 'val', the value in that cell, and 'header', the column to which that cell belongs by column title. If there are subattributes (e.g. an attribute weight), these are not included in the list of column headers. 
 >
 > *Arguments:*
-- `subAttrs`: a **list of strings** containing column headers that are subattributes
-- `excel_file`: a **string** with the path to an SNA Excel template
-- `sheet`: a **string** with the name of the sheet to parse)
+>- `subAttrs`: a **list of strings** containing column headers that are subattributes
+>- `excel_file`: a **string** with the path to an SNA Excel template
+>- `sheet`: a **string** with the name of the sheet to parse)
 
 `excel_parser.buildJSON(excel_file)`
 > Creates a jsonifiable dictionary in which the keys are the last-parsed cell in the second column (parsing left to right, top to bottom) and the values are lists of dictionaries. Each dictionary represents a row, where the keys are column headers and the values are cell values corresponding to each header. Repeated headers are permitted but not expected. 
 >
 > *Arguments:*
-- `excel_file`: a **string** path to an Excel document with a single sheet
+>- `excel_file`: a **string** path to an Excel document with a single sheet
 
 ### Network
 `sna.createNodeList(nodeSet)`
 > Using list of **node** sheet cells generated during [instantation](#parsing), adds nodes to `SNA.G` graph object with attribute 'block' equal to the node's header in the Excel sheet (see also [excel_parser](#excel_parser)). Only includes nodes in the user-selected columns specified by `nodeSet`, and excludes repeated node names. 
 >
 > *Arguments:*
-- `nodeSet`: a **list** of the node columns to include in the network by column header
+>- `nodeSet`: a **list** of the node columns to include in the network by column header
 
 `sna.loadAttributes()`
 > Using list of **attribute** sheet cells generated during [instantation](#parsing), adds attributes to each node (the first item in each row parsed from the attribute sheet) in an attribute dictionary. The attribute dictionary has keys for each attribute type (the column headers) and values in a list. Each item in the list of values is a list with a string, the value of that attribute for that node. If there is a subattribute header assigned to that node, it is attached as part of a dictionary in the previous list. For example:
@@ -105,15 +109,15 @@ attributes = {
 > Using list of **node** sheet cells generated during [instantation](#parsing), creates directed edges between nodes occupying the same row. The node occupying the column specified by `sourceSet` is the source of each edge. Every other node in the row is the target of an edge from the node occupying the source column. If the target node is an attribute value (see `SNA.loadAttributes()`) of the source node, and that attribute has a weight, that weight is applied to the edge. 
 >
 >*Arguments:*
-- `sourceSet`: a **string** with the source column header
+>- `sourceSet`: a **string** with the source column header
 
 `sna.loadOntology()(source, classAssignments[, weight])`
-> Using a user-provided set of class assignments for each column of nodes parsed during [instantation](#parsing), adds the attribute "ontClass" to each node with the value equal to the ontology class assigned to that node by the user. **Warning: the ontology classes are hardcoded strings in this method**. 
+> Using a user-provided set of class assignments for each column of nodes parsed during [instantation](#parsing), adds the attribute `"ontClass"` to each node with the value equal to the ontology class assigned to that node by the user. **Warning: the ontology classes are hardcoded strings in this method**. 
 >
 > *Arguments:*
-- `source`: a **string** with the source column header
-- `classAssignments`: a **dict** of class assignments keyed by node column header **strings**
-- `weight` (optional): a **string** denoting the key used to access edge weights, if used
+>- `source`: a **string** with the source column header
+>- `classAssignments`: a **dict** of class assignments keyed by node column header **strings**
+>- `weight` (optional): a **string** denoting the key used to access edge weights, if used
 
 ## Analysis
 
@@ -151,14 +155,78 @@ SNA includes several basic network measures that utilize the NetworkX [API](http
 > Calls all the system-wide measures.
 
 `sna.sentiment(types, key[, operation])`
-> A node-dependent custom measure that iterates through all node attributes and sums the weight towards every node of the given types. If "operation" is set to "average", the weights are averaged instead. 
-*Returns: a **dict** of sentiment values keyed by node.*
+> A node-dependent custom measure that iterates through all node attributes and sums the weight towards every node of the given types. If `operation` is set to `"average"`, the weights are averaged instead. 
+>
+> *Returns:*
+>- a **dict** of sentiment values keyed by node
 >
 > *Arguments:*
-- `types`: a **list** of **strings**, one for each ontology class to be analyzed (e.g. "Belief")
-- `key`: a **string** with the attribute key containing the weight to be analyzed (e.g. "W")
+>- `types`: a **list** of **strings**, one for each ontology class to be analyzed (e.g. `"Belief"`)
+>- `key`: a **string** with the attribute key containing the weight to be analyzed (e.g. `"W"`)
 
 ### Propensities
+
+The propensities model assigns *a priori* probabilities and descriptions to edges in the network based on the attributes and properties of dyads. Specifically, propensities are formulated using attributes and the Intersubjective Orientation vector, which contains values representing the level of five different qualities of a subjective relationship: 
+- [Warmth](#warmth)
+- [Affiliation](#affiliation)
+- [Legitimacy](#legitimacy)
+- [Dominance](#dominance)
+- [Competence](#competence)
+
+Specifically, propensities are split into three independent categories:
+- [Emotion](#emotion)
+- [Influence](#influence)
+- [Role](#role)
+
+`sna.calculatePropensities([propToggle])`
+> The primary class method for calculating propensities. Iterates through network edges and assigns propensity calculation output (see `propensities.propCalc(edge, propToggle)`) in the attribute dictionary (see also [attribute assignment](#network)). Filters which propensities are included based on user toggle input.
+>
+> *Arguments:*
+>- `propToggle` (optional): a **dict** keyed by propensity type (one of `"emo"`, `"infl"`, or `"role"`) with Boolean values (`True` if propensity should be calculated, else `False`)
+
+`propensities.propCalc(graph, edge[, propToggle])`
+> For a given edge, calculates IO (see [IOs](#ios)) and required propensity types using helper functions (see [Emotion](#emotion), [Influence](#influence), and [Role](#role)).
+>
+>*Returns:*
+>- a **dict** keyed by IO descriptor (e.g. `"Warmth"`) with values for each IO calculated
+>- a **list** of [emotional](#emotional) propensities
+>- a **list** of [influence](#influence) propensities
+>- a **list** of [role](#role) propensities
+>
+> *Arguments:*
+>- `graph`: a NetworkX **graph object**
+>- `edge`: a **tuple** containing two **strings**, one for each node name in the dyad to be analyzed
+>- `propToggle` (optional): a **dict** keyed by propensity type (one of `"emo"`, `"infl"`, or `"role"`) with Boolean values (`True` if propensity should be calculated, else `False`)
+
+#### IO
+
+`propensities.IOCalc(graph, source, target)`
+> A helper function used to calculate intersubjective orientation (IO) for a directed dyad. First creates a **list** of random floats, one for each IO value, then assigns new floats to each place according to their respective model (see [Warmth](#warmth), [Affiliation](#affiliation), [Legitimacy](#legitimacy), [Dominance](#dominance), and [Competence](#competence)). Uses globally stored list of IO descriptors to generate a verbose output **dict** as well as a condensed **list**.
+>
+>*Returns:*
+>- a **list** of floats, one for each IO value
+>- a **dictionary** with the same length, keyed by **strings** describing each value, where values are **floats**
+>
+>*Arguments:*
+>- `graph`: a NetworkX **graph object**
+>- `source`: a **string** with the name of source node in dyad
+>- `target`: a **string** with the name of target/subject node in dyad
+
+##### Warmth
+
+##### Affiliation
+
+##### Legitimacy
+
+##### Dominance
+
+##### Competence
+
+#### Emotion
+
+#### Role
+
+#### Influence
 
 ### Communities
 
