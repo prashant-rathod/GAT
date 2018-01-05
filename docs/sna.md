@@ -112,7 +112,10 @@ attributes = {
 >- `sourceSet`: a **string** with the source column header
 
 `sna.loadOntology()(source, classAssignments[, weight])`
-> Using a user-provided set of class assignments for each column of nodes parsed during [instantation](#parsing), adds the attribute `"ontClass"` to each node with the value equal to the ontology class assigned to that node by the user. **Warning: the ontology classes are hardcoded strings in this method**. 
+> Using a user-provided set of class assignments for each column of nodes parsed during [instantation](#parsing), adds the attribute `"ontClass"` to each node with the value equal to the ontology class assigned to that node by the user. The ontology classes are hardcoded strings and can be any one of the following:
+```python
+ontological_elements = ["Actor","Belief","Symbol","Resource","Agent","Organization","Event","Audience","Role","Knowledge"]
+```
 >
 > *Arguments:*
 >- `source`: a **string** with the source column header
@@ -198,11 +201,11 @@ Specifically, propensities are split into three independent categories:
 >- `edge`: a **tuple** containing two **strings**, one for each node name in the dyad to be analyzed
 >- `propToggle` (optional): a **dict** keyed by propensity type (one of `"emo"`, `"infl"`, or `"role"`) with Boolean values (`True` if propensity should be calculated, else `False`)
 
-#### IO
+#### IOs
 
 `propensities.IOCalc(graph, source, target)`
 > A helper function used to calculate intersubjective orientation (IO) for a directed dyad. First creates a **list** of random floats, one for each IO value, then assigns new floats to each place according to their respective model (see [Warmth](#warmth), [Affiliation](#affiliation), [Legitimacy](#legitimacy), [Dominance](#dominance), and [Competence](#competence)). Uses globally stored list of IO descriptors to generate a verbose output **dict** as well as a condensed **list**:
->```python
+```python
 IO_keys = ["Warmth", "Affiliation", "Legitimacy", "Dominance", "Competence"]
 ```
 >
@@ -243,14 +246,210 @@ Dominance is simply the source node's average percent share of a network resourc
 ```python
 dom_keys = ["Resource","Knowledge"]
 ```
+Total resource amounts are collected using the `sna.sentiment` function (see [Measures](#measures)) where the types assessed are given by `dom_keys` and the attribute key used is `"AMT"`. The final resource share is rescaled from [0,1] to [-1 to 1].
 
 ##### Competence
 
+Competence is assigned randomly for each dyad pending progress on Task Models for SNA.
+
 #### Emotion
+
+Emotion propensities are aggreggated in two stages.
+
+For every neighboring event, a "simple" emotion is collected according to the CAMEO category of that event. The CAMEO-emotion associations are provided by an Excel spreadsheet, reproduced below and stored in the global variable `emo_key`:
+
+|CAMEO Category|Emotion|
+|---|---|
+|Assault|Rage|
+|Use unconventional mass violence|Terror|
+|Fight|Anger|
+|Coerce|Vigilance|
+|Exhibit force posture|Amazement|
+|Reduce relations|Disgust|
+|Threaten|Fear|
+|Reject|Loathing|
+|Disapprove|Surprise|
+|Investigate|Interest|
+|Control information|Distraction|
+|Yield|Acceptance|
+|Protest|Grief|
+|Refuse to build infrastructure|Sadness|
+|Demand|Annoyance|
+|Appeal|Acceptance|
+|Make a public statement|Interest|
+|Build energy infrastructure|Trust|
+|Build social infrastructure|Trust|
+|Build political infrastructure|Trust|
+|Build military infrastructure|Trust|
+|Build information infrastructure|Trust|
+|Build economic infrastructure|Trust|
+|Gather/mine for materials|Joy|
+|Change price|Apprehension|
+|Government funds|Joy|
+|Express intent|Pensiveness|
+|Appeal to build infrastructure|Trust|
+|Express intent to cooperate|Joy|
+|Express intent to build infrastructure|Serenity|
+|Consult|Admiration|
+|Accede|Ecstasy|
+|Use social following|Anticipation|
+|Demand to build infrastructure|Anticipation|
+|Engage in material cooperation|Admiration|
+|Engage in diplomatic cooperation|Ecstasy|
+|Provide aid|Ecstasy|
+
+Each of these emotions can be placed on Plutchik's wheel of emotions as in the diagram below.
+![plutchik](./resources/plutchik.png)
+
+An emotion is positioned on any of three concentric circles and is surrounded by two "refined" emotions. 
+
+To determine which of the two "refined" emotions is associated with a neighboring event, threat level is calculated. Threat level depends on the IO values of Warmth and Competence. Here, **high** is defined as any positive value, while **low** is any negative value.
+
+|Warmth\Competence|High|Low
+|---|---|---|
+|**High**|`threat = -1`|`threat = 0`|
+|**Low**|`threat = 1`|`threat = 0`|
+
+This threat level determines which direction the "simple" emotion will "snap" to determine a "refined" emotion. Put simply, a higher threat pushes emotion towards the Fear/Anger axis.
+
+Programmatically, the snapping function separates all possible emotions into six semicircles spanning from Fear to Anger on each side of each tier. These semicircles are stored as **lists** in a global **dict** keyed by tier:
+```python
+threatRanking = {
+    "low":[
+        [
+	        "Annoyance", "Anxiety","Interest","Resignation","Serenity",
+	        "Content","Acceptance","Worry", "Apprehension"
+        ],
+        [
+	        "Annoyance", "Curiosity","Boredom","Disgruntled","Pensiveness",
+	        "Apathy","Distraction","Dismay", "Apprehension"
+        ]
+    ],
+    "medium": [
+        [
+	        "Anger","Despair","Anticipation","Vulnerability","Joy",
+	        "Love","Trust","Paranoia","Fear"
+        ],
+        [
+	        "Anger","Excitement","Disgust","Hatred","Sadness",
+	        "Broodiness","Surprise","Melancholy","Fear"
+        ]
+    ],
+    "high": [
+        [
+	        "Rage","Hopeless","Vigilence","Envy","Ecstasy",
+	        "Adoration","Admiration","Wonder","Terror"
+        ],
+        [
+	        "Rage","Dread","Loathing","Cruel","Grief",
+	        "Resentment","Amazement","Hopeful","Terror"
+        ]
+    ]
+}
+```
+For each list, lowest index is closest to anger, while the highest index is closest to fear.
+
+If threat level is high, the "simple" emotion snaps to the neighboring "refined" emotion that is closest to the Fear/Anger axis. If threat level is low, the "simple" emotion snaps to the neighboring "refined" emotion that is farthest from the Fear/Anger axis. The distance from the axis is determined by index level in the semicircle list. If threat level is medium, there is a 50% chance the "simple" emotion will snap to either neighboring "refined" emotion.
+
+Thus, every neighboring event produces a simple emotion, which is snapped to a refined emotion. A given node has as many emotion propensities as there are neighboring events.
+
+`emoCalc(G, edge, IO)`
+> A helper function that uses the model above to formulate a **list** of subjective emotions within a dyad. Finds all source node neighbors that are also event nodes and gets the emotion associated with each event. The emotion associations are provided by a spreadsheet stored globally as JSON (`GAT/static/sample/sna/CAMEO-Emotion.xlsx`) which is parsed using the `excel_parser.buildJSON` function (see [Parsing](#parsing)). Refines emotion using snapping function (above). Outputs a list of refined emotions, one for each neighboring event.
+>
+>*Returns:*
+>- a **list** of **strings**, each with one refined emotion
+>
+>*Arguments:*
+>- `G`: a NetworkX **graph object**
+>- `edge`: a **tuple** containing two **strings**, one for each node name in the dyad to be analyzed
+>- `IO`: a **list** of floats, one for each IO value, from -1 to 1
+
+#### Influence
+
+Influence propensities have six components, each represented by a numerical value from -1 to 1:
+- Reciprocity
+- Commitment
+- Social proof
+- Authority
+- Liking
+- Scarcity
+
+Each component is determined by a weighted average of the IO values, where the weights are provided by the table below (stored in the global variable `infl_weight_table`). Weights are chosen randomly from a range of values, also provided below.
+```python
+## weights ##
+A = (-.8,-.6)
+B = (-.6,-.3)
+C = (-.3,.3)
+D = (.3,.6)
+E = (.6,.8)
+```
+
+| | Warmth | Affiliation | Legitimacy | Dominance | Competence |
+|---|---|---|---|---|---|
+| **Reciprocity**  |D|D|C|D|D|
+| **Commitment**   |D|B|C|A|C|
+| **Social Proof** |B|A|B|A|B|
+| **Authority**    |B|B|D|A|D|
+| **Liking**       |E|D|D|B|D|
+| **Scarcity**     |C|B|C|B|B|
+
+The meaning of a particular influence propensity (e.g. Reciprocity) is derived from the arrangement of weights used to produce it. For example, the IO value "Warmth" matters much more to the influence propensity "Liking" than it does to "Authority".
+
+Each influence propensity is represented by a single numerical value, which is the weighted average of all five IO values using a random weight selection from the ranges provided for that particular influence propensity.
+
+`inflCalc(IO)`
+> A helper function that uses the model above to generate vectors of six weighted average values each, one for each influence propensity. Adds to a verbose dictionary keyed by influence propensity.
+>
+>*Returns:*
+>- a **dict** keyed by **strings** with influence propensity descriptors, where values are floats from -1 to 1
+> 
+>*Arguments:*
+>- `IO`: a **list** of floats, one for each IO value, from -1 to 1
 
 #### Role
 
-#### Influence
+Role propensities operate on a similar weighted average, but take into account the role of both the source and target nodes. Thus, role propensities depend on both IO and the roles of each node in the dyad.
+
+Stored in the global **list** `role_weight_table`, the following table establishes the weight ranges for any combination of roles. Each list corresponds to the five IO values (sequentially, [Warmth](#warmth), [Affiliation](#affiliation), [Legitimacy](#legitimacy), [Dominance](#dominance), and [Competence](#competence)).
+```python
+## weights ##
+A = (-.8,-.6)
+B = (-.6,-.3)
+C = (-.3,.3)
+D = (.3,.6)
+E = (.6,.8)
+
+IO_keys = ["Warmth", "Affiliation", "Legitimacy", "Dominance", "Competence"]
+```
+
+| | Hegemon | Revisionist | Ally | Defender of the Faith | Dependent | Independent | Mediator | Isolationist |
+|---|---|---|---|---|---|---|---|---|
+| **Hegemon**  |[B,B,D,A,D]|[A,A,B,B,C]|[E,D,D,D,D]|[C,B,B,C,B]|[D,C,B,E,C]|[C,B,A,A,B]|[C,C,C,B,C]|[D,C,B,D,C]
+| **...**  | ... | ... | ... | ... | ... | ... | ... | ... |
+| **Isolationist**  |[C,B,D,A,C]|[A,A,C,A,B]|[C,B,C,C,B]|[B,A,B,B,B]|[A,B,A,D,A]|[D,B,D,B,D]|[B,C,C,B,C]|[C,C,D,B,C]|
+
+The weight ranges for a given role pairing are used to take a weighted average of the IO values for a given dyad, producing the role weight. Role labels depend on the role weight. For every role pairing, there are two possible role labels, provided in the table below:
+
+| | Hegemon | Revisionist | Ally | Defender of the Faith | Dependent | Independent | Mediator | Isolationist |
+|---|---|---|---|---|---|---|---|---|
+| **Hegemon**  |Facilitator/Belligerent|Facilitator/Belligerent|Protector/Provacateur|Protector/Provacateur|Provider/Provacateur|Facilitator/Supporter|Facilitator/Facilitator|Protector/Protector|
+| **...**  | ... | ... | ... | ... | ... | ... | ... | ... |
+| **Isolationist**  |Facilitator/Provacateur|Facilitator/Belligerent|Facilitator/Belligerent|Facilitator/Provacateur|Facilitator/Provacateur|Supporter/Provacateur|Belligerent/Provacateur|Supporter/Supporter|
+
+If the role weight is positive, the first role label is used. If role weight is negative, the second role label is used.
+
+For each dyad, one role weight is calculated and one role label is determined.
+
+`roleCalc(IO, roles)`
+>A helper function which calculates role weighted average and role label according to the method described above. Outputs a simple tuple (not verbose).
+>
+>*Returns:*
+>- a **string** with the role label (see table above)
+>- a **float**, the weighted average of the IO values
+>
+>*Arguments:*
+>- `IO`: a **list** of floats, one for each IO value, from -1 to 1
+>- `roles`: a **tuple** containing two **strings** describing the role of the source node and target node, sequentially
 
 ### Communities
 
@@ -273,6 +472,8 @@ Ryan Steed
 
 Lead Modeler
 
-Laboratory for Unconventional Conflict Analysis and Simulation
+*Laboratory for Unconventional Conflict Analysis and Simulation*
 
-ryansteed@gwu.edu
+*ryansteed@gwu.edu*
+
+[- Top -](#contents)
