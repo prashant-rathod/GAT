@@ -59,9 +59,9 @@ The first stage of SNA parses an Excel sheet into a node list and an edge list. 
 > On class instantiation, parses a list of nodes from a user-inputted Excel sheet and a list of attributes if provided to `SNA.list` and `SNA.attrList`, respectively (see also [excel_parser](#excel_parser)). Creates an empty directed NetworkX graph object (refer to [networkx](https://networkx.github.io/documentation/networkx-1.10/index.html) for documentation) at `SNA.G`. Also initializes several other class variables used in various methods, including lists of nodes, edges, and measure values. 
 >
 > *Arguments:*
-- `excel_file`: a **string** with a path to an Excel file
-- `nodeSheet`: a **string** with the name of the node sheet in that Excel file
-- `attrSheet` (optional): a **string** with the name of the attribute sheet in that Excel file
+>- `excel_file`: a **string** with a path to an Excel file
+>- `nodeSheet`: a **string** with the name of the node sheet in that Excel file
+>- `attrSheet` (optional): a **string** with the name of the attribute sheet in that Excel file
 
 #### `excel_parser`
 
