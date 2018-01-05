@@ -202,7 +202,7 @@ Specifically, propensities are split into three independent categories:
 
 `propensities.IOCalc(graph, source, target)`
 > A helper function used to calculate intersubjective orientation (IO) for a directed dyad. First creates a **list** of random floats, one for each IO value, then assigns new floats to each place according to their respective model (see [Warmth](#warmth), [Affiliation](#affiliation), [Legitimacy](#legitimacy), [Dominance](#dominance), and [Competence](#competence)). Uses globally stored list of IO descriptors to generate a verbose output **dict** as well as a condensed **list**:
-```python
+>```python
 IO_keys = ["Warmth", "Affiliation", "Legitimacy", "Dominance", "Competence"]
 ```
 >
