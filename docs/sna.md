@@ -214,7 +214,15 @@ Specifically, propensities are split into three independent categories:
 
 ##### Warmth
 
+Warmth is simply the affect of the source node towards the target node, accessed by iterating through every attribute value in the source node's attribute **dict** and checking for the name of the target node. If both the target node's name and a subattribute `"W"` are present, the value of `"W"` is added to the IO **list** as warmth.
+
 ##### Affiliation
+
+Affiliation is the average index weight of affect towards any shared attribute value (e.g. `"Nationalism"`). Index weight is calculated according to the following equation, which creates a hyperboloid from -1 to 1 in all dimensions:
+```python
+w_index = w_src ** 2 + w_trg ** 2 - 1
+```
+![hyperboloid](./resources/hyperboloid)
 
 ##### Legitimacy
 

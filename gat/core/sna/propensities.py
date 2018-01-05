@@ -300,7 +300,7 @@ def IOCalc(graph, source, target):
                     src_w = float(src_val[1]["W"]) if "W" in src_val[1] else None
                     trg_w = float(trg_val[1]["W"]) if "W" in trg_val[1] else None
 
-                    aff_w = src_w ** 2 * trg_w ** 2 if src_w is not None and trg_w is not None else None  # 3d parabola
+                    aff_w = src_w ** 2 + trg_w ** 2 - 1 if src_w is not None and trg_w is not None else None  # 3d parabola
 
                     ### Warmth IO ###
                     # Warmth IO is simply affect of source towards target
