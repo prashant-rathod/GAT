@@ -24,6 +24,8 @@ Last updated: January 15, 2017
 4. [Forecasting](#forecasting)
 	1. [Simple](#simple)
 	2. [Smart](#smart)
+		1. [DRAG](#drag)
+		2. [Feedback](#feedback)
 5. [Utilities](#utilities)
 6. [Future Features](#future-features)
 
@@ -481,7 +483,9 @@ Each identified community is labelled by the most central node in its myth-symbo
 
 ### ERGM
 
-Exponential random graph models (ERGMs) comprise a stochastic network statistics technique intended to estimate certain network properties. Traditional statistical practices like linear regression are not suitable for networks because network data is inherently relational. From a [full description](drag.pdf) of ERGMs in SNA:
+Exponential random graph models (ERGMs) comprise a stochastic network statistics technique intended to estimate certain network properties. Traditional statistical practices like linear regression are not suitable for networks because network data is inherently relational. The most useful explanations of ERGM in Python can be found [here](http://socialabstractions-blog.tumblr.com/post/53391947460/exponential-random-graph-models-in-python) and [here](https://gist.github.com/dmasad/78cb940de103edbee699).
+
+From a [full description](drag.pdf) of ERGMs in SNA:
 
 >The proper ERGM provides us with the means to estimate the coefficients associated with any network statistic we decide to measure; i.e., it tells us how important each statistic is to the original network's structure. If we change the structure of the network, how do the network statistics change in response? How does the probability of observing that network change?
 >
@@ -504,8 +508,64 @@ Exponential random graph models (ERGMs) comprise a stochastic network statistics
 
 >How does the MCMC discern higher relative weights from lower relative weights? For each edge represented in the conditional probability matrix produced above, the random variable is distributed across a Bernoulli distribution. Since a Bernoulli distribution is a binomial distribution with only a single trial, a matrix of these random variable distributions will contain only 0s and 1s, successes and failures, edge presences and edge absences. Thus, the matrix of random variables O can be realized as the adjacency matrix for an observable network. The MCMC model is [instantiated](https://pymc-devs.github.io/pymc/modelfitting.html#chap-modelfitting) with the matrix of random variables as the observed graph to fit (our priors) and the list of coefficients as the parameters to estimate. For a set number of iterations, the MCMC returns the optimized (maximum likelihood) coefficient values and the probability of observing the adjacency matrix given the set of fitted parameters. To produce a random realization/instance of the network, a random realization from the posterior distribution can be drawn (after fixing the optimized coefficients).
 
+ERGM is not a standalone feature, but is used in the [Analysis](#analysis) and [Forecasting](#forecasting) portions of the tool.
+
 `ergm.probability(G)`
-> A helper function
+> A helper function that initiates a Monte Carlo Markov Chain (MCMC) for probability estimation (see [DRAG](#drag). Generates default parameters (see `ergm.calc_params`), runs a 3000 iteration estimation with a burn-in of 1000, and estimates default coefficients.
+>
+>*Returns:*
+>- A **2D numpy array** of edge probabilities, arranged as an adjacency matrix
+>
+>*Arguments:*
+>- `G`: a NetworkX **graph object**
+
+`ergm.resilience(G,iters,mu)`
+> A helper function that initiates an MCMC for parameter tracing (see [Resilience](#resilience)). Generates customized resilience parameters (see `ergm.calc_params`), records ERGM trace (see `ergm.trace`). Skips estimation step and does not use a burn-in period. Accepts custom iterations and custom *mu* for priors.
+>
+>*Returns:*
+>- A **dict** of traces, keyed by **strings** for each parameter; values are **lists** of **floats**
+>
+>*Arguments:*
+>- `G`: a NetworkX **graph object**
+>- `iters`: the number of MCMC iterations
+>- `mu`: the mean for prior parameters for the MCMC
+
+`ergm.calc_params(G[, type])`
+> A helper function which specifies the parameters/coefficients to use for the MCMC model. Coefficients are network measures. Different coefficients are returned for [resilience](#resilience) and the [DRAG](#drag) model, depending on model specs.
+>
+>*Returns:*
+>- A **dict** of coefficients, keyed by coefficient label (a **string**) with **2D numpy arrays** outputted from coefficient calculators as values.
+>
+>*Arguments:*
+>- `G`: a NetworkX **graph object**
+>- `type` (optional): a **string** specifying the type of MCMC to be run (one of `"resilience"` or `"drag"`)
+
+`ergm.trace(matrix,params,iters,burn[,mu])`
+> A helper function which instantiates and runs MCMC. Creates coefficients using parameter input and prior normal distributions. Calculates probabilities using an likelihood function described [here](drag.pdf). Since probabilities sometimes output negative infinity depending on the priors, the model often attempts calculation multiple times. A Bernoulli distribution is used to simulate an outcome graph realization. The MCMC is instantiated with the true outcome (the probability based on the observed graph), a simulated outcome (the probability without an observed graph), an array of probabilites estimated by the model, and priors for each coefficient. The [pymc](https://pymc-devs.github.io/pymc/) package is used for the MCMC model. Returns the traces for each coefficient and also conducts a goodness of fit analysis.
+>
+>*Returns:*
+>- A **dict** of traces, keyed by **strings** for each parameter; values are **lists** of **floats**
+>
+>*Arguments:*
+>- `matrix`: a **2D numpy array** containing the adjacency table for the current graph
+>- `params`: a **dict** of coefficients, keyed by coefficient label (a **string**) with **2D numpy arrays** outputted from coefficient calculators as values (see `ergm.calc_params()`)
+>- `iters`: the number of iterations to run, an **int**
+>- `burn`: the length of the burn-in period (not counted in the trace, brings the model to a higher probability region before estimating), an **int**
+>- `mu` (optional): the mean of the prior probability distributions, a **float**
+
+`ergm.py` also contains service functions with straightforward uses in the above methods. They are as follows:
+- Utilities
+	- `ergm.draw_init` - draw the initial graph, if required (not used)
+	- `ergm.create_coefs` - generate coefficient info for MCMC model
+	- `ergm.diagnostics` - produce the traces and a Matlab graph of trace (not present in UI), saves image to `GAT/out/sna/ergm/diagnostics.png`
+	- `ergm.goodness_of_fit` - a goodness of fit test for the MCMC, produces a random new instantiation of the graph at `GAT/out/sna/ergm/new.png`
+	- `ergm.coefs_to_prob` - uses a logistic function to produce a probability for each coefficient for inclusion in the MCMC
+- Calculators
+	- `ergm.aspl` - average shortest path length
+	- `ergm.edge_count` - basic density
+	- `ergm.node_match` - the probability of nodes of different ontology classes to share an edge
+	- `ergm.istarDelta` - number of groups sharing *i* mutual in-star edges
+	- `ergm.ostarDelta` - number of groups with *i* "out" edges
 
 ### Resilience
 
@@ -514,6 +574,10 @@ Exponential random graph models (ERGMs) comprise a stochastic network statistics
 ### Simple
 
 ### Smart
+
+#### DRAG
+
+#### Feedback
 
 ## Utilities
 
