@@ -1,7 +1,7 @@
 ![LUCAS Logo](http://css-lucas.com/wp-content/uploads/2016/07/cropped-Lucas-Header-for-website.png)
 
 # SNA Documentation
-Last updated: January 15, 2017
+Last updated: January 15, 2018
 
 ## Contents
 
@@ -607,7 +607,7 @@ A line graph displaying every 10 iterations of the ERGM is used to visualize the
 
 ## Forecasting
 
-The most powerful tools in SNA forecast the effect of external influence (an interference by the user) on a network based on that network's properties and composition. The core forecasting model in SNA is the Derivative Relational Attribute Graph Model (DRAG), which forecasts the presence of edges in a network based on propensities and overall network characteristics and dynamically adjusts the network composition. The DRAG model is assisted by feedback loops, which adjust node attribute weights based on system-wide weights towards nodes in the network, thereby altering propensities and other analyses. The combination of DRAG and feedback loops accurately propagates the effects of even the smallest network interferences in an effort to reflect the extraordinary complexity of networked systems.
+The most powerful tools in SNA forecast the effect of external influence (an interference by the user) on a network based on that network's properties and composition. The core forecasting model in SNA is the Derivative Relational Attribute Graph Model (DRAG), which forecasts the presence of edges in a network based on [propensities](#propensities) and overall network characteristics and dynamically adjusts the network composition. The DRAG model is assisted by feedback loops, which adjust node attribute weights based on system-wide weights towards nodes in the network, thereby altering propensities and other analyses. The combination of DRAG and feedback loops accurately propagates the effects of even the smallest network interferences in an effort to reflect the extraordinary complexity of networked systems.
 
 ### DRAG
 
@@ -644,7 +644,33 @@ Specifically, the DRAG model uses an log-odds function to generate edge probabil
 
 ### Events
 
+The event update mechanism inserts nodes for events provided in a spreadsheet and measures their effects on network sentiments towards nodes. Specifically, the mechanism outputs the change in sentiment sum towards a node of a given set of ontology classes in the network. *(Author: Miles Latham)*
+
+`sna.event_update(event_sheet, max_iter)`
+> The primary class method for spreadsheet-derived event addition. Parses an Excel sheet with hardcoded city population requests (customized for Iranian Influence case) and adds sentiment outputs to a **dict**. Only adds events within a certain time period, calculated based on the number of iterations to be calculated. Also updates the SNA class object stored node list and edge list.
+>
+>*Returns:*
+>- a **list** of **lists**, each containing **strings** describing the sentiment change as a result of the addition of various events
+>
+>*Arguments:*
+>- `event_sheet`: a **string** with the path to the Excel sheet of events to be added
+>- `max_iter`: the maximum number of time iterations to include
+
 ### Feedback
+
+Feedback loops relate the weight of an individual node's attribute value (e.g. the Belief "Nationalism") to the system-wide weight towards that attribute value's matching node (e.g. the "Nationalism" node) in the network. 
+
+If a matching node is present in the network for a given attribute value, the individual node's weight towards that attribute value is combined with the system-wide average weight towards the matching node. The weight given to the individual node's attribute value weight is dependent on the node's attribute value weight. According to the following function, if the individual node weight is extreme, its weighting will be much higher than the system-wide node weight, and vice versa:
+```python
+globalWeighting = nodeAttrWeight**2
+weightedAverage = (1-globalWeighting)*nodeAttrWeight + (globalWeighting)*globalNodeWeight
+```
+![parabola](./resources/parabola.png)
+
+In the graph above, the individual node attribute value weight is on the x-axis, while the weighting for the system-wide node weight is on the y-axis.
+
+`sna.feedbackUpdate()`
+> The primary class method for attribute weight update feedback loops. Measures average sentiment for all nodes, then iterates through all individual node attributes and combines invidual attribute weights with global averages according to the function above. Also updates [propensities](#propensities), since individual attribute weights have changed.
 
 [- Top -](#contents)
 
@@ -653,11 +679,13 @@ Specifically, the DRAG model uses an log-odds function to generate edge probabil
 ## Future Features
 
 ---
-Ryan Steed
+Unless another author is specified, please reach out to the undersigned with any questions about documentation or code.
+
+**Ryan Steed**
 
 Lead Modeler
 
-*Laboratory for Unconventional Conflict Analysis and Simulation*
+*Laboratory for Unconventional Conflict Analysis and Simulation*>
 
 *ryansteed@gwu.edu*
 

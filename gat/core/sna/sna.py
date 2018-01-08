@@ -471,8 +471,6 @@ class SNA():
                 self.edges.remove(edge)
         self.drag_predict()
 
-    # input: spreadsheet of bomb attacks
-    # output: updated dict of sentiment changes for each of attack events
     def event_update(self, event_sheet, max_iter):
         df = pd.read_excel(event_sheet)
         bombData = df.to_dict(orient='index')
@@ -576,16 +574,16 @@ class SNA():
                             # update this sentiment weight
                             globalSent = currentSents.get(item[0])
                             # some function to decide the weighting, dependent on node sent
-                            localWeight = -4*(float(item[1]['W'])-0.5)**2+1 #inverse parabola scaled to width 1, height 1, intersects origin
+                            globalWeight = -float(item[1]['W'])**2+1 #parabola scaled to width 1, height 1, intersects origin
                             # set new sentiment
-                            self.G.node[node][type][i][1]['W'] = str((localWeight)*float(item[1]['W']) + (1-localWeight)*globalSent)
+                            self.G.node[node][type][i][1]['W'] = str((1-globalWeight)*float(item[1]['W']) + (globalWeight)*globalSent)
         self.calculatePropensities(self.propToggle)
 
     ###################
     #### Utilities ####
     ###################
 
-    def addEdges(self, pair):  # deprecated, needs fixing - doesn't handle new dict structure
+    def addEdges(self, pair):  # deprecated, needs fixing - doesn't handle new attribute structure
         data = self.list
         newEdgeList = []
         for row in data:
@@ -778,7 +776,7 @@ class SNA():
                 removeEdge.append(n[i])
         for j in range(len(removeEdge)):
             n.remove(removeEdge[j])
-        jgraph.draw(nx.edges(self.G), directed="true")
+        nx.draw(nx.edges(self.G), directed="true")
 
     # note: this is for Vinay's UI
     def plot_2D(self, attr, label=False):
