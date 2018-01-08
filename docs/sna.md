@@ -22,10 +22,9 @@ Last updated: January 15, 2017
 	4. [ERGM](#ergm)
 	5. [Resilience](#resilience)
 4. [Forecasting](#forecasting)
-	1. [Simple](#simple)
-	2. [Smart](#smart)
-		1. [DRAG](#drag)
-		2. [Feedback](#feedback)
+	1. [DRAG](#drag)
+	2. [Events](#events)
+	3. [Feedback](#feedback)
 5. [Utilities](#utilities)
 6. [Future Features](#future-features)
 
@@ -124,6 +123,8 @@ ontological_elements = ["Actor","Belief","Symbol","Resource","Agent","Organizati
 >- `classAssignments`: a **dict** of class assignments keyed by node column header **strings**
 >- `weight` (optional): a **string** denoting the key used to access edge weights, if used
 
+[- Top -](#contents)
+
 ## Analysis
 
 The analysis phase of SNA includes several basic network measures, edge propensity analysis, a community detection function, and a resilience measurement function which uses an exponential random graph model (ERGM).
@@ -169,6 +170,8 @@ SNA includes several basic network measures that utilize the NetworkX [API](http
 >- `types`: a **list** of **strings**, one for each ontology class to be analyzed (e.g. `"Belief"`)
 >- `key`: a **string** with the attribute key containing the weight to be analyzed (e.g. `"W"`)
 >- `operation` (optional): a **string** with the operation to be performed (one of `"sum"` or `"average"`)
+
+[- Top -](#contents)
 
 ### Propensities
 
@@ -481,11 +484,13 @@ Each identified community is labelled by the most central node in its myth-symbo
 >- `weightKey` (optional): a **string** with the edge attribute to be used as a weight in the algorithm
 >- `centralities` (optional): a **dict** of **floats** for centrality values, keyed by node name
 
+[- Top -](#contents)
+
 ### ERGM
 
 Exponential random graph models (ERGMs) comprise a stochastic network statistics technique intended to estimate certain network properties. Traditional statistical practices like linear regression are not suitable for networks because network data is inherently relational. The most useful explanations of ERGM in Python can be found [here](http://socialabstractions-blog.tumblr.com/post/53391947460/exponential-random-graph-models-in-python) and [here](https://gist.github.com/dmasad/78cb940de103edbee699).
 
-From a [full description](drag.pdf) of ERGMs in SNA:
+From a [full description](resources/drag.pdf) of ERGMs in SNA:
 
 >The proper ERGM provides us with the means to estimate the coefficients associated with any network statistic we decide to measure; i.e., it tells us how important each statistic is to the original network's structure. If we change the structure of the network, how do the network statistics change in response? How does the probability of observing that network change?
 >
@@ -541,7 +546,7 @@ ERGM is not a standalone feature, but is used in the [Analysis](#analysis) and [
 >- `type` (optional): a **string** specifying the type of MCMC to be run (one of `"resilience"` or `"drag"`)
 
 `ergm.trace(matrix,params,iters,burn[,mu])`
-> A helper function which instantiates and runs MCMC. Creates coefficients using parameter input and prior normal distributions. Calculates probabilities using an likelihood function described [here](drag.pdf). Since probabilities sometimes output negative infinity depending on the priors, the model often attempts calculation multiple times. A Bernoulli distribution is used to simulate an outcome graph realization. The MCMC is instantiated with the true outcome (the probability based on the observed graph), a simulated outcome (the probability without an observed graph), an array of probabilites estimated by the model, and priors for each coefficient. The [pymc](https://pymc-devs.github.io/pymc/) package is used for the MCMC model. Returns the traces for each coefficient and also conducts a goodness of fit analysis.
+> A helper function which instantiates and runs MCMC. Creates coefficients using parameter input and prior normal distributions. Calculates probabilities using an likelihood function described [here](resources/drag.pdf). Since probabilities sometimes output negative infinity depending on the priors, the model often attempts calculation multiple times. A Bernoulli distribution is used to simulate an outcome graph realization. The MCMC is instantiated with the true outcome (the probability based on the observed graph), a simulated outcome (the probability without an observed graph), an array of probabilites estimated by the model, and priors for each coefficient. The [pymc](https://pymc-devs.github.io/pymc/) package is used for the MCMC model. Returns the traces for each coefficient and also conducts a goodness of fit analysis.
 >
 >*Returns:*
 >- A **dict** of traces, keyed by **strings** for each parameter; values are **lists** of **floats**
@@ -567,17 +572,81 @@ ERGM is not a standalone feature, but is used in the [Analysis](#analysis) and [
 	- `ergm.istarDelta` - number of groups sharing *i* mutual in-star edges
 	- `ergm.ostarDelta` - number of groups with *i* "out" edges
 
+[- Top -](#contents)
+
 ### Resilience
+
+Resilience measures and visualization are based on a network perturbation and an [ERGM](#ergm) probability trace. First, [community detection](#communities) is used to identify all communities in the network. For each community, a system shock is delivered such that 10% of edges and nodes are removed at random. After the shock, an ERGM is run to trace the estimation of a network measure (e.g. Average Shortest Path Length) from the time of perturbation to a number *n* iterations after which the network is assumed to be stable. Since the ERGM alters network composition at random, the ERGM effectively simulates the random probability of improvement or decline in a given network measure after a system shock.
+
+The ERGM trace is the medium of analysis for resilience, as in the example below.
+
+![resilience](./resources/resilience.png)
+
+A line graph displaying every 10 iterations of the ERGM is used to visualize the estimation of each subgraph, labelled by its most central node. Each subgraph is a community in the network. The resilience of each community can be compared and assessed by the regions on the right side of the graph, from fragile to anti-fragile. A relative scale is used to ensure that these regions are applicable in many cases, though without an aboslute scale it is difficult to compare vastly different cases.
+
+`sna.calculateResilience()`
+> The primary class method for resilience calculation. First, calls `sna.communityDetection()` to identify communities for analysis. Next, uses helper functions (see `resilience.resilience`) to calculate baseline measure, simple resilience, and the trace (used for graphing).
+>
+>*Returns:*
+>- a **dict** keyed by subgraph central node name (a **string**), where values are the percentile baseline measure for that community among all communities in the graph
+>- a **dict** keyed by subgraph central node name (a **string**), where values are the percentile simple resilience measure for that community among all communities in the graph
+>- a reformatted **dict** of traces keyed by central node name (a **string**); each value is a **dict**, keyed by measure (a **string**) with lists of **floats** representing the measure at every 10 iterations as values
+
+`resilience.resilience(cliques_found[, ergm_iters])`
+> A helper function for resilience community iteration and calculation. Finds baseline (original) network measures, simple resilience (the difference between the new equilibrium measure and the original), and ERGm trace for each community after delivering a system shock, removing some percentage of nodes. Once measurements are made, creates percentile scores for baseline and simple resilience based on measurements for all communities in the network (accomplished with the [numpy](http://www.numpy.org/) package). Reformats traces into a labelled dictionary.
+>*Returns:*
+>- a **dict** keyed by subgraph central node name (a **string**), where values are the percentile baseline measure for that community among all communities in the graph
+>- a **dict** keyed by subgraph central node name (a **string**), where values are the percentile simple resilience measure for that community among all communities in the graph
+>- a reformatted **dict** of traces keyed by central node name (a **string**); each value is a **dict**, keyed by measure (a **string**) with lists of **floats** representing the measure at every 10 iterations as values
+>
+>*Arguments:*
+>- `cliques_found`: a **list** of NetworkX **graph objects**, each a subgraph representing a community in the network
+>- `ergm_iters`: an **int** specifying the number of iterations to run the trace
+
+[- Top -](#contents)
 
 ## Forecasting
 
-### Simple
+The most powerful tools in SNA forecast the effect of external influence (an interference by the user) on a network based on that network's properties and composition. The core forecasting model in SNA is the Derivative Relational Attribute Graph Model (DRAG), which forecasts the presence of edges in a network based on propensities and overall network characteristics and dynamically adjusts the network composition. The DRAG model is assisted by feedback loops, which adjust node attribute weights based on system-wide weights towards nodes in the network, thereby altering propensities and other analyses. The combination of DRAG and feedback loops accurately propagates the effects of even the smallest network interferences in an effort to reflect the extraordinary complexity of networked systems.
 
-### Smart
+### DRAG
 
-#### DRAG
+The DRAG model converts the probability output of ERGM estimation into a matrix of edge-specific probabilities and combines it with propensities to produce a matrix of probabilistic edge forecasts. An excerpt from the full [description](resources/drag.pdf) of the DRAG model:
 
-#### Feedback
+>The DRAG model combines the probability matrix
+output of these two models into single generative model for link prediction. This model will take an observed
+network, containing nodes with attributes, and produce a single, combined link probability adjacency matrix
+based on parameter estimation by both the ERGM and the MAG model. By combining both the models
+above, we produce a new network that reflects both the original system characteristics and the interaction
+between roles and attributes we seek to model.
+
+Specifically, the DRAG model uses an log-odds function to generate edge probabilites from the ERGM network-wide coefficient probability estimations. Once propensity weights are used to fine-tune the edge weights from the ERGM, a Bernoulli sampling distribution is applied to the final probability matrix to determine a final network structure.
+
+`sna.drag_predict([node])`
+> The primary class method for DRAG link prediction. Generates an ERGM probability matrix with a helper function (see `ergm.probability`). Calculates propensities for a new node if one is being added. Iterates through all node propensities and adjusts directed edge probability based on emotional propensities found. Uses the weighting function `(prob + w_avg * 0.5) / 2` to combine ERGM edge probability and average emotional propensity weight. Chooses outcome with random binomial (Bernoulli) sample and adds edges if necessary. Conducts a feedback update (see `sna.feedbackUpdate`). Also adds a flag to new edges so that they will be colored red in JGraph.
+>
+>*Arguments:*
+>- `node` (optional): a **string** with the name of the node being added, if necessary
+
+`sna.addNode(node[, attrDict, connections])`
+> The primary method for adding nodes to the graph. Appends a node to the SNA **graph object** with an attribute **dict** (see [section](#network) on loading attributes), if provided, and edges, if provided. Also updates the SNA class object stored node list and edge list.
+>
+>*Arguments:*
+>- `node`: a **string** with the name of the node to be added
+>- `attrDict` (optional): a **dict** containing the attributes of the new node (see [Network](#network) for data format)
+>- `connections`: a **list** of **strings** with the target node names for each user-provided edge
+
+`sna.removeNode(node)`
+> The primary method for removing nodes from the graph. Removes the specified node from the SNA **graph object** along with any edges it shares. Also updates the SNA class object stored node list and edge list.
+>
+>*Arguments:*
+>- `node`: a **string** with the name of the node to be removed
+
+### Events
+
+### Feedback
+
+[- Top -](#contents)
 
 ## Utilities
 
