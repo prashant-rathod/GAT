@@ -60,7 +60,9 @@ The first stage of SNA parses an Excel sheet into a node list and an edge list. 
 
 ### Parsing
 
-`sna.__init__(excel_file, nodeSheet[, attrSheet])`
+```python
+sna.__init__(excel_file, nodeSheet[, attrSheet])
+```
 > On class instantiation, parses a list of nodes from a user-inputted Excel sheet and a list of attributes if provided to `SNA.list` and `SNA.attrList`, respectively (see also [excel_parser](#excel_parser)). Creates an empty directed NetworkX graph object (refer to [networkx](https://networkx.github.io/documentation/networkx-1.10/index.html) for documentation) at `SNA.G`. Also initializes several other class variables used in various methods, including lists of nodes, edges, and measure values. 
 >
 > *Arguments:*
@@ -72,7 +74,9 @@ The first stage of SNA parses an Excel sheet into a node list and an edge list. 
 
 The `excel_parser` library script provides methods for parsing the custom Excel templates used for SNA.
 
-`excel_parser.readFile(subAttrs, excel_file, sheet)`
+```python
+excel_parser.readFile(subAttrs, excel_file, sheet)
+```
 > Reads a specified sheet in an SNA Excel template and return the first row (without repeats) and a list of lists, each containing dictionaries for each cell. The dictionary has two keys: 'val', the value in that cell, and 'header', the column to which that cell belongs by column title. If there are subattributes (e.g. an attribute weight), these are not included in the list of column headers. 
 >
 > *Arguments:*
@@ -80,20 +84,26 @@ The `excel_parser` library script provides methods for parsing the custom Excel 
 >- `excel_file`: a **string** with the path to an SNA Excel template
 >- `sheet`: a **string** with the name of the sheet to parse)
 
-`excel_parser.buildJSON(excel_file)`
+```python
+excel_parser.buildJSON(excel_file)
+```
 > Creates a jsonifiable dictionary in which the keys are the last-parsed cell in the second column (parsing left to right, top to bottom) and the values are lists of dictionaries. Each dictionary represents a row, where the keys are column headers and the values are cell values corresponding to each header. Repeated headers are permitted but not expected. 
 >
 > *Arguments:*
 >- `excel_file`: a **string** path to an Excel document with a single sheet
 
 ### Network
-`sna.createNodeList(nodeSet)`
+```python
+sna.createNodeList(nodeSet)
+```
 > Using list of **node** sheet cells generated during [instantation](#parsing), adds nodes to `SNA.G` graph object with attribute 'block' equal to the node's header in the Excel sheet (see also [excel_parser](#excel_parser)). Only includes nodes in the user-selected columns specified by `nodeSet`, and excludes repeated node names. 
 >
 > *Arguments:*
 >- `nodeSet`: a **list** of the node columns to include in the network by column header
 
-`sna.loadAttributes()`
+```python
+sna.loadAttributes()
+```
 > Using list of **attribute** sheet cells generated during [instantation](#parsing), adds attributes to each node (the first item in each row parsed from the attribute sheet) in an attribute dictionary. The attribute dictionary has keys for each attribute type (the column headers) and values in a list. Each item in the list of values is a list with a string, the value of that attribute for that node. If there is a subattribute header assigned to that node, it is attached as part of a dictionary in the previous list. For example:
 ```python
 attributes = {
@@ -106,13 +116,17 @@ attributes = {
 }
 ```
 
-`sna.createEdgeList(sourceSet)`
+```python
+sna.createEdgeList(sourceSet)
+```
 > Using list of **node** sheet cells generated during [instantation](#parsing), creates directed edges between nodes occupying the same row. The node occupying the column specified by `sourceSet` is the source of each edge. Every other node in the row is the target of an edge from the node occupying the source column. If the target node is an attribute value (see `SNA.loadAttributes()`) of the source node, and that attribute has a weight, that weight is applied to the edge. 
 >
 >*Arguments:*
 >- `sourceSet`: a **string** with the source column header
 
-`sna.loadOntology()(source, classAssignments[, weight])`
+```python
+sna.loadOntology()(source, classAssignments[, weight])
+```
 > Using a user-provided set of class assignments for each column of nodes parsed during [instantation](#parsing), adds the attribute `"ontClass"` to each node with the value equal to the ontology class assigned to that node by the user. The ontology classes are hardcoded strings and can be any one of the following:
 ```python
 ontological_elements = ["Actor","Belief","Symbol","Resource","Agent","Organization","Event","Audience","Role","Knowledge"]
@@ -157,10 +171,14 @@ SNA includes several basic network measures that utilize the NetworkX [API](http
 	- [`sna.load_centrality()`](https://networkx.github.io/documentation/networkx-1.10/reference/generated/networkx.algorithms.centrality.load_centrality.html#networkx.algorithms.centrality.load_centrality)
 	- [`sna.communicability_centrality()`](https://networkx.github.io/documentation/networkx-1.10/reference/generated/networkx.algorithms.centrality.communicability_centrality.html#networkx.algorithms.centrality.communicability_centrality)
 
-`sna.set_property()`
+```python
+sna.set_property()
+```
 > Calls all the system-wide measures.
 
-`sna.sentiment(types, key[, operation])`
+```python
+sna.sentiment(types, key[, operation])
+```
 > A node-dependent custom measure that iterates through all node attributes and sums the weight towards every node of the given types. If `operation` is set to `"average"`, the weights are averaged instead. 
 >
 > *Returns:*
@@ -187,13 +205,17 @@ Specifically, propensities are split into three independent categories:
 - [Influence](#influence)
 - [Role](#role)
 
-`sna.calculatePropensities([propToggle])`
+```python
+sna.calculatePropensities([propToggle])
+```
 > The primary class method for calculating propensities. Iterates through network edges and assigns propensity calculation output (see `propensities.propCalc`) in the attribute dictionary (see also [attribute assignment](#network)). Filters which propensities are included based on user toggle input.
 >
 > *Arguments:*
 >- `propToggle` (optional): a **dict** keyed by propensity type (one of `"emo"`, `"infl"`, or `"role"`) with Boolean values (`True` if propensity should be calculated, else `False`)
 
-`propensities.propCalc(graph, edge[, propToggle])`
+```python
+propensities.propCalc(graph, edge[, propToggle])
+```
 > For a given edge, calculates IO (see [IOs](#ios)) and required propensity types using helper functions (see [Emotion](#emotion), [Influence](#influence), and [Role](#role)).
 >
 >*Returns:*
@@ -209,7 +231,9 @@ Specifically, propensities are split into three independent categories:
 
 #### IOs
 
-`propensities.IOCalc(graph, source, target)`
+```python
+propensities.ioCalc(graph, source, target)
+```
 > A helper function used to calculate intersubjective orientation (IO) for a directed dyad. First creates a **list** of random floats, one for each IO value, then assigns new floats to each place according to their respective model (see [Warmth](#warmth), [Affiliation](#affiliation), [Legitimacy](#legitimacy), [Dominance](#dominance), and [Competence](#competence)). Uses globally stored list of IO descriptors to generate a verbose output **dict** as well as a condensed **list**:
 ```python
 IO_keys = ["Warmth", "Affiliation", "Legitimacy", "Dominance", "Competence"]
@@ -359,7 +383,9 @@ If threat level is high, the "simple" emotion snaps to the neighboring "refined"
 
 Thus, every neighboring event produces a simple emotion, which is snapped to a refined emotion. A given node has as many emotion propensities as there are neighboring events.
 
-`emoCalc(G, edge, IO)`
+```python
+propensities.emoCalc(G, edge, IO)
+```
 > A helper function that uses the model above to formulate a **list** of subjective emotions within a dyad. Finds all source node neighbors that are also event nodes and gets the emotion associated with each event. The emotion associations are provided by a spreadsheet stored globally as JSON (`GAT/static/sample/sna/CAMEO-Emotion.xlsx`) which is parsed using the `excel_parser.buildJSON` function (see [Parsing](#parsing)). Refines emotion using snapping function (above). Outputs a list of refined emotions, one for each neighboring event.
 >
 >*Returns:*
@@ -403,7 +429,9 @@ The meaning of a particular influence propensity (e.g. Reciprocity) is derived f
 
 Each influence propensity is represented by a single numerical value, which is the weighted average of all five IO values using a random weight selection from the ranges provided for that particular influence propensity.
 
-`inflCalc(IO)`
+```python
+propensities.inflCalc(IO)
+```
 > A helper function that uses the model above to generate vectors of six weighted average values each, one for each influence propensity. Adds to a verbose dictionary keyed by influence propensity.
 >
 >*Returns:*
@@ -446,7 +474,9 @@ If the role weight is positive, the first role label is used. If role weight is 
 
 For each dyad, one role weight is calculated and one role label is determined.
 
-`roleCalc(IO, roles)`
+```python
+propensities.roleCalc(IO, roles)
+```
 >A helper function which calculates role weighted average and role label according to the method described above. Outputs a simple tuple (not verbose).
 >
 >*Returns:*
@@ -465,14 +495,18 @@ SNA community detection utilizes two stages of community detection. First, a Lou
 
 Each identified community is labelled by the most central node in its myth-symbol complex.
 
-`sna.communityDetection()`
+```python
+sna.communityDetection()
+```
 > The primary class method for community detection. Ensures eigenvector centrality analysis is complete and converts `sna.G` to an undirected network (the Louvain algorithm does not support directed edges).
 >
 >*Returns:*
 >- a **list** of graph objects (the identified communities as subgraphs)
 >- a **list** of **strings** containing the labels for each subgraph
 
-`communities.louvain(G[, weightKey, centralities])`
+```python
+communities.louvain(G[, weightKey, centralities])
+```
 > The modified two-step weighted Louvain algorithm for SNA, using the model above. Uses `best_partition` algorithm from [python-louvain](https://pypi.python.org/pypi/python-louvain) package, rearranges messy data return type, and constructs a subgraph for each community. Labels subgraphs using eigenvector centrality of core community nodes, or by first node listed if centrality is not available.
 >
 >*Returns:*
@@ -515,7 +549,9 @@ From a [full description](resources/drag.pdf) of ERGMs in SNA:
 
 ERGM is not a standalone feature, but is used in the [Analysis](#analysis) and [Forecasting](#forecasting) portions of the tool.
 
-`ergm.probability(G)`
+```python
+ergm.probability(G)
+```
 > A helper function that initiates a Monte Carlo Markov Chain (MCMC) for probability estimation (see [DRAG](#drag). Generates default parameters (see `ergm.calc_params`), runs a 3000 iteration estimation with a burn-in of 1000, and estimates default coefficients.
 >
 >*Returns:*
@@ -524,7 +560,9 @@ ERGM is not a standalone feature, but is used in the [Analysis](#analysis) and [
 >*Arguments:*
 >- `G`: a NetworkX **graph object**
 
-`ergm.resilience(G,iters,mu)`
+```python
+ergm.resilience(G,iters,mu)
+```
 > A helper function that initiates an MCMC for parameter tracing (see [Resilience](#resilience)). Generates customized resilience parameters (see `ergm.calc_params`), records ERGM trace (see `ergm.trace`). Skips estimation step and does not use a burn-in period. Accepts custom iterations and custom *mu* for priors.
 >
 >*Returns:*
@@ -535,7 +573,9 @@ ERGM is not a standalone feature, but is used in the [Analysis](#analysis) and [
 >- `iters`: the number of MCMC iterations
 >- `mu`: the mean for prior parameters for the MCMC
 
-`ergm.calc_params(G[, type])`
+```python
+ergm.calc_params(G[, type])
+```
 > A helper function which specifies the parameters/coefficients to use for the MCMC model. Coefficients are network measures. Different coefficients are returned for [resilience](#resilience) and the [DRAG](#drag) model, depending on model specs.
 >
 >*Returns:*
@@ -545,7 +585,9 @@ ERGM is not a standalone feature, but is used in the [Analysis](#analysis) and [
 >- `G`: a NetworkX **graph object**
 >- `type` (optional): a **string** specifying the type of MCMC to be run (one of `"resilience"` or `"drag"`)
 
-`ergm.trace(matrix,params,iters,burn[,mu])`
+```python
+ergm.trace(matrix,params,iters,burn[,mu])
+```
 > A helper function which instantiates and runs MCMC. Creates coefficients using parameter input and prior normal distributions. Calculates probabilities using an likelihood function described [here](resources/drag.pdf). Since probabilities sometimes output negative infinity depending on the priors, the model often attempts calculation multiple times. A Bernoulli distribution is used to simulate an outcome graph realization. The MCMC is instantiated with the true outcome (the probability based on the observed graph), a simulated outcome (the probability without an observed graph), an array of probabilites estimated by the model, and priors for each coefficient. The [pymc](https://pymc-devs.github.io/pymc/) package is used for the MCMC model. Returns the traces for each coefficient and also conducts a goodness of fit analysis.
 >
 >*Returns:*
@@ -584,7 +626,9 @@ The ERGM trace is the medium of analysis for resilience, as in the example below
 
 A line graph displaying every 10 iterations of the ERGM is used to visualize the estimation of each subgraph, labelled by its most central node. Each subgraph is a community in the network. The resilience of each community can be compared and assessed by the regions on the right side of the graph, from fragile to anti-fragile. A relative scale is used to ensure that these regions are applicable in many cases, though without an aboslute scale it is difficult to compare vastly different cases.
 
-`sna.calculateResilience()`
+```python
+sna.calculateResilience()
+```
 > The primary class method for resilience calculation. First, calls `sna.communityDetection()` to identify communities for analysis. Next, uses helper functions (see `resilience.resilience`) to calculate baseline measure, simple resilience, and the trace (used for graphing).
 >
 >*Returns:*
@@ -592,7 +636,9 @@ A line graph displaying every 10 iterations of the ERGM is used to visualize the
 >- a **dict** keyed by subgraph central node name (a **string**), where values are the percentile simple resilience measure for that community among all communities in the graph
 >- a reformatted **dict** of traces keyed by central node name (a **string**); each value is a **dict**, keyed by measure (a **string**) with lists of **floats** representing the measure at every 10 iterations as values
 
-`resilience.resilience(cliques_found[, ergm_iters])`
+```python
+resilience.resilience(cliques_found[, ergm_iters])
+```
 > A helper function for resilience community iteration and calculation. Finds baseline (original) network measures, simple resilience (the difference between the new equilibrium measure and the original), and ERGm trace for each community after delivering a system shock, removing some percentage of nodes. Once measurements are made, creates percentile scores for baseline and simple resilience based on measurements for all communities in the network (accomplished with the [numpy](http://www.numpy.org/) package). Reformats traces into a labelled dictionary.
 >*Returns:*
 >- a **dict** keyed by subgraph central node name (a **string**), where values are the percentile baseline measure for that community among all communities in the graph
@@ -622,13 +668,17 @@ between roles and attributes we seek to model.
 
 Specifically, the DRAG model uses an log-odds function to generate edge probabilites from the ERGM network-wide coefficient probability estimations. Once propensity weights are used to fine-tune the edge weights from the ERGM, a Bernoulli sampling distribution is applied to the final probability matrix to determine a final network structure.
 
-`sna.drag_predict([node])`
+```python
+sna.drag_predict([node])
+```
 > The primary class method for DRAG link prediction. Generates an ERGM probability matrix with a helper function (see `ergm.probability`). Calculates propensities for a new node if one is being added. Iterates through all node propensities and adjusts directed edge probability based on emotional propensities found. Uses the weighting function `(prob + w_avg * 0.5) / 2` to combine ERGM edge probability and average emotional propensity weight. Chooses outcome with random binomial (Bernoulli) sample and adds edges if necessary. Conducts a feedback update (see `sna.feedbackUpdate`). Also adds a flag to new edges so that they will be colored red in JGraph.
 >
 >*Arguments:*
 >- `node` (optional): a **string** with the name of the node being added, if necessary
 
-`sna.addNode(node[, attrDict, connections])`
+```python
+sna.addNode(node[, attrDict, connections])
+```
 > The primary method for adding nodes to the graph. Appends a node to the SNA **graph object** with an attribute **dict** (see [section](#network) on loading attributes), if provided, and edges, if provided. Also updates the SNA class object stored node list and edge list.
 >
 >*Arguments:*
@@ -636,7 +686,9 @@ Specifically, the DRAG model uses an log-odds function to generate edge probabil
 >- `attrDict` (optional): a **dict** containing the attributes of the new node (see [Network](#network) for data format)
 >- `connections`: a **list** of **strings** with the target node names for each user-provided edge
 
-`sna.removeNode(node)`
+```python
+sna.removeNode(node)
+```
 > The primary method for removing nodes from the graph. Removes the specified node from the SNA **graph object** along with any edges it shares. Also updates the SNA class object stored node list and edge list.
 >
 >*Arguments:*
@@ -646,7 +698,9 @@ Specifically, the DRAG model uses an log-odds function to generate edge probabil
 
 The event update mechanism inserts nodes for events provided in a spreadsheet and measures their effects on network sentiments towards nodes. Specifically, the mechanism outputs the change in sentiment sum towards a node of a given set of ontology classes in the network. *(Author: Miles Latham)*
 
-`sna.event_update(event_sheet, max_iter)`
+```python
+sna.event_update(event_sheet, max_iter)
+```
 > The primary class method for spreadsheet-derived event addition. Parses an Excel sheet with hardcoded city population requests (customized for Iranian Influence case) and adds sentiment outputs to a **dict**. Only adds events within a certain time period, calculated based on the number of iterations to be calculated. Also updates the SNA class object stored node list and edge list.
 >
 >*Returns:*
@@ -669,7 +723,9 @@ weightedAverage = (1-globalWeighting)*nodeAttrWeight + (globalWeighting)*globalN
 
 In the graph above, the individual node attribute value weight is on the x-axis, while the weighting for the system-wide node weight is on the y-axis.
 
-`sna.feedbackUpdate()`
+```python
+sna.feedbackUpdate()
+```
 > The primary class method for attribute weight update feedback loops. Measures average sentiment for all nodes, then iterates through all individual node attributes and combines invidual attribute weights with global averages according to the function above. Also updates [propensities](#propensities), since individual attribute weights have changed.
 
 [- Top -](#contents)
