@@ -105,6 +105,7 @@ sna.createNodeList(nodeSet)
 sna.loadAttributes()
 ```
 > Using list of **attribute** sheet cells generated during [instantation](#parsing), adds attributes to each node (the first item in each row parsed from the attribute sheet) in an attribute dictionary. The attribute dictionary has keys for each attribute type (the column headers) and values in a list. Each item in the list of values is a list with a string, the value of that attribute for that node. If there is a subattribute header assigned to that node, it is attached as part of a dictionary in the previous list. For example:
+
 ```python
 attributes = {
 	'Belief': [
@@ -125,7 +126,7 @@ sna.createEdgeList(sourceSet)
 >- `sourceSet`: a **string** with the source column header
 
 ```python
-sna.loadOntology()(source, classAssignments[, weight])
+sna.loadOntology(source, classAssignments[, weight])
 ```
 > Using a user-provided set of class assignments for each column of nodes parsed during [instantation](#parsing), adds the attribute `"ontClass"` to each node with the value equal to the ontology class assigned to that node by the user. The ontology classes are hardcoded strings and can be any one of the following:
 ```python
@@ -807,7 +808,24 @@ data = {
 }
 ```
 
+[- Top -](#contents)
+
 ## Future Features
+
+The following are a few recommended future feature targets for SNA and Project Hermes 2.0, including both frontend, backend, and refactoring suggestions:
+- Port SNA intermediary pages (node selection and sheet selection) in HTML into the SNA modal window to consolidate HTML templates and improve page flow
+- Create a more detailed Markdown description of the entire GAT project to include as `README.md`
+- Include a more detailed acknowledgements page recognizing the open source projects and Python modules used to create SNA and Project Hermes 2.0
+- JGraph
+	- Include permanent labels on all nodes (not just on hover) that are more easily visible
+	- Make the click box for edges much larger, and include the arrow
+	- For color changes and simple visual alterations in JGraph, use the node data template route helper instead of an entire page refresh (form submission); or, even better, use Javascript
+- Code the MAG model (detailed in the DRAG [documentation](resources/drag.pdf)) and include it in the DRAG function (currently just ERGM and propensities)
+- Add custom iterators (e.g. one for nodes, one for node attributes, one for edges) similar to Python build in iterators like `.items()` - will improve code and development efficiency
+- Condense the iteration system into one method and add iteration features, e.g. pause, step forward, step backward; should call DRAG, feedback, and propensities calculation all in one place
+- Emotional Propensities
+	- Rework the weighting (currently a simple index weight)
+	- Add an if clause that will add emotion if a neighbor is affected by an event, not just the node itself (how to judge whether neighbor is also a close associate? use identified communities?)
 
 ---
 Unless another author is specified, please reach out to the undersigned with any questions about documentation or code.
