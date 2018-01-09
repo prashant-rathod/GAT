@@ -1,6 +1,6 @@
 ![LUCAS Logo](http://css-lucas.com/wp-content/uploads/2016/07/cropped-Lucas-Header-for-website.png)
 
-# SNA Documentation
+# SNA Documentation for Project Hermes 2.0
 Last updated: January 15, 2018
 
 ## Contents
@@ -731,6 +731,81 @@ sna.feedbackUpdate()
 [- Top -](#contents)
 
 ## Utilities
+
+There are several simple utility functions used for the functions above and present in the UI.
+
+```python
+sna.changeAttribute(node, value, attribute)
+```
+> A simple function for setting a node attribute.
+>
+>*Arguments:*
+>- `node`: a **string** with the name of the node to be edited
+>- `value`: any **object** to be set as the value of the attribute chosen
+>- `attribute`: a **string** to be used as the key for the attribute in the attribute **dict** (may already exist)
+
+- Changers
+	- `sna.relabelNode(oldNode, newNode)` - relabels a given node with a new node name **string**
+	- `sna.copyGraph()` - copies SNA class graph object to a temporary class variable `sna.temp`
+	- `sna.resetGraph()` - sets SNA class graph object to stored temporary class variable `sna.temp`
+- Getters
+	- `getNodes()` - returns a **list** of **strings** with the names of nodes in the graph
+	- `getEdges()` - returns a **list** of **tuples** containing **strings** for the names of the source and target node for every edge in the graph
+	- `get_node_attributes(node)` - returns the attribute **dict** (see [attribute loading](#network)) for the node of a given name (a **string**)
+	- `get_eigenvector_centrality([lst])` - returns eigenvector centrality **dict** (see [Analysis](#analysis)) with option to filter for certain nodes
+	- `get_clustering([lst])` - returns clustering **dict** (see [Analysis](#analysis)) with option to filter for certain nodes
+	- ...
+	- `get_communicability_centrality([lst])` - returns communicability centrality **dict** (see [Analysis](#analysis)) with option to filter for certain nodes
+	- `is_node(node)` - checks if node of a given name (a **string**) is present in the graph, returns **boolean**
+
+```python
+sna.plot_2D(attr[, label])
+```
+> A class method used to produce a 2D depiction of the graph to display on the UI dashboard. Uses NetworkX's [Fruchterman-Reingold](#https://networkx.github.io/documentation/networkx-1.11/reference/generated/networkx.drawing.layout.fruchterman_reingold_layout.html) layout. Colors nodes by ontology class and saves to `GAT/out/sna/` as a temporary `.png` file.
+>
+>*Returns:*
+>- a **string** with the path to the temporary file
+>
+>*Arguments:*
+>- `attr`: a **dict** keyed by node name **strings** where values are **lists** containing the color and size of the node, sequentially
+>- `label` (optional): a **boolean** specifying whether or not to display labels; labels are displayed if `label==True`
+
+```python
+sna.create_json(classes, color[, graph])
+```
+> A class method used to produce a JSON table with the information necessary for JGraph network visualization. If an edge is marked with certain flags (e.g. for propensities, edge prediction), it may be colored or bolded. Arrow, edge, and node size and color can be amended here. Nodes are colored by ontology class.
+>
+>*Returns:*
+>- a JSONifiable **dict** (see below)
+>
+>*Arguments:*
+>- `classes`: a **list** of **strings**, one for each ontology class (see [ontology loading](#network))
+>- `color`: a **list** of **strings** each with a hex code for a color
+>- `graph` (optional): a NetworkX **graph object**, the graph to be drawn in JGraph; if not specified, the SNA class graph object is used
+
+```python
+# JSON table data structure
+
+data = {
+	'edges': [
+		{
+			'source': 'Iran_Jafari',
+			'target': 'Iraq_al-Sistani',
+			'name': 'Iran_Jafari,Iraq_al-Sistani',
+			'arrowColor': 'orange',
+			'arrowSize': 2
+		},
+		...
+	],
+	'nodes': {
+		'Iran_Jafari': {
+			'color': 'blue',
+			'name': 'Mohammad Ali Jafari'
+		},
+		...
+	}
+}
+```
 
 ## Future Features
 

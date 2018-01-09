@@ -583,47 +583,27 @@ class SNA():
     #### Utilities ####
     ###################
 
-    def addEdges(self, pair):  # deprecated, needs fixing - doesn't handle new attribute structure
-        data = self.list
-        newEdgeList = []
-        for row in data:
-            first = row[pair[0]]['val']
-            second = row[pair[1]]['val']
-            if (first != '' and second != '') and (first != second):
-                newEdgeList.append((first, second))
-        self.G.add_edges_from(newEdgeList)
-        self.edges.extend(newEdgeList)
+    ## Changers ##
 
-    # copy the original social network graph created with user input data.
-    # this will be later used to reset the modified graph to inital state
-    def copyGraph(self):
-        self.temp = self.G
-
-    def resetGraph(self):
-        self.G = self.temp
-
-    def removeEdge(self, node1, node2):
-        if self.G.has_edge(node1, node2):
-            self.G.remove_edge(node1, node2)
-
-    # Change an attribute of a node
-    def changeAttribute(self, node, value, attribute="bipartite"):
+    def changeAttribute(self, node, value, attribute):
         if self.G.has_node(node):
             self.G.node[node][attribute] = value
         self.nodes = nx.nodes(self.G)
 
-    # Change node name
     def relabelNode(self, oldNode, newNode):
         if self.G.has_node(oldNode):
             self.G.add_node(newNode, self.G.node[oldNode])
             self.G.remove_node(oldNode)
         self.nodes = nx.nodes(self.G)
 
-    # Check if node exists
-    def is_node(self, node):
-        return self.G.has_node(node)
+    def copyGraph(self):
+        self.temp = self.G
 
-    # Getter for nodes and edges
+    def resetGraph(self):
+        self.G = self.temp
+
+    ## Getters ##
+
     def getNodes(self):
         return self.nodes
 
@@ -733,52 +713,12 @@ class SNA():
                     sub_dict[key] = value
             return sub_dict
 
-    def get_communicability_centrality_exp(self, lst=[]):
-        if len(lst) == 0:
-            return self.communicability_centrality_dict
-        else:
-            sub_dict = {}
-            for key, value in self.communicability_centrality_dict:
-                if key in lst:
-                    sub_dict[key] = value
-            return sub_dict
+    # Check if node exists
+    def is_node(self, node):
+        return self.G.has_node(node)
 
-    # draw 2D graph
-    # attr is a dictionary that has color and size as its value.
-    def graph_2D(self, attr, label=False):
-        block = nx.get_node_attributes(self.G, 'block')
-        Nodes = nx.nodes(self.G)
-        pos = nx.fruchterman_reingold_layout(self.G)
-        labels = {}
-        for node in block:
-            labels[node] = node
-        for node in set(self.nodeSet):
-            nx.draw_networkx_nodes(self.G, pos,
-                                   with_labels=False,
-                                   nodelist=[n for n in Nodes if bipartite[n] == node],
-                                   node_color=attr[node][0],
-                                   node_size=attr[node][1],
-                                   alpha=0.8)
-        nx.draw_networkx_edges(self.G, pos, width=1.0, alpha=0.5)
-        for key, value in pos.items():
-            pos[key][1] += 0.01
-        if label == True:
-            nx.draw_networkx_labels(self.G, pos, labels, font_size=8)
-        limits = plt.axis('off')
-        plt.show()
+    ## Graphers ##
 
-    # draw 3 dimensional verison of the graph (returning html object)
-    def graph_3D(self):
-        n = nx.edges(self.G)
-        removeEdge = []
-        for i in range(len(n)):
-            if n[i][0] == '' or n[i][1] == '':
-                removeEdge.append(n[i])
-        for j in range(len(removeEdge)):
-            n.remove(removeEdge[j])
-        nx.draw(nx.edges(self.G), directed="true")
-
-    # note: this is for Vinay's UI
     def plot_2D(self, attr, label=False):
         plt.clf()
         ontClass = nx.get_node_attributes(self.G, 'ontClass')
