@@ -37,9 +37,11 @@ SNA is the social network analysis portion of Project Hermes 2.0. Its major feat
 - performs more advanced, customized network analysis on resilience and influence community detection
 - forecasts likely outcomes with stochastic probability model and psychology/political theory-based propensities model
 
+The following documentation summarizes the use of SNA functions and the models that drive them, but does not include UI or application service functions unless they are integral to SNA core functionality or models.
+
 ### Requirements
 
-SNA runs on Python 3.6.1 using the following core (non-util) packages:
+SNA runs on Python 3.6.1 using the following core (non-utility) packages:
 - [matplotlib](https://matplotlib.org/)
 - [networkx](https://networkx.github.io/documentation/networkx-1.10/index.html)
 - [numpy](http://www.numpy.org/)
@@ -60,6 +62,8 @@ The first stage of SNA parses an Excel sheet into a node list and an edge list. 
 
 ### Parsing
 
+The `excel_parser` library script provides methods for parsing the custom Excel templates used for SNA.
+
 ```python
 sna.__init__(excel_file, nodeSheet[, attrSheet])
 ```
@@ -69,10 +73,6 @@ sna.__init__(excel_file, nodeSheet[, attrSheet])
 >- `excel_file`: a **string** with a path to an Excel file
 >- `nodeSheet`: a **string** with the name of the node sheet in that Excel file
 >- `attrSheet` (optional): a **string** with the name of the attribute sheet in that Excel file
-
-#### `excel_parser`
-
-The `excel_parser` library script provides methods for parsing the custom Excel templates used for SNA.
 
 ```python
 excel_parser.readFile(subAttrs, excel_file, sheet)
@@ -146,7 +146,7 @@ The analysis phase of SNA includes several basic network measures, edge propensi
 
 ### Measures
 
-SNA includes several basic network measures that utilize the NetworkX [API](https://networkx.github.io/documentation/networkx-1.10/index.html). Node-dependent measures output a **dict** of measures keyed by node name that are stored as SNA class variables. While not all measures are visible in the tool, the class methods for network measurement are as follows (measure for which the network is converted to an undirected networks are noted):
+SNA includes several basic network measures that utilize the NetworkX [API](https://networkx.github.io/documentation/networkx-1.10/index.html). Node-dependent measures output a **dict** of measures keyed by node name that are stored as SNA class variables. While not all measures are visible in the tool, the class methods for network measurement are as follows (measures for which the network is converted to an undirected networks are noted):
 
 - System-Wide Measures
 	- [`sna.center()`](https://networkx.github.io/documentation/networkx-1.10/reference/generated/networkx.algorithms.distance_measures.center.html)
@@ -157,7 +157,7 @@ SNA includes several basic network measures that utilize the NetworkX [API](http
 	- [`sna.degree_assortativity_coefficient()`](https://networkx.github.io/documentation/networkx-1.10/reference/generated/networkx.algorithms.assortativity.degree_assortativity_coefficient.html#networkx.algorithms.assortativity.degree_assortativity_coefficient)
 	- [`sna.node_connectivity()`](https://networkx.github.io/documentation/networkx-1.10/reference/generated/networkx.algorithms.connectivity.connectivity.node_connectivity.html#networkx.algorithms.connectivity.connectivity.node_connectivity)
 	- [`sna.average_clustering()`](https://networkx.github.io/documentation/networkx-1.10/reference/generated/networkx.algorithms.approximation.clustering_coefficient.average_clustering.html?highlight=average%20clustering#networkx.algorithms.approximation.clustering_coefficient.average_clustering) (undirected)
-	- [`sna.attribute_assortativity(attr)`](https://networkx.github.io/documentation/networkx-1.10/reference/generated/networkx.algorithms.assortativity.attribute_assortativity_coefficient.html#networkx.algorithms.assortativity.attribute_assortativity_coefficient) - *argument: a **string** with the key of the attribute to be analyzed*
+	- [`sna.attribute_assortativity(attr)`](https://networkx.github.io/documentation/networkx-1.10/reference/generated/networkx.algorithms.assortativity.attribute_assortativity_coefficient.html#networkx.algorithms.assortativity.attribute_assortativity_coefficient) (`attr` is a **string** with the key of the attribute to be analyzed)
 	- [`sna.is_strongly_connected()`](https://networkx.github.io/documentation/networkx-1.10/reference/generated/networkx.algorithms.components.strongly_connected.is_strongly_connected.html?highlight=strongly%20connected#networkx.algorithms.components.strongly_connected.is_strongly_connected)
 	- [`sna.is_weakly_connected()`](https://networkx.github.io/documentation/networkx-1.10/reference/generated/networkx.algorithms.components.weakly_connected.is_weakly_connected.html?highlight=weakly%20connected#networkx.algorithms.components.weakly_connected.is_weakly_connected)
 - Node-Dependent
@@ -820,6 +820,7 @@ The following are a few recommended future feature targets for SNA and Project H
 	- Include permanent labels on all nodes (not just on hover) that are more easily visible
 	- Make the click box for edges much larger, and include the arrow
 	- For color changes and simple visual alterations in JGraph, use the node data template route helper instead of an entire page refresh (form submission); or, even better, use Javascript
+	- A search bar that highlight nodes when their names are searched
 - Code the MAG model (detailed in the DRAG [documentation](resources/drag.pdf)) and include it in the DRAG function (currently just ERGM and propensities)
 - Add custom iterators (e.g. one for nodes, one for node attributes, one for edges) similar to Python build in iterators like `.items()` - will improve code and development efficiency
 - Condense the iteration system into one method and add iteration features, e.g. pause, step forward, step backward; should call DRAG, feedback, and propensities calculation all in one place
