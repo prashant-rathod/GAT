@@ -541,11 +541,11 @@ From a [full description](resources/drag.pdf) of ERGMs in SNA:
 >- **2-outstar count**: number of nodes that are the source of two edges
 
 >Specifically, each covariate is the change in one of the statistics above for two cases: the case in which the edge in question is present in the graph, and the case in which it is not.
-
+>
 >For even the simplest network, there are a very high number of possible configurations that must be calculated to achieve a perfectly normalized statistic.
-
+>
 >A Monte Carlo metropolis chain (MCMC) algorithm takes the matrix of probabilities for each individual edge resulting from the product of the vector of coefficients and the vector of network statistics and uses it to estimate the normalized coefficients for a network given all possible networks. Specifically, the MCMC explores the most probable areas of the parameter space (where the parameters are the covariates defined above), sampling the areas of the parameter space where conditional probabilities are high and ignoring the areas where conditional probabilities are low.
-
+>
 >How does the MCMC discern higher relative weights from lower relative weights? For each edge represented in the conditional probability matrix produced above, the random variable is distributed across a Bernoulli distribution. Since a Bernoulli distribution is a binomial distribution with only a single trial, a matrix of these random variable distributions will contain only 0s and 1s, successes and failures, edge presences and edge absences. Thus, the matrix of random variables O can be realized as the adjacency matrix for an observable network. The MCMC model is [instantiated](https://pymc-devs.github.io/pymc/modelfitting.html#chap-modelfitting) with the matrix of random variables as the observed graph to fit (our priors) and the list of coefficients as the parameters to estimate. For a set number of iterations, the MCMC returns the optimized (maximum likelihood) coefficient values and the probability of observing the adjacency matrix given the set of fitted parameters. To produce a random realization/instance of the network, a random realization from the posterior distribution can be drawn (after fixing the optimized coefficients).
 
 ERGM is not a standalone feature, but is used in the [Analysis](#analysis) and [Forecasting](#forecasting) portions of the tool.
