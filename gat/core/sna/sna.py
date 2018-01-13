@@ -58,6 +58,7 @@ class SNA():
         self.nodes = nx.nodes(self.G)
 
     def loadAttributes(self):
+
         for row in self.attrList:
             nodeID = row[0]['val']
             for cell in row[1:]:
@@ -87,6 +88,21 @@ class SNA():
                         self.changeAttribute(nodeID, attrList, attrID)
 
                 prevCell = cell # save cell in case of subattribute data
+
+        ## Role Strategies Section ##
+        # pseudocode for role strategies attribute loading:
+        # parse strategic actor data table
+        # for classname in ["SA","A","SO","O","AU","KA"]:
+        #     header, rows = excel_parser.readFile([], sa_file, classname)
+        #     for row in rows:
+        #         nodeID = row[0]['val']
+        #         attrDict = {}  # add a dict for strategic actors, orgs, etc.
+        #         if nodeID in self.nodes:
+        #             node = self.G.node[nodeID]
+        #             for cell in row[1:]:
+        #                 if cell['val'] != '':
+        #                     attrDict[cell['header']] = cell['val']
+        #             node[classname] = attrDict # add an attribute dict titled by classname, e.g. "SA", with info from row
 
     def createEdgeList(self, sourceSet):
         list = self.list

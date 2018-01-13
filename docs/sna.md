@@ -814,19 +814,24 @@ data = {
 
 The following are a few recommended future feature targets for SNA and Project Hermes 2.0, including both frontend, backend, and refactoring suggestions:
 - Port SNA intermediary pages (node selection and sheet selection) in HTML into the SNA modal window to consolidate HTML templates and improve page flow
-- Create a more detailed Markdown description of the entire GAT project to include as `README.md`
+- Create a more detailed Markdown description of the entire GAT project to include as `README.md` - before semester ends
 - Include a more detailed acknowledgements page recognizing the open source projects and Python modules used to create SNA and Project Hermes 2.0
 - JGraph
-	- Include permanent labels on all nodes (not just on hover) that are more easily visible
+	- Include permanent labels on all nodes (not just on hover) that are more easily visible - function of zoom scale
 	- Make the click box for edges much larger, and include the arrow
 	- For color changes and simple visual alterations in JGraph, use the node data template route helper instead of an entire page refresh (form submission); or, even better, use Javascript
 	- A search bar that highlight nodes when their names are searched
 - Code the MAG model (detailed in the DRAG [documentation](resources/drag.pdf)) and include it in the DRAG function (currently just ERGM and propensities)
 - Add custom iterators (e.g. one for nodes, one for node attributes, one for edges) similar to Python build in iterators like `.items()` - will improve code and development efficiency
-- Condense the iteration system into one method and add iteration features, e.g. pause, step forward, step backward; should call DRAG, feedback, and propensities calculation all in one place
+- Condense the iteration system into one method and add iteration features, e.g. pause, step forward, step backward; should call DRAG, feedback, and propensities calculation all in one place - could use step function in MESA tied to iterations, SNA and decision-making both governed by MESA (most important), use graph object
 - Emotional Propensities
 	- Rework the weighting (currently a simple index weight)
 	- Add an if clause that will add emotion if a neighbor is affected by an event, not just the node itself (how to judge whether neighbor is also a close associate? use identified communities?)
+- Community Detection: need more ideological separation (maybe limit to one belief? try to build based on inputs - user inputs a football club, builds an influence community around it), could use overlapping, combine attributes to solve the problem - also a high priority
+- Resilience
+	- add quantitative measures to solidify the output of resilience dictionary, e.g. percent reduction/addition in resilience measure
+	- how to decide what system shock to deliver? depends on definition of community and resilience
+	- run multiple MCMCs to avoid random effects of system shocks
 
 ---
 Unless another author is specified, please reach out to the undersigned with any questions about documentation or code.
