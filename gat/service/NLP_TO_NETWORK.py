@@ -70,7 +70,7 @@ def relationship_mining(txt_name):
                                  edge_labels=nx.get_edge_attributes(G, 'verbs'), font_size=18, font_color='b')
     filename = 'new_nlp_relationship_example'
     filename = 'out/nlp/' + filename + '.png'
-    plt.savefig(filename)
+    plt.savefig(filename, dpi=100)
     return filename
 
 
@@ -94,7 +94,7 @@ def sentiment_mining(txt_name):
     cb.ax.tick_params(labelsize=24)
     filename = 'new_nlp_sentiment_example'
     filename = 'out/nlp/' + filename + '.png'
-    plt.savefig(filename)
+    plt.savefig(filename, dpi=100)
     return filename
 
 def sentiment3D(txt_name):
