@@ -67,6 +67,15 @@ def visualize():
 
     nlp_new_example_sentiment = ''
     nlp_new_example_relationship = ''
+    nlp_stemmerize = ''
+    nlp_lemmatize = ''
+    nlp_abstract = ''
+    nlp_top20_verbs = ''
+    nlp_top20_persons = ''
+    nlp_top20_locations = ''
+    nlp_top20_organizations = ''
+    nlp_sentence_sentiment_distribution = ''
+    nlp_wordcloud = ''
 
     if NLP_new_example_file is not None:
         nlp_new_example_sentiment = NLP_TO_NETWORK.sentiment_mining(NLP_new_example_file)
