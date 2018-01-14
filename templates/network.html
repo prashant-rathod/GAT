@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<meta charset="utf-8"/>
+
+<style>
+
+    #mapid { height: 640px; }
+
+</style>
+
+<body>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css"
+          integrity="sha512-M2wvCLH6DSRazYeZRIm1JnYyh22purTM+FDB5CsyxtQJYeKq83arPe5wgbNmcFXGqiSH2XR8dT/fJISVA1r/zQ=="
+          crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js"
+            integrity="sha512-lInM/apFSqyy1o6s89K4iQUKg6ppXEgsVxT35HbzUupEVRh2Eu9Wdl4tHj7dZO0s1uvplcYGmt3498TtHq+log=="
+            crossorigin=""></script>
+
+    <script type="text/javascript">
+
+        $(document).ready(function() {
+
+            var mymap = L.map('mapid', {
+                center: [33.4152, -111.8315],
+                zoom: 15
+            });
+
+            L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+                attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
+                maxZoom: 18,
+                id: 'mapbox.streets',
+                accessToken: 'pk.eyJ1IjoibGVzc3dpZmkiLCJhIjoiY2o5cW5sYnQ5NjFncDMzcW1mb2RzamczZiJ9.XiG9QFM9t3ZdurQl31BU0g'
+            }).addTo(mymap);
+
+            $.getJSON('../static/mygeodata/demo.json', function(data) {
+
+                var features = data.features;
+
+                L.geoJSON(features, {
+                    style: function(feature) {
+                        if (feature.properties.NUM_CRIMES > 5){
+                            return {color: "#ff0000"};
+                        }
+                        else{
+                            return {color: "#0000ff"};
+                        }
+                    }
+                }).bindPopup(function (layer) {
+                    return JSON.stringify(layer.feature.properties);
+                }).addTo(mymap);
+
+            });
+
+        });
+
+    </script>
+
+    <div id="mapid"></div>
+
+</body>
+</html>
