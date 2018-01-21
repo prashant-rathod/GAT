@@ -33,10 +33,10 @@ def Decode(x):
         r[e]=1
         result.append(r)
     return result
-
+        
 def top5index(a):
     return sorted(range(len(a)), key=lambda i: a[i])[-5:]
-
+    
 def top5pred(pred_ba):
     result=[]
     for e in pred_ba:
@@ -50,7 +50,7 @@ def top5accuracy(y_true, y_pred):
         if y_true[i] in y_pred[i]:
             correct=correct+1
     return correct*1.0/len(y_true)
-
+                    
 
 
 
@@ -63,7 +63,7 @@ nlp=spacy.load('en')
 def top5CAMEO(sentence):
     phrase=[e.lemma_ for e in nlp(sentence)]
     sentence_binary=np.zeros(3000,dtype=int)
-
+    
     for i in range(len(top_words)):
         if top_words[i] in phrase:
             sentence_binary[i]=1
