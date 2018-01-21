@@ -29,11 +29,11 @@ for i,user in enumerate(caption):
 for i,caption_text in enumerate(caption):
     if caption_text is not None and caption_text['text'] is not None:
         scraped.loc[i,'Caption'] = caption_text['text']
-        svo = svo_sent.__get_svo(caption_text['text'])
+        svo = svo_sent.get_svo(caption_text['text'])
         scraped.loc[i, 'Names'] = svo['Names']
         scraped.loc[i, 'Locations'] = svo['Locations']
         scraped.loc[i, 'Dates'] = svo['Event_date']
-        sentiment = svo_sent.__sentimentAnalysis(caption_text['text'])
+        sentiment = svo_sent.sentimentAnalysis(caption_text['text'])
         sentiment.pop('Sentence')
         scraped.loc[i, 'Sentiment'] = str(sentiment)
     else:

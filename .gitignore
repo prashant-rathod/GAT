@@ -5,4 +5,3 @@ nltk_downloads/*
 static/temp/*
 .DS_Store
 out/*
-/gat/service/SmartSearch/chromedriver
