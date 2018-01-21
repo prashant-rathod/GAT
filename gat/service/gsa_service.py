@@ -1,5 +1,7 @@
 import csv
 import json
+#from xml.dom import minidom
+from dbfread import DBF
 
 from gat.core.gsa.misc import util, map_generator
 
@@ -23,8 +25,9 @@ def tempParseGSA(GSA_file_CSV, GSA_file_SHP, idVar, nameVar):
         except:
             return (None, True)
 
+    #TODO: remove this
     gsaSVG = "out/gsa/mymap.svg"
-    map_generator.generateMap(GSA_file_SHP, gsaSVG)
+    generateMap(GSA_file_SHP, gsaSVG)
 
     with open(gsaSVG, 'r') as myfile:
         data = None
@@ -37,6 +40,14 @@ def tempParseGSA(GSA_file_CSV, GSA_file_SHP, idVar, nameVar):
     nameMapping = {key: value.replace("'", "APOSTROPHE") for key, value in nameMapping.items()}
     return json.dumps(str(gsaCSV).replace('"', "'")), json.dumps(data), json.dumps(str(nameMapping).replace('"', "'"))
 
+def generateMap(GSA_file_SHP, path):
+    map_generator.generateMap(GSA_file_SHP, path)
+
+def getColumns(path):
+    return DBF(path).field_names
+
+def getNameMapping(path, nameVar):
+    return [record[nameVar] for record in DBF(path).records]
 
 def parseGSA(GSA_file_CSV, GSA_file_SVG):
     if GSA_file_CSV == None or GSA_file_SVG == None:

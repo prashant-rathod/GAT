@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>GSA Variables</title>
+</head>
+<body>
+<form enctype="multipart/form-data" method="post">
+    <p>Id</p>
+    <select name="gsa-id" id="gsa-id" >
+        {% for name in names %}
+            {% if name == id %}
+                <option value="{{ name }}" selected>{{ name }}</option>
+            {% else %}
+                <option value="{{ name }}">{{ name }}</option>
+            {% endif %}
+        {% endfor %}
+    </select>
+    <br>
+
+    <!--<p>Name Variable</p>
+    <select name="gsa-name-var" id="gsa-name-var">
+        {% for name in names %}
+            {% if name == name_var %}
+                <option value="{{ name }}" selected>{{ name }}</option>
+            {% else %}
+                <option value="{{ name }}">{{ name }}</option>
+            {% endif %}
+        {% endfor %}
+    </select>-->
+
+    <input type="submit" value="CONTINUE">
+</form>
+</body>
+</html>
