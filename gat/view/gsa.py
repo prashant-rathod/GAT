@@ -44,21 +44,25 @@ def gsa_select():
         return render_template("gsaselect.html", info=info, case_num=case_num)
 
     if request.method == 'POST':
-
+        '''
         info.autoRow = request.form.get('auto-row')
         info.autoCol = ast.literal_eval(request.form.get('auto-col'))
         info.dynRow = request.form.get('dyn-row')
-        #info.dynCol = ast.literal_eval(request.form.get('dyn-col'))
-        info.id = request.form.get('gsa-id')
-        id = fileDict['GSA_SHP_VARS'][0]
+        info.dynCol = ast.literal_eval(request.form.get('dyn-col'))
+        #info.id = request.form.get('gsa-id')
+        '''
+        info.id = "NAME_1"
+        #id = fileDict['GSA_SHP_VARS'][0]
+        name_var = "data-" + info.id.lower()
+
 
         localAutoCorrelation, globalAutoCorrelation, spatialDynamics = gsa_service.runGSA(case_num, info.autoRow,
                                                                                           info.autoCol, info.dynRow,
-                                                                                          info.dynCol, id)
+                                                                                          info.dynCol, info.id)
 
         fileDict['GSA_data'] = ('id-1', localAutoCorrelation, globalAutoCorrelation,
                                 spatialDynamics[0], spatialDynamics[1], spatialDynamics[2], spatialDynamics[3])
-        fileDict['GSA_meta'] = ('data-id-1', 'data-name-1', "NAME_1", np.arange(2014, 2017, 0.25).tolist(), fileDict['GSA_SHP_VARS'][1])
+        fileDict['GSA_meta'] = ('data-id-1', 'data-name-1', "NAME_1", np.arange(2014, 2017, 0.25).tolist(), name_var)
 
         return redirect(url_for('visualize_blueprint.visualize', case_num=case_num))
 
