@@ -105,6 +105,18 @@ def get_autocorrelation(case_num):
         return jsonify(year=year, loc=loc, glob=glob)
     return jsonify(year="something went wrong", loc=0, glob=0)
 
+@gsa_blueprint.route('/geonet', methods=['GET', 'POST'])
+def get_json():
+
+    case_num = request.args.get('case_num', None)
+    return redirect(url_for('visualize_blueprint.visualize', case_num=case_num))
+
+@gsa_blueprint.route('/emo', methods=['GET', 'POST'])
+def emotional_space():
+
+    case_num = request.args.get('case_num', None)
+    return redirect(url_for('visualize_blueprint.visualize', case_num=case_num))
+
 
 @gsa_blueprint.route("/_gsa_csv", methods = ['GET'])
 def upload_csv_get():
