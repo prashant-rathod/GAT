@@ -71,7 +71,7 @@ def visualize():
     if network_sample is not None:
         geoNet = gsa_service.geoNetwork(case_num=case_num)
     actors = None
-    relations= None
+    relations = None
     if "emotionalSpace" in fileDict:
         actors, relations = gsa_service.emoSpace(case_num=case_num)
 
