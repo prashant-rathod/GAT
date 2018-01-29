@@ -32,13 +32,14 @@ def gsa_select():
     # TODO: reorganize use of gsa_meta
 
     class Input:
-        def __init__(self, autoRow, autoCol, dynRow, dynCol):
+        def __init__(self, autoRow, autoCol, dynRow, dynCol, id):
             self.autoRow = autoRow
             self.autoCol = autoCol
             self.dynRow = dynRow
             self.dynCol = dynCol
+            self.id = id
 
-    info = Input("ALL", ["2014.0"], "ALL", np.arange(2014, 2017, 0.25).tolist())
+    info = Input("ALL", ["2014.0"], "ALL", np.arange(2014, 2017, 0.25).tolist(), "NAME_1")
 
     if request.method == 'GET':
         return render_template("gsaselect.html", info=info, case_num=case_num)
@@ -50,15 +51,16 @@ def gsa_select():
         info.dynRow = request.form.get('dyn-row')
         #info.dynCol = ast.literal_eval(request.form.get('dyn-col'))
         info.id = request.form.get('gsa-id')
-        id = fileDict['GSA_SHP_VARS'][0]
+        #id = fileDict['GSA_SHP_VARS'][0]
 
         localAutoCorrelation, globalAutoCorrelation, spatialDynamics = gsa_service.runGSA(case_num, info.autoRow,
                                                                                           info.autoCol, info.dynRow,
-                                                                                          info.dynCol, id)
+                                                                                          info.dynCol, info.id)
 
         fileDict['GSA_data'] = ('id-1', localAutoCorrelation, globalAutoCorrelation,
                                 spatialDynamics[0], spatialDynamics[1], spatialDynamics[2], spatialDynamics[3])
-        fileDict['GSA_meta'] = ('data-id-1', 'data-name-1', "NAME_1", np.arange(2014, 2017, 0.25).tolist(), fileDict['GSA_SHP_VARS'][1])
+        #fileDict['GSA_meta'] = ('data-id-1', 'data-name-1', "NAME_1", np.arange(2014, 2017, 0.25).tolist(), fileDict['GSA_SHP_VARS'][1])
+        fileDict['GSA_meta'] = ('data-id-1', 'data-name-1', "NAME_1", np.arange(2014, 2017, 0.25).tolist(), "name-1")
 
         return redirect(url_for('visualize_blueprint.visualize', case_num=case_num))
 
