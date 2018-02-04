@@ -1,9 +1,9 @@
 {% if error %}
 Note: If you uploaded shapefiles for GSA analysis and nothing is displayed, then it is possible that the generated
 map or the provide CSV has characters/letters that our tool cannot understand.
-{% endif %}
 
-{% if gsaCSV %}
+
+{% else %}
   <div class="output-window resize-drag-outer" id="GSA Visualization Window" style="width: 50%; heigth: 50%">
     <div class="output-button-bar resize-drag">
       <span class="left-span">
@@ -22,8 +22,12 @@ map or the provide CSV has characters/letters that our tool cannot understand.
             visualization</a>
         {% endif %}
 
-        {% if gsaCSV %}
-        {% include "kartograph.html" %}
+        {% if actors %}
+            {% include "emoSpace.html" %}
+        {% elif geoNet %}
+            {% include "network.html" %}
+        {% elif gsaCSV %}
+            {% include "kartograph.html" %}
         {% endif %}
 
     </div>
@@ -52,6 +56,24 @@ map or the provide CSV has characters/letters that our tool cannot understand.
         {% endif %}
         <p>Mean Passage Time:<br> {% for row in sp_dyn[3] %}{{row}}<br>{% endfor %}</p>
       {% endif %}
+
+        {% if geoNet %}
+            <a>Click on the edge of network for more information</a>
+            <p style="font-weight:bold;">Geonetwork Statistics:</p>
+            <p>Location: Mesa, Arizona</p>
+            <p>Average Number of Crime on the street: {{ auto[1] }}</p><br>
+        {% endif %}
+
+        {% if actors %}
+
+            {% for i in relations.keys() %}
+                <p style="font-weight:bold;">Relations between {{ i }}</p>
+                <p>Money: {{ relations[i][0] }}</p>
+                <p>Belief: {{ relations[i][1] }}</p>
+                <p>Symbol: {{ relations[i][2] }}</p>
+                <p>Info: {{ relations[i][3] }}</p>
+            {% endfor %}
+        {% endif %}
     </div>
   </div>
 {% endif %}

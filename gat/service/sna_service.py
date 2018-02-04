@@ -2,7 +2,7 @@ import copy
 
 import matplotlib
 import networkx as nx
-from flask import jsonify
+import xlsxwriter as xlsxw
 
 from gat.dao import dao
 
@@ -98,8 +98,8 @@ def SNA2Dand3D(graph, request, case_num, _3D=True, _2D=False, label=False):
         inputFile = fileDict['SNA_Events']
         iters = int(request.form.get("iters"))
         systemMeasures['SentimentDict'] = True
-        fileDict['SentimentChange'] = graph.event_update(inputFile,iters)
-
+        fileDict['SentimentChange'] = write_to_excel(graph.event_update(inputFile,iters))
+        graph.calculatePropensities(fileDict["propToggle"])
 
     # Add system measures dictionary
     try:
@@ -177,18 +177,7 @@ def SNA2Dand3D(graph, request, case_num, _3D=True, _2D=False, label=False):
     # Calculate resilience when requested
     if request.form.get("resilienceSubmit") != None:
         try:
-            systemMeasures["Baseline"], systemMeasures["Resilience"], systemMeasures["Robustness"] = graph.calculateResilience()  # gets a scaled resilience value for each clique identified in network
-            # Add colors for each resilience measure
-            def addColors(systemMeasure):
-                for cluster in systemMeasure:
-                    systemMeasure[cluster] = int(systemMeasure[cluster])
-                    percentile = systemMeasure[cluster]
-                    b = int(percentile)
-                    r = int(100 - percentile)
-                    systemMeasure[cluster] = [percentile, r, b]
-            addColors(systemMeasures["Baseline"])
-            addColors(systemMeasures["Resilience"])
-            addColors(systemMeasures["Robustness"])
+            systemMeasures["Baseline"], systemMeasures["Resilience"], systemMeasures["Trace"] = graph.calculateResilience()  # gets a scaled resilience value for each clique identified in network
         except nx.exception.NetworkXError:
             systemMeasures["Resilience"] = "Could not calculate resilience, NetworkX error."
 
@@ -213,3 +202,22 @@ def prep(graph):
         # graph.katz_centrality()
         graph.eigenvector_centrality()
         graph.load_centrality()
+
+def write_to_excel(ret):
+    path = "out/sna/SentimentChange.xlsx"
+    workbook = xlsxw.Workbook(path)
+    for i in range(len(ret)):
+        worksheet = workbook.add_worksheet(str(i))
+        row = 0
+        col = 0
+        for header in ["Source","Target","Sentiment Change"]:
+            worksheet.write(row,col,header)
+            col += 1
+        col = 0
+        for line in ret[i]:
+            row += 1
+            worksheet.write(row, col, line.source)
+            worksheet.write(row, col+1, line.target)
+            worksheet.write(row, col+2, line.change)
+    workbook.close()
+    return path

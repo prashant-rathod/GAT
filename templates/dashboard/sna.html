@@ -36,7 +36,7 @@
             {% if systemMeasures -%}
                 <h4>System Measures</h4>
                 {% for measure in systemMeasures -%}
-                    {% if measure not in ['Description','Resilience','Robustness','Baseline'] -%}
+                    {% if measure not in ['Description','Resilience','Robustness','Baseline','Trace'] -%}
                         <p>
                             <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="left" title="{{systemMeasures['Description'][measure]}}"></i>
                             {{measure}}: {{systemMeasures[measure]}}
@@ -64,7 +64,6 @@
                         </linearGradient>
                       </defs>
                     </svg>
-                    <script type="text/javascript" src="../static/js/resilience.js"></script>
                     <script type="text/javascript">
                       drawSVG({{systemMeasures|tojson}})
                     </script>

@@ -45,7 +45,14 @@ sudo pip3 install -r requirements.txt;
 sudo chmod 777 nltk_downloads;
 sudo pip3 install gunicorn;
 
-sudo python3 -m spacy download en
+sudo python3 -m spacy download en;
+
+cd gat/service/SmartSearch;
+wget -N http://chromedriver.storage.googleapis.com/2.26/chromedriver_linux64.zip;
+unzip chromedriver_linux64.zip;
+chmod +x chromedriver;
+
+cd ~/Projects/GAT;
 
 sudo service nginx restart;
 
