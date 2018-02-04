@@ -27,7 +27,6 @@ def gsa_sample(sample_path):
     else:
         # TODO: take in years and file names instead of hard coding
         # TODO: reorganize use of gsa_meta
-
         localAutoCorrelation, globalAutoCorrelation, spatialDynamics = gsa_service.runGSA(case_num, "ALL", ["2014.0"],
                                                                                           "ALL",
                                                                                           np.arange(2014, 2017,
@@ -38,7 +37,6 @@ def gsa_sample(sample_path):
         fileDict['GSA_meta'] = (
             'data-id-1', 'data-name-1', "NAME_1", np.arange(2014, 2017, 0.25).tolist(), "name-1")
     return redirect(url_for('visualize_blueprint.visualize', case_num=case_num))
-
 '''
 
 @sample_blueprint.route('/gsa/<path:sample_path>')
