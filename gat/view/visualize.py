@@ -26,6 +26,7 @@ def visualize():
     tropes = fileDict.get('tropes')
     graph = fileDict.get('graph')
     GSA_sample = fileDict.get('GSA_data')
+    network_sample = fileDict.get('Geonet_Input_Streets')
     error = False
 
     auto = None
@@ -43,6 +44,7 @@ def visualize():
     if (GSA_file_CSV is not None and GSA_file_SHP is not None and fileDict.get('GSA_meta') is not None):
         gsaCSV, mymap, nameMapping = gsa_service.tempParseGSA(GSA_file_CSV, GSA_file_SHP, fileDict['GSA_meta'][0],
                                                               fileDict['GSA_meta'][1])
+
     if GSA_file_SVG is not None:
         gsaCSV, mymap = gsa_service.parseGSA(GSA_file_CSV, GSA_file_SVG)
 
@@ -65,9 +67,20 @@ def visualize():
     nlp_sentiment = nlp_service.sentiment(NLP_file_sentiment)
     research_question = scraper_service.scrape(research_question)
 
+    geoNet = None
+    if network_sample is not None:
+        geoNet = gsa_service.geoNetwork(case_num=case_num)
+    actors = None
+    relations = None
+    if "emotionalSpace" in fileDict:
+        actors, relations = gsa_service.emoSpace(case_num=case_num)
+
     if NLP_new_example_file is not None:
         nlp_summary = 'Enable'
 
+    #call gsa_service.geoNet, produce output, do whatever else you need
+    #geoNet = true if there is a geonet produced
+    # fileDict[geoNetFiles...]
     return render_template('visualizations.html',
                            research_question=research_question,
                            SNAbpPlot=SNAbpPlot,
@@ -92,5 +105,6 @@ def visualize():
                            nlp_tropes=nlp_tropes,
                            systemMeasures=systemMeasures,
                            NLP_new_example_file=NLP_new_example_file,
-    
-                           )
+                           geoNet=geoNet,
+                           actors=actors,
+                           relations=relations)
