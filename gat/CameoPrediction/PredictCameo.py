@@ -12,6 +12,7 @@ import pandas as pd
 from sklearn.model_selection import cross_val_score
 from sklearn.externals import joblib
 import spacy
+from gat.dao import dao
 
 def accuracy(y_true,y_pred):
     correct=0
@@ -58,7 +59,8 @@ model=joblib.load('gat/CameoPrediction/model.pkl')
 vector_rule=pd.read_csv('gat/CameoPrediction/vectorize_rules.txt', sep='	',header=None)
 cameo_book=pd.read_csv('gat/CameoPrediction/CAMEO_code_new.csv')
 top_words=list(pd.read_csv('gat/CameoPrediction/top_all_words_from_analysis.txt',sep='	',header=None).head(3000)[0])
-nlp=spacy.load('en')
+
+nlp=dao.spacy_load_en()
 
 def top5CAMEO(sentence):
     phrase=[e.lemma_ for e in nlp(sentence)]

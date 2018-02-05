@@ -11,6 +11,7 @@ from gat.service.SmartSearch.SEARCH_BING_MODULE import bingURL
 from gat.service import file_io
 from nltk import data
 from dateparser import parse
+from gat.dao import dao
 
 
 class SmartSearchThread(threading.Thread):
@@ -22,7 +23,7 @@ class SmartSearchThread(threading.Thread):
         self.result_lock = threading.Lock()
         self.result_ontology = None
         self.result_ontology_lock = threading.Lock()
-        self.__nlp = spacy.load('en')  # spacy parser
+        self._nlp = dao.spacy_load_en()
         self.__sent_detector = data.load('tokenizers/punkt/english.pickle')
         self.__analyzer = SentimentIntensityAnalyzer()  # for sentiment analysis
         current_file_path = os.path.dirname(os.path.abspath(__file__))

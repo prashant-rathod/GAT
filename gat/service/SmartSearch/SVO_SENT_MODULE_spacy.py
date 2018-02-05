@@ -19,6 +19,7 @@ from dateparser import parse
 import time
 from nltk.stem import WordNetLemmatizer
 import numpy as np
+from gat.dao import dao
 
 
 class SVOSENT(object):
@@ -30,7 +31,7 @@ class SVOSENT(object):
         """
         Initialize 
         """
-        self.nlp = spacy.load('en')  # spacy parser
+        self.nlp = dao.spacy_load_en()
         self.sent_detector = data.load('tokenizers/punkt/english.pickle')
         self.analyzer = SentimentIntensityAnalyzer()  # for sentiment analysis
         self.keyverbs = list(pd.read_csv('KeyVerbs.csv')['key_verbs'])

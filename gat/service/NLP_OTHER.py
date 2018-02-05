@@ -14,6 +14,7 @@ from collections import Counter
 from wordcloud import WordCloud, STOPWORDS
 import matplotlib as mpl
 from gensim.summarization import summarize
+from gat.dao import dao
 
 ##NLP functions
 
@@ -54,7 +55,7 @@ def stemmerize(txt_name):
     return ' '.join(results)
 
 def lemmatize(txt_name):
-    nlp=spacy.load("en")
+    nlp = dao.spacy_load_en()
     with open(txt_name, 'r') as myfile:
         article=myfile.read().replace('\n', '')
     results=[]
@@ -68,7 +69,7 @@ def abstract(txt_name):
     return summarize(article,ratio=0.2)
 
 def top20_verbs(txt_name):
-    nlp=spacy.load("en")
+    nlp = dao.spacy_load_en()
     with open(txt_name, 'r') as myfile:
         article=myfile.read().replace('\n', '')
     results=[]
@@ -97,7 +98,7 @@ def top20_verbs(txt_name):
     return "out/nlp/nlp_top20_verbs.png"
     
 def top20_persons(txt_name):
-    nlp=spacy.load("en")
+    nlp = dao.spacy_load_en()
     with open(txt_name, 'r') as myfile:
         article=myfile.read().replace('\n', '')
     parsed_phrase=nlp(article)
@@ -127,7 +128,7 @@ def top20_persons(txt_name):
     return "out/nlp/top20_persons.png"
     
 def top20_locations(txt_name):
-    nlp=spacy.load("en")
+    nlp = dao.spacy_load_en()
     with open(txt_name, 'r') as myfile:
         article=myfile.read().replace('\n', '')
     parsed_phrase=nlp(article)
@@ -157,7 +158,7 @@ def top20_locations(txt_name):
     return "out/nlp/top20_locations.png"
     
 def top20_organizations(txt_name):
-    nlp=spacy.load("en")
+    nlp = dao.spacy_load_en()
     with open(txt_name, 'r') as myfile:
         article=myfile.read().replace('\n', '')
     parsed_phrase=nlp(article)

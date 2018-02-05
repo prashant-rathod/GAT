@@ -16,6 +16,7 @@ import re
 import textacy
 import datetime
 from dateparser import parse
+from gat.dao import dao
 
 
 class SVOSENT(object):
@@ -27,7 +28,7 @@ class SVOSENT(object):
         """
         Initialize
         """
-        self.nlp = spacy.load('en')  # spacy parser
+        self.nlp = dao.spacy_load_en()
         self.sent_detector = data.load('tokenizers/punkt/english.pickle')
         self.analyzer = SentimentIntensityAnalyzer()  # for sentiment analysis
 
