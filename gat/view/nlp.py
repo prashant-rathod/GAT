@@ -32,25 +32,26 @@ def sent():
 	NLP_new_example_file = fileDict.get('NLP_New_Example')
 	filename = ''
 	if(type == "tab-five"):
-		filename = NLP_TO_NETWORK.sentiment_mining(NLP_new_example_file)
+		filename = "f"+NLP_TO_NETWORK.sentiment_mining(NLP_new_example_file)
 	elif (type == "tab-four"):
-		filename = NLP_TO_NETWORK.relationship_mining(NLP_new_example_file)
+		filename = "f"+NLP_TO_NETWORK.relationship_mining(NLP_new_example_file)
 	elif (type == "tab-six"):
-		filename = NLP_OTHER.wordcloud(NLP_new_example_file)
+		filename = "f"+NLP_OTHER.wordcloud(NLP_new_example_file)
 	elif (type == "tab-seven"):
-		filename = NLP_OTHER.stemmerize(NLP_new_example_file)
+		filename = "f"+NLP_OTHER.stemmerize(NLP_new_example_file)
 	elif (type == "tab-eight"):
-		filename = NLP_OTHER.lemmatize(NLP_new_example_file)
+		filename = "f"+NLP_OTHER.lemmatize(NLP_new_example_file)
 	elif (type == "tab-nine"):
-		filename = NLP_OTHER.abstract(NLP_new_example_file)
+		filename = "f"+NLP_OTHER.abstract(NLP_new_example_file)
 	elif (type == "tab-ten"):
-		filename = NLP_OTHER.top20_verbs(NLP_new_example_file)
+		filename = "f"+NLP_OTHER.top20_verbs(NLP_new_example_file)
 	elif (type == "tab-eleven"):
-		filename = NLP_OTHER.top20_persons(NLP_new_example_file)
+		filename = "f"+NLP_OTHER.top20_persons(NLP_new_example_file)
 	elif (type == "tab-twelve"):
-		filename = NLP_OTHER.top20_locations(NLP_new_example_file)
+		filename = "f"+NLP_OTHER.top20_locations(NLP_new_example_file)
 	elif (type == "tab-thirteen"):
-		filename = NLP_OTHER.top20_organizations(NLP_new_example_file)
+		filename = "f"+NLP_OTHER.top20_organizations(NLP_new_example_file)
 	elif (type == "tab-fourteen"):
-		filename = NLP_OTHER.sentence_sentiment_distribution(NLP_new_example_file)
+		filename = "f"+NLP_OTHER.sentence_sentiment_distribution(NLP_new_example_file)
+	print(filename)
 	return jsonify(result=filename)
