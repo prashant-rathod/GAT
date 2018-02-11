@@ -70,12 +70,16 @@
                         <div class="panel-body">
                             Upload text files (.txt, .rtf):<br>
                             <p style="font-size:10px">(Use Ctrl- or Shift-click to select multiple files)</p>
-                            <input type="file" id="NLP_Input_corpus" name="NLP_Input_corpus" multiple>
-                            <hr>
-                            Enter urls to scrape (comma separated):<br>
-                            <input type="text" id="NLP_LDP_terms" name="NLP_LDP_terms">
-                            <hr>
-                            <input type="submit" value="SUBMIT">
+                            <form enctype="multipart/form-data" method="post"
+                                  action="{{ url_for('upload_blueprint.upload', case_num=case_num) }}" name="nlp_file"
+                                  id="nlp_file">
+                                <input type="file" id="NLP_Input_corpus" name="NLP_Input_corpus"> <!-- removed multiple -->
+                                <hr>
+                                Enter urls to scrape (comma separated):<br>
+                                <input type="text" id="NLP_LDP_terms" name="NLP_LDP_terms">
+                                <hr>
+                                <input type="submit" value="SUBMIT">
+                            </form>
                         </div>
                     </div>
                 </div>

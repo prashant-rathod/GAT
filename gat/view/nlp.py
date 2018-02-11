@@ -13,7 +13,9 @@ nlp_blueprint = Blueprint('nlp_blueprint', __name__)
 def jgvis():
 	case_num = request.args.get('case_num', None)
 	fileDict = dao.getFileDict(case_num)
-	NLP_new_example_file = fileDict.get('NLP_New_Example')
+	NLP_new_example_file = fileDict.get('NLP_Input_corpus')
+	if NLP_new_example_file == None:
+		NLP_new_example_file = fileDict.get('NLP_New_Example')
 	jgdata, graph = NLP_TO_NETWORK.sentiment3D(NLP_new_example_file)
 	systemMeasures={}
 	systemMeasures["Description"] = "Description"
@@ -29,7 +31,9 @@ def sent():
 	print(type)
 	case_num = request.args.get('case_num', None)
 	fileDict = dao.getFileDict(case_num)
-	NLP_new_example_file = fileDict.get('NLP_New_Example')
+	NLP_new_example_file = fileDict.get('NLP_Input_corpus')
+	if NLP_new_example_file == None:
+		NLP_new_example_file = fileDict.get('NLP_New_Example')
 	filename = ''
 	if(type == "tab-five"):
 		filename = "f"+NLP_TO_NETWORK.sentiment_mining(NLP_new_example_file)

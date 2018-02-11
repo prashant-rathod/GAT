@@ -33,14 +33,17 @@ def storefile(inFile):
 
 
 def storeNLP(file_list):
-    if len(file_list) == 0 or file_list[0].filename == '':
+    # at the moment only accepts one file as opposed to multiple
+    if file_list == None:# or file_list[0].filename == '':
         return
     source_dir = tempfile.mkdtemp(dir=tempdir) + '/'
-    for f in file_list:
-        f.save(source_dir + f.filename)
+    filePath = None
+    #for f in file_list:
+    file_list.save(source_dir + file_list.filename)
+    filePath = source_dir + file_list.filename
     # this line is necessary because of how AWS creates default permissions for newly created files and folders
     os.chmod(source_dir, 0o755)
-    return source_dir
+    return filePath
 
 
 def storeGSA(file_list):
@@ -60,7 +63,7 @@ def storeGSA(file_list):
     return shapefile, dbf
 
 
-def checkExtensions(case_num):
+def checkExtensionsGSA(case_num):
     errors = []
     fileDict = dao.getFileDict(case_num)
 
@@ -75,21 +78,23 @@ def checkExtensions(case_num):
             if not ext_in:
                 errors.append("Error: please upload shp, shx, and dbf file for GSA.")
                 break
+    return errors
 
+def checkExtensionsSNA(case_num):
+    errors = []
+    fileDict = dao.getFileDict(case_num)
     sna_file = fileDict['SNA_Input']
     if sna_file != None:
         if not sna_file.endswith(('.xls', '.xlsx')):
             errors.append("Error: please upload xls OR xlsx file for SNA.")
+    return errors
 
-    nlp_file = fileDict['NLP_Input_LDP']
-    # terms = fileDict.get('NLP_LDP_terms')
-    # if nlp_file != None:
-    #    if not nlp_file.endswith('.txt'):
-    #        errors.append("Error: please upload txt file for NLP Lexical Dispersion Plot.")
-
-    sentiment_file = fileDict["NLP_Input_Sentiment"]
-    if sentiment_file != None:
-        if not sentiment_file.endswith('.txt'):
-            errors.append("Error: please upload txt file for Sentiment Analysis.")
+def checkExtensionsNLP(case_num):
+    errors = []
+    fileDict = dao.getFileDict(case_num)
+    nlp_file = fileDict['NLP_Input_corpus']
+    if nlp_file != None:
+        if not nlp_file.endswith('.txt'):
+            errors.append("Error: please upload txt file for NLP.")
 
     return errors
