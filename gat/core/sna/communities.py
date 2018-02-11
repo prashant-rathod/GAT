@@ -1,6 +1,6 @@
 import networkx as nx
 import scipy as sp
-from community import community_louvain#best_partition
+from community import best_partition
 from collections import defaultdict
 
 
@@ -29,7 +29,7 @@ def find_subgraph(G, centralNode, subGraph, depth):
 
 def louvain(G, weightKey='emoWeight', centralities=None):
     # use partition argument to start the algorithm with a particular partition, i.e. the find_cliques method?
-    partition = community_lovain.best_partition(G, weight=weightKey)
+    partition = best_partition(G, weight=weightKey)
     partitions = defaultdict(list)
     partitionLists = []
     centralNodes = []
