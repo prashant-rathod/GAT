@@ -3,15 +3,17 @@ import os
 import shutil
 import zipfile
 from gat.nltk.Memory_Tests.createExpected import create_expected
+
 file_path = "/home/daniel/nltk_data/corpora/"
 corpora_actual = [x for x in os.listdir(file_path) if x[-4:] != '.zip']
 corpora_zips = [x[:-4] for x in os.listdir(file_path) if x[-4:] == '.zip']
-f = open(str('gat/nltk/Memory_Tests/removed_corpora/results.txt'), 'w+')
+f = open(str('gat/nltk/Memory_Tests/results.txt'), 'w+')
 
 for corpus in corpora_actual:
     print(corpus)
 
     shutil.rmtree(file_path + corpus)
+    # update list after removing one corpus
     corpora_actual = [x for x in os.listdir(file_path) if x[-4:] != '.zip']
 
     difference = list(set(corpora_zips) - set(corpora_actual))
@@ -20,7 +22,8 @@ for corpus in corpora_actual:
     try:
         create_expected(corpus)
 
-        result = filecmp.cmp('gat/nltk/Memory_Tests/removed_corpora/' + corpus + ".txt",'gat/nltk/Memory_Tests/removed_corpora/expected.txt')
+        result = filecmp.cmp('gat/nltk/Memory_Tests/removed_corpora/' + corpus + ".txt",
+                             'gat/nltk/Memory_Tests/expected.txt')
     except Exception as e:
         result = e
     f.write(corpus + " " + str(result) + "\n")
