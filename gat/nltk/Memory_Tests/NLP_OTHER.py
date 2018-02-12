@@ -228,10 +228,11 @@ def sentence_sentiment_distribution(txt_name):
 
     # add labels
     plt.xticks(indexes + bar_width, labels, rotation=45)
-    plt.show()
+    #plt.show()
     plt.savefig("out/nlp/sentence_sentiment_distribution.png", dpi=100)
-    return "out/nlp/sentence_sentiment_distribution.png"
-    #return sentiments
+    plt.close()
+    #return "out/nlp/sentence_sentiment_distribution.png"
+    return counts
 
 
 def quote_extractor(text_file):
