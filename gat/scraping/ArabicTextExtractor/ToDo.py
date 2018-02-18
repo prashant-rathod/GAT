@@ -120,5 +120,5 @@ for rect in rectList:
 #TODO: Figure out how to include the dots (maybe if something is smaller than a certain size
 #Todo: it gets added to the closest contour that can be found)
 
-cv2.imshow("Bois", img1)
+cv2.imshow("Boxed", img1)
 cv2.waitKey(0)
