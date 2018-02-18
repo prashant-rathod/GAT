@@ -34,17 +34,19 @@ def storefile(inFile):
 
 def storeNLP(file_list):
     # at the moment only accepts one file as opposed to multiple
-    if file_list == None:# or file_list[0].filename == '':
+    if file_list == None or file_list[0].filename == '':
         return
     source_dir = tempfile.mkdtemp(dir=tempdir) + '/'
-    filePath = None
-    #for f in file_list:
-    file_list.save(source_dir + file_list.filename)
-    filePath = source_dir + file_list.filename
+    filePath = source_dir+'NLPFile.txt'
+    s = open(source_dir+'NLPFile.txt', 'w')
+    for f in file_list:
+        a = str(f.read())
+        s.write(a)
+        s.write(" ")
     # this line is necessary because of how AWS creates default permissions for newly created files and folders
+    s.close()
     os.chmod(source_dir, 0o755)
     return filePath
-
 
 def storeGSA(file_list):
     # saves everything but only returns the shapefile

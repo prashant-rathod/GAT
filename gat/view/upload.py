@@ -49,7 +49,7 @@ def upload():
             return redirect(url_for('gsa_blueprint.shp_vars_get', case_num=case_num))
     
     if request.files.get('NLP_Input_corpus') != None:
-        fileDict['NLP_Input_corpus'] = io_service.storeNLP(request.files.get('NLP_Input_corpus'))
+        fileDict['NLP_Input_corpus'] = io_service.storeNLP(request.files.getlist('NLP_Input_corpus'))
         fileDict['NLP_Input_LDP'] = io_service.storefile(request.files.get('NLP_Input_LDP'))
         fileDict['NLP_Input_Sentiment'] = io_service.storefile(request.files.get('NLP_Input_Sentiment'))
         errors = errors + io_service.checkExtensionsNLP(case_num)
