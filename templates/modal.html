@@ -1,6 +1,6 @@
-<script type="text/javascript" src="../static/js/jquery-1.11.1.min.js"></script>
+<!--<script type="text/javascript" src="../static/js/jquery-1.11.1.min.js"></script>
 <script type="text/javascript" src="../static/js/bootstrap.min.js"></script>
-<script type="text/javascript" src="../static/js/custom.frontend.js"></script>
+<script type="text/javascript" src="../static/js/custom.frontend.js"></script>-->
 <script>
     function show1() {
         $('#nlp_modal').modal('show');
@@ -24,6 +24,7 @@
         window.open(link);
     }
 </script>
+
 <style>
     body.modal-open .blur {
         -webkit-filter: blur(20px);
@@ -58,6 +59,7 @@
 {#                                Mosul</a>#}
 {#                            <br/>#}
                             <a href="{{ url_for('sample_blueprint.nlp_sample', sample_path = 'new_nlp_example', case_num=case_num) }}">Iranian Influence</a>
+
                         </div>
                     </div>
 
@@ -165,6 +167,12 @@
                             <a href="{{ url_for('sample_blueprint.gsa_sample', sample_path = 'iraq', case_num=case_num) }}">
                                 Iranian Influence</a>
                             <br/>
+                            <a href="{{ url_for('sample_blueprint.gsa_sample', sample_path = 'geonet', case_num=case_num) }}">
+                                Crimes on Streets</a>
+                            <br/>
+                            <a href="{{ url_for('sample_blueprint.gsa_sample', sample_path = 'emoSpace', case_num=case_num) }}">
+                                Emotional Space</a>
+                            <br/>
                             <a href="{{ url_for('static', filename = 'sample/gsa/template.csv', case_num=case_num) }}"
                                download>Download Template</a>
                         </div>
@@ -177,19 +185,21 @@
 
                         <div class="panel-body">
 						<span class="inputsection">
-
+                        <!--
                             <form enctype="multipart/form-data" method="post"
                                   action="{{ url_for('upload_blueprint.upload', case_num=case_num) }}" name="sna_file"
                                   id="sna_file">
-
-                                Upload .csv file for GSA:<br>
-
-                                <input type="file" id="GSA_Input_CSV" name="GSA_Input_CSV" size=20><br>
+                            -->
+                            <form enctype="multipart/form-data" method="post" action="{{url_for('upload_blueprint.upload', case_num=case_num)}}" name="gsa_file" id="gsa_file">
 
                                 Upload 3 files (.shp, .shx, .dfb) for GSA:<br>
 
 							    <input type="file" id="GSA_Input_map" name="GSA_Input_map" size=20
                                        multiple><br>
+
+                                <!--Upload .csv file for GSA:<br>
+
+                                <input type="file" id="GSA_Input_CSV" name="GSA_Input_CSV" size=20><br>-->
 
                                 <input type="submit" value="SUBMIT">
 

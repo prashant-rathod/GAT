@@ -44,7 +44,7 @@ def storeNLP(file_list):
 
 
 def storeGSA(file_list):
-    # saves everything but only returns the shapefile. Nice
+    # saves everything but only returns the shapefile
     if len(file_list) == 0 or file_list[0].filename == '':
         return
     source_dir = tempfile.mkdtemp(dir=tempdir) + '/'
@@ -53,18 +53,16 @@ def storeGSA(file_list):
         f.save(source_dir + f.filename)
         if f.filename.endswith(".shp"):
             shapefile = source_dir + f.filename
+        if f.filename.endswith(".dbf"):
+            dbf = source_dir + f.filename
     # see previous comment
     os.chmod(source_dir, 0o755)
-    return shapefile
+    return shapefile, dbf
 
 
 def checkExtensions(case_num):
     errors = []
     fileDict = dao.getFileDict(case_num)
-    gsa_csv_file = fileDict['GSA_Input_CSV']
-    if gsa_csv_file != None:
-        if not gsa_csv_file.endswith('.csv'):
-            errors.append("Error: please upload csv file for GSA.")
 
     gsa_file_list = fileDict['GSA_file_list']
     exts = ['.shp', '.shx', '.dbf']

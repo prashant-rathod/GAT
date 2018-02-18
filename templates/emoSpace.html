@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- Numeric.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/numeric/1.2.6/numeric.min.js"></script>
+    <!-- Plotly.js -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+
+<body>
+
+<div>
+        <h1>Emotion Propensities</h1>
+        <div id="myDiv">
+            <div id="labels">
+                <p id="joy">Joy</p>
+                <p id="trust">Trust</p>
+                <p id="anger">Anger</p>
+                <p id="surprise">Surprise</p>
+                <p id="sadness">Sadness</p>
+                <p id="disgust">Disgust</p>
+                <p id="fear">Fear</p>
+                <p id="anticipation">Anticipation</p>
+            </div>
+            <!-- Plotly chart will be drawn inside this DIV -->
+        </div>
+
+    </div>
+<script>
+    <!-- JAVASCRIPT CODE GOES HERE -->
+</script>
+</body>
+
+<div id="container1"></div>
+
+<script type="text/javascript">
+
+    var A_val = {{actors['A']|safe}}
+    var B_val = {{actors['B']|safe}}
+
+    var actorA = {
+        //r: [0.5, 0.6, 0.4, 0.1],
+        r: A_val,
+        t: [-90, -45, 0, 45],
+        mode: 'markers',
+        name: 'Object A',
+        marker: {
+            color: 'rgb(102,166,30)',
+            size: 200,
+            line: {color: 'white'},
+            opacity: 0.7
+        },
+        type: 'scatter'
+    };
+
+    var actorB = {
+        //r: [0.8, 0.2, 0.6, 0.6],
+        r: B_val,
+        t: [-90, -45, 0, 45],
+        mode: 'markers',
+        name: 'Object B',
+        marker: {
+            color: 'rgb(231,41,138)',
+            size: 200,
+            line: {color: 'white'},
+            opacity: 0.7
+        },
+        type: 'scatter'
+    };
+
+    var data = [actorA, actorB];
+
+    var layout = {
+        height: 600,
+        width: 600,
+        font: {
+            size: 15
+        },
+        plot_bgcolor: 'rgb(223, 223, 223)',
+        radialAxis: {
+            domain: [0,1],
+            orientation: -90
+        },
+        angularaxis: {
+            tickcolor: 'rgb(253,253,253)',
+            ticksCount: 8,
+            labelsVisible: false
+        }
+    };
+
+    Plotly.plot('myDiv', data, layout);
+
+</script>
+
+<style>
+    {#body{#}
+    {#    position: relative;#}
+    {#    font-family: Arial;#}
+    {#}#}
+
+    {#.overlay{#}
+    {#    position: absolute;#}
+    {#    top: 0;#}
+    {#    left: 0;#}
+    {#    width: 100%;#}
+    {#    height: 100%;#}
+    {#    z-index: 10;#}
+    {#}#}
+
+    #labels{
+        font-size: 20px;
+        color: #999999;
+        position: absolute;
+        z-index: 1;
+    }
+
+    #joy{
+        position: absolute;
+        top: -580px;
+        left: 260px;
+    }
+
+    #trust{
+        position: absolute;
+        top: -140px;
+        left: 450px;
+    }
+
+    #anger{
+        position: absolute;
+        top: -320px;
+        left: 520px;
+    }
+
+    #surprise{
+        position: absolute;
+        top: -495px;
+        left: 425px;
+    }
+
+    #sadness{
+        position: absolute;
+        top: -60px;
+        left: 235px;
+    }
+
+    #disgust{
+        position: absolute;
+        top: -140px;
+        left: 45px;
+    }
+
+    #fear{
+        position: absolute;
+        top: -325px;
+        left: 0;
+    }
+
+    #anticipation{
+        position: absolute;
+        top: -500px;
+        left: 5px;
+    }
+
+    h1{
+        color: white;
+        text-align: center;
+        font-size: 20px;
+    }
+
+</style>
+</html>
