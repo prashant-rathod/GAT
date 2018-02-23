@@ -32,8 +32,8 @@ def upload():
     # the strings used to index request.files come from the HTML name of the input field
     # see upload.html
     files = io_service.storeGSA(request.files.getlist('GSA_Input_map'))
-    fileDict['GSA_Input_SHP'] = files[0]
-    fileDict['GSA_Input_DBF'] = files[1]
+    fileDict['GSA_Input_SHP'] = files[0] if files is not None and len(files) == 2 else None
+    fileDict['GSA_Input_DBF'] = files[1] if files is not None and len(files) == 2 else None
     fileDict['GSA_file_list'] = request.files.getlist('GSA_Input_map')
     fileDict['NLP_Input_corpus'] = io_service.storeNLP(request.files.getlist('NLP_Input_corpus'))
     fileDict['NLP_Input_LDP'] = io_service.storefile(request.files.get('NLP_Input_LDP'))
