@@ -52,7 +52,7 @@
 
                     <div class="panel panel-default">
                         <div class="panel-heading">
-                            <h4 class="panel-title">Sample Cases</h4>
+                            <h4 class="panel-title">Sample NLP Cases</h4>
                         </div>
                         <div class="panel-body">
 {#                            <a href="{{ url_for('sample_blueprint.nlp_sample', sample_path = 'isil', case_num=case_num) }}">Capturing#}
@@ -61,11 +61,18 @@
                             <a href="{{ url_for('sample_blueprint.nlp_sample', sample_path = 'new_nlp_example', case_num=case_num) }}">Iranian Influence</a>
 
                         </div>
+                        <div class="panel-heading">
+                            <h4 class="panel-title">Sample TextNets Cases</h4>
+                        </div>
+                        <div class="panel-body">
+                            <a href="{{ url_for('sample_blueprint.textnets_sample', sample_path = 'new_textnets_example', case_num=case_num) }}">State of the Union</a>
+
+                        </div>
                     </div>
 
                     <div class="panel panel-default">
                         <div class="panel-heading">
-                            <h4 class="panel-title">Data Input</h4>
+                            <h4 class="panel-title">NLP Data Input</h4>
                         </div>
                         <div class="panel-body">
                             Upload text files (.txt, .rtf):<br>
@@ -74,6 +81,16 @@
                             <hr>
                             Enter urls to scrape (comma separated):<br>
                             <input type="text" id="NLP_LDP_terms" name="NLP_LDP_terms">
+                            <hr>
+                            <input type="submit" value="SUBMIT">
+                        </div>
+                        <div class="panel-heading">
+                            <h4 class="panel-title">Textnets Data Input</h4>
+                        </div>
+                        <div class="panel-body">
+                            Upload text files (.csv):<br>
+                            <p style="font-size:10px">(Use Ctrl- or Shift-click to select multiple files)</p>
+                            <input type="file" id="textnets_input" name="textnets_input" multiple>
                             <hr>
                             <input type="submit" value="SUBMIT">
                         </div>

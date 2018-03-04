@@ -35,6 +35,15 @@ def nlp_sample(sample_path):
         fileDict['NLP_Input_corpus'] = url_for('static', filename="sample/nlp/" + sample_path + '/')[1:]
     return redirect(url_for('visualize_blueprint.visualize', case_num=case_num))
 
+@sample_blueprint.route('/textnets/<path:sample_path>')
+def textnets_sample(sample_path):
+    case_num = request.args.get('case_num', None)
+    fileDict = dao.getFileDict(case_num)
+    if sample_path == 'new_textnets_example':
+        fileDict['textnets_New_Example'] = 'static/sample/nlp/textnets_new_example.html'
+    else:
+        fileDict['textnets_input'] = url_for('static', filename="sample/nlp/" + sample_path + '/')[1:]
+    return redirect(url_for('textnets_blueprint.textnetviz', case_num=case_num))
 
 @sample_blueprint.route('/sna/<path:sample_path>')
 def sna_sample(sample_path):
