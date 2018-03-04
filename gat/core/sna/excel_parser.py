@@ -3,6 +3,7 @@ import xlrd
 # Read xlsx file and save the header and all the cells, each a dict with value and header label
 # Input: xlsx file, sheet
 def readFile(subAttrs, excel_file, sheet):
+
     workbook = xlrd.open_workbook(excel_file)
     sh = workbook.sheet_by_name(sheet)
     header = [str(sh.cell(0, col).value).strip("\n") for col in range(sh.ncols)]
@@ -38,6 +39,7 @@ def readFile(subAttrs, excel_file, sheet):
                 personal = False
                 continue
             consolidatedHeader.append((feature,personal))
+            
     return consolidatedHeader, list
 
 def buildJSON(excel_file):

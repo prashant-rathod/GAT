@@ -220,7 +220,6 @@
       jgraph.create('.graph', {directed: true, edgeSize: .05, arrowSize:.5, defaultEdgeColor:0x808080});
       try {
         jgraph.draw({{jgdata|safe}});
-        //console.log({{jgdata}});
       }
       catch (err) {
        console.log(err) // prevent page break on drawing error
@@ -239,9 +238,6 @@
           if (object.name !== ""){
             $d.html('<p><b>' + object.name + '</b></p>');
           }
-        }
-        if(object.img !== undefined){
-          $d.html('<p><b>' + object.name + '</b></p>'+'<img style="width:50px" src="'+object.img+'"</img>');
         }
           $d.show();
           object.defaultMaterial = object.material;
@@ -292,6 +288,7 @@
 
       // return edge data on edge click, including propensities
       jgraph.onClick(function (edge) {
+        console.log(edge)
         if (attributeFlag == false) {
           console.log("edge.name",edge.name)
           if (edge.name != "" && edge.geometry.type === "CylinderGeometry") {
