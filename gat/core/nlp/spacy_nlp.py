@@ -9,12 +9,14 @@ import spacy
 import textacy
 from collections import defaultdict
 from networkx.readwrite import json_graph
+from gat.dao import dao
 
 ########### SpaCy Pre-Processing Methods #############
 
 def loadModel(language):
+	#Only loads english.
 	#Loads SpaCy language model. Separate because computationally expensive.
-	return spacy.load(language)
+	return dao.spacy_load_en()
 
 def pipeline(model, texts):
 	#Builds an efficient pipeline for tagging, dependency parsing, and NER. Linear time with number of words in text.

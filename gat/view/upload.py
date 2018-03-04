@@ -31,7 +31,6 @@ def upload():
     # here the use of fileDict is probably more clear
     # the strings used to index request.files come from the HTML name of the input field
     # see upload.html
-    
     errors = []
 
     fileDict['research_question'] = request.form.get('research_question')

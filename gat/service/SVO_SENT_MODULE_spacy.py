@@ -13,6 +13,7 @@ from nltk.sentiment.vader import SentimentIntensityAnalyzer
 from dateparser import parse
 import time
 from gat.service import file_io
+from gat.dao import dao
 
 
 class SVOSENT(object):
@@ -24,7 +25,7 @@ class SVOSENT(object):
         """
         Initialize 
         """
-        self.nlp = spacy.load('en')  # spacy parser
+        self.nlp = dao.spacy_load_en()
         self.sent_detector = data.load('tokenizers/punkt/english.pickle')
         self.analyzer = SentimentIntensityAnalyzer()  # for sentiment analysis
         self.keyverbs = list(pd.read_csv('gat/service/nlp_resources/KeyVerbs.csv')['key_verbs'])
