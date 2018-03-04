@@ -92,7 +92,7 @@
                         View
                       </a>
                     </td>
-                </tr>  
+                </tr>
                 {% endfor -%}
             </table>
             {% endif -%}
@@ -220,6 +220,7 @@
       jgraph.create('.graph', {directed: true, edgeSize: .05, arrowSize:.5, defaultEdgeColor:0x808080});
       try {
         jgraph.draw({{jgdata|safe}});
+        //console.log({{jgdata}});
       }
       catch (err) {
        console.log(err) // prevent page break on drawing error
@@ -231,6 +232,7 @@
       $d.hide();
       hovered = jgraph.makeMaterial(0xb7ecff);
       onEnter = function (object) {
+        console.log(object)
         if (object.geometry.type === "SphereGeometry") {
           $d.html('<p><b>' + object.name + '</b></p>');
         } else {
@@ -238,7 +240,9 @@
             $d.html('<p><b>' + object.name + '</b></p>');
           }
         }
-          console.log(object);
+        if(object.img !== undefined){
+          $d.html('<p><b>' + object.name + '</b></p>'+'<img style="width:50px" src="'+object.img+'"</img>');
+        }
           $d.show();
           object.defaultMaterial = object.material;
           object.material = hovered;
@@ -336,6 +340,9 @@
       //update info displays with node data
       update = function(nodeDict) {
         console.log("NodeDict:",nodeDict)
+        if (nodeDict['img'] !== null){
+          $d.html('<p><b>' + nodeDict['name'] + '</b></p>'+'<img style="width:50px" src="'+nodeDict['img']+'"</img>');
+        }
         $("#delete").val(nodeDict['name']);
         $("#addNodeFormName").val(nodeDict['name']);
         $("#nodeMeasureInfo").empty()

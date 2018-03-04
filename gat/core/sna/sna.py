@@ -47,18 +47,28 @@ class SNA():
         self.classList = ['Agent','Organization','Audience','Role','Event','Belief','Symbol','Knowledge','Task','Actor']
         self.attrSheet = attrSheet
         self.sent_outputs = []
+        self.imageMap = {}
 
     def createNodeList(self, nodeSet):
+        # creating image map
+        d = {}
+        for row in self.attrList:
+            for node in row:
+                if node['header'] == 'ID':
+                    d[node['val']] = row[len(row)-1]['val']
+        self.imageMap = d
         for row in self.list:
             for node in row:
                 if node['header'] in nodeSet and node['val'] != "":
+                    #if node['val'] not in imageMap:
+                    #print(node['header'])
+                        #imageMap.append((node['val'], ))
                     # strip empty cells
                     self.G.add_node(node['val'], block=node['header'])
         self.nodeSet = nodeSet
         self.nodes = nx.nodes(self.G)
 
     def loadAttributes(self):
-
         for row in self.attrList:
             nodeID = row[0]['val']
             for cell in row[1:]:
@@ -620,6 +630,10 @@ class SNA():
 
     ## Getters ##
 
+    def getImage(self, val):
+        if val in self.imageMap:
+            return self.imageMap[val]
+
     def getNodes(self):
         return self.nodes
 
@@ -772,6 +786,7 @@ class SNA():
     # color: {"0xgggggg", "0xaaaaaa"} etc. (Takes a hexadecimal "String").
     # returns a json dictionary
     def create_json(self, classes, color, graph=None):
+        print(self.imageMap)
         data = {}
         edges = []
         nodes_property = {}

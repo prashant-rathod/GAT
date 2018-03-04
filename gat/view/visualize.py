@@ -70,7 +70,7 @@ def visualize():
     relations = None
     if "emotionalSpace" in fileDict:
         actors, relations = gsa_service.emoSpace(case_num=case_num)
-
+    nlp_summary = ''
     if NLP_new_example_file is not None:
         nlp_summary = 'Enable'
 
