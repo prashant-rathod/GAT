@@ -5,9 +5,7 @@ from rpy2.robjects import pandas2ri
 #Assume they pass in a csv, first column is text, the group metadata is in second column
 
 pandas2ri.activate()
-def textnetAllText(csvPath):
-
-    #TODO: Add functionality to choose different groupvariables
+def textnetAllText(csvPath, textColumnName = '', groupVarColumnName=''):
     rstring = '''
         function(sotu){
             dyn.load('/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64/server/libjvm.so')
@@ -45,6 +43,8 @@ def textnetAllText(csvPath):
     '''
     rfunc = robjects.r(rstring)
     dataList = pd.read_csv(csvPath)
+    if textColumnName!='' and groupVarColumnName!='':
+        dataList = dataList[[textColumnName, groupVarColumnName]]
     rfunc(dataList)
 
-textnetAllText("/home/cheesecake/Downloads/State-of-the-Union-Addresses.csv")
+textnetAllText("/home/cheesecake/Downloads/State-of-the-Union-Addresses.csv", 'Text', 'Age')
