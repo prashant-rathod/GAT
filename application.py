@@ -16,6 +16,7 @@ from gat.view.smart_search import smart_search_blueprint
 from gat.view.nlp import nlp_blueprint
 from gat.view.textnets import textnets_blueprint
 
+
 ''' Before running:
         Make sure you have flask and jinja2 installed
         among other things
@@ -83,6 +84,7 @@ application.register_blueprint(smart_search_blueprint)
 application.register_blueprint(nlp_blueprint)
 application.register_blueprint(textnets_blueprint)
 
+
 #################
 #### Running ####
 #################
@@ -90,5 +92,5 @@ application.register_blueprint(textnets_blueprint)
 application.secret_key = 'na3928ewafds'
 
 if __name__ == "__main__":
-    application.debug = False
+    application.debug = True
     application.run(host='127.0.0.1', threaded=False, port=5000)
