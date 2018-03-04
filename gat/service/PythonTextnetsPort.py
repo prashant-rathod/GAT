@@ -47,4 +47,4 @@ def textnetAllText(csvPath, textColumnName = '', groupVarColumnName=''):
         dataList = dataList[[textColumnName, groupVarColumnName]]
     rfunc(dataList)
 
-textnetAllText("/home/cheesecake/Downloads/State-of-the-Union-Addresses.csv", 'Text', 'Age')
+textnetAllText("/home/cheesecake/Downloads/State-of-the-Union-Addresses.csv", 'Text', 'President')
