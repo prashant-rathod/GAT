@@ -40,7 +40,7 @@ def textnets_sample(sample_path):
     case_num = request.args.get('case_num', None)
     fileDict = dao.getFileDict(case_num)
     if sample_path == 'new_textnets_example':
-        fileDict['textnets_New_Example'] = 'static/sample/nlp/textnets_new_example.html'
+        fileDict['textnets_New_Example'] = 'static/sample/nlp/State-of-the-Union-Addresses.csv'
     else:
         fileDict['textnets_input'] = url_for('static', filename="sample/nlp/" + sample_path + '/')[1:]
     return redirect(url_for('textnets_blueprint.textnetviz', case_num=case_num))
