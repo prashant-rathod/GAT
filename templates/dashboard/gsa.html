@@ -1,79 +1,55 @@
-{% if error %}
-Note: If you uploaded shapefiles for GSA analysis and nothing is displayed, then it is possible that the generated
-map or the provide CSV has characters/letters that our tool cannot understand.
+{% if error %} Note: If you uploaded shapefiles for GSA analysis and nothing is displayed, then it is possible that the
+    generated map or the provide CSV has characters/letters that our tool cannot understand. {% elif GSA_sample %}
+    <div id="gsa-tile" class="card col-md-4 resize-drag-outer" style="background-color: rgba(69,90,100,1);" id="GSA Visualization Window">
+        <div class="card-title resize-drag">
+            <span class="window-title">GSA</span>
+            <span class="window-controls">
+                    <i class="btn btn-hide fa fa-window-minimize"
+                       onclick="handleWindowResizeClick('gsa-card-body',this)"></i>
+                    <i class="btn btn-hide fa fa-window-maximize"
+                       onclick="maximizeTile('gsa-tile',this)"></i>
+                    <i class="btn btn-close fa fa-window-close-o"
+                       onclick="document.getElementById('gsa-tile').style.display='none'"></i>
+            </span>
+        </div>
 
-
-{% else %}
-  <div class="output-window resize-drag-outer" id="GSA Visualization Window" style="width: 50%; heigth: 50%">
-    <div class="output-button-bar resize-drag">
-      <span class="left-span">
-        <i class="btn btn-close fa fa-window-close-o"
-                   onclick="document.getElementById('GSA Visualization Window').style.display='none'"></i>
-
-        <i class="btn btn-hide fa fa-window-minimize"
-                   onclick="handleWindowResizeClick('GSA Visualization',this)"></i>
-      </span>
-      <span class="right-span"><b>GSA Visualization</b></span>
+        <div class="card-body" id="gsa-card-body">
+            <div id="GSA Visualization" class="visual-output" >
+                <span class="right-span"><b>Visual Output</b></span>
+            </br>
+                {% if GSA_sample %}
+                    <a href="{{ url_for('gsa_blueprint.reg', case_num = case_num) }}">Click here for regionalization
+                        visualization</a> {% endif %} {% if actors %}
+                {% include "emoSpace.html" %} {% elif geoNet %} {% include "network.html" %} {% elif gsaCSV %}
+                {% include "kartograph.html" %} {% endif %}
+            </div>
+            <div id="GSA Data" class="statistical-output">
+                <span class="right-span"><b>Statistical Output</b></span>
+                {% if GSA_sample %}
+                    <p id="gsa_year" style="font-weight:bold;">Autocorrelation Statistics:</p>
+                    <p id="local_autocorrelation">Local Autocorrelation: {{ auto[0] }}</p>
+                    <p id="global_autocorrelation">Global Autocorrelation: {{ auto[1] }}</p><br>
+                    <p><b>Spatial Dynamics Statistics</b></p>
+                    <p>Transition Counts:<br> {% for row in sp_dyn[0] %}{{ row }}<br>{% endfor %}</p>
+                    <p>Transition Probabilities:<br> {% for row in sp_dyn[1] %}{{ row }}<br>{% endfor %}</p>
+                    {% if sp_dyn[2] != None %}
+                        <p>Steady State Distributions:<br> {% for row in sp_dyn[2] %}{{ row }}<br>{% endfor %}
+                        </p>
+                    {% endif %}
+                    <p>Mean Passage Time:<br> {% for row in sp_dyn[3] %}{{ row }}<br>{% endfor %}</p>
+                {% endif %} {% if geoNet %}
+                <a>Click on the edge of network for more information</a>
+                <p style="font-weight:bold;">Geonetwork Statistics:</p>
+                <p>Location: Mesa, Arizona</p>
+                <p>Average Number of Crime on the street: {{ auto[1] }}</p><br> {% endif %} {% if actors %}
+                {% for i in relations.keys() %}
+                    <p style="font-weight:bold;">Relations between {{ i }}</p>
+                    <p>Money: {{ relations[i][0] }}</p>
+                    <p>Belief: {{ relations[i][1] }}</p>
+                    <p>Symbol: {{ relations[i][2] }}</p>
+                    <p>Info: {{ relations[i][3] }}</p>
+                {% endfor %} {% endif %}
+            </div>
+        </div>
     </div>
-    <div class="output" id="GSA Visualization">
-
-        {% if GSA_sample %}
-        <a href="{{url_for('gsa_blueprint.reg', case_num = case_num)}}">Click here for regionalization
-            visualization</a>
-        {% endif %}
-
-        {% if actors %}
-            {% include "emoSpace.html" %}
-        {% elif geoNet %}
-            {% include "network.html" %}
-        {% elif gsaCSV %}
-            {% include "kartograph.html" %}
-        {% endif %}
-
-    </div>
-  </div>
-  <div class="output-window resize-drag-outer" id="GSA Data Window">
-    <div class="output-button-bar resize-drag">
-      <span class="left-span">
-        <i class="btn btn-close fa fa-window-close-o"
-                   onclick="document.getElementById('GSA Data Window').style.display='none'"></i>
-
-        <i class="btn btn-hide fa fa-window-minimize"
-                   onclick="handleWindowResizeClick('GSA Data',this)"></i>
-      </span>
-      <span class="right-span"><b>GSA Data</b></span>
-    </div>
-    <div class="output" id="GSA Data">
-      {% if GSA_sample %}
-        <p id="gsa_year" style="font-weight:bold;">Autocorrelation Statistics:</p>
-        <p id="local_autocorrelation">Local Autocorrelation: {{ auto[0] }}</p>
-        <p id="global_autocorrelation">Global Autocorrelation: {{ auto[1] }}</p><br>
-        <p><b>Spatial Dynamics Statistics</b></p>
-        <p>Transition Counts:<br> {% for row in sp_dyn[0] %}{{row}}<br>{% endfor %}</p>
-        <p>Transition Probabilities:<br> {% for row in sp_dyn[1] %}{{row}}<br>{% endfor %}</p>
-        {% if sp_dyn[2] != None %}
-        <p>Steady State Distributions:<br> {% for row in sp_dyn[2] %}{{row}}<br>{% endfor %}</p>
-        {% endif %}
-        <p>Mean Passage Time:<br> {% for row in sp_dyn[3] %}{{row}}<br>{% endfor %}</p>
-      {% endif %}
-
-        {% if geoNet %}
-            <a>Click on the edge of network for more information</a>
-            <p style="font-weight:bold;">Geonetwork Statistics:</p>
-            <p>Location: Mesa, Arizona</p>
-            <p>Average Number of Crime on the street: {{ auto[1] }}</p><br>
-        {% endif %}
-
-        {% if actors %}
-
-            {% for i in relations.keys() %}
-                <p style="font-weight:bold;">Relations between {{ i }}</p>
-                <p>Money: {{ relations[i][0] }}</p>
-                <p>Belief: {{ relations[i][1] }}</p>
-                <p>Symbol: {{ relations[i][2] }}</p>
-                <p>Info: {{ relations[i][3] }}</p>
-            {% endfor %}
-        {% endif %}
-    </div>
-  </div>
 {% endif %}

@@ -2,108 +2,154 @@
 <html>
 <head>
     <title>Analysis output</title>
-		{% include "header.html" -%}
-    <link href="{{url_for('static', filename='css/vizStyle.css')}}" rel="stylesheet">
-    <script type="text/javascript" src="{{url_for('static', filename='js/vizScript.js')}}"></script>
-    <script type="text/javascript" src="{{url_for('static', filename='js/resilience.js')}}"></script>
+    {% include "header.html" -%}
+    <link href="{{ url_for('static', filename='css/vizStyle.css') }}" rel="stylesheet">
+    <script type="text/javascript" src="{{ url_for('static', filename='js/vizScript.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/resilience.js') }}"></script>
     <script type="text/javascript">
-	  function get(id) {
-			return document.getElementById(id);
-		}
-		function openHelp(source){
-			get("help").style.display = "block";
-		}
-		function closeHelp(source) {
-			get("help").style.display = "none";
-		}
-		// target elements with the "draggable" class
-		interact('.draggable')
-		  .draggable({
-		    // enable inertial throwing
-		    inertia: true,
-		    // keep the element within the area of it's parent
-		    restrict: {
-		      restriction: "parent",
-		      endOnly: true,
-		      elementRect: { top: 0, left: 0, bottom: 1, right: 1 }
-		    },
-		    // enable autoScroll
-		    autoScroll: true,
+        function get(id) {
+            return document.getElementById(id);
+        }
 
-		    // call this function on every dragmove event
-		    onmove: dragMoveListener,
-		    // call this function on every dragend event
-		    onend: function (event) {
-		      var textEl = event.target.querySelector('p');
+        function openHelp(source) {
+            get("help").style.display = "block";
+        }
 
-		      textEl && (textEl.textContent =
-		        'moved a distance of '
-		        + (Math.sqrt(event.dx * event.dx +
-		                     event.dy * event.dy)|0) + 'px');
-		    }
-		  });
+        function closeHelp(source) {
+            get("help").style.display = "none";
+        }
 
-		  function dragMoveListener (event) {
-		    var target = event.target,
-		        // keep the dragged position in the data-x/data-y attributes
-		        x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx,
-		        y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
+        // target elements with the "draggable" class
+        interact('.draggable')
+            .draggable({
+                // enable inertial throwing
+                inertia: true,
+                // keep the element within the area of it's parent
+                restrict: {
+                    restriction: "parent",
+                    endOnly: true,
+                    elementRect: {top: 0, left: 0, bottom: 1, right: 1}
+                },
+                // enable autoScroll
+                autoScroll: true,
 
-		    // translate the element
-		    target.style.webkitTransform =
-		    target.style.transform =
-		      'translate(' + x + 'px, ' + y + 'px)';
+                // call this function on every dragmove event
+                onmove: dragMoveListener,
+                // call this function on every dragend event
+                onend: function (event) {
+                    var textEl = event.target.querySelector('p');
 
-		    // update the posiion attributes
-		    target.setAttribute('data-x', x);
-		    target.setAttribute('data-y', y);
-		  }
+                    textEl && (textEl.textContent =
+                        'moved a distance of '
+                        + (Math.sqrt(event.dx * event.dx +
+                        event.dy * event.dy) | 0) + 'px');
+                }
+            });
 
-		  // this is used later in the resizing and gesture demos
-		  window.dragMoveListener = dragMoveListener;
-		interact('.resize-drag-outer')
-	  .draggable({
-	    onmove: window.dragMoveListener
-	  })
-	  .allowFrom('.resize-drag')
-	  .resizable({
-	    preserveAspectRatio: true,
-	    edges: { left: true, right: true, bottom: true, top: true }
-	  })
-	  .on('resizemove', function (event) {
-	    var target = event.target,
-	        x = (parseFloat(target.getAttribute('data-x')) || 0),
-	        y = (parseFloat(target.getAttribute('data-y')) || 0);
+        function dragMoveListener(event) {
+            var target = event.target,
+                // keep the dragged position in the data-x/data-y attributes
+                x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx,
+                y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
 
-	    // update the element's style
-	    target.style.width  = event.rect.width + 'px';
-	    target.style.height = event.rect.height + 'px';
+            // translate the element
+            target.style.webkitTransform =
+                target.style.transform =
+                    'translate(' + x + 'px, ' + y + 'px)';
 
-	    // translate when resizing from top or left edges
-	    x += event.deltaRect.left;
-	    y += event.deltaRect.top;
+            // update the posiion attributes
+            target.setAttribute('data-x', x);
+            target.setAttribute('data-y', y);
+        }
 
-	    target.style.webkitTransform = target.style.transform =
-	        'translate(' + x + 'px,' + y + 'px)';
+        // this is used later in the resizing and gesture demos
+        window.dragMoveListener = dragMoveListener;
+        interact('.resize-drag-outer')
+            .draggable({
+                onmove: window.dragMoveListener
+            })
+            .allowFrom('.resize-drag')
+            .resizable({
+                preserveAspectRatio: true,
+                edges: {left: true, right: true, bottom: true, top: true}
+            })
+            .on('resizemove', function (event) {
+                var target = event.target,
+                    x = (parseFloat(target.getAttribute('data-x')) || 0),
+                    y = (parseFloat(target.getAttribute('data-y')) || 0);
 
-	    target.setAttribute('data-x', x);
-	    target.setAttribute('data-y', y);
-	  });
+                // update the element's style
+                target.style.width = event.rect.width + 'px';
+                target.style.height = event.rect.height + 'px';
+
+                // translate when resizing from top or left edges
+                x += event.deltaRect.left;
+                y += event.deltaRect.top;
+
+                target.style.webkitTransform = target.style.transform =
+                    'translate(' + x + 'px,' + y + 'px)';
+
+                target.setAttribute('data-x', x);
+                target.setAttribute('data-y', y);
+            });
+        $(document).ready(function () {
+            var parent = $("#tile-container");
+            var tiles = parent.children();
+            if (tiles.length === 1 && tiles[0].id === 'nlp-tile') {
+                showFullNLPView();
+            }
+            restoreTiles();
+        });
+
+        function restoreTiles() {
+            var parent = $("#tile-container");
+            var tiles = parent.children();
+            var parentPosition = parent.position();
+
+            var width = 100 / tiles.length
+            tiles.css('width', width + '%');
+            var startX = parentPosition.top;
+            var startY = parentPosition.left + 150;
+
+            if (tiles.length >= 2) {
+                tiles.each(function (index, element) {
+                    var target = element;
+                    // keep the dragged position in the data-x/data-y attributes
+                    setTilePosition(target, startX, startY);
+                    $(target).show();
+                    startX -= 100;
+                    startY -= 50;
+                });
+            }
+        }
+
+        function setTilePosition(target, x, y) {
+            // translate the element
+            target.style.webkitTransform =
+                target.style.transform =
+                    'translate(' + x + 'px, ' + y + 'px)';
+            // update the position attributes
+            target.setAttribute('data-x', x);
+            target.setAttribute('data-y', y);
+        }
     </script>
     <style>
-		body {
-			height:100vh;
-		}
-		label {
-			display: block;
-		}
-		center {
-			color: white;
-		}
-		* {
-		 font-size: 100%;
-		 font-family: Segoe UI;
-		}
+        body {
+            height: 100vh;
+        }
+
+        label {
+            display: block !important;
+        }
+
+        center {
+            color: white;
+        }
+
+        * {
+            font-size: 100%;
+            font-family: Segoe UI;
+        }
     </style>
 </head>
 
@@ -114,8 +160,8 @@
     <div class="wrapperul" align="center">
         <ul>
             <li class="dropdown contains-image">
-                <a href="{{url_for('upload_blueprint.upload', case_num = case_num)}}"><img
-                        src="{{url_for('static', filename='GATLogo.svg')}}" alt="hermes logo"></a>
+                <a href="{{ url_for('upload_blueprint.upload', case_num = case_num) }}"><img
+                        src="{{ url_for('static', filename='GATLogo.svg') }}" alt="hermes logo"></a>
             </li>
             <li class="dropdown" onclick="show1()">
                 <a href="#" class="dropbtn">NLP</a>
@@ -144,7 +190,7 @@
                 <a href="#" class="dropbtn">Help</a>
                 <div class="dropdown-content">
                     <a href="#" onClick="openHelp(this)">GSA Output Help</a>
-                    <a href="{{url_for('info_blueprint.help', case_num = case_num)}}">Help Page</a>
+                    <a href="{{ url_for('info_blueprint.help', case_num = case_num) }}">Help Page</a>
                 </div>
             </li>
         </ul>
@@ -164,16 +210,19 @@
             transition to similar categories. <br>2. The transition probability matrix. <br>3. The steady-state
             distribution matrix, which indicates the probability of a region ending up in category b, given that it
             started in category a. <br>4. The mean transition time matrix.</p>
-		</div>
-			<br><br>
-			<!-- Dashboard elements -->
-			{% include "dashboard/scrapedText.html"-%}
-			{% include "dashboard/gsa.html"-%}
-			{% include "dashboard/nlp.html"-%}
-			{% include "dashboard/sna.html"-%}
+    </div>
+    <br>
+    <!-- Dashboard elements -->
+
+    {% include "dashboard/scrapedText.html"-%}
+    <div id="tile-container" class="clearfix">
+        {% include "dashboard/nlp.html" %}
+        {% include "dashboard/gsa.html" %}
+        {% include "dashboard/sna.html" %}
+    </div>
     </div>
 
 </section>
-    {% include 'modal.html' -%}
+{% include 'modal.html' -%}
 </body>
 </html>
