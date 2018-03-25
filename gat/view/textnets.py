@@ -15,8 +15,8 @@ def textnetviz():
     case_num = request.args.get('case_num', None)
     fileDict = dao.getFileDict(case_num)
     textnets_input = fileDict.get('textnets_New_Example')
-    textnetAllText(csvPath=textnets_input, textColumnName='Text', groupVarColumnName='President')
-    os.rename("sotu_textnet.html", "templates/sotu_textnet.html")
+    #textnetAllText(csvPath=textnets_input, textColumnName='Text', groupVarColumnName='President')
+    #os.rename("sotu_textnet.html", "templates/sotu_textnet.html")
     systemMeasures = {}
     systemMeasures["Description"] = "Description"
     return render_template("sotu_textnet.html",
