@@ -42,7 +42,7 @@ def textnets_sample(sample_path):
     if sample_path == 'new_textnets_example':
         fileDict['textnets_New_Example'] = 'static/sample/nlp/State-of-the-Union-Addresses.csv'
     else:
-        fileDict['textnets_input'] = url_for('static', filename="sample/nlp/" + sample_path + '/')[1:]
+        fileDict['Textnets_Input'] = url_for('static', filename="sample/nlp/" + sample_path + '/')[1:]
     return redirect(url_for('textnets_blueprint.textnetviz', case_num=case_num))
 
 @sample_blueprint.route('/sna/<path:sample_path>')

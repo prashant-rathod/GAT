@@ -54,17 +54,19 @@
                             <h4 class="panel-title">Sample NLP Cases</h4>
                         </div>
                         <div class="panel-body">
-{#                            <a href="{{ url_for('sample_blueprint.nlp_sample', sample_path = 'isil', case_num=case_num) }}">Capturing#}
-{#                                Mosul</a>#}
-{#                            <br/>#}
-                            <a href="{{ url_for('sample_blueprint.nlp_sample', sample_path = 'new_nlp_example', case_num=case_num) }}">Iranian Influence</a>
+                            {#                            <a href="{{ url_for('sample_blueprint.nlp_sample', sample_path = 'isil', case_num=case_num) }}">Capturing#}
+                            {#                                Mosul</a>#}
+                            {#                            <br/>#}
+                            <a href="{{ url_for('sample_blueprint.nlp_sample', sample_path = 'new_nlp_example', case_num=case_num) }}">Iranian
+                                Influence</a>
 
                         </div>
                         <div class="panel-heading">
                             <h4 class="panel-title">Sample TextNets Cases</h4>
                         </div>
                         <div class="panel-body">
-                            <a href="{{ url_for('sample_blueprint.textnets_sample', sample_path = 'new_textnets_example', case_num=case_num) }}">State of the Union</a>
+                            <a href="{{ url_for('sample_blueprint.textnets_sample', sample_path = 'new_textnets_example', case_num=case_num) }}">State
+                                of the Union</a>
 
                         </div>
                     </div>
@@ -88,11 +90,22 @@
                             <h4 class="panel-title">Textnets Data Input</h4>
                         </div>
                         <div class="panel-body">
-                            Upload .csv files:<br>
-                            <p style="font-size:10px">(Use Ctrl- or Shift-click to select multiple files)</p>
-                            <input type="file" id="textnets_input" name="textnets_input" multiple>
+						<span class="inputsection">
+
+                            <form enctype="multipart/form-data" method="post"
+                                  action="{{ url_for('upload_blueprint.upload', case_num=case_num) }}"
+                                  name="Textnets_Input"
+                                  id="Textnets_Input">
+
+                                Upload .csv files for Textnets:<br>
+
+                                <p style="font-size:10px">(Use Ctrl- or Shift-click to select multiple files)</p>
+                            <input type="file" id="Textnets_Input" name="Textnets_Input" multiple>
                             <hr>
                             <input type="submit" value="SUBMIT">
+                            </form>
+
+						</span>
                         </div>
                     </div>
                 </div>
@@ -126,7 +139,8 @@
                             <!--<a href="{{url_for('sample_blueprint.sna_sample', sample_path = 'iran.xlsx', case_num=case_num)}}">Run Iran Political Elite case</a><br>-->
                             <!--<a href="{{url_for('sample_blueprint.sna_sample', sample_path = 'AAH_for_SNA.xlsx', case_num=case_num)}}">Run AAH case</a><br>-->
                             <!--<a href="{{url_for('sample_blueprint.sna_sample', sample_path = 'roleTheorySample.xlsx', case_num=case_num)}}">Run Role Theory case</a><br>-->
-                            <a href="{{ url_for('sample_blueprint.sna_sample', sample_path = 'Iranian_Influence.xlsx', case_num=case_num) }}">Iranian Influence</a><br>
+                            <a href="{{ url_for('sample_blueprint.sna_sample', sample_path = 'Iranian_Influence.xlsx', case_num=case_num) }}">Iranian
+                                Influence</a><br>
                             <!-- <a href="{{url_for('sample_blueprint.sna_sample', sample_path = 'TestDetectionCase.xlsx', case_num=case_num)}}">Test Community Detection</a><br> -->
                             <a href="{{ url_for('static', filename = 'sample/sna/template.xlsx', case_num=case_num) }}"
                                download>Download Template</a>
