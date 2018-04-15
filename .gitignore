@@ -5,8 +5,6 @@ nltk_downloads/*
 static/temp/*
 .DS_Store
 out/*
-<<<<<<< HEAD
 gat/service/SmartSearch/chromedriver
 data/*
-=======
->>>>>>> 615c187d70393b82b1a41c2932016661c42ea30f
+venv/*
