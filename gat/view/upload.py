@@ -46,6 +46,7 @@ def upload():
 
     fileDict['SNA_Input'] = io_service.storefile(request.files.get('SNA_Input'))
     fileDict['GSA_Input'] = io_service.storefile(request.files.get('SGA_Input'))
+    fileDict['Textnets_Input'] = io_service.storefile(request.files.get('Textnets_Input'))
 
     fileDict['research_question'] = request.form.get('research_question')
 
@@ -65,6 +66,9 @@ def upload():
     # if a user does both SNA and NLP, as it stands, the NLP intermediary data will never be gotten to. This is a problem.
     if fileDict['NLP_Input_corpus']:
         return redirect(url_for('visualize_blueprint.visualize', case_num=case_num))
+
+    if fileDict['Textnets_Input']:
+        return redirect(url_for('textnets_blueprint.textnetviz', case_num=case_num))
 
     # if NLP chosen, allow them to pick from the different tools available
     # do i redirect to another url to choose then save the results then redirect to visualize?
