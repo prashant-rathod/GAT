@@ -50,6 +50,9 @@ def upload():
     errors = io_service.checkExtensions(case_num)  # helper method to make sure there are no input errors by the user
     # i.e. if there are errors, we can't proceed so we stay on the upload page
     if len(errors) > 0:
+        simple_response = "SNA_Input" in request.files or "GSA_Input_map" in request.files
+        if simple_response:
+            return errors[0]
         return render_template('upload.html',
                                errors=errors, case_num=case_num)
 
