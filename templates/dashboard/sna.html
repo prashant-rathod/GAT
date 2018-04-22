@@ -12,7 +12,6 @@
                        onclick="document.getElementById('sna-tile').style.display='none'"></i>
             </span>
         </div>
-
         <div class="card-body" id="sna-card-body">
             <div id="SNA Visualization" class="visual-output">
                 <span class="right-span"><b>Visual Output</b></span>
@@ -39,6 +38,7 @@
                                    data-placement="left" title="{{ systemMeasures['Description']['Resilience'] }}">
                         </form>
                     {% else -%}
+
                         <p>
                             <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="left"
                                title="{{ systemMeasures['Description']['Resilience'] }}"></i>
@@ -69,6 +69,7 @@
                             </p>
                         {% endif -%}
                     {% endfor -%}
+
                 {% endif -%}
             </div>
         </div>

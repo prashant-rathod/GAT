@@ -39,7 +39,7 @@ def readFile(subAttrs, excel_file, sheet):
                 personal = False
                 continue
             consolidatedHeader.append((feature,personal))
-
+            
     return consolidatedHeader, list
 
 def buildJSON(excel_file):

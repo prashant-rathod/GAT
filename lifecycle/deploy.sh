@@ -1,6 +1,6 @@
 #!/bin/bash 
 
-INSTANCE_URL=ubuntu@ec2-52-37-61-214.us-west-2.compute.amazonaws.com
+INSTANCE_URL=ubuntu@ec2-52-88-172-21.us-west-2.compute.amazonaws.com
 PEM_NAME="aws-ec2-gat1.pem"
 
 echo "CLENING LOCAL PROJECT"
@@ -45,14 +45,7 @@ sudo pip3 install -r requirements.txt;
 sudo chmod 777 nltk_downloads;
 sudo pip3 install gunicorn;
 
-sudo python3 -m spacy download en;
-
-cd gat/service/SmartSearch;
-wget -N http://chromedriver.storage.googleapis.com/2.26/chromedriver_linux64.zip;
-unzip chromedriver_linux64.zip;
-chmod +x chromedriver;
-
-cd ~/Projects/GAT;
+sudo python3 -m spacy download en
 
 sudo service nginx restart;
 
