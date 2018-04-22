@@ -40,8 +40,9 @@ class SNA():
         self.node_attributes_dict = {}
         self.classList = ['Agent','Organization','Audience','Role','Event','Belief','Symbol','Knowledge','Task','Actor']
         self.attrSheet = attrSheet
-<<<<<<< HEAD
         self.output_dict = {}
+        self.sent_outputs = []
+        self.imageMap = {}
 
     # Read xlsx file and save the header and all the cells, each a dict with value and header label
     # Input: xlsx file, sheet
@@ -85,11 +86,8 @@ class SNA():
     # name = names of the node. This is defined by the header. ex: Abbasi-Davani.F: Name  or Abbasi-Davani.F: Faction leader
     # nodeSet = names that define a set of node. For example, we can define Person, Faction Leader, and Party Leader as ".['agent']"
     # note: len(name) = len(nodeSet), else code fails
-=======
-        self.sent_outputs = []
-        self.imageMap = {}
 
->>>>>>> harry
+
     def createNodeList(self, nodeSet):
         # creating image map
         d = {}
@@ -109,7 +107,6 @@ class SNA():
         self.nodeSet = nodeSet
         self.nodes = nx.nodes(self.G)
 
-<<<<<<< HEAD
     def loadOntology(self, source, classAssignments):
 
         # Creating an edge list and setting its length for the conditional iterations:
@@ -171,8 +168,6 @@ class SNA():
 
     # Input: header list and list of attributes with header label from attribute sheet
     # Output: updated list of nodes with attributes
-=======
->>>>>>> harry
     def loadAttributes(self):
         for row in self.attrList:
             nodeID = row[0]['val']
@@ -465,14 +460,11 @@ class SNA():
     def is_node(self, node):
         return self.G.has_node(node)
 
-<<<<<<< HEAD
     # Getter for nodes and edges
-=======
     def getImage(self, val):
         if val in self.imageMap:
             return self.imageMap[val]
 
->>>>>>> harry
     def getNodes(self):
         return self.nodes
 

@@ -58,11 +58,13 @@ def visualize():
     copy_of_graph = copy.deepcopy(graph)
     fileDict['copy_of_graph'] = copy_of_graph
 
+    '''
     if NLP_dir:
         nlp_summary, nlp_entities, nlp_network, nlp_sources, nlp_tropes = nlp_service.nlp_dir(NLP_dir)
     else:
         nlp_summary, nlp_entities, nlp_network, nlp_sources, nlp_tropes = nlp_service.nlp_urls(NLP_urls)
-
+    
+    '''
     nlp_sentiment = nlp_service.sentiment(NLP_file_sentiment)
     research_question = scraper_service.scrape(research_question)
 
