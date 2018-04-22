@@ -1,19 +1,33 @@
 {% if nlp_summary %}
-    <div class="output-window resize-drag-outer" id="NLP Visualization Window">
-        <div class="output-button-bar resize-drag">
-            <span class="left-span">
-                <i class="btn btn-close fa fa-window-close-o"
-                   onclick="document.getElementById('NLP Visualization Window').style.display='none'"></i>
-                <i class="btn btn-hide fa fa-window-minimize"
-                   onclick="handleWindowResizeClick('NLP Visualization',this)"></i>
+    <div id="nlp-tile" class="card col-md-4 resize-drag-outer"
+         style="background-color: rgba(69,90,100,1);"
+         id="NLP Visualization Window">
+        <div class="card-title resize-drag">
+            <span class="window-title">NLP</span>
+            <span class="window-controls">
+                    <i class="btn btn-hide fa fa-window-minimize"
+                       onclick="handleWindowResizeClick('nlp-card-body',this)"></i>
+                    <i class="btn btn-hide fa fa-window-maximize"
+                       onclick="maximizeNLPTile('nlp-tile',this)"></i>
+                    <i class="btn btn-close fa fa-window-close-o" onclick="document.getElementById('nlp-tile').style.display='none'"></i>
             </span>
-            <span class="right-span"><b>NLP Visualization</b></span>
         </div>
-        <div class="output" id="NLP Visualization">
-            <div class="wrapper" style="height: 100%;width: 100%;">
-                <h1>
-                    <center>Natural Language Processing</center>
-                </h1>
+
+        <div class="card-body" id="nlp-card-body">
+            <div id="short-nlp">
+                <div id="NLP Visualization" class="visual-output">
+                    <span class="right-span"><b>Visual Output</b></span>
+                    </br>
+                    {% if NLP_new_example_file %}
+                        <img src={{ nlp_new_example_relationship }} height="50%" width="90%">
+                    {% endif %}
+                </div>
+
+                <div id="NLP Data" class="statistical-output">
+                    <span class="right-span"><b>Statistical Output</b></span>
+                </div>
+            </div>
+            <div id="full-nlp">
                 {% if not NLP_new_example_file %}
                     <div class="tab">
                         <input id="tab-sum" type="checkbox" name="tabs">
@@ -101,8 +115,8 @@
                         <div class="tab-content">
                             <img id="image1" src="" height="50%" width="90%">
                         </div>
-
-                        <p><a href="{{ url_for('nlp_blueprint.jgvis', case_num=case_num) }}" style="color:lightblue">Click here for 3D visualization of Sentiment Mining</a></p>
+                        <p><a href="{{ url_for('nlp_blueprint.jgvis', case_num=case_num) }}" style="color:lightblue">Click
+                            here for 3D visualization of Sentiment Mining</a></p>
                     </div>
                     <div class="tab">
                         <input id="tab-six" type="checkbox" name="tabs" class="imageLoaderNLP">

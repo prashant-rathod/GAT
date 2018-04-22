@@ -54,6 +54,7 @@ def storeGSA(file_list):
         return
     source_dir = tempfile.mkdtemp(dir=tempdir) + '/'
     shapefile = None
+    dbf = None
     for f in file_list:
         f.save(source_dir + f.filename)
         if f.filename.endswith(".shp"):

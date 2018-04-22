@@ -17,6 +17,45 @@
         $('#sna_modal').modal('hide');
         $('#gsa_modal').modal('show');
     }
+  
+    function showResponse(element) {
+        $('#nlp_modal').modal('hide');
+        $('#sna_modal').modal('hide');
+        $('#gsa_modal').modal('hide');
+        $('#response_modal').modal('show');
+        var url = element.getAttribute('href');
+        $.ajax(url).done(function (reply) {
+            $('#response-placeholder').html(reply);
+        });
+        return false;
+    }
+
+    function showResponsePost(event, formId) {
+        event.preventDefault();
+        $('#nlp_modal').modal('hide');
+        $('#sna_modal').modal('hide');
+        $('#gsa_modal').modal('hide');
+        $('#response_modal').modal('show');
+        var userForm = $('form#'+formId);
+        var url1 = userForm.attr('action');
+        var formData = new FormData(userForm[0]);
+        $.ajax({
+            url: url1,
+            type: 'post',
+            enctype: 'multipart/form-data',
+            processData: false,  // Important!
+            contentType: false,
+            cache: false,
+            data: formData,
+        }).done(function (reply) {
+            $('#response-placeholder').html(reply);
+        }).fail(function (data) {
+            $('#response-placeholder').text(data.statusText || data);
+        });
+
+        return false;
+    }
+
     function openurl(link) {
         window.open(link);
     }
@@ -99,10 +138,7 @@
                                 <p style="font-size:10px">(Use Ctrl- or Shift-click to select multiple files)</p>
                             <input type="file" id="Textnets_Input" name="Textnets_Input" multiple>
                             <hr>
-                            <input type="submit" value="SUBMIT">
-                            </form>
-
-						</span>
+                            <input type="submit" onclick="showResponsePost(event)" value="SUBMIT">
                         </div>
                     </div>
                 </div>
@@ -136,15 +172,17 @@
                             <!--<a href="{{url_for('sample_blueprint.sna_sample', sample_path = 'iran.xlsx', case_num=case_num)}}">Run Iran Political Elite case</a><br>-->
                             <!--<a href="{{url_for('sample_blueprint.sna_sample', sample_path = 'AAH_for_SNA.xlsx', case_num=case_num)}}">Run AAH case</a><br>-->
                             <!--<a href="{{url_for('sample_blueprint.sna_sample', sample_path = 'roleTheorySample.xlsx', case_num=case_num)}}">Run Role Theory case</a><br>-->
-                            <a href="{{ url_for('sample_blueprint.sna_sample', sample_path = 'Iranian_Influence.xlsx', case_num=case_num) }}">Iranian
-                                Influence</a><br>
+                            <span onclick="showResponse(this)"
+                                  href="{{ url_for('sample_blueprint.sna_sample', sample_path = 'Iranian_Influence.xlsx', case_num=case_num) }}">Iranian
+                                Influence</span><br>
+
                             <!-- <a href="{{url_for('sample_blueprint.sna_sample', sample_path = 'TestDetectionCase.xlsx', case_num=case_num)}}">Test Community Detection</a><br> -->
                             <a href="{{ url_for('static', filename = 'sample/sna/template.xlsx', case_num=case_num) }}"
                                download>Download Template</a>
                             <!--<a href="{{url_for('sample_blueprint.sna_sample', sample_path = 'BT_CaseStudy.xlsx', case_num=case_num)}}">Run BT case</a><br>-->
                         </div>
                     </div>
-                    <div class="panel panel-default">
+                    <div id="sna-default-panel-body" class="panel panel-default">
                         <div class="panel-heading">
                             <h4 class="panel-title">Data Input</a></h4>
                         </div>
@@ -156,7 +194,7 @@
                                   action="{{ url_for('upload_blueprint.upload', case_num=case_num) }}" name="sna_file"
                                   id="sna_file">
 							    <input type="file" id="SNA_Input" name="SNA_Input" size=20 value="a"><br>
-							    <input type="submit" value="SUBMIT">
+							    <input type="submit" onclick="showResponsePost(event, 'sna_file')" value="SUBMIT">
                             </form>
 						</span>
                         </div>
@@ -192,8 +230,9 @@
                         </div>
                         <div class="panel-body">
                             <!-- <a href="{{url_for('sample_blueprint.gsa_sample', sample_path = 'usa', case_num=case_num)}}">Run United States Income case</a><br> -->
-                            <a href="{{ url_for('sample_blueprint.gsa_sample', sample_path = 'iraq', case_num=case_num) }}">
-                                Iranian Influence</a>
+                            <span onclick="showResponse(this)"
+                                  href="{{ url_for('sample_blueprint.gsa_sample', sample_path = 'iraq', case_num=case_num) }}">
+                                Iranian Influence</span>
                             <br/>
                             <a href="{{ url_for('sample_blueprint.gsa_sample', sample_path = 'geonet', case_num=case_num) }}">
                                 Crimes on Streets</a>
@@ -217,28 +256,66 @@
                             <form enctype="multipart/form-data" method="post"
                                   action="{{ url_for('upload_blueprint.upload', case_num=case_num) }}" name="sna_file"
                                   id="sna_file">
-
-                                Upload .csv file for GSA:<br>
-
-                                <input type="file" id="GSA_Input_CSV" name="GSA_Input_CSV" size=20><br>
+                            -->
+                            <form enctype="multipart/form-data" method="post"
+                                  action="{{ url_for('upload_blueprint.upload', case_num=case_num) }}" name="gsa_file"
+                                  id="gsa_file">
 
                                 Upload 3 files (.shp, .shx, .dfb) for GSA:<br>
 
 							    <input type="file" id="GSA_Input_map" name="GSA_Input_map" size=20
                                        multiple><br>
 
-                                <input type="submit" value="SUBMIT">
+                                <!--Upload .csv file for GSA:<br>
+
+                                <input type="file" id="GSA_Input_CSV" name="GSA_Input_CSV" size=20><br>-->
+
+                                <input type="submit" onclick="showResponsePost(event, 'gsa_file')" value="SUBMIT">
 
                             </form>
 
 						</span>
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>
         <!-- /.modal-content -->
     </div>
     <!-- /.modal-dialog -->
+</div>
+
+<div class="modal fade slide-right" id="response_modal" tabindex="-1" role="dialog"
+     aria-labelledby="myModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content-wrapper">
+            <div class="modal-content table-block"
+                 style="background: rgba(187, 222, 251, .0); border: 0px; background-repeat: no-repeat; background-position: 50% 90%; background-size: 40%;">
+
+                <div style="margin-right: 27px;">
+                    <button type="button" class="btn btn-danger btn-sm pull-right"
+                            data-dismiss="modal"><i
+                            class="fa fa-times-circle fa-2x" aria-hidden="true"
+                            style="z-index:1000;"></i></button>
+                </div>
+                <br>
+                <div class="modal-body v-align-left text-left">
+                    <h3 style='color:white'>&nbsp;</h3>
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                Response
+                            </h4>
+                        </div>
+                        <div class="panel-body">
+                            <div id="response-placeholder"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /.modal-dialog -->
+</div>
 </div>
