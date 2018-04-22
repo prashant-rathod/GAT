@@ -49,4 +49,3 @@ def louvain(G, weightKey='emoWeight', centralities=None):
 
     else:
         return "No centralities passed"
-

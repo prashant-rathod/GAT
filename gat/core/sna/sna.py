@@ -40,6 +40,7 @@ class SNA():
         self.node_attributes_dict = {}
         self.classList = ['Agent','Organization','Audience','Role','Event','Belief','Symbol','Knowledge','Task','Actor']
         self.attrSheet = attrSheet
+<<<<<<< HEAD
         self.output_dict = {}
 
     # Read xlsx file and save the header and all the cells, each a dict with value and header label
@@ -84,15 +85,31 @@ class SNA():
     # name = names of the node. This is defined by the header. ex: Abbasi-Davani.F: Name  or Abbasi-Davani.F: Faction leader
     # nodeSet = names that define a set of node. For example, we can define Person, Faction Leader, and Party Leader as ".['agent']"
     # note: len(name) = len(nodeSet), else code fails
+=======
+        self.sent_outputs = []
+        self.imageMap = {}
+
+>>>>>>> harry
     def createNodeList(self, nodeSet):
+        # creating image map
+        d = {}
+        for row in self.attrList:
+            for node in row:
+                if node['header'] == 'ID':
+                    d[node['val']] = row[len(row)-1]['val']
+        self.imageMap = d
         for row in self.list:
             for node in row:
                 if node['header'] in nodeSet and node['val'] != "":
+                    #if node['val'] not in imageMap:
+                    #print(node['header'])
+                        #imageMap.append((node['val'], ))
                     # strip empty cells
                     self.G.add_node(node['val'], block=node['header'])
         self.nodeSet = nodeSet
         self.nodes = nx.nodes(self.G)
 
+<<<<<<< HEAD
     def loadOntology(self, source, classAssignments):
 
         # Creating an edge list and setting its length for the conditional iterations:
@@ -154,6 +171,8 @@ class SNA():
 
     # Input: header list and list of attributes with header label from attribute sheet
     # Output: updated list of nodes with attributes
+=======
+>>>>>>> harry
     def loadAttributes(self):
         for row in self.attrList:
             nodeID = row[0]['val']
@@ -446,7 +465,14 @@ class SNA():
     def is_node(self, node):
         return self.G.has_node(node)
 
+<<<<<<< HEAD
     # Getter for nodes and edges
+=======
+    def getImage(self, val):
+        if val in self.imageMap:
+            return self.imageMap[val]
+
+>>>>>>> harry
     def getNodes(self):
         return self.nodes
 
@@ -777,6 +803,7 @@ class SNA():
     # color: {"0xgggggg", "0xaaaaaa"} etc. (Takes a hexadecimal "String").
     # returns a json dictionary
     def create_json(self, classes, color, graph=None):
+        print(self.imageMap)
         data = {}
         edges = []
         nodes_property = {}

@@ -17,16 +17,17 @@ def visualize():
     GSA_file_SHP = fileDict.get('GSA_Input_SHP')
     GSA_file_SVG = fileDict.get('GSA_Input_SVG')
     NLP_dir = fileDict.get('NLP_Input_corpus')
-    NLP_urls = fileDict.get('NLP_LDP_terms')
     NLP_file_sentiment = fileDict.get('NLP_Input_Sentiment')
-    NLP_new_example_file = fileDict.get('NLP_New_Example')
+    if NLP_dir == None:
+      NLP_new_example_file = fileDict.get('NLP_New_Example')
+    else:
+      NLP_new_example_file = fileDict.get('NLP_Input_corpus')
     research_question = fileDict.get('research_question')
     tropes = fileDict.get('tropes')
     graph = fileDict.get('graph')
     GSA_sample = fileDict.get('GSA_data')
     network_sample = fileDict.get('Geonet_Input_Streets')
     error = False
-
     auto = None
     sp_dyn = None
     svgNaming = None
@@ -79,6 +80,8 @@ def visualize():
         nlp_new_example_sentiment = NLP_TO_NETWORK.sentiment_mining(NLP_new_example_file)
         nlp_new_example_relationship = NLP_TO_NETWORK.relationship_mining(NLP_new_example_file)
 
+    nlp_summary = ''
+    if NLP_new_example_file is not None:
         nlp_summary = 'Enable'
 
     #call gsa_service.geoNet, produce output, do whatever else you need
@@ -103,13 +106,8 @@ def visualize():
                            case_num=case_num,
                            nlp_sentiment=nlp_sentiment,
                            nlp_summary=nlp_summary,
-                           nlp_entities=nlp_entities,
-                           nlp_sources=nlp_sources,
-                           nlp_tropes=nlp_tropes,
                            systemMeasures=systemMeasures,
                            NLP_new_example_file=NLP_new_example_file,
-                           nlp_new_example_sentiment=nlp_new_example_sentiment,
-                           nlp_new_example_relationship=nlp_new_example_relationship,
                            geoNet=geoNet,
                            actors=actors,
                            relations=relations)

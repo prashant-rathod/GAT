@@ -89,19 +89,211 @@
 
                 {% if NLP_new_example_file %}
                     <div class="tab">
-                        <input id="tab-four" type="checkbox" name="tabs">
+                        <input id="tab-four" type="checkbox" name="tabs" class="imageLoaderNLP">
                         <label for="tab-four">Relationship Mining</label>
                         <div class="tab-content">
-                            <img src={{ nlp_new_example_relationship }} height="50%" width="90%">
+                            <img id="image0" src="" height="50%" width="90%">
                         </div>
                     </div>
                     <div class="tab">
-                        <input id="tab-five" type="checkbox" name="tabs">
+                        <input id="tab-five" type="checkbox" name="tabs" class="imageLoaderNLP">
                         <label for="tab-five">Sentiment Mining</label>
                         <div class="tab-content">
-                            <img src={{ nlp_new_example_sentiment }} height="50%" width="90%">
+                            <img id="image1" src="" height="50%" width="90%">
+                        </div>
+
+                        <p><a href="{{ url_for('nlp_blueprint.jgvis', case_num=case_num) }}" style="color:lightblue">Click here for 3D visualization of Sentiment Mining</a></p>
+                    </div>
+                    <div class="tab">
+                        <input id="tab-six" type="checkbox" name="tabs" class="imageLoaderNLP">
+                        <label for="tab-six">Wordcloud</label>
+                        <div class="tab-content">
+                            <img id="image2" src="" height="50%" width="90%">
                         </div>
                     </div>
+                    <div class="tab">
+                        <input id="tab-seven" type="checkbox" name="tabs" class="imageLoaderNLP">
+                        <label for="tab-seven">Stemmerize</label>
+                        <div class="tab-content">
+                            <span id="text1"></span>
+                        </div>
+                    </div>
+                    <div class="tab">
+                        <input id="tab-eight" type="checkbox" name="tabs" class="imageLoaderNLP">
+                        <label for="tab-eight">Lemmatize</label>
+                        <div class="tab-content">
+                            <span id="text2"></span>
+                        </div>
+                    </div>
+                    <div class="tab">
+                        <input id="tab-nine" type="checkbox" name="tabs" class="imageLoaderNLP">
+                        <label for="tab-nine">Abstract</label>
+                        <div class="tab-content">
+                            <span id="text3"></span>
+                        </div>
+                    </div>
+                    <div class="tab">
+                        <input id="tab-ten" type="checkbox" name="tabs" class="imageLoaderNLP">
+                        <label for="tab-ten">Top 20 Verbs</label>
+                        <div class="tab-content">
+                            <img id="image3" src="" height="50%" width="90%">
+                        </div>
+                    </div>
+                    <div class="tab">
+                        <input id="tab-eleven" type="checkbox" name="tabs" class="imageLoaderNLP">
+                        <label for="tab-eleven">Top 20 Persons</label>
+                        <div class="tab-content">
+                            <img id="image4" src="" height="50%" width="90%">
+                        </div>
+                    </div>
+                    <div class="tab">
+                        <input id="tab-twelve" type="checkbox" name="tabs" class="imageLoaderNLP">
+                        <label for="tab-twelve">Top 20 Locations</label>
+                        <div class="tab-content">
+                            <img id="image5" src="" height="50%" width="90%">
+                        </div>
+                    </div>
+                    <div class="tab">
+                        <input id="tab-thirteen" type="checkbox" name="tabs" class="imageLoaderNLP">
+                        <label for="tab-thirteen">Top 20 Organizations</label>
+                        <div class="tab-content">
+                            <img id="image6" src="" height="50%" width="90%">
+                        </div>
+                    </div>
+                    <div class="tab">
+                        <input id="tab-fourteen" type="checkbox" name="tabs" class="imageLoaderNLP">
+                        <label for="tab-fourteen">Sentence Sentiment Distribution</label>
+                        <div class="tab-content">
+                            <img id="image7" src="" height="50%" width="90%">
+                        </div>
+                    </div>
+                    <script type="text/javascript">
+                        $(function(){
+                        var one = 1, two = 1, three = 1, four = 1, five = 1, six = 1, seven = 1, eight = 1, nine = 1, ten = 1, eleven = 1;
+                        $('#tab-four').bind('click', function(){
+                            if(one == 0) return;
+                            $.getJSON("{{url_for('nlp_blueprint.sent', case_num=case_num)}}",{
+                                type: 'tab-four',
+                            },
+                                function(data){
+                                    one = one -1;
+                                    $("#image0").attr('src', data.result);
+                                    console.log("finished")
+                                });
+                        });
+                        $('#tab-five').bind('click', function(){
+                            if(two == 0 )return;
+                            $.getJSON("{{url_for('nlp_blueprint.sent', case_num=case_num)}}",{
+                                type: 'tab-five',
+                            },
+                                function(data){
+                                    two = two -1;
+                                    $("#image1").attr('src', data.result);
+                                    console.log("finished")
+                                });
+                        });
+                        $('#tab-six').bind('click', function(){
+                            if(three == 0)return;
+                            $.getJSON("{{url_for('nlp_blueprint.sent', case_num=case_num)}}",{
+                                type: 'tab-six',
+                            },
+                                function(data){
+                                    three = three -1;
+                                    $("#image2").attr('src', data.result);
+                                    console.log("finished")
+                                });
+                        });
+                        $('#tab-seven').bind('click', function(){
+                            if(four == 0 )return;
+                            $.getJSON("{{url_for('nlp_blueprint.sent', case_num=case_num)}}",{
+                                type: 'tab-seven',
+                            },
+                                function(data){
+                                    four = four -1;
+                                    $("#text1").text(data.result);
+                                    console.log("finished")
+                                });
+                        });
+                        $('#tab-eight').bind('click', function(){
+                            if(five == 0 )return;
+                            $.getJSON("{{url_for('nlp_blueprint.sent', case_num=case_num)}}",{
+                                type: 'tab-eight',
+                            },
+                                function(data){
+                                    five = five -1;
+                                    $("#text2").text(data.result);
+                                    console.log("finished")
+                                });
+                        });
+                        $('#tab-nine').bind('click', function(){
+                            if(six == 0)return;
+                            $.getJSON("{{url_for('nlp_blueprint.sent', case_num=case_num)}}",{
+                                type: 'tab-nine',
+                            },
+                                function(data){
+                                    six = six -1;
+                                    $("#text3").text(data.result);
+                                    console.log("finished")
+                                });
+                        });
+                        $('#tab-ten').bind('click', function(){
+                            if(seven == 0)return;
+                            $.getJSON("{{url_for('nlp_blueprint.sent', case_num=case_num)}}",{
+                                type: 'tab-ten',
+                            },
+                                function(data){
+                                    seven = seven -1;
+                                    $("#image3").attr('src', data.result);
+                                    console.log("finished")
+                                });
+                        });
+                        $('#tab-eleven').bind('click', function(){
+                            if(eight == 0) return;
+                            $.getJSON("{{url_for('nlp_blueprint.sent', case_num=case_num)}}",{
+                                type: 'tab-eleven',
+                            },
+                                function(data){
+                                    eight = eight -1;
+                                    $("#image4").attr('src', data.result);
+                                    console.log("finished")
+                                });
+                        });
+                        $('#tab-twelve').bind('click', function(){
+                            if(nine == 0) return;
+                            $.getJSON("{{url_for('nlp_blueprint.sent', case_num=case_num)}}",{
+                                type: 'tab-twelve',
+                            },
+                                function(data){
+                                    nine = nine -1;
+                                    $("#image5").attr('src', data.result);
+                                    console.log("finished")
+                                });
+                        });
+                        $('#tab-thirteen').bind('click', function(){
+                            if(ten == 0)return;
+                            $.getJSON("{{url_for('nlp_blueprint.sent', case_num=case_num)}}",{
+                                type: 'tab-thirteen',
+                            },
+                                function(data){
+                                    ten = ten-1;
+                                    $("#image6").attr('src', data.result);
+                                    console.log("finished")
+                                });
+                        });
+                        $('#tab-fourteen').bind('click', function(){
+                            if(eleven == 0)return;
+                            $.getJSON("{{url_for('nlp_blueprint.sent', case_num=case_num)}}",{
+                                type: 'tab-fourteen',
+                            },
+                                function(data){
+                                    eleven = eleven-1;
+                                    $("#image7").attr('src', data.result);
+                                    console.log("finished")
+                                });
+                        });
+                    });
+                    </script>
+
                 {% endif %}
             </div>
         </div>

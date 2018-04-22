@@ -92,7 +92,7 @@
                         View
                       </a>
                     </td>
-                </tr>  
+                </tr>
                 {% endfor -%}
             </table>
             {% endif -%}
@@ -270,6 +270,7 @@
       $d.hide();
       hovered = jgraph.makeMaterial(0xb7ecff);
       onEnter = function (object) {
+        console.log(object)
         if (object.geometry.type === "SphereGeometry") {
           $d.html('<p><b>' + object.name + '</b></p>');
         } else {
@@ -277,7 +278,6 @@
             $d.html('<p><b>' + object.name + '</b></p>');
           }
         }
-          console.log(object);
           $d.show();
           object.defaultMaterial = object.material;
           object.material = hovered;
@@ -327,6 +327,7 @@
 
       // return edge data on edge click, including propensities
       jgraph.onClick(function (edge) {
+        console.log(edge)
         if (attributeFlag == false) {
           console.log("edge.name",edge.name)
           if (edge.name != "" && edge.geometry.type === "CylinderGeometry") {
@@ -375,6 +376,9 @@
       //update info displays with node data
       update = function(nodeDict) {
         console.log("NodeDict:",nodeDict)
+        if (nodeDict['img'] !== null){
+          $d.html('<p><b>' + nodeDict['name'] + '</b></p>'+'<img style="width:50px" src="'+nodeDict['img']+'"</img>');
+        }
         $("#delete").val(nodeDict['name']);
         $("#addNodeFormName").val(nodeDict['name']);
         $("#nodeMeasureInfo").empty()
