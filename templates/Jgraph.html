@@ -446,6 +446,8 @@
         // append to $("#propInfo")
         $("#propInfo").append("<span>Propensities for the link from <b>"+edgeDict['source']+"</b> to <b>"+edgeDict['target']+"</b>:<br></span>")
         empty = true
+
+
         for (var key in edgeDict) {
           if (key != "source" && key != "target" && key != "name") {
             if (edgeDict[key] != null) {
@@ -455,6 +457,9 @@
             }
           }
         }
+        $.ajax({url: "{{url_for('sna_blueprint.get_propensity')}}" + "?case_num=" + {{case_num}} + "&node1=" + edgeDict['source'] + "&node2=" + edgeDict['target'], success: function(result){
+        $("#propInfo").append("<span>Propensity: "+result+"</span>");
+        }});
         if (empty) {
           $("#propInfo").empty()
           $("#propInfo").append("<span>No propensities apply to the edge from "+edgeDict['source']+" to "+edgeDict['target']+".</span>")

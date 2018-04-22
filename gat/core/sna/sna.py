@@ -104,6 +104,7 @@ class SNA():
                         #imageMap.append((node['val'], ))
                     # strip empty cells
                     self.G.add_node(node['val'], block=node['header'])
+
         self.nodeSet = nodeSet
         self.nodes = nx.nodes(self.G)
 
@@ -447,6 +448,7 @@ class SNA():
     def changeAttribute(self, node, value, attribute="bipartite"):
         if self.G.has_node(node):
             self.G.node[node][attribute] = value
+            print(self.G.node[node])
         self.nodes = nx.nodes(self.G)
 
     # Change node name
@@ -847,3 +849,54 @@ class SNA():
         data['edges'] = edges
         data['nodes'] = nodes_property
         return data
+
+    def createAttrVector(self, nodeinfo):
+
+            #nodeinfo  is self.G.nodes[node]
+            #name = nodeinfo["Name"][0]
+            attrls = ["Org", "Agent", "Title", "Belief", "Position", "Role", "Audience", "Knowledge", "Task", "Symbol",
+                      "Entity", "Resource", "Location", "Organization", "Event"]
+            rowstruct = {}
+
+            for k, v in nodeinfo.items():
+                if k in attrls:
+                    for attr in v:
+                        if attr[1]:
+                            rowstruct[attr[0]] = float(attr[1]['W'])
+                            # matrixdict[name]=rowstruct
+                            # neighboringnodes = self.G.neighbors(node)
+                            # for node in neighboringnodes:
+                            #     rowstruct = {}
+                            #     nodeinfo  = self.G.node[node]
+                            #     name = nodeinfo["Name"][0]
+                            #
+                            #     for k,v in nodeinfo.items():
+                            #         if k in attrls:
+                            #             for attr in v:
+                            #                 rowstruct[attr[0]] = float(attr[1]['W'])
+                            #     matrixdict[name] = rowstruct
+
+            nodeinfo["attrVector"] = rowstruct
+            # self.nodes = nx.nodes(self.G)
+
+    def createProbMatrix(self, G, target, source):
+        prob_matrix = np.zeros((len(self.nodes), len(self.nodes)))
+        # self.nodes
+        for node in self.nodes:
+            if "attrVector" not in self.G.node[node]:
+                self.createAttrVector(self.G.node[node])
+        for i in range(len(self.nodes)):
+            i_attributes = self.G.node[self.nodes[i]]["attrVector"]
+            for j in range(len(self.nodes)):
+                j_attributes = self.G.node[self.nodes[j]]["attrVector"]
+                if i != j:
+                    prob = 0.0
+                    for k, v in i_attributes.items():
+                        if k in j_attributes:
+                            prob += v * j_attributes[k]
+                    prob_matrix[i, j] = prob
+        i = self.nodes.index(target)
+        j = self.nodes.index(source)
+
+        return prob_matrix[i][j]
+

@@ -168,3 +168,15 @@ def view_sent_change():
     return render_template("sentiment_change.html",
                            sent_json=json.dumps(response, sort_keys=True, indent=4, separators=(',', ':'))
                            )
+
+@sna_blueprint.route("/get_propensity")
+def get_propensity():
+    case_num = request.args.get('case_num', None)
+    fileDict = dao.getFileDict(case_num)
+    node1 = request.args.get("node1")
+    node2 = request.args.get("node2")
+    graph = fileDict.get('copy_of_graph')
+
+    propensity = graph.createProbMatrix(graph, node1, node2)
+
+    return str(propensity)
