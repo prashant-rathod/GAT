@@ -15,8 +15,8 @@ import scipy
 import tensorflow as tf
 import keras.backend.tensorflow_backend as KTF
 
-#Might need to figure out what to do because 5875 is not divisible by 3
-#First approach is just 47*125 output of softmax layer
+#Yo turns out there are only 28 characters in arabic so will have to maybe delete all the
+# lines with characters that aren't part of those 28?
 #Potentially need to make the image reading better
 
 def clean_line(line):
@@ -99,6 +99,13 @@ for i in label_list:
 
 one_hot_dict = create_one_hot(all_labels)
 one_hot_dict[''] = len(one_hot_dict)
+
+
+for i in range(10000):
+    image_batch, label_batch = get_batch(image_dir, get_labels(label_path), batch_size, width, height, channels)
+    for i in range(1):
+        image = image_batch[i]
+        print(image.shape)
 
 
 for i in range(1000):

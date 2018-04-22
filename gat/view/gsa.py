@@ -4,8 +4,8 @@ import ast
 
 from flask import Blueprint, render_template, request, redirect, url_for, jsonify
 from gat.core.gsa.misc import util
+import xlrd
 from gat.service import gsa_service
-from gat.service import io_service
 
 from gat.core.gsa.core import weights, regionalization
 from gat.dao import dao
@@ -27,6 +27,19 @@ def gsa_select():
     if 'GSA_Input_CSV' not in fileDict:
         fileDict['GSA_Input_CSV'] = url_for('static', filename="sample/gsa/" + csv)[1:]
         fileDict['GSA_Input_SHP'] = url_for('static', filename="sample/gsa/" + shp)[1:]
+
+    '''
+    if sample_path == "usa":
+        localAutoCorrelation, globalAutoCorrelation, spatialDynamics = gsa_service.runGSA(case_num, "ALL", [2008],
+                                                                                          "ALL",
+                                                                                          list(range(1979, 2009)),
+                                                                                          "STATE_NAME")
+        fileDict['GSA_data'] = ('id-1', localAutoCorrelation, globalAutoCorrelation,
+                                spatialDynamics[0], spatialDynamics[1], spatialDynamics[2], spatialDynamics[3])
+        fileDict['GSA_meta'] = (
+            'data-state-id', 'data-state-name', "STATE_NAME", list(range(1979, 2009)), "state-name")
+    else:
+    '''
 
     # TODO: take in years and file names instead of hard coding
     # TODO: reorganize use of gsa_meta
@@ -51,7 +64,6 @@ def gsa_select():
         info.dynRow = request.form.get('dyn-row')
         #info.dynCol = ast.literal_eval(request.form.get('dyn-col'))
         info.id = request.form.get('gsa-id')
-        #id = fileDict['GSA_SHP_VARS'][0]
 
         localAutoCorrelation, globalAutoCorrelation, spatialDynamics = gsa_service.runGSA(case_num, info.autoRow,
                                                                                           info.autoCol, info.dynRow,
@@ -59,7 +71,6 @@ def gsa_select():
 
         fileDict['GSA_data'] = ('id-1', localAutoCorrelation, globalAutoCorrelation,
                                 spatialDynamics[0], spatialDynamics[1], spatialDynamics[2], spatialDynamics[3])
-        #fileDict['GSA_meta'] = ('data-id-1', 'data-name-1', "NAME_1", np.arange(2014, 2017, 0.25).tolist(), fileDict['GSA_SHP_VARS'][1])
         fileDict['GSA_meta'] = ('data-id-1', 'data-name-1', "NAME_1", np.arange(2014, 2017, 0.25).tolist(), "name-1")
 
         return redirect(url_for('visualize_blueprint.visualize', case_num=case_num))
@@ -113,7 +124,7 @@ def get_json():
     case_num = request.args.get('case_num', None)
     return redirect(url_for('visualize_blueprint.visualize', case_num=case_num))
 
-@gsa_blueprint.route('/emo', methods=['GET', 'POST'])
+@gsa_blueprint.route ('/emo', methods=['GET', 'POST'])
 def emotional_space():
 
     case_num = request.args.get('case_num', None)
@@ -154,3 +165,4 @@ def shp_vars_post():
     fileDict['GSA_SHP_VARS'] = [request.form.get('gsa-id'), name_var]
     #fileDict['GSA_SHP_VARS'] = [request.form.get('gsa-id'), request.form.get('gsa-name-var')]
     return redirect(url_for("gsa_blueprint.upload_csv_get", case_num = case_num))
+

@@ -1,62 +1,25 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>GSA Select</title>
-    {% include "header.html" -%}
-    <link href="{{url_for('static', filename='css/vizStyle.css')}}" rel="stylesheet">
-    <script type="text/javascript">
-	  function get(id) {
-			return document.getElementById(id);
-		}
-		function openHelp(source){
-			get("help").style.display = "block";
-		}
-		function closeHelp(source) {
-			get("help").style.display = "none";
-		}
-		// target elements with the "draggable" class
-		interact('.draggable')
-		  .draggable({
-		    // enable inertial throwing
-		    inertia: true,
-		    // keep the element within the area of it's parent
-		    restrict: {
-		      restriction: "parent",
-		      endOnly: true,
-		      elementRect: { top: 0, left: 0, bottom: 1, right: 1 }
-		    },
-		    // enable autoScroll
-		    autoScroll: true,
+<div class="indented">
+    <h3>Please input map and attribute data:</h3>
 
-		    // call this function on every dragmove event
-		    onmove: dragMoveListener,
-		    // call this function on every dragend event
-		    onend: function (event) {
-		      var textEl = event.target.querySelector('p');
+    <form enctype="multipart/form-data" method="post" action="{{ request.url }}">
 
-		      textEl && (textEl.textContent =
-		        'moved a distance of '
-		        + (Math.sqrt(event.dx * event.dx +
-		                     event.dy * event.dy)|0) + 'px');
-		    }
-		  });
+        <p>Autocorrelation Rows</p>
+        <input type="text" name="auto-row" value={{ info.autoRow }}>
+        <br>
 
-		  function dragMoveListener (event) {
-		    var target = event.target,
-		        // keep the dragged position in the data-x/data-y attributes
-		        x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx,
-		        y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
+        <p>Autocorrelation Columns</p>
+        <input type="text" name="auto-col" value={{ info.autoCol }}>
+        <br>
 
-		    // translate the element
-		    target.style.webkitTransform =
-		    target.style.transform =
-		      'translate(' + x + 'px, ' + y + 'px)';
+        <p>System Dynamics Rows</p>
+        <input type="text" name="dyn-row" value={{ info.dynRow }}>
+        <br>
 
-		    // update the posiion attributes
-		    target.setAttribute('data-x', x);
-		    target.setAttribute('data-y', y);
-		  }
+        <p>System Dynamics Columns</p>
+        <input type="text" name="dyn-col" value={{ info.dynCol }}>
+        <br>
 
+        <!---<p>Id</p>
 		  // this is used later in the resizing and gesture demos
 		  window.dragMoveListener = dragMoveListener;
 		interact('.resize-drag-outer')
@@ -200,20 +163,13 @@ input {
             <input type="text" name="dyn-col" value={{ info.dynCol }}>
             <br>
 
-            <!---<p>Id</p>
+            <p>Id</p>
             <input type="text" name="gsa-id" value={{ info.id }}>
             <br>
 
-            <br>-->
+            <br>
 
-            <input type="submit" value="CONTINUE">
+        <input type="submit" value="CONTINUE">
 
-        </form>
-    </div>
-  </section>
-  {% include 'modal.html' -%}
-
-    </body>
-
-
-</html>
+    </form>
+</div>

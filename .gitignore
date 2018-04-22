@@ -7,3 +7,4 @@ static/temp/*
 out/*
 gat/service/SmartSearch/chromedriver
 data/*
+venv/*

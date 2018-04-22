@@ -56,7 +56,7 @@
                 systemMeasures contains measures where key is name of measure, value is measure value
                 also contains dictionary of measure descriptions (systemMeasures["Description"]) used for tooltips
               -->
-              {% if measure not in ["Resilience","Description","Cliques","SentimentDict","Robustness","Trace"] -%}
+              {% if measure not in ["Resilience","Description","Cliques","SentimentDict","Robustness"] -%}
               <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="left" title="{{systemMeasures['Description'][measure]}}"></i>
               {{ measure }}: {{ systemMeasures[measure] }}
               {% endif -%}
@@ -64,7 +64,7 @@
           {% endfor -%}
           <div>
             {% if systemMeasures.get("SentimentDict") -%}
-            <a id="sentimentDict" name="sentimentDict" href="{{ url_for('sna_blueprint.view_sent_change', case_num=case_num) }}">
+            <a id="sentimentDict" name="sentimentDict" target="_blank" href="{{ url_for('sna_blueprint.view_sent_change', case_num=case_num) }}">
               View Sentiment Change
             </a>
             {% endif -%}
@@ -92,14 +92,56 @@
                         View
                       </a>
                     </td>
-                </tr>  
+                </tr>
                 {% endfor -%}
             </table>
             {% endif -%}
           </div>
           <!-- handle resilience -->
           <div id="resilienceInfo">
-              View Resilience measures in the Dashboard.
+            {% if systemMeasures.get("Resilience") == None -%}
+              <form id="resilienceForm" enctype="multipart/form-data" method="post">
+                <input id="resilience" name="resilienceSubmit" type="submit" value="Calculate Resilience" onclick="handleResilienceClick();" href="javascript:void(0)" data-toggle="tooltip" data-placement="left" title="{{systemMeasures['Description']['Resilience']}}"/>
+              </form>
+            {% else -%}
+            <table id="resilienceTable">
+                <tr>
+                    <th style="text-align:center" colspan="4">Resilience Measures</th>
+                    <td rowspan="1000" class="resilienceGradient"></td>
+                    <td>High</td>
+                </tr>
+                <tr>
+                    <th>Cliques</th>
+                    <th>Baseline</th>
+                    <th>Resilience</th>
+                    <th>Robustness</th>
+                </tr>
+                {% for cluster in systemMeasures['Baseline'] -%}
+                <tr>
+                    <td class="node">{{ cluster }}</td>
+                    <td>
+                        {{ systemMeasures['Baseline'][cluster][0] }}
+                        <div class="colorCode"
+                             style="background-color:rgb({{systemMeasures['Baseline'][cluster][1]}}%,0%,{{systemMeasures['Baseline'][cluster][2]}}%)"></div>
+                    </td>
+                    <td>
+                        {{ systemMeasures['Resilience'][cluster][0] }}
+                        <div class="colorCode"
+                             style="background-color:rgb({{systemMeasures['Resilience'][cluster][1]}}%,0%,{{systemMeasures['Resilience'][cluster][2]}}%)"></div>
+                    </td>
+                    <td>
+                        {{ systemMeasures['Robustness'][cluster][0] }}
+                        <div class="colorCode"
+                             style="background-color:rgb({{systemMeasures['Robustness'][cluster][1]}}%,0%,{{systemMeasures['Robustness'][cluster][2]}}%)"></div>
+                    </td>
+                </tr>
+                {% endfor -%}
+                <tr>
+                  <td colspan="4"></td>
+                  <td>Low</td>
+                </tr>
+            </table>
+            {% endif -%}
           </div>
           <!-- node-dependent measures updated dynamically with js -->
           <div class="top-border"><b>Node-Dependent Measures</b></div>
@@ -140,7 +182,7 @@
             <tr>
               <td>Node Type:</td>
               <td>
-                <select id="classList" name="classList">
+                <select name="classList">
                  {% for set in graph.classList %}
                    <option value="{{set}}">
                      {{set}}
@@ -148,9 +190,6 @@
                  {% endfor %}
                </select>
               </td>
-            </tr>
-            <tr>
-              <td colspan="2"><div id="additionAdvice"></div></td>
             </tr>
             <tr>
               <td>Add Attribute:</td>
@@ -198,7 +237,7 @@
         onclick="document.getElementById('SNAOptions').style.display='inline-block'"></i>
       </div>
       <div class = "output" id = "SNAOptions">
-        <h3><center>Options</center></h3>
+        <h3><center>SNA Options</center></h3>
         <!-- color options form -->
         <form enctype = "multipart/form-data" method = "post">
           <b>Colors</b><br>
@@ -231,6 +270,7 @@
       $d.hide();
       hovered = jgraph.makeMaterial(0xb7ecff);
       onEnter = function (object) {
+        console.log(object)
         if (object.geometry.type === "SphereGeometry") {
           $d.html('<p><b>' + object.name + '</b></p>');
         } else {
@@ -238,7 +278,6 @@
             $d.html('<p><b>' + object.name + '</b></p>');
           }
         }
-          console.log(object);
           $d.show();
           object.defaultMaterial = object.material;
           object.material = hovered;
@@ -288,6 +327,7 @@
 
       // return edge data on edge click, including propensities
       jgraph.onClick(function (edge) {
+        console.log(edge)
         if (attributeFlag == false) {
           console.log("edge.name",edge.name)
           if (edge.name != "" && edge.geometry.type === "CylinderGeometry") {
@@ -336,6 +376,9 @@
       //update info displays with node data
       update = function(nodeDict) {
         console.log("NodeDict:",nodeDict)
+        if (nodeDict['img'] !== null){
+          $d.html('<p><b>' + nodeDict['name'] + '</b></p>'+'<img style="width:50px" src="'+nodeDict['img']+'"</img>');
+        }
         $("#delete").val(nodeDict['name']);
         $("#addNodeFormName").val(nodeDict['name']);
         $("#nodeMeasureInfo").empty()
@@ -406,12 +449,10 @@
 
 
         for (var key in edgeDict) {
-          if (key != "source" && key != "target" && key != "name" && key != "propsFlag") {
+          if (key != "source" && key != "target" && key != "name") {
             if (edgeDict[key] != null) {
-              $("#propInfo").append("<span id='"+key+"'><i>"+key+":</i></span><br>")
-              for (var prop in edgeDict[key]) {
-                $("#propInfo").append("<span id='"+prop+"'>"+prop+": "+edgeDict[key][prop]+"</span><br>")
-              }
+              console.log(key, edgeDict[key])
+              $("#propInfo").append("<span id='"+key+"'>"+key+": "+edgeDict[key][0][0]+" (resulting from attribute {"+edgeDict[key][0][1]+": "+edgeDict[key][0][2]+"})</span><br>")
               empty = false
             }
           }
@@ -425,18 +466,6 @@
         }
       }
       $('[data-toggle="tooltip"]').tooltip();
-
-      // Add custom advice for node addition.
-      $('#classList').on('change', function() {
-        var selected = $( "#classList option:selected" ).val();
-        console.log(selected)
-        if(selected == "Event") {
-          $("#additionAdvice").html("For events, specify CAMEO code ('code'), event source ('source'), and event target ('target') attributes below.");
-        }
-        else {
-          $("#additionAdvice").html("");
-        }
-      });
     </script>
   </body>
 </html>

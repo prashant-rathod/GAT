@@ -1,72 +1,75 @@
 {% if graph %}
-    <div class="output-window resize-drag-outer" id="SNA Visualization Window">
-        <div class="output-button-bar resize-drag">
-            <span class="left-span">
-            <i class="btn btn-close fa fa-window-close-o"
-                       onclick="document.getElementById('SNA Visualization Window').style.display='none'"></i>
-
-            <i class="btn btn-hide fa fa-window-minimize"
-                       onclick="handleWindowResizeClick('SNA Visualization',this)"></i>
+    <div id="sna-tile" class="card col-md-4 resize-drag-outer"
+         style="background-color: rgba(69,90,100,1);" id="SNA Visualization Window">
+        <div class="card-title resize-drag">
+            <span class="window-title">SNA</span>
+            <span class="window-controls">
+                    <i class="btn btn-hide fa fa-window-minimize"
+                       onclick="handleWindowResizeClick('sna-card-body',this)"></i>
+                    <i class="btn btn-hide fa fa-window-maximize"
+                       onclick="maximizeTile('sna-tile',this)"></i>
+                    <i class="btn btn-close fa fa-window-close-o"
+                       onclick="document.getElementById('sna-tile').style.display='none'"></i>
             </span>
-            <span class="right-span"><b>SNA Visualization</b></span>
         </div>
-        <div class="output" id="SNA Visualization">
-            {% if jgdata %}
-            <p><a href="{{ url_for('sna_blueprint.jgvis', case_num=case_num) }}" style="color:lightblue">Click here for
-                3D visualization</a></p>
-            {% if SNAbpPlot -%}
-            <p>2D Visualization:</p>
-            <image src="{{url_for('out_blueprint.custom_static', filename='sna/' + SNAbpPlot )}}"></image>
-            {% endif -%}
-            {% endif %}
-        </div>
-    </div>
-    <div class="output-window resize-drag-outer" id="SNA Data Window">
-        <div class="output-button-bar resize-drag">
-            <span class="left-span">
-            <i class="btn btn-close fa fa-window-close-o"
-                       onclick="document.getElementById('SNA Data Window').style.display='none'"></i>
-
-            <i class="btn btn-hide fa fa-window-minimize"
-                       onclick="handleWindowResizeClick('SNA Data',this)"></i>
-            </span>
-            <span class="right-span"><b>SNA Data</b></span>
-        </div>
-        <div class="output" id="SNA Data">
-            {% if systemMeasures -%}
-                <h4>System Measures</h4>
-                {% for measure in systemMeasures -%}
-                    {% if measure not in ['Description','Resilience','Robustness','Baseline','Trace'] -%}
-                        <p>
-                            <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="left" title="{{systemMeasures['Description'][measure]}}"></i>
-                            {{measure}}: {{systemMeasures[measure]}}
-                        </p>
+        <div class="card-body" id="sna-card-body">
+            <div id="SNA Visualization" class="visual-output">
+                <span class="right-span"><b>Visual Output</b></span>
+                </br>
+                {% if jgdata %}
+                    <p><a href="{{ url_for('sna_blueprint.jgvis', case_num=case_num) }}">
+                        Click here for 3D visualization</a></p>
+                    {% if SNAbpPlot -%}
+                        <div style="text-align: center">
+                            <image class="sna-img"
+                                   src="{{ url_for('out_blueprint.custom_static', filename='sna/' + SNAbpPlot ) }}"></image>
+                        </div>
                     {% endif -%}
-                {% endfor -%}
-            {% endif -%}
-            <div id="resilienceInfo">
-                {% if systemMeasures.get("Baseline") == None -%}
-                    <form id="resilienceForm" enctype="multipart/form-data" method="post">
-                        <input id="resilience" onclick="handleResilienceClick()" name="resilienceSubmit" type="submit"
-                               value="Calculate Resilience" href="javascript:void(0)" data-toggle="tooltip"
-                               data-placement="left" title="{{systemMeasures['Description']['Resilience']}}">
-                    </form>
+                {% endif %}
+            </div>
+            <div id="SNA Data" class="statistical-output">
+
+                <div id="resilienceInfo" style="float: right;">
+                    {% if systemMeasures.get("Baseline") == None -%}
+                        <form id="resilienceForm" enctype="multipart/form-data" method="post">
+                            <input id="resilience" onclick="handleResilienceClick()" name="resilienceSubmit"
+                                   type="submit"
+                                   value="Calculate Resilience" href="javascript:void(0)" data-toggle="tooltip"
+                                   data-placement="left" title="{{ systemMeasures['Description']['Resilience'] }}">
+                        </form>
                     {% else -%}
-                    <p>
-                      <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="left" title="{{systemMeasures['Description']['Resilience']}}"></i>
-                      <span>Resilience:</span>
-                    </p>
-                    <svg width="0px">
-                      <defs>
-                        <linearGradient id="gradient">
-                          <stop offset="5%" stop-color="red" />
-                          <stop offset="95%" stop-color="blue" />
-                        </linearGradient>
-                      </defs>
-                    </svg>
-                    <script type="text/javascript">
-                      drawSVG({{systemMeasures|tojson}})
-                    </script>
+
+                        <p>
+                            <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="left"
+                               title="{{ systemMeasures['Description']['Resilience'] }}"></i>
+                            <span>Resilience:</span>
+                        </p>
+                        <svg width="0px">
+                            <defs>
+                                <linearGradient id="gradient">
+                                    <stop offset="5%" stop-color="red"/>
+                                    <stop offset="95%" stop-color="blue"/>
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                        <script type="text/javascript">
+                            drawSVG({{systemMeasures|tojson}})
+                        </script>
+                    {% endif -%}
+                </div>
+                <span class="right-span"><b><h4>Statistical Output</h4></b></span>
+                {% if systemMeasures -%}
+                    System Measures
+                    {% for measure in systemMeasures -%}
+                        {% if measure not in ['Description','Resilience','Robustness','Baseline','Trace'] -%}
+                            <p>
+                                <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="left"
+                                   title="{{ systemMeasures['Description'][measure] }}"></i>
+                                {{ measure }}: {{ systemMeasures[measure] }}
+                            </p>
+                        {% endif -%}
+                    {% endfor -%}
+
                 {% endif -%}
             </div>
         </div>
