@@ -56,5 +56,3 @@ def textnetAllText(csvPath, textColumnName = '', groupVarColumnName=''):
     if textColumnName!='' and groupVarColumnName!='':
         dataList = dataList[[textColumnName, groupVarColumnName]]
     rfunc(dataList, filename)
-
-textnetAllText("/home/cheesecake/Downloads/State-of-the-Union-Addresses.csv", 'Text', 'President')
