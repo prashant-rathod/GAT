@@ -995,3 +995,15 @@ section.last:before {
 .z-index-10 {
   z-index: 10;
 }
+.panel-body-scroll{
+    max-height: calc(100vh - 150px);
+    overflow-y: auto;
+}
+.spanlink {
+cursor: pointer;
+color: #337ab7;
+}
+
+span.spanlink:hover {
+     text-decoration:underline;
+}

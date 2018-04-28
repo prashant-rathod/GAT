@@ -199,7 +199,7 @@ input {
   opacity: 1;
   z-index: -1;
 }
-label {
+.nlp-label {
   position: relative;
   display: block;
   padding: 0 0 0 1em;
@@ -395,4 +395,9 @@ h4 {
     background-color: rgba(144, 164, 174, .8);
     color: white;
     resize: both;
+}
+
+.form-label{
+    font-size: 100%;
+    font-family: Segoe UI;
 }

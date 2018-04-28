@@ -31,7 +31,7 @@
                 {% if not NLP_new_example_file %}
                     <div class="tab">
                         <input id="tab-sum" type="checkbox" name="tabs">
-                        <label for="tab-sum">Corpus Statistics</label>
+                        <label class="nlp-label" for="tab-sum">Corpus Statistics</label>
                         <div class="tab-content">
                             <p>Number of documents analyzed: {{ nlp_summary[0] }}<br>
                                 Total document word count: {{ nlp_summary[2] }}<br>
@@ -45,7 +45,7 @@
                 {% if False %}
                     <div class="tab">
                         <input id="tab-one" type="checkbox" name="tabs">
-                        <label for="tab-one">Entity Sentiment</label>
+                        <label class="nlp-label" for="tab-one">Entity Sentiment</label>
                         <div class="tab-content">
                             <table class="sortable" border="2px">
                                 <tr>
@@ -74,7 +74,7 @@
                 {% if nlp_tropes %}
                     <div class="tab">
                         <input id="tab-two" type="checkbox" name="tabs">
-                        <label for="tab-two">Entity Emotions</label>
+                        <label class="nlp-label" for="tab-two">Entity Emotions</label>
                         <div class="tab-content">
                             {% for trope in nlp_tropes %}
                                 <img src="out/nlp/{{ trope }}" height="40%" width="40%"></image>
@@ -85,7 +85,7 @@
                 {% if nlp_actors %}
                     <div class="tab">
                         <input id="tab-three" type="checkbox" name="tabs">
-                        <label for="tab-three">Actor Analysis</label>
+                        <label class="nlp-label" for="tab-three">Actor Analysis</label>
                         <div class="tab-content">
                             <p>Person to other category table</p>
                         </div>
@@ -94,7 +94,7 @@
                 {% if nlp_network %}
                     <div class="tab">
                         <input id="tab-three" type="checkbox" name="tabs">
-                        <label for="tab-three">Entity Network</label>
+                        <label class="nlp-label" for="tab-three">Entity Network</label>
                         <div class="tab-content">
                             <p>Jgraph 2D picture with link to SNA</p>
                         </div>
@@ -104,14 +104,14 @@
                 {% if NLP_new_example_file %}
                     <div class="tab">
                         <input id="tab-four" type="checkbox" name="tabs" class="imageLoaderNLP">
-                        <label for="tab-four">Relationship Mining</label>
+                        <label class="nlp-label" for="tab-four">Relationship Mining</label>
                         <div class="tab-content">
                             <img id="image0" src="" height="50%" width="90%">
                         </div>
                     </div>
                     <div class="tab">
                         <input id="tab-five" type="checkbox" name="tabs" class="imageLoaderNLP">
-                        <label for="tab-five">Sentiment Mining</label>
+                        <label class="nlp-label" for="tab-five">Sentiment Mining</label>
                         <div class="tab-content">
                             <img id="image1" src="" height="50%" width="90%">
                         </div>
@@ -120,63 +120,63 @@
                     </div>
                     <div class="tab">
                         <input id="tab-six" type="checkbox" name="tabs" class="imageLoaderNLP">
-                        <label for="tab-six">Wordcloud</label>
+                        <label class="nlp-label" for="tab-six">Wordcloud</label>
                         <div class="tab-content">
                             <img id="image2" src="" height="50%" width="90%">
                         </div>
                     </div>
                     <div class="tab">
                         <input id="tab-seven" type="checkbox" name="tabs" class="imageLoaderNLP">
-                        <label for="tab-seven">Stemmerize</label>
+                        <label class="nlp-label" for="tab-seven">Stemmerize</label>
                         <div class="tab-content">
                             <span id="text1"></span>
                         </div>
                     </div>
                     <div class="tab">
                         <input id="tab-eight" type="checkbox" name="tabs" class="imageLoaderNLP">
-                        <label for="tab-eight">Lemmatize</label>
+                        <label class="nlp-label" for="tab-eight">Lemmatize</label>
                         <div class="tab-content">
                             <span id="text2"></span>
                         </div>
                     </div>
                     <div class="tab">
                         <input id="tab-nine" type="checkbox" name="tabs" class="imageLoaderNLP">
-                        <label for="tab-nine">Abstract</label>
+                        <label class="nlp-label" for="tab-nine">Abstract</label>
                         <div class="tab-content">
                             <span id="text3"></span>
                         </div>
                     </div>
                     <div class="tab">
                         <input id="tab-ten" type="checkbox" name="tabs" class="imageLoaderNLP">
-                        <label for="tab-ten">Top 20 Verbs</label>
+                        <label class="nlp-label" for="tab-ten">Top 20 Verbs</label>
                         <div class="tab-content">
                             <img id="image3" src="" height="50%" width="90%">
                         </div>
                     </div>
                     <div class="tab">
                         <input id="tab-eleven" type="checkbox" name="tabs" class="imageLoaderNLP">
-                        <label for="tab-eleven">Top 20 Persons</label>
+                        <label class="nlp-label" for="tab-eleven">Top 20 Persons</label>
                         <div class="tab-content">
                             <img id="image4" src="" height="50%" width="90%">
                         </div>
                     </div>
                     <div class="tab">
                         <input id="tab-twelve" type="checkbox" name="tabs" class="imageLoaderNLP">
-                        <label for="tab-twelve">Top 20 Locations</label>
+                        <label class="nlp-label" for="tab-twelve">Top 20 Locations</label>
                         <div class="tab-content">
                             <img id="image5" src="" height="50%" width="90%">
                         </div>
                     </div>
                     <div class="tab">
                         <input id="tab-thirteen" type="checkbox" name="tabs" class="imageLoaderNLP">
-                        <label for="tab-thirteen">Top 20 Organizations</label>
+                        <label class="nlp-label" for="tab-thirteen">Top 20 Organizations</label>
                         <div class="tab-content">
                             <img id="image6" src="" height="50%" width="90%">
                         </div>
                     </div>
                     <div class="tab">
                         <input id="tab-fourteen" type="checkbox" name="tabs" class="imageLoaderNLP">
-                        <label for="tab-fourteen">Sentence Sentiment Distribution</label>
+                        <label class="nlp-label" for="tab-fourteen">Sentence Sentiment Distribution</label>
                         <div class="tab-content">
                             <img id="image7" src="" height="50%" width="90%">
                         </div>

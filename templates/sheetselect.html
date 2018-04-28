@@ -1,33 +1,41 @@
 <div class="indented">
     <h3>Please select node and attribute data sheets:</h3>
 
-    <form enctype="multipart/form-data" method="post" action="{{ request.url }}">
+    <form enctype="multipart/form-data" id="sna_sheetselect" method="post" action="{{ request.url }}">
+        <div class="form-group">
+            <label class="form-label" for="nodeSheet"> Node Sheet: </label>
+            <div>
+                <select class="form-control" name="nodeSheet" id="nodeSheet">
 
-        <p>Node Sheet: </p>
-        <select name="nodeSheet">
+                    {% for sheet in sheets %}
 
-            {% for sheet in sheets %}
-
-                <option value="{{ sheet }}" {% if
+                        <option value="{{ sheet }}" {% if
                 'Node' in sheet -%} selected="selected" {% endif -%} >{{ sheet }}</option>
 
-            {% endfor %}
+                    {% endfor %}
 
-        </select><br>
+                </select>
+            </div>
+        </div>
 
-        <p>Attribute Sheet: </p>
-        <select name="attrSheet">
+        <div class="form-group">
+            <label class="form-label" for="attrSheet">Attribute Sheet: </label>
+            <div>
+                <select class="form-control" name="attrSheet" id="attrSheet">
 
-            {% for sheet in sheets %}
+                    {% for sheet in sheets %}
 
-                <option value="{{ sheet }}" {% if
+                        <option value="{{ sheet }}" {% if
                 'Attr' in sheet -%} selected="selected" {% endif -%} >{{ sheet }}</option>
 
-            {% endfor %}
+                    {% endfor %}
 
-        </select><br><bR>
+                </select>
+            </div>
+        </div>
 
-        <input type="submit" value="CONTINUE">
+
+        <input type="submit" onclick="showResponsePost(event, 'sna_sheetselect')" value="CONTINUE" class="btn btn-default">
 
     </form>
 </div>
