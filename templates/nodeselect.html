@@ -1,418 +1,120 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Node Select</title>
-    {% include "header.html" -%}
-    <link href="{{url_for('static', filename='css/vizStyle.css')}}" rel="stylesheet">
-    <script type="text/javascript">
-	  function get(id) {
-			return document.getElementById(id);
-		}
-		function openHelp(source){
-			get("help").style.display = "block";
-		}
-		function closeHelp(source) {
-			get("help").style.display = "none";
-		}
-		// target elements with the "draggable" class
-		interact('.draggable')
-		  .draggable({
-		    // enable inertial throwing
-		    inertia: true,
-		    // keep the element within the area of it's parent
-		    restrict: {
-		      restriction: "parent",
-		      endOnly: true,
-		      elementRect: { top: 0, left: 0, bottom: 1, right: 1 }
-		    },
-		    // enable autoScroll
-		    autoScroll: true,
+<script type="text/javascript">
 
-		    // call this function on every dragmove event
-		    onmove: dragMoveListener,
-		    // call this function on every dragend event
-		    onend: function (event) {
-		      var textEl = event.target.querySelector('p');
+    function get(id) {
+        return document.getElementById(id);
+    }
 
-		      textEl && (textEl.textContent =
-		        'moved a distance of '
-		        + (Math.sqrt(event.dx * event.dx +
-		                     event.dy * event.dy)|0) + 'px');
-		    }
-		  });
+    function openHelp(source) {
+        get("help").style.display = "block";
+    }
 
-		  function dragMoveListener (event) {
-		    var target = event.target,
-		        // keep the dragged position in the data-x/data-y attributes
-		        x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx,
-		        y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
+    function closeHelp(source) {
+        get("help").style.display = "none";
+    }
 
-		    // translate the element
-		    target.style.webkitTransform =
-		    target.style.transform =
-		      'translate(' + x + 'px, ' + y + 'px)';
+    function toggleNodeSet(source) {
+        checkboxes = document.getElementsByClassName("nodeset");
+        for (var i = 0, n = checkboxes.length; i < n; i++) {
+            checkboxes[i].checked = source.checked;
+        }
+    }
 
-		    // update the posiion attributes
-		    target.setAttribute('data-x', x);
-		    target.setAttribute('data-y', y);
-		  }
-
-		  // this is used later in the resizing and gesture demos
-		  window.dragMoveListener = dragMoveListener;
-		interact('.resize-drag-outer')
-	  .draggable({
-	    onmove: window.dragMoveListener
-	  })
-	  .allowFrom('.resize-drag')
-	  .resizable({
-	    preserveAspectRatio: true,
-	    edges: { left: true, right: true, bottom: true, top: true }
-	  })
-	  .on('resizemove', function (event) {
-	    var target = event.target,
-	        x = (parseFloat(target.getAttribute('data-x')) || 0),
-	        y = (parseFloat(target.getAttribute('data-y')) || 0);
-
-	    // update the element's style
-	    target.style.width  = event.rect.width + 'px';
-	    target.style.height = event.rect.height + 'px';
-
-	    // translate when resizing from top or left edges
-	    x += event.deltaRect.left;
-	    y += event.deltaRect.top;
-
-	    target.style.webkitTransform = target.style.transform =
-	        'translate(' + x + 'px,' + y + 'px)';
-
-	    target.setAttribute('data-x', x);
-	    target.setAttribute('data-y', y);
-	  });
-
-
-    </script>
-    <style>
-		body {
-			height:100vh;
-		}
-		label {
-			display: block;
-		}
-		center {
-			color: white;
-		}
-
-    </style>
-
-</head>
-
-<style>
-* {
- font-size: 100%;
- font-family: Segoe UI;
-}
-
-</style>
-
-<script>
-		function show1(){
-			$('#nlp_modal').modal('show');
-			$('#sna_modal').modal('hide');
-			$('#gsa_modal').modal('hide');
-		}
-
-		function show2(){
-			$('#nlp_modal').modal('hide');
-			$('#sna_modal').modal('show');
-			$('#gsa_modal').modal('hide');
-		}
-
-		function show3(){
-			$('#nlp_modal').modal('hide');
-			$('#sna_modal').modal('hide');
-			$('#gsa_modal').modal('show');
-		}
-		function openurl(link){
-				window.open(link);
-			}
-
+    function toggleSrcSet(source) {
+        checkboxes = document.getElementsByClassName("srcset");
+        for (var i = 0, n = checkboxes.length; i < n; i++) {
+            checkboxes[i].checked = source.checked;
+        }
+    }
 </script>
-
-
-<body class="resize-container">
-<section class="blur">
-    <!-- dropdown menu
-        The buttons will have to become buttons, indeed-->
-    <div class="wrapperul" align="center">
-        <ul>
-            <li class="dropdown contains-image">
-                <a href="{{url_for('upload_blueprint.upload', case_num = case_num)}}"><img
-                        src="{{url_for('static', filename='GATLogo.svg')}}" alt="hermes logo"></a>
-            </li>
-            <li class="dropdown" onclick="show1()">
-                <a href="#" class="dropbtn">NLP</a>
-            </li>
-            <li class="dropdown" onclick="show2()">
-                <a href="#" class="dropbtn">SNA</a>
-            </li>
-            <li class="dropdown" onclick="show3()">
-                <a href="#" class="dropbtn">GSA</a>
-            </li>
-            <li class="dropdown align-right">
-                <a href="#" class="dropbtn"><i class="fa fa-question-circle fa-lg"></i></a>
-                <div class="dropdown-content">
-                    <a href="#" onClick="openHelp(this)">GSA Output Help</a>
-                    <a href="{{url_for('info_blueprint.help', case_num = case_num)}}">Help Page</a>
-                </div>
-            </li>
-        </ul>
-    </div>
-
-    <script type="text/javascript">
-
-	function get(id) {
-		return document.getElementById(id);
-	}
-
-	function openHelp(source){
-		get("help").style.display = "block";
-	}
-
-	function closeHelp(source) {
-		get("help").style.display = "none";
-	}
-	function toggleNodeSet(source) {
-	  checkboxes = document.getElementsByClassName("nodeset");
-	  for(var i=0, n=checkboxes.length;i<n;i++) {
-		checkboxes[i].checked = source.checked;
-	  }
-	}
-	function toggleSrcSet(source) {
-	  checkboxes = document.getElementsByClassName("srcset");
-	  for(var i=0, n=checkboxes.length;i<n;i++) {
-		checkboxes[i].checked = source.checked;
-	  }
-	}
-
-    </script>
-    <style>
-		table {
-			background-color: #071138;
-			border: solid white;
-			border-collapse: collapse;
-		}
-		table .centered {
-			text-align: center
-		}
-		th,td {
-			padding: 5px;
-			border-top: solid thin white;
-		}
-		.last td {
-			border-bottom: solid thick white;
-			border-top: none;
-		}
-        #propToggle {
-            position:absolute;
-            bottom: 59%;
-            left: 50%;
-        }
-        .indented {
-            position: relative;
-        }
-    </style>
-
-
-    </head>
-
-    <style>
-* {
- font-size: 100%;
- font-family: Segoe UI;
-}
-* {
- font-size: 100%;
- font-family: Segoe UI;
-}
-h3, p {
-	color: white;
-}
-.indented {
-	margin: 0 10%;
-}
-input {
-	opacity: 1;
-	position: initial;
-}
-label  {
-	background: transparent;
-	padding:0;
-}
-table {
-	color:white;
-}
-th, td {
-	text-align:center;
-	padding:none
-}
-select,input {
-	color: initial;
-}
-/* The switch - the box around the slider */
-.switch {
-  position: relative;
-  display: inline-block;
-  width: 30px;
-  height: 17px;
-}
-
-/* Hide default HTML checkbox */
-.switch input {display:none;}
-
-/* The slider */
-.slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #ccc;
-  -webkit-transition: .4s;
-  transition: .4s;
-}
-
-.slider:before {
-  position: absolute;
-  content: "";
-  height: 13px;
-  width: 13px;
-  left: 2px;
-  bottom: 2px;
-  background-color: white;
-  -webkit-transition: .4s;
-  transition: .4s;
-}
-
-input:checked + .slider {
-  background-color: #2196F3;
-}
-
-input:focus + .slider {
-  box-shadow: 0 0 1px #2196F3;
-}
-
-input:checked + .slider:before {
-  -webkit-transform: translateX(13px);
-  -ms-transform: translateX(13px);
-  transform: translateX(13px);
-}
-
-/* Rounded sliders */
-.slider.round {
-  border-radius: 17px;
-}
-
-.slider.round:before {
-  border-radius: 50%;
-}
-
-    </style>
-
-    <body>
-    <br>
-
-
-    <div id="help" style="display:none;">
-        <button onClick="closeHelp(this)">Close Help</button>
-        <p>Each box in this section corresponds to a column in your specified spreadsheet. Each column should correspond
-            to a set of nodes, or nodeset. If you check the "is a nodeset?" box, then every value in that column will
-            represent a node in the network. If you do not, then the values in that column will be attributes of nodes
-            in the network. You may also elect to rename nodesets; the default value is the column name in the
-            spreadsheet. The next page will allow you to select which relationships between the nodesets you would like
-            to visualize and analyze.</p>
-    </div>
-
-    <div class="indented">
-        <form enctype="multipart/form-data" method="post" style="display:inline;">
-            <table>
+<div class="indented">
+    <form enctype="multipart/form-data" method="post" action="{{ request.url }}">
+        <table class="table table-striped table-responsive">
+            <tr>
+                <th>Node Set</th>
+                <th>Visualize?</th>
+                <!--<th>Source?</th>-->
+                <th>Class</th>
+                <th>Label</th>
+            </tr>
+            <tr class="last">
+                <td><i>Select all</i></td>
+                <td class="centered"><input checked type="checkbox" onclick="toggleNodeSet(this)"></td>
+                <!--<td class="centered"><input  type = "checkbox" onclick="toggleSrcSet(this)"></td>-->
+                <td colspan="2"></td>
+            </tr>
+            <tr>
+                <td>{{ nodes[0] }}</td>
+                <td class="centered"><label><input checked type="checkbox" onclick="return false;"/></label></td>
+                <td>
+                    Source Nodeset
+                </td>
+                <td><input type="text" name="" value="{{ nodes[0] }}"></td>
+            </tr>
+            {% for node in nodes[1:] %}
                 <tr>
-                    <th>Node Set</th>
-                    <th>Visualize?</th>
-                    <!--<th>Source?</th>-->
-                    <th>Class</th>
-                    <th>Label</th>
-                </tr>
-                <tr class="last">
-                    <td><i>Select all</i></td>
-                    <td class="centered"><input checked type="checkbox" onclick="toggleNodeSet(this)"></td>
-                    <!--<td class="centered"><input  type = "checkbox" onclick="toggleSrcSet(this)"></td>-->
-                    <td colspan="2"></td>
-                </tr>
-                <tr>
-                    <td>{{nodes[0]}}</td>
-                    <td class="centered"><label><input checked type="checkbox" onclick="return false;" /></label></td>
-                    <td>
-                        Source Nodeset
-                    </td>
-                    <td><input type="text" name="" value="{{ nodes[0] }}"></td>
-                </tr>
-                {% for node in nodes[1:] %}
-                <tr>
-                    <td>{{node}}</td>
+                    <td>{{ node }}</td>
                     <td class="centered"><label><input checked class="nodeset" type="checkbox"
                                                        name="{{ node + 'IsNode' }}"></label></td>
                     <td>
-            <!--'position': 'position',-->
+                        <!--'position': 'position',-->
                         <select name="{{ node + 'Class' }}">
                             <option value="Agent" {% if
-                            'Agent' in node %} selected="selected" {% endif %} >Agent</option>
+                            'Agent' in node %} selected="selected" {% endif %} >Agent
+                            </option>
                             <option value="Organization" {% if
-                            'Org' in node %} selected="selected" {% endif %} >Organization</option>
+                            'Org' in node %} selected="selected" {% endif %} >Organization
+                            </option>
                             <option value="Audience" {% if
-                            'Audience' in node %} selected="selected" {% endif %}>Audience</option>
+                            'Audience' in node %} selected="selected" {% endif %}>Audience
+                            </option>
                             <option value="Role" {% if
-                            'Role' in node %} selected="selected" {% endif %}>Role</option>
+                            'Role' in node %} selected="selected" {% endif %}>Role
+                            </option>
                             <option value="Event" {% if
-                            'Event' in node %} selected="selected" {% endif %}>Event</option>
+                            'Event' in node %} selected="selected" {% endif %}>Event
+                            </option>
                             <option value="Belief" {% if
-                            'Belief' in node %} selected="selected" {% endif %}>Belief</option>
+                            'Belief' in node %} selected="selected" {% endif %}>Belief
+                            </option>
                             <option value="Symbols" {% if
-                            'Symbol' in node %} selected="selected" {% endif %}>Symbol</option>
+                            'Symbol' in node %} selected="selected" {% endif %}>Symbol
+                            </option>
                             <option value="Knowledge" {% if
-                            'Knowledge' in node %} selected="selected" {% endif %}>Knowledge</option>
+                            'Knowledge' in node %} selected="selected" {% endif %}>Knowledge
+                            </option>
                             <option value="Task Model" {% if
-                            'Task' in node %} selected="selected" {% endif %}>Task</option>
+                            'Task' in node %} selected="selected" {% endif %}>Task
+                            </option>
                         </select>
                     </td>
                     <td><input type="text" name="{{ node + 'Name' }}" value="{{ node }}"></td>
                 </tr>
-                {% endfor -%}
-            </table>
-            <br/>
-            <table id="propToggle">
-                <tr>
-                    <th colspan="2">Propensities</th>
-                </tr>
-                <tr>
-                    <td>Emotional</td>
-                    <td class="centered"><label class="switch"><input checked class="nodeset" type="checkbox"
-                                                       name="emo"><span class="slider round"></span></label></td>
-                </tr>
-                <tr>
-                    <td>Influence</td>
-                    <td class="centered"><label class="switch"><input checked class="nodeset" type="checkbox"
-                                                       name="infl"><span class="slider round"></span></label></td>
-                </tr>
-                <tr>
-                    <td>Role</td>
-                    <td class="centered"><label class="switch"><input checked class="nodeset" type="checkbox"
-                                                       name="role"><span class="slider round"></span></label></td>
-                </tr>
-            </table>
-            <input type="submit" value="CONTINUE" style="box-sizing:border-box;"/>
-        </form>
-    </div>
-  </section>
-  {% include 'modal.html' -%}
-    </body>
-</html>
+            {% endfor -%}
+        </table>
+        <br/>
+        <table id="propToggle" class="table table-striped">
+            <tr>
+                <th colspan="2">Propensities</th>
+            </tr>
+            <tr>
+                <td>Emotional</td>
+                <td class="centered"><label class="switch"><input checked class="nodeset" type="checkbox"
+                                                                  name="emo"><span class="slider round"></span></label>
+                </td>
+            </tr>
+            <tr>
+                <td>Influence</td>
+                <td class="centered"><label class="switch"><input checked class="nodeset" type="checkbox"
+                                                                  name="infl"><span class="slider round"></span></label>
+                </td>
+            </tr>
+            <tr>
+                <td>Role</td>
+                <td class="centered"><label class="switch"><input checked class="nodeset" type="checkbox"
+                                                                  name="role"><span class="slider round"></span></label>
+                </td>
+            </tr>
+        </table>
+        <input type="submit" value="CONTINUE" class="btn btn-default"/>
+    </form>
+</div>

@@ -2,22 +2,33 @@
     <h3>Please input map and attribute data:</h3>
 
     <form enctype="multipart/form-data" method="post" action="{{ request.url }}">
+        <div>
+            <label for="auto-row"> Autocorrelation Rows</label>
+            <div>
+                <input type="text" name="auto-row" id="auto-row" value={{ info.autoRow }}>
+            </div>
+        </div>
 
-        <p>Autocorrelation Rows</p>
-        <input type="text" name="auto-row" value={{ info.autoRow }}>
-        <br>
+        <div>
+            <label for="auto-col">Autocorrelation Columns</label>
+            <div>
+                <input type="text" name="auto-col" id="auto-col" value={{ info.autoCol }}>
+            </div>
+        </div>
 
-        <p>Autocorrelation Columns</p>
-        <input type="text" name="auto-col" value={{ info.autoCol }}>
-        <br>
+        <div>
+            <label for="dyn-row">System Dynamics Rows</label>
+            <div>
+                <input type="text" name="dyn-row" id="dyn-row" value={{ info.dynRow }}>
+            </div>
+        </div>
 
-        <p>System Dynamics Rows</p>
-        <input type="text" name="dyn-row" value={{ info.dynRow }}>
-        <br>
-
-        <p>System Dynamics Columns</p>
-        <input type="text" name="dyn-col" value={{ info.dynCol }}>
-        <br>
+        <div>
+            <label for="dyn-col">System Dynamics Columns</label>
+            <div>
+                <input type="text" name="dyn-col" id="dyn-col" value={{ info.dynCol }}>
+            </div>
+        </div>
 
         <!---<p>Id</p>
             <input type="text" name="gsa-id" value={{ info.id }}>
@@ -25,7 +36,7 @@
 
             <br>-->
 
-        <input type="submit" value="CONTINUE">
+        <input type="submit" value="CONTINUE" class="btn btn-default">
 
     </form>
 </div>
