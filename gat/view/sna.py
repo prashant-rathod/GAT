@@ -1,7 +1,7 @@
 import warnings
 
 import xlrd
-from flask import Blueprint, render_template, request, redirect, url_for, jsonify, json, send_file
+from flask import Blueprint, render_template, request, redirect, url_for, jsonify, json
 
 from gat.core.sna.sna import SNA
 from gat.dao import dao
@@ -39,7 +39,6 @@ def nodeSelect():
     fileDict = dao.getFileDict(case_num)
     graph = SNA(fileDict['SNA_Input'], nodeSheet=fileDict['nodeSheet'], attrSheet=fileDict['attrSheet'])
     fileDict['graph'] = graph
-
     if request.method == 'POST':
 
         nodeColNames = []
@@ -54,19 +53,13 @@ def nodeSelect():
                 nodeColNames.append(fileDict[header + "Name"])
         fileDict['nodeColNames'] = nodeColNames
 
-        fileDict['propToggle'] = {
-            'emo': True if request.form.get("emo") == "on" else False,
-            'infl': True if request.form.get("infl") == "on" else False,
-            'role': True if request.form.get("role") == "on" else False
-        }
-
         graph.createNodeList(nodeColNames)
         if fileDict['attrSheet'] != None:
             graph.loadAttributes()
         graph.createEdgeList(nodeColNames[0])
         graph.loadOntology(source=nodeColNames[0], classAssignments=classAssignments)
         if fileDict['attrSheet'] != None:
-            graph.calculatePropensities(fileDict['propToggle'])
+            graph.calculatePropensities(emo=True)
 
         # Only the first column is a source
         graph.closeness_centrality()
@@ -82,7 +75,7 @@ def nodeSelect():
 def jgvis():
     case_num = request.args.get('case_num', None)
     fileDict = dao.getFileDict(case_num)
-    graph = fileDict.get('copy_of_graph')
+    graph = fileDict.get('graph')
     jgdata, SNAbpPlot, attr, systemMeasures = sna_service.SNA2Dand3D(graph, request, case_num, _2D=False)
     return render_template("Jgraph.html",
                            jgdata=jgdata,
@@ -111,6 +104,7 @@ def get_node_data():
     graph.betweenness_centrality()
     graph.degree_centrality()
     # graph.katz_centrality()
+    image = graph.getImage(name)
     graph.eigenvector_centrality()
     graph.load_centrality()
     if graph.eigenvector_centrality_dict != {} and graph.eigenvector_centrality_dict != None and graph.eigenvector_centrality_dict.get(
@@ -129,6 +123,7 @@ def get_node_data():
         sentiment = "Sentiment not available for this node."
     attributes = graph.get_node_attributes(name)
     toJsonify = dict(name=name,
+                     img=image,
                      eigenvector=eigenvector,
                      betweenness=betweenness,
                      sentiment=sentiment,
@@ -173,4 +168,3 @@ def view_sent_change():
     return render_template("sentiment_change.html",
                            sent_json=json.dumps(response, sort_keys=True, indent=4, separators=(',', ':'))
                            )
-

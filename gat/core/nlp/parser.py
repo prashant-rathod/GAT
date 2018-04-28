@@ -28,9 +28,13 @@ INPUT:
 OUTPUT: 
 	text: raw text (string)
 """
+
+
 def readFile(file):
-	text = open(file)
-	return text
+    text = open(file)
+    return text
+
+
 """
 Tokenize Sentences
 INPUT: 
@@ -44,9 +48,12 @@ Follow the spanish example below for loading a tokenizer for a particular langua
 >>> spanish_tokenizer.tokenize(‘Hola amigo. Estoy bien.’)
 [‘Hola amigo.’, ‘Estoy bien.’]
 """
+
+
 def sentenceTokenizer(raw):
-	sentences = sent_tokenize(raw)
-	return sentences
+    sentences = sent_tokenize(raw)
+    return sentences
+
 
 """
 Tokenize on Stop Words
@@ -56,12 +63,15 @@ INPUT:
 OUTPUT: 
 	words: list of words (string)
 """
-def wordTokenizer(sentence, mode = "k"):
-	words = word_tokenize(sentence)
-	if mode == "r":
-		stopWords = set(stopwords.words('english'))
-		words = [w for w in words if w not in stopWords]
-	return words
+
+
+def wordTokenizer(sentence, mode="k"):
+    words = word_tokenize(sentence)
+    if mode == "r":
+        stopWords = set(stopwords.words('english'))
+        words = [w for w in words if w not in stopWords]
+    return words
+
 
 """
 Modify words to their stem form using the Porter Algorithm (e.g. "gaming" to "game")
@@ -70,9 +80,12 @@ INPUT:
 OUTPUT: 
 	words_stemmed: list of words (string), words that can't be stemmed are left unchanged (e.g. "the")
 """
+
+
 def wordStemmer(words):
-	porter_stemmer = PorterStemmer()
-	words = [porter_stemmer.stem(word) for word in words]
+    porter_stemmer = PorterStemmer()
+    words = [porter_stemmer.stem(word) for word in words]
+
 
 """
 Tag parts of speech, uses wordTokenizer function. Use POS_Tag.csv to understand the POS tags
@@ -81,10 +94,13 @@ INPUT:
 OUTPUT: 
 	pos_words: list of tuples (word, tag) [(string, string)]
 """
+
+
 def posTagger(sentence):
-	words = wordTokenizer(sentence)
-	pos_words = nltk.pos_tag(words)
-	return pos_words
+    words = wordTokenizer(sentence)
+    pos_words = nltk.pos_tag(words)
+    return pos_words
+
 
 """
 Following two are alternative options to the posTagger() function above. 
@@ -94,6 +110,8 @@ Following two are alternative options to the posTagger() function above.
 2. trainPOS_tagger trains a tagger using NLTK corpora to tag words. 
 	Allows for tagger customization to a specific domain with a curated training set.
 """
+
+
 def sentencePOS_Tagging(sentences):
     """
     Use NLTK's currently recommended part of speech tagger to tag the
@@ -102,15 +120,16 @@ def sentencePOS_Tagging(sentences):
     tagger = load('taggers/maxent_treebank_pos_tagger/english.pickle')
     return tagger.batch_tag(sentences)
 
+
 def trainPOS_Tagger():
-	train_data = treebank.tagged_sents()[:3000]
-	test_data = treebank.tagged_sents()[3000:]
-	tnt_pos_tagger = tnt.TnT()
-	tnt_pos_tagger.train(train_data)
-	tnt_pos_tagger.evaluate(test_data)
-	f = open('tnt_treebank_pos_tagger.pickle', 'w')
-	pickle.dump(tnt_pos_tagger, f)
-	f.close()
+    train_data = treebank.tagged_sents()[:3000]
+    test_data = treebank.tagged_sents()[3000:]
+    tnt_pos_tagger = tnt.TnT()
+    tnt_pos_tagger.train(train_data)
+    tnt_pos_tagger.evaluate(test_data)
+    f = open('tnt_treebank_pos_tagger.pickle', 'w')
+    pickle.dump(tnt_pos_tagger, f)
+    f.close()
 
 
 """
@@ -121,12 +140,15 @@ INPUT:
 OUTPUT: 
 	parse_result: parsed sentence tree with parts of speech tagged
 """
+
+
 def npChunking(sentence):
-	grammar = "NP: {<DT>?<JJ>*<NN>}"
-	pos_words = posTagger(sentence)
-	chunkParser= nltk.RegexpParser(grammar)
-	parse_result = chunkParser.parse(pos_words)
-	return parse_result
+    grammar = "NP: {<DT>?<JJ>*<NN>}"
+    pos_words = posTagger(sentence)
+    chunkParser = nltk.RegexpParser(grammar)
+    parse_result = chunkParser.parse(pos_words)
+    return parse_result
+
 
 """
 Chunks a sentence and performs Name Entity Recognition (NER). Uses several parsing helper functions
@@ -138,9 +160,12 @@ OUTPUT:
 	ne_chunks: a list of the entities in the sentence (stopwords removed) with their name entity tags 
 		(see the main function for an example)
 """
+
+
 def NEChunker(sentence):
-	ne_chunks = ne_chunk(posTagger(sentence))
-	return ne_chunks
+    ne_chunks = ne_chunk(posTagger(sentence))
+    return ne_chunks
+
 
 """
 Performs a recursive traversal of the NEChunker output 
@@ -150,6 +175,8 @@ OUTPUT:
 	prints the tree for readability; the output can be parsed for more information, 
 		but parsing the tree will be more efficient and fluid
 """
+
+
 def treeTraverse(t):
     try:
         t.label()
@@ -160,6 +187,7 @@ def treeTraverse(t):
         for child in t:
             treeTraverse(child)
         print(')', end=" ")
+
 
 def treeTraverseString(t):
     try:
@@ -172,6 +200,7 @@ def treeTraverseString(t):
             string += treeTraverseString(child)
         return string + ')' + " "
 
+
 """
 Takes the output from the NEChunker() and does IOB tagging 
 Used for identifying verbs to match to CAMEO codes 
@@ -183,9 +212,12 @@ OUTPUT:
 		with their parts of speech and sentence structure tagged
 		(go to main function for an example)
 """
+
+
 def IOB_Tagging(t):
-	iob_tagged = tree2conlltags(t)
-	return iob_tagged
+    iob_tagged = tree2conlltags(t)
+    return iob_tagged
+
 
 ###################################
 ###### Gender Classification ######
@@ -203,6 +235,8 @@ Note Maximum Entropy Models requires downloading the MEGAM optimization package.
 	"sudo cp megam.opt /usr/local/bin" or wherever NLTK is accessing
 """
 _megam_bin = "/home/nikita/Projects/GAT/GAT_NLP_JamesWu/NLP/megam_0.92"
+
+
 def config_megam(bin=None):
     """
     Configure NLTK's interface to the ``megam`` maxent optimization
@@ -220,6 +254,7 @@ def config_megam(bin=None):
         binary_names=['megam.opt', 'megam', 'megam_686', 'megam_i686.opt'],
         url='http://www.umiacs.umd.edu/~hal/megam/index.html')
 
+
 """
 Feature Extractor Helper Function for the Gender classifier
 INPUT: 
@@ -228,6 +263,7 @@ OUTPUT:
 	features: relevant features for determining gender of a PERSON {string, char}
 """
 
+
 def gender_features(name):
     features = {}
     features["fl"] = name[0].lower()
@@ -235,6 +271,8 @@ def gender_features(name):
     features["fw"] = name[:2].lower()
     features["lw"] = name[-2:].lower()
     return features
+
+
 """
 Uses NLTK corpora to train a gender classifier model for the PERSON name entity chunk
 INPUT: 
@@ -243,19 +281,21 @@ OUTPUT:
 	The model is pickled in the same directory as the script and can be accessed with predictGender()
 """
 
+
 def trainGenderClassifier(model="NB"):
-	my_names = ([(name, 'male') for name in names.words('male.txt')] +
-		[(name, 'female') for name in names.words('female.txt')])
-	shuffle(my_names)
-	train_set = [(gender_features(n), g) for (n, g) in my_names]
-	if model == "NB":
-		nb_classifier = NaiveBayesClassifier.train(train_set)
-		joblib.dump(nb_classifier, 'nb_gender_classifier.pkl')
-	elif model == "ME": 
-		me_classifier = MaxentClassifier.train(train_set, "megam")
-		joblib.dump(me_classifier, 'me_gender_classifier.pkl')
-	else:
-		raise ValueError("Enter Model Type: Naive Bayes (NB) or Maximum Entropy (ME)")
+    my_names = ([(name, 'male') for name in names.words('male.txt')] +
+                [(name, 'female') for name in names.words('female.txt')])
+    shuffle(my_names)
+    train_set = [(gender_features(n), g) for (n, g) in my_names]
+    if model == "NB":
+        nb_classifier = NaiveBayesClassifier.train(train_set)
+        joblib.dump(nb_classifier, 'nb_gender_classifier.pkl')
+    elif model == "ME":
+        me_classifier = MaxentClassifier.train(train_set, "megam")
+        joblib.dump(me_classifier, 'me_gender_classifier.pkl')
+    else:
+        raise ValueError("Enter Model Type: Naive Bayes (NB) or Maximum Entropy (ME)")
+
 
 """
 Uses picked gender classifier model to predict a gender for a test name
@@ -267,17 +307,20 @@ OUTPUT:
 	male_prob: probability of male (if close to 0.5, the name may not be a PERSON NE)
 	female_prob: probability of female (if close to 0.5, the name may not be a PERSON NE)
 """
+
+
 def predictGender(name, model="NB"):
-	test = gender_features(name)
-	classifier = None
-	if model == "ME":
-		classifier = joblib.load("me_gender_classifier.pkl") 
-	elif model == "NB":
-		classifier = joblib.load("nb_gender_classifier.pkl") 
-	predicts = classifier.classify(classifier, test)
-	male_prob = classifier.prob("m")
-	female_prob = classifier.prob("f")
-	return predicts,male_prob,female_prob
+    test = gender_features(name)
+    classifier = None
+    if model == "ME":
+        classifier = joblib.load("me_gender_classifier.pkl")
+    elif model == "NB":
+        classifier = joblib.load("nb_gender_classifier.pkl")
+    predicts = classifier.classify(classifier, test)
+    male_prob = classifier.prob("m")
+    female_prob = classifier.prob("f")
+    return predicts, male_prob, female_prob
+
 
 #######################################
 ######### Sentiment Analysis ##########
@@ -290,33 +333,45 @@ OUTPUT:
 	all_features: relevant features for determining sentiment of the document
 """
 
+
 def sentiment_features(words, n=2):
-	all_features = bag_of_words(words)
-	ngram_features = bag_of_ngrams(words, n=n)
-	all_features.update(ngram_features)   
-	return all_features
+    all_features = bag_of_words(words)
+    ngram_features = bag_of_ngrams(words, n=n)
+    all_features.update(ngram_features)
+    return all_features
+
+
 """
 Helper functions for sentiment_features 
 """
+
+
 def bag_of_words(words):
-	return dict([(word, True) for word in words])
+    return dict([(word, True) for word in words])
+
 
 def bag_of_ngrams(words, n=2):
-	ngs = [ng for ng in iter(ngrams(words, n))]
-	return bag_of_words(ngs)
+    ngs = [ng for ng in iter(ngrams(words, n))]
+    return bag_of_words(ngs)
+
 
 """
 Uses NLTK corpora to train a sentiment classifier model
 OUTPUT: 
 	The model is pickled in the same directory as the script and can be accessed with predictSentiment()
 """
+
+
 def trainSentimentClassifier():
-	documents = [(list(movie_reviews.words(fileid)), category) for category in movie_reviews.categories() for fileid in movie_reviews.fileids(category)]
-	shuffle(documents)
-	train_set = [(sentiment_features(d), c) for (d, c) in documents]
-	#me_classifier = MaxentClassifier.train(train_set, "megam")
-	nb_classifier = NaiveBayesClassifier.train(train_set)
-	joblib.dump(nb_classifier, "nb_sentiment_classifier.pkl")
+    documents = [(list(movie_reviews.words(fileid)), category) for category in movie_reviews.categories() for fileid in
+                 movie_reviews.fileids(category)]
+    shuffle(documents)
+    train_set = [(sentiment_features(d), c) for (d, c) in documents]
+    # me_classifier = MaxentClassifier.train(train_set, "megam")
+    nb_classifier = NaiveBayesClassifier.train(train_set)
+    joblib.dump(nb_classifier, "nb_sentiment_classifier.pkl")
+
+
 """
 Uses pickled sentiment classifier model to predict a sentiment for a text
 INPUT: 
@@ -327,29 +382,31 @@ OUTPUT:
 	negative_prob: probability of negative sentiment (closer to 0.5 may show weaker sentiment)
 	most_useful: most useful words in the text for determining the sentiment
 """
-def predictSentiment(text):
-	test = sentiment_features(wordTokenizer(text, "r"))
-	me_classifier = joblib.load("nb_sentiment_classifier.pkl")
-	sentiment = me_classifier.classify(test)
-	sentiment_probabilities = me_classifier.prob_classify(test)
-	positive_prob = sentiment_probabilities.prob("pos")
-	negative_prob = sentiment_probabilities.prob("neg")
-	most_useful = me_classifier.most_informative_features(5)
-	return sentiment,positive_prob,negative_prob,most_useful
 
-if __name__=="__main__":
-	tags = npChunking("All work and no play makes jack dull boy. this is a test for stop words.")
-	treeTraverse(tags)
-	""" Output below
-	( S ( NP ('All', 'DT') ('work', 'NN') ) ('and', 'CC') ( NP ('no', 'DT') ('play', 'NN') ) ('makes', 'VBZ') ( NP ('jack', 'NN') ) ( NP ('dull', 'JJ') ('boy', 'NN') ) ('.', '.') ('this', 'DT') ('is', 'VBZ') ( NP ('a', 'DT') ('test', 'NN') ) ('for', 'IN') ( NP ('stop', 'NN') ) ('words', 'NNS') ('.', '.') )
-	"""
-	ne_tree = NEChunker("Mark and John are working at Google in San Francisco.")
-	treeTraverse(ne_tree)
-	"""Output below
-	( S ( PERSON ('Mark', 'NNP') ) ('and', 'CC') ( PERSON ('John', 'NNP') ) ('are', 'VBP') ('working', 'VBG') ('at', 'IN') ( ORGANIZATION ('Google', 'NNP') ) ('in', 'IN') ( GPE ('San', 'NNP') ('Francisco', 'NNP') ) ('.', '.') )
-	"""
-	print(IOB_Tagging(ne_tree))
-	"""Output below
-	[('Mark', 'NNP', 'B-PERSON'), ('John', 'NNP', 'B-PERSON'), ('working', 'VBG', 'O'), ('Google', 'NNP', 'B-PERSON'), ('San', 'NNP', 'I-PERSON'), ('Francisco', 'NNP', 'I-PERSON'), ('.', '.', 'O')]
-	"""
-	
+
+def predictSentiment(text):
+    test = sentiment_features(wordTokenizer(text, "r"))
+    me_classifier = joblib.load("nb_sentiment_classifier.pkl")
+    sentiment = me_classifier.classify(test)
+    sentiment_probabilities = me_classifier.prob_classify(test)
+    positive_prob = sentiment_probabilities.prob("pos")
+    negative_prob = sentiment_probabilities.prob("neg")
+    most_useful = me_classifier.most_informative_features(5)
+    return sentiment, positive_prob, negative_prob, most_useful
+
+
+if __name__ == "__main__":
+    tags = npChunking("All work and no play makes jack dull boy. this is a test for stop words.")
+    treeTraverse(tags)
+    """ Output below
+    ( S ( NP ('All', 'DT') ('work', 'NN') ) ('and', 'CC') ( NP ('no', 'DT') ('play', 'NN') ) ('makes', 'VBZ') ( NP ('jack', 'NN') ) ( NP ('dull', 'JJ') ('boy', 'NN') ) ('.', '.') ('this', 'DT') ('is', 'VBZ') ( NP ('a', 'DT') ('test', 'NN') ) ('for', 'IN') ( NP ('stop', 'NN') ) ('words', 'NNS') ('.', '.') )
+    """
+    ne_tree = NEChunker("Mark and John are working at Google in San Francisco.")
+    treeTraverse(ne_tree)
+    """Output below
+    ( S ( PERSON ('Mark', 'NNP') ) ('and', 'CC') ( PERSON ('John', 'NNP') ) ('are', 'VBP') ('working', 'VBG') ('at', 'IN') ( ORGANIZATION ('Google', 'NNP') ) ('in', 'IN') ( GPE ('San', 'NNP') ('Francisco', 'NNP') ) ('.', '.') )
+    """
+    print(IOB_Tagging(ne_tree))
+    """Output below
+    [('Mark', 'NNP', 'B-PERSON'), ('John', 'NNP', 'B-PERSON'), ('working', 'VBG', 'O'), ('Google', 'NNP', 'B-PERSON'), ('San', 'NNP', 'I-PERSON'), ('Francisco', 'NNP', 'I-PERSON'), ('.', '.', 'O')]
+    """

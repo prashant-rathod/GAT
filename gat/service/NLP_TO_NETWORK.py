@@ -14,7 +14,7 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import matplotlib.colors as colorlib
-import matplotlib.cm as cm
+import matplotlib.cm as cmx
 import numpy as np
 from gat.service import file_io
 from gat.service.SVO_SENT_MODULE_spacy import SVOSENT
@@ -70,7 +70,7 @@ def relationship_mining(txt_name):
                                  edge_labels=nx.get_edge_attributes(G, 'verbs'), font_size=18, font_color='b')
     filename = 'new_nlp_relationship_example'
     filename = 'out/nlp/' + filename + '.png'
-    plt.savefig(filename)
+    plt.savefig(filename, dpi=100)
     return filename
 
 
@@ -94,36 +94,5 @@ def sentiment_mining(txt_name):
     cb.ax.tick_params(labelsize=24)
     filename = 'new_nlp_sentiment_example'
     filename = 'out/nlp/' + filename + '.png'
-    plt.savefig(filename)
+    plt.savefig(filename, dpi=100)
     return filename
-
-def sentiment3D(txt_name):
-    data = txt_to_data(txt_name)
-    G = nx.DiGraph()
-    data1 = {}
-    edges1 = []
-    nodes_property = {}
-    norm = matplotlib.colors.Normalize(vmin=-1, vmax=1)
-    mapper = cm.ScalarMappable(norm=norm, cmap=plt.cm.jet)
-    for i in range(len(data)):
-        G.add_edge(data['edges'][i][0], data['edges'][i][1], sentiment=data['sentiment'][i])
-        weight=data['sentiment'][i]
-        #need to add the first 0x
-        col = mapper.to_rgba(weight)
-        color = '0x%02x%02x%02x' % (int(255*col[0]), int(255*col[1]), int(255*col[2]))
-        edges1.append({
-            'source':data['edges'][i][0],
-            'target':data['edges'][i][1],
-            'name': weight,
-            'color': color,
-            #doesn't actually need arrows
-            'arrowColor': '0x666666',
-            'arrowSize': 0})
-    for node in G.nodes_iter():
-        temp = {}
-        temp['name'] = node
-        temp['color'] = '0xC0C0C0'
-        nodes_property[node] = temp
-    data1['edges'] = edges1
-    data1['nodes'] = nodes_property
-    return data1, G
